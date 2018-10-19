@@ -19,6 +19,9 @@
 package executionconfig;
 
 
+import ai.grakn.Keyspace;
+import ai.grakn.graql.Graql;
+import ai.grakn.graql.Query;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.io.Files;
@@ -27,6 +30,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *  Contains the configuration for an execution of the benchmarking system
@@ -40,6 +44,7 @@ public class BenchmarkConfiguration {
     private boolean noDataGeneration = true;
     private BenchmarkConfigurationFile benchmarkConfigFile;
     private Path configFilePath;
+    private String keyspace;
 
     public BenchmarkConfiguration(Path configFilePath, BenchmarkConfigurationFile config) throws IOException {
         this.configFilePath = configFilePath;
@@ -56,28 +61,34 @@ public class BenchmarkConfiguration {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        this.setKeyspace(this.getName());
     }
 
     public String getName() {
         return this.benchmarkConfigFile.getName();
     }
 
-    public String getDefaultKeyspace() {
-        String name = this.getName();
+
+    public void setKeyspace(String keyspace ) {
+        String name = keyspace;
         // remove spaces
         name = name.replace(' ', '_');
         if (name.length() > 48) {
-            return name.substring(0, 48);
-        } else {
-            return name;
+            name = name.substring(0, 48);
         }
+        this.keyspace = keyspace;
     }
 
-    public List<String> getSchema() {
+    public Keyspace getKeyspace() {
+        return Keyspace.of(this.keyspace);
+    }
+
+    public List<Query> getSchemaGraql() {
         if (this.noSchemaLoad) {
             return null;
         } else {
-            return this.schemaGraql;
+            return this.schemaGraql.stream().map(query -> (Query)Graql.parse(query)).collect(Collectors.toList());
         }
     }
 

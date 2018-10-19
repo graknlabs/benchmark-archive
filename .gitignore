@@ -1,5 +1,6 @@
 *.iml
 .idea
 .DS_STORE
+__pycache__
 data/
 benchmark-runner/target/

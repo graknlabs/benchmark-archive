@@ -21,7 +21,13 @@ package storage;
 import ai.grakn.GraknSession;
 import ai.grakn.GraknTx;
 import ai.grakn.GraknTxType;
+import ai.grakn.Keyspace;
+import ai.grakn.client.Grakn;
+import ai.grakn.concept.Attribute;
 import ai.grakn.concept.AttributeType;
+import ai.grakn.concept.Concept;
+import ai.grakn.concept.EntityType;
+import ai.grakn.concept.RelationshipType;
 import ai.grakn.concept.Role;
 import ai.grakn.concept.SchemaConcept;
 import ai.grakn.concept.Type;
@@ -35,7 +41,9 @@ import ai.grakn.util.Schema;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static ai.grakn.graql.internal.pattern.Patterns.var;
 
@@ -44,17 +52,66 @@ import static ai.grakn.graql.internal.pattern.Patterns.var;
  */
 public class SchemaManager {
 
-    public static void initialise(GraknSession session, List<String> graqlSchemaQueries) {
+    Grakn.Session session;
+    List<Query> graqlSchemaQueries;
 
+    private HashSet<EntityType> entityTypes;
+    private HashSet<RelationshipType> relationshipTypes;
+    private HashSet<AttributeType> attributeTypes;
+    private HashSet<Role> roles;
+
+    public SchemaManager(Grakn.Session session, List<Query> graqlSchemaQueries) {
+        this.session = session;
+        this.graqlSchemaQueries = graqlSchemaQueries;
+    }
+
+    public Keyspace keyspace() {
+        return this.session.keyspace();
+    }
+
+    public void initialise() {
+        clearKeyspace(session);
         try (GraknTx tx = session.transaction(GraknTxType.WRITE)) {
+            graqlSchemaQueries.stream().map(query -> query.withTx(tx).execute());
+
+            this.entityTypes = SchemaManager.getTypesOfMetaType(tx, "entity");
+            this.relationshipTypes = SchemaManager.getTypesOfMetaType(tx, "relationship");
+            this.attributeTypes = SchemaManager.getTypesOfMetaType(tx, "attribute");
+            this.roles = SchemaManager.getRoles(tx, "role");
+
+            tx.commit();
+        }
+    }
+
+    public HashSet<EntityType> getEntityTypes() {
+        return this.entityTypes;
+    }
+
+    public HashSet<RelationshipType> getRelationshipTypes() {
+        return this.relationshipTypes;
+    }
+
+    public HashSet<AttributeType> getAttributeTypes() {
+        return this.attributeTypes;
+    }
+
+    public HashSet<Role> getRoles() {
+        return this.roles;
+    }
+
+
+    private void clearKeyspace(GraknSession session) {
+        try (GraknTx tx = session.transaction(GraknTxType.WRITE)) {
+
+            // delete all attributes, relationships, entities from keyspace
 
             QueryBuilder qb = tx.graql();
             Var x = Graql.var().asUserDefined();  //TODO This needed to be asUserDefined or else getting error: ai.grakn.exception.GraqlQueryException: the variable $1528883020589004 is not in the query
             Var y = Graql.var().asUserDefined();
 
-            // qb.match(x.isa("thing")).delete(x).execute();  // TODO Only got a complaint at runtime when using delete() without supplying a variable
             // TODO Sporadically has errors, logged in bug #20200
 
+            // cannot use delete "thing", complains
             qb.match(x.isa("attribute")).delete(x).execute();
             qb.match(x.isa("relationship")).delete(x).execute();
             qb.match(x.isa("entity")).delete(x).execute();
@@ -70,8 +127,6 @@ public class SchemaManager {
                 qb.undefine(z.id(element.get(y).id())).execute();
             }
 
-            tx.graql().parser().parseList(graqlSchemaQueries.stream().collect(Collectors.joining("\n"))).forEach(Query::execute);
-            tx.commit();
         }
     }
 
@@ -99,22 +154,22 @@ public class SchemaManager {
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
-    public static <T extends SchemaConcept> T getTypeFromString(String typeName, HashSet<T> typeInstances) {
-        Iterator iter = typeInstances.iterator();
-        String l;
-        T currentType;
 
-        while (iter.hasNext()) {
-            currentType = (T) iter.next();
-            l = currentType.label().toString();
-            if (l.equals(typeName)) {
-                return currentType;
-            }
+    public <T extends  SchemaConcept> T getTypeFromString(String typeName) {
+
+        for (EntityType entityType : entityTypes) {
+            if (entityType.label().toString().equals(typeName)) return (T)entityType;
         }
+
+        for (AttributeType attributeType : attributeTypes) {
+            if (attributeType.label().toString().equals(typeName)) return (T)attributeType;
+        }
+
+        for (RelationshipType relationshipType : relationshipTypes) {
+            if (relationshipType.label().toString().equals(typeName)) return (T)relationshipType;
+        }
+
         throw new RuntimeException("Couldn't find a concept type with name \"" + typeName + "\"");
     }
 
-    public static AttributeType.DataType getDatatype(String typeName, HashSet<Type> typeInstances) {
-        return null;
-    }
 }

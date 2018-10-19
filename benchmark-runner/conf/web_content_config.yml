@@ -1,0 +1,12 @@
+name: "web content"
+schema: "web_content/web_content_schema.gql"
+queries: "web_content/queries.yml"
+concepts:
+  - 100
+  - 500
+repeatsPerQuery: 5
+# TODO
+# concurrency:
+#   clients: 1
+  # mixed:
+# replication: 1

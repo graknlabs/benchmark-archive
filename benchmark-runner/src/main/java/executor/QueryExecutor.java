@@ -45,13 +45,13 @@ public class QueryExecutor {
 
     private final String uri;
     private final String executionName;
-    private final String keyspace;
+    private final Keyspace keyspace;
 
     final List<Query> queries;
 
     private static final Logger LOG = LoggerFactory.getLogger(QueryExecutor.class);
 
-    public QueryExecutor(String keyspace, String uri, String executionName, List<String> queryStrings) {
+    public QueryExecutor(Keyspace keyspace, String uri, String executionName, List<String> queryStrings) {
         this.keyspace = keyspace;
         this.uri = uri;
         this.executionName = executionName;
@@ -76,7 +76,7 @@ public class QueryExecutor {
 
     public int aggregateCount() {
         Grakn client = new Grakn(new SimpleURI(uri), true);
-        Grakn.Session session = client.session(Keyspace.of(keyspace));
+        Grakn.Session session = client.session(keyspace);
 
         try (Grakn.Transaction tx = session.transaction(GraknTxType.READ)) {
             List<Value> count = tx.graql().match(var("x").isa("thing")).aggregate(Graql.count()).execute();
@@ -87,7 +87,7 @@ public class QueryExecutor {
     void processQueries(Stream<Query> queryStream, int numRepeats, int numConcepts, String msg) throws Exception {
         // instantiate grakn client
         Grakn client = new Grakn(new SimpleURI(uri), true);
-        Grakn.Session session = client.session(Keyspace.of(keyspace));
+        Grakn.Session session = client.session(keyspace);
 
         try (Grakn.Transaction tx = session.transaction(GraknTxType.WRITE)) {
 
