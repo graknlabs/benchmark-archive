@@ -264,7 +264,6 @@ public class BenchmarkManager {
         String dateString = dateFormat.format(new Date());
         executionName = String.join(" ", Arrays.asList(dateString, benchmarkConfiguration.getName(), executionName)).trim();
 
-
         Grakn client = new Grakn(new SimpleURI(Configs.GRAKN_URI));
         Grakn.Session session = client.session(benchmarkConfiguration.getKeyspace());
         int randomSeed = 0;

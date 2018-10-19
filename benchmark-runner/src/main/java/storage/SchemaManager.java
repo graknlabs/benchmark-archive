@@ -53,14 +53,14 @@ import static ai.grakn.graql.internal.pattern.Patterns.var;
 public class SchemaManager {
 
     Grakn.Session session;
-    List<Query> graqlSchemaQueries;
+    List<String> graqlSchemaQueries;
 
     private HashSet<EntityType> entityTypes;
     private HashSet<RelationshipType> relationshipTypes;
     private HashSet<AttributeType> attributeTypes;
     private HashSet<Role> roles;
 
-    public SchemaManager(Grakn.Session session, List<Query> graqlSchemaQueries) {
+    public SchemaManager(Grakn.Session session, List<String> graqlSchemaQueries) {
         this.session = session;
         this.graqlSchemaQueries = graqlSchemaQueries;
     }
@@ -69,19 +69,16 @@ public class SchemaManager {
         return this.session.keyspace();
     }
 
-    public void initialise() {
+    public void initialiseKeyspace() {
         clearKeyspace(session);
         try (GraknTx tx = session.transaction(GraknTxType.WRITE)) {
-            graqlSchemaQueries.stream().map(query -> query.withTx(tx).execute());
-
-            this.entityTypes = SchemaManager.getTypesOfMetaType(tx, "entity");
-            this.relationshipTypes = SchemaManager.getTypesOfMetaType(tx, "relationship");
-            this.attributeTypes = SchemaManager.getTypesOfMetaType(tx, "attribute");
-            this.roles = SchemaManager.getRoles(tx, "role");
+            tx.graql().parser().parseList(graqlSchemaQueries.stream().collect(Collectors.joining("\n"))).forEach(Query::execute);
 
             tx.commit();
         }
     }
+
+    public void initialise
 
     public HashSet<EntityType> getEntityTypes() {
         return this.entityTypes;

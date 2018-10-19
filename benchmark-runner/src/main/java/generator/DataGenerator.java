@@ -57,7 +57,7 @@ public class DataGenerator {
 
     private SpecificStrategy dataStrategies;
 
-    public DataGenerator(Grakn.Session session, String executionName, List<Query> schemaDefinition, int randomSeed) {
+    public DataGenerator(Grakn.Session session, String executionName, List<String> schemaDefinition, int randomSeed) {
         this.session = session;
         this.executionName = executionName;
         this.schemaManager = new SchemaManager(session, schemaDefinition);
@@ -65,9 +65,10 @@ public class DataGenerator {
         this.iteration = 0;
     }
 
-    public void loadSchema() {
+    p
+    ublic void loadSchema() {
         System.out.println("Initialising keyspace `" + this.schemaManager.keyspace() + "`...");
-        this.schemaManager.initialise();
+        this.schemaManager.initialiseKeyspace();
         System.out.println("done");
     }
 

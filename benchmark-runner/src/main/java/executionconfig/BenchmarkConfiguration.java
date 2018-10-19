@@ -70,25 +70,25 @@ public class BenchmarkConfiguration {
     }
 
 
-    public void setKeyspace(String keyspace ) {
+    public void setKeyspace(String keyspace) {
         String name = keyspace;
         // remove spaces
         name = name.replace(' ', '_');
         if (name.length() > 48) {
             name = name.substring(0, 48);
         }
-        this.keyspace = keyspace;
+        this.keyspace = name;
     }
 
     public Keyspace getKeyspace() {
         return Keyspace.of(this.keyspace);
     }
 
-    public List<Query> getSchemaGraql() {
+    public List<String> getSchemaGraql() {
         if (this.noSchemaLoad) {
             return null;
         } else {
-            return this.schemaGraql.stream().map(query -> (Query)Graql.parse(query)).collect(Collectors.toList());
+            return this.schemaGraql;
         }
     }
 
