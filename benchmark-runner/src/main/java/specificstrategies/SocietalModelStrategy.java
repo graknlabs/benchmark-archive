@@ -28,7 +28,6 @@ import java.util.Set;
 public class SocietalModelStrategy implements SpecificStrategy {
 
     private Random random;
-    private SchemaManager schemaManager;
     private ConceptStore storage;
 
     private RouletteWheelCollection<TypeStrategyInterface> entityStrategies;
@@ -36,9 +35,8 @@ public class SocietalModelStrategy implements SpecificStrategy {
     private RouletteWheelCollection<TypeStrategyInterface> attributeStrategies;
     private RouletteWheelCollection<RouletteWheelCollection<TypeStrategyInterface>> operationStrategies;
 
-    public SocietalModelStrategy(Random random, SchemaManager schemaManager, ConceptStore storage) {
+    public SocietalModelStrategy(Random random, ConceptStore storage) {
         this.random = random;
-        this.schemaManager = schemaManager;
         this.storage = storage;
 
         this.entityStrategies = new RouletteWheelCollection<>(random);
@@ -59,14 +57,14 @@ public class SocietalModelStrategy implements SpecificStrategy {
         this.entityStrategies.add(
                 0.5,
                 new EntityStrategy(
-                        schemaManager.getTypeFromString("person"),
+                        "person",
                         new UniformPDF(random, 20, 40)
                 ));
 
         this.entityStrategies.add(
                 0.5,
                 new EntityStrategy(
-                        schemaManager.getTypeFromString("company"),
+                        "company",
                         new UniformPDF(random, 1, 5)
                 )
         );
@@ -75,8 +73,8 @@ public class SocietalModelStrategy implements SpecificStrategy {
 
         employmentRoleStrategies.add(
                 new RolePlayerTypeStrategy(
-                        schemaManager.getTypeFromString("employee"),
-                        schemaManager.getTypeFromString("person"),
+                        "employee",
+                        "person",
                         new ConstantPDF(1),
                         new StreamProvider<>(
                                 new FromIdStoragePicker<>(
@@ -90,8 +88,8 @@ public class SocietalModelStrategy implements SpecificStrategy {
 
         employmentRoleStrategies.add(
                 new RolePlayerTypeStrategy(
-                        schemaManager.getTypeFromString("employer"),
-                        schemaManager.getTypeFromString("company"),
+                        "employer",
+                        "person",
                         new ConstantPDF(1),
                         new CentralStreamProvider<>(
                                 new NotInRelationshipConceptIdStream(
@@ -111,7 +109,7 @@ public class SocietalModelStrategy implements SpecificStrategy {
         this.relationshipStrategies.add(
                 0.3,
                 new RelationshipStrategy(
-                        schemaManager.getTypeFromString("employment"),
+                        "employment",
                         new DiscreteGaussianPDF(random, 30.0, 30.0),
                         employmentRoleStrategies)
         );
@@ -133,10 +131,10 @@ public class SocietalModelStrategy implements SpecificStrategy {
         this.attributeStrategies.add(
                 1.0,
                 new AttributeStrategy<>(
-                        schemaManager.getTypeFromString("name"),
+                        "name",
                         new UniformPDF(random, 3, 100),
                         new AttributeOwnerTypeStrategy<>(
-                                schemaManager.getTypeFromString("company"),
+                                "company",
                                 new StreamProvider<>(
                                         new FromIdStoragePicker<>(
                                                 random,
@@ -194,10 +192,10 @@ public class SocietalModelStrategy implements SpecificStrategy {
         this.attributeStrategies.add(
                 1.0,
                 new AttributeStrategy<>(
-                        schemaManager.getTypeFromString("rating"),
+                        "rating",
                         new UniformPDF(random, 10, 20),
                         new AttributeOwnerTypeStrategy<>(
-                                schemaManager.getTypeFromString("name"),
+                                "name",
                                 new StreamProvider<>(
                                         new FromIdStoragePicker<>(
                                                 random,
@@ -216,10 +214,10 @@ public class SocietalModelStrategy implements SpecificStrategy {
         this.attributeStrategies.add(
                 5.0,
                 new AttributeStrategy<>(
-                        schemaManager.getTypeFromString("rating"),
+                        "rating",
                         new UniformPDF(random, 3, 40),
                         new AttributeOwnerTypeStrategy<>(
-                                schemaManager.getTypeFromString("company"),
+                                "company",
                                 new StreamProvider<>(
                                         new FromIdStoragePicker<>(
                                                 random,
@@ -238,10 +236,10 @@ public class SocietalModelStrategy implements SpecificStrategy {
         this.attributeStrategies.add(
                 3.0,
                 new AttributeStrategy<>(
-                        schemaManager.getTypeFromString("rating"),
+                        "rating",
                         new UniformPDF(random, 40, 60),
                         new AttributeOwnerTypeStrategy<>(
-                                schemaManager.getTypeFromString("employment"),  //TODO change this so that declaring the MetaType to search isn't necessary
+                                "employment",
                                 new StreamProvider<>(
                                         new FromIdStoragePicker<>(
                                                 random,

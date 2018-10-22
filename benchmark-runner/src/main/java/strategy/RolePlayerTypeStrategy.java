@@ -29,14 +29,12 @@ import pick.StreamProviderInterface;
  */
 public class RolePlayerTypeStrategy extends TypeStrategy implements HasPicker {
 
-    private final Role role;
     private final String roleLabel;
     private StreamProviderInterface<ConceptId> conceptPicker;
 
-    public RolePlayerTypeStrategy(Role role, Type type, PDF numInstancesPDF, StreamProviderInterface<ConceptId> conceptPicker) {
-        super(type, numInstancesPDF);
-        this.role = role;
-        this.roleLabel = role.label().getValue();
+    public RolePlayerTypeStrategy(String roleLabel, String typeLabel, PDF numInstancesPDF, StreamProviderInterface<ConceptId> conceptPicker) {
+        super(typeLabel, numInstancesPDF);
+        this.roleLabel = roleLabel;
         this.conceptPicker = conceptPicker;
     }
 
@@ -48,8 +46,5 @@ public class RolePlayerTypeStrategy extends TypeStrategy implements HasPicker {
         return this.roleLabel;
     }
 
-    public Role getRole() {
-        return role;
-    }
 }
 

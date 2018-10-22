@@ -26,14 +26,12 @@ import pick.StreamProviderInterface;
  */
 // TODO implement a base interface of TypeStrategyInterface?
 public class AttributeOwnerTypeStrategy<T> implements HasPicker {
-    private final Type type;
     private final String typeLabel;
     private StreamProviderInterface<T> picker;
 
-    public AttributeOwnerTypeStrategy(Type type, StreamProviderInterface<T> picker) {
-        this.type = type;
+    public AttributeOwnerTypeStrategy(String typeLabel, StreamProviderInterface<T> picker) {
         this.picker = picker;
-        typeLabel = this.type.label().getValue();
+        this.typeLabel = typeLabel;
     }
 
     @Override

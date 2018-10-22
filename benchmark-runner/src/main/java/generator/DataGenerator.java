@@ -21,7 +21,11 @@ package generator;
 import ai.grakn.GraknTx;
 import ai.grakn.GraknTxType;
 import ai.grakn.client.Grakn;
+import ai.grakn.concept.AttributeType;
 import ai.grakn.concept.Concept;
+import ai.grakn.concept.EntityType;
+import ai.grakn.concept.RelationshipType;
+import ai.grakn.concept.Role;
 import ai.grakn.graql.InsertQuery;
 import ai.grakn.graql.Query;
 import ai.grakn.graql.answer.ConceptMap;
@@ -46,7 +50,7 @@ public class DataGenerator {
 
     Grakn.Session session;
     String executionName;
-    private SchemaManager schemaManager;
+    List<String> schemaDefinition;
 
 
     private int iteration = 0;
@@ -60,21 +64,26 @@ public class DataGenerator {
     public DataGenerator(Grakn.Session session, String executionName, List<String> schemaDefinition, int randomSeed) {
         this.session = session;
         this.executionName = executionName;
-        this.schemaManager = new SchemaManager(session, schemaDefinition);
         this.rand = new Random(randomSeed);
         this.iteration = 0;
+        this.schemaDefinition = schemaDefinition;
     }
 
-    p
-    ublic void loadSchema() {
-        System.out.println("Initialising keyspace `" + this.schemaManager.keyspace() + "`...");
-        this.schemaManager.initialiseKeyspace();
+    public void loadSchema() {
+        System.out.println("Initialising keyspace `" + this.session.keyspace() + "`...");
+        SchemaManager.initialiseKeyspace(this.session, this.schemaDefinition);
         System.out.println("done");
     }
 
     public void initializeGeneration() {
-        this.storage = new IgniteConceptIdStore(schemaManager.getEntityTypes(), schemaManager.getRelationshipTypes(), schemaManager.getAttributeTypes());
-        this.dataStrategies = SpecificStrategyFactory.getSpecificStrategy(this.executionName, this.rand, this.schemaManager, this.storage);
+        try (Grakn.Transaction tx = session.transaction(GraknTxType.READ)) {
+            HashSet<EntityType> entityTypes = SchemaManager.getTypesOfMetaType(tx, "entity");
+            HashSet<RelationshipType> relationshipTypes = SchemaManager.getTypesOfMetaType(tx, "relationship");
+            HashSet<AttributeType> attributeTypes = SchemaManager.getTypesOfMetaType(tx, "attribute");
+            this.storage = new IgniteConceptIdStore(entityTypes, relationshipTypes, attributeTypes);
+        }
+
+        this.dataStrategies = SpecificStrategyFactory.getSpecificStrategy(this.executionName, this.rand, this.storage);
         this.initialized = true;
     }
 
@@ -94,7 +103,7 @@ public class DataGenerator {
 
         while (conceptTotal < numConceptsLimit) {
             System.out.printf("---- Iteration %d ----\n", this.iteration);
-            try (GraknTx tx = session.transaction(GraknTxType.WRITE)) {
+            try (Grakn.Transaction tx = session.transaction(GraknTxType.WRITE)) {
 
                 //TODO Deal with this being an Object. TypeStrategy should be/have an interface for this purpose?
                 TypeStrategyInterface typeStrategy = operationStrategies.next().next();
@@ -113,7 +122,6 @@ public class DataGenerator {
                 tx.commit();
             }
         }
-        session.close();
     }
 
     private void processQueryStream(Stream<Query> queryStream) {

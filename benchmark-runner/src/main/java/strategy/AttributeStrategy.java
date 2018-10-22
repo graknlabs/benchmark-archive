@@ -33,20 +33,20 @@ public class AttributeStrategy<OwnerDatatype, ValueDatatype> extends TypeStrateg
     private final StreamProviderInterface<ValueDatatype> valuePicker;
     private AttributeOwnerTypeStrategy<OwnerDatatype> attributeOwnerStrategy = null;
 
-    public AttributeStrategy(AttributeType type,
+    public AttributeStrategy(String attributeTypeLabel,
                              PDF numInstancesPDF,
                              PickableCollection<AttributeOwnerTypeStrategy<OwnerDatatype>> attributeOwnerStrategies,
                              StreamProviderInterface<ValueDatatype> valuePicker) {
-        super(type, numInstancesPDF);
+        super(attributeTypeLabel, numInstancesPDF);
         this.attributeOwnerStrategies = attributeOwnerStrategies;
         this.valuePicker = valuePicker;
     }
 
-    public AttributeStrategy(AttributeType type,
+    public AttributeStrategy(String attributeTypeLabel,
                              PDF numInstancesPDF,
                              AttributeOwnerTypeStrategy<OwnerDatatype> attributeOwnerStrategy,
                              StreamProviderInterface<ValueDatatype> valuePicker) {
-        super(type, numInstancesPDF);
+        super(attributeTypeLabel, numInstancesPDF);
         this.attributeOwnerStrategy = attributeOwnerStrategy;
         this.valuePicker = valuePicker;
     }

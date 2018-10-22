@@ -30,8 +30,8 @@ public class RelationshipStrategy extends TypeStrategy<RelationshipType> {
 
     private Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies;
 
-    public <P extends PDF> RelationshipStrategy(RelationshipType type, P numInstancesPDF, Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies) {
-        super(type, numInstancesPDF);
+    public <P extends PDF> RelationshipStrategy(String typeLabel, P numInstancesPDF, Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies) {
+        super(typeLabel, numInstancesPDF);
         this.rolePlayerTypeStrategies = rolePlayerTypeStrategies;
     }
 

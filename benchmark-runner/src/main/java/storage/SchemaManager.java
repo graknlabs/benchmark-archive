@@ -52,54 +52,17 @@ import static ai.grakn.graql.internal.pattern.Patterns.var;
  */
 public class SchemaManager {
 
-    Grakn.Session session;
-    List<String> graqlSchemaQueries;
 
-    private HashSet<EntityType> entityTypes;
-    private HashSet<RelationshipType> relationshipTypes;
-    private HashSet<AttributeType> attributeTypes;
-    private HashSet<Role> roles;
-
-    public SchemaManager(Grakn.Session session, List<String> graqlSchemaQueries) {
-        this.session = session;
-        this.graqlSchemaQueries = graqlSchemaQueries;
-    }
-
-    public Keyspace keyspace() {
-        return this.session.keyspace();
-    }
-
-    public void initialiseKeyspace() {
+    public static void initialiseKeyspace(Grakn.Session session, List<String> graqlSchemaQueries) {
         clearKeyspace(session);
         try (GraknTx tx = session.transaction(GraknTxType.WRITE)) {
             tx.graql().parser().parseList(graqlSchemaQueries.stream().collect(Collectors.joining("\n"))).forEach(Query::execute);
-
             tx.commit();
         }
     }
 
-    public void initialise
-
-    public HashSet<EntityType> getEntityTypes() {
-        return this.entityTypes;
-    }
-
-    public HashSet<RelationshipType> getRelationshipTypes() {
-        return this.relationshipTypes;
-    }
-
-    public HashSet<AttributeType> getAttributeTypes() {
-        return this.attributeTypes;
-    }
-
-    public HashSet<Role> getRoles() {
-        return this.roles;
-    }
-
-
-    private void clearKeyspace(GraknSession session) {
+    private static void clearKeyspace(Grakn.Session session) {
         try (GraknTx tx = session.transaction(GraknTxType.WRITE)) {
-
             // delete all attributes, relationships, entities from keyspace
 
             QueryBuilder qb = tx.graql();
@@ -151,22 +114,5 @@ public class SchemaManager {
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
-
-    public <T extends  SchemaConcept> T getTypeFromString(String typeName) {
-
-        for (EntityType entityType : entityTypes) {
-            if (entityType.label().toString().equals(typeName)) return (T)entityType;
-        }
-
-        for (AttributeType attributeType : attributeTypes) {
-            if (attributeType.label().toString().equals(typeName)) return (T)attributeType;
-        }
-
-        for (RelationshipType relationshipType : relationshipTypes) {
-            if (relationshipType.label().toString().equals(typeName)) return (T)relationshipType;
-        }
-
-        throw new RuntimeException("Couldn't find a concept type with name \"" + typeName + "\"");
-    }
 
 }

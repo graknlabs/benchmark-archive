@@ -25,7 +25,6 @@ import pdf.PDF;
  * @param <T>
  */
 public interface TypeStrategyInterface<T extends Type> {
-    T getType();
 
     String getTypeLabel();
 

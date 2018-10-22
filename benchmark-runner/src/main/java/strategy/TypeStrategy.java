@@ -25,20 +25,12 @@ import pdf.PDF;
  * @param <T>
  */
 public class TypeStrategy<T extends Type> implements TypeStrategyInterface {
-    private final T type;
     private final String typeLabel;
-//    private final P numInstancesPDF;
     private final PDF numInstancesPDF;
 
-    public TypeStrategy(T type, PDF numInstancesPDF){
-        this.type = type;
+    public TypeStrategy(String typeLabel, PDF numInstancesPDF){
         this.numInstancesPDF = numInstancesPDF;
-        // TODO Storing the label value can be avoided when TP functionality #20179 is complete
-        this.typeLabel = this.type.label().getValue();
-    }
-
-    public T getType() {
-        return type;
+        this.typeLabel = typeLabel;
     }
 
     public String getTypeLabel() {
