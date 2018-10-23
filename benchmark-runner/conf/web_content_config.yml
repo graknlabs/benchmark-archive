@@ -4,7 +4,8 @@ queries: "web_content/queries.yml"
 concepts:
   - 100
   - 500
-repeatsPerQuery: 5
+  - 1000
+repeatsPerQuery: 50
 # TODO
 # concurrency:
 #   clients: 1

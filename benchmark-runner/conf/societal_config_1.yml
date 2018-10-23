@@ -3,9 +3,9 @@ schema: "societal_model/societal_model.gql"
 queries: "societal_model/queries.yml"
 concepts:
   - 100
-  - 250
   - 500
-repeatsPerQuery: 5
+  - 1000
+repeatsPerQuery: 2
 # TODO
 # concurrency:
 #   clients: 1
