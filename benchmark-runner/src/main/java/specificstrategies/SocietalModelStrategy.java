@@ -89,7 +89,7 @@ public class SocietalModelStrategy implements SpecificStrategy {
         employmentRoleStrategies.add(
                 new RolePlayerTypeStrategy(
                         "employer",
-                        "person",
+                        "company",
                         new ConstantPDF(1),
                         new CentralStreamProvider<>(
                                 new NotInRelationshipConceptIdStream(

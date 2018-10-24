@@ -53,14 +53,8 @@ public class CentralStreamProvider<T> implements StreamProviderInterface<T> {
 
             Stream<T> stream = this.streamer.getStream(streamLength,tx);
             //Read stream to list and store to be used again later
-
-            this.conceptIdList = new ArrayList<>();
-
-
-            Iterator<T> iter = stream.limit(streamLength).iterator();
-            while (iter.hasNext()) {
-                this.conceptIdList.add(iter.next());
-            }
+            this.conceptIdList.clear();
+            stream.limit(streamLength).map(conceptId -> this.conceptIdList.add(conceptId));
 
             this.isReset = false;
         }
