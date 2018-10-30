@@ -18,7 +18,7 @@
 
 package pick;
 
-import ai.grakn.GraknTx;
+import ai.grakn.client.Grakn;
 
 import java.util.stream.Stream;
 
@@ -27,5 +27,5 @@ import java.util.stream.Stream;
  */
 public interface PickerInterface<T> extends StreamInterface<T> {
 
-    Stream<Integer> getRandomOffsetStream(int streamLength, GraknTx tx);
+    Stream<Integer> getRandomOffsetStream(int streamLength, Grakn.Transaction tx);
 }

@@ -18,7 +18,7 @@
 
 package generator;
 
-import ai.grakn.GraknTx;
+import ai.grakn.client.Grakn;
 import ai.grakn.graql.Query;
 import ai.grakn.graql.QueryBuilder;
 import strategy.EntityStrategy;
@@ -31,7 +31,7 @@ import static ai.grakn.graql.internal.pattern.Patterns.var;
  *
  */
 public class EntityGenerator extends Generator<EntityStrategy> {
-    public EntityGenerator(EntityStrategy strategy, GraknTx tx) {
+    public EntityGenerator(EntityStrategy strategy, Grakn.Transaction tx) {
         super(strategy, tx);
     }
 

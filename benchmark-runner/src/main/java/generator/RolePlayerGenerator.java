@@ -18,7 +18,7 @@
 
 package generator;
 
-import ai.grakn.GraknTx;
+import ai.grakn.client.Grakn;
 import ai.grakn.graql.Query;
 import strategy.RolePlayerTypeStrategy;
 
@@ -33,7 +33,7 @@ public class RolePlayerGenerator extends Generator<RolePlayerTypeStrategy> {
      * @param strategy
      * @param tx
      */
-    public RolePlayerGenerator(RolePlayerTypeStrategy strategy, GraknTx tx) {
+    public RolePlayerGenerator(RolePlayerTypeStrategy strategy, Grakn.Transaction tx) {
         super(strategy, tx);
     }
 

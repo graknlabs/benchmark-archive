@@ -1,13 +1,10 @@
 package random;
 
 
-import ai.grakn.client.Grakn;
-import pick.StreamInterface;
 
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
-import java.util.stream.Stream;
 
 /**
  * adapted from https://stackoverflow.com/questions/41107/how-to-generate-a-random-alpha-numeric-string

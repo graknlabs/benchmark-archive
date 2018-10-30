@@ -18,7 +18,6 @@
 
 package strategy;
 
-import ai.grakn.concept.Type;
 import pick.StreamProviderInterface;
 
 /**

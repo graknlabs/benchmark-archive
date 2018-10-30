@@ -18,7 +18,7 @@
 
 package generator;
 
-import ai.grakn.GraknTx;
+import ai.grakn.client.Grakn;
 import strategy.AttributeStrategy;
 import strategy.EntityStrategy;
 import strategy.RelationshipStrategy;
@@ -34,7 +34,7 @@ public class GeneratorFactory {
      * @param tx
      * @return
      */
-    public GeneratorInterface create(TypeStrategyInterface typeStrategy, GraknTx tx) {
+    public GeneratorInterface create(TypeStrategyInterface typeStrategy, Grakn.Transaction tx) {
         /*
 
         We want to pass a structure like:

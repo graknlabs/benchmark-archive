@@ -19,7 +19,6 @@
 package pick;
 
 
-import ai.grakn.GraknTx;
 import ai.grakn.client.Grakn;
 import storage.IdStoreInterface;
 
@@ -51,7 +50,7 @@ public class FromIdStoragePicker<T> extends Picker<T> {
         return randomUniqueOffsetStream.map(randomOffset -> this.conceptStore.get(this.typeLabel, this.datatype, randomOffset));
     }
 
-    public Integer getConceptCount(GraknTx tx) {
+    public Integer getConceptCount(Grakn.Transaction tx) {
         return this.conceptStore.getConceptCount(this.typeLabel);
     }
 }

@@ -18,7 +18,7 @@
 
 package generator;
 
-import ai.grakn.GraknTx;
+import ai.grakn.client.Grakn;
 import ai.grakn.graql.Query;
 import strategy.TypeStrategy;
 
@@ -31,13 +31,13 @@ import java.util.stream.Stream;
 public abstract class Generator<T extends TypeStrategy> implements GeneratorInterface {
 
     protected final T strategy;
-    protected final GraknTx tx;
+    protected final Grakn.Transaction tx;
 
     /**
      * @param strategy
      * @param tx
      */
-    public Generator(T strategy, GraknTx tx) {
+    public Generator(T strategy, Grakn.Transaction tx) {
         this.strategy = strategy;
         this.tx = tx;
     }

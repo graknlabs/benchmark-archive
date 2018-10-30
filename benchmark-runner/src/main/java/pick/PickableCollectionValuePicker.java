@@ -18,7 +18,6 @@
 
 package pick;
 
-import ai.grakn.GraknTx;
 import ai.grakn.client.Grakn;
 import strategy.PickableCollection;
 

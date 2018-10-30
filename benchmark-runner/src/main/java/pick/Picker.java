@@ -18,7 +18,8 @@
 
 package pick;
 
-import ai.grakn.GraknTx;
+
+import ai.grakn.client.Grakn;
 
 import java.util.Random;
 import java.util.stream.Stream;
@@ -33,7 +34,7 @@ public abstract class Picker<T> implements PickerInterface<T> {
         this.rand = rand;
     }
 
-    public Stream<Integer> getRandomOffsetStream(int streamLength, GraknTx tx) {
+    public Stream<Integer> getRandomOffsetStream(int streamLength, Grakn.Transaction tx) {
         int typeCount = getConceptCount(tx);
 
         // If there aren't enough concepts to fulfill the number requested, then return null
@@ -42,5 +43,5 @@ public abstract class Picker<T> implements PickerInterface<T> {
         return RandomOffsetGenerator.generate(this.rand, typeCount);
     }
 
-    abstract Integer getConceptCount(GraknTx tx);
+    abstract Integer getConceptCount(Grakn.Transaction tx);
 }

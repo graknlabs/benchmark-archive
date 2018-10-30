@@ -19,8 +19,6 @@
 package manage;
 
 import ai.grakn.client.Grakn;
-import ai.grakn.graql.Graql;
-import ai.grakn.graql.Query;
 import ai.grakn.util.SimpleURI;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -61,7 +59,6 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 /**

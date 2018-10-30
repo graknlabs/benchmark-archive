@@ -18,7 +18,7 @@
 
 package generator;
 
-import ai.grakn.GraknTx;
+import ai.grakn.client.Grakn;
 import ai.grakn.concept.ConceptId;
 import ai.grakn.graql.Pattern;
 import ai.grakn.graql.Query;
@@ -45,7 +45,7 @@ public class RelationshipGenerator extends Generator<RelationshipStrategy> {
      * @param strategy
      * @param tx
      */
-    public RelationshipGenerator(RelationshipStrategy strategy, GraknTx tx) {
+    public RelationshipGenerator(RelationshipStrategy strategy, Grakn.Transaction tx) {
         super(strategy, tx);
     }
 

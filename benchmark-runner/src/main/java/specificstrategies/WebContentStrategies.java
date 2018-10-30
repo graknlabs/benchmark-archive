@@ -9,16 +9,13 @@ import pdf.UniformPDF;
 import pick.CentralStreamProvider;
 import pick.FromIdStoragePicker;
 import pick.NotInRelationshipConceptIdStream;
-import pick.StreamInterface;
 import pick.StreamProvider;
 import pick.StreamProviderInterface;
 import random.RandomString;
 import random.RandomValue;
-import random.StringPicker;
 import storage.ConceptStore;
 import storage.IdStoreInterface;
 import storage.SchemaManager;
-import strategy.AttributeStrategy;
 import strategy.EntityStrategy;
 import strategy.GeneratedRoulette;
 import strategy.RelationshipStrategy;
@@ -325,7 +322,9 @@ public class WebContentStrategies implements SpecificStrategy {
         RandomValue<String> randomString = new RandomString(6, random);
         GeneratedRoulette<String> attributeNamesRoulette = new GeneratedRoulette<>(random, 100, randomString, constant(1));
 
-        this.attributeStrategies.add(1.0, new AttributeStrategy<>("forename", ))
+        // TODO
+//        this.attributeStrategies.add(1.0, new AttributeStrategy<>("forename", ))
+
 
 
 
@@ -344,8 +343,6 @@ public class WebContentStrategies implements SpecificStrategy {
         // project.name
 
     }
-
-    private add(double weight, String attributeLabel, String ownerLabel, PDF )
 
 
     // ---- helpers ----

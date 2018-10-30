@@ -18,18 +18,9 @@
 
 package storage;
 
-import ai.grakn.GraknSession;
-import ai.grakn.GraknTx;
 import ai.grakn.GraknTxType;
-import ai.grakn.Keyspace;
 import ai.grakn.client.Grakn;
-import ai.grakn.concept.Attribute;
-import ai.grakn.concept.AttributeType;
-import ai.grakn.concept.Concept;
-import ai.grakn.concept.EntityType;
-import ai.grakn.concept.RelationshipType;
 import ai.grakn.concept.Role;
-import ai.grakn.concept.SchemaConcept;
 import ai.grakn.concept.Type;
 import ai.grakn.graql.Graql;
 import ai.grakn.graql.Match;
@@ -39,11 +30,8 @@ import ai.grakn.graql.Var;
 import ai.grakn.graql.answer.ConceptMap;
 import ai.grakn.util.Schema;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static ai.grakn.graql.internal.pattern.Patterns.var;
 
@@ -55,14 +43,14 @@ public class SchemaManager {
 
     public static void initialiseKeyspace(Grakn.Session session, List<String> graqlSchemaQueries) {
         clearKeyspace(session);
-        try (GraknTx tx = session.transaction(GraknTxType.WRITE)) {
+        try (Grakn.Transaction tx = session.transaction(GraknTxType.WRITE)) {
             tx.graql().parser().parseList(graqlSchemaQueries.stream().collect(Collectors.joining("\n"))).forEach(Query::execute);
             tx.commit();
         }
     }
 
     private static void clearKeyspace(Grakn.Session session) {
-        try (GraknTx tx = session.transaction(GraknTxType.WRITE)) {
+        try (Grakn.Transaction tx = session.transaction(GraknTxType.WRITE)) {
             // delete all attributes, relationships, entities from keyspace
 
             QueryBuilder qb = tx.graql();
@@ -90,7 +78,7 @@ public class SchemaManager {
         }
     }
 
-    public static <T extends Type> HashSet<T> getTypesOfMetaType(GraknTx tx, String metaTypeName) {
+    public static <T extends Type> HashSet<T> getTypesOfMetaType(Grakn.Transaction tx, String metaTypeName) {
         QueryBuilder qb = tx.graql();
         Match match = qb.match(var("x").sub(metaTypeName));
         List<ConceptMap> result = match.get().execute();
@@ -102,7 +90,7 @@ public class SchemaManager {
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
-    public static HashSet<Role> getRoles(GraknTx tx, String metaTypeName) {
+    public static HashSet<Role> getRoles(Grakn.Transaction tx, String metaTypeName) {
         QueryBuilder qb = tx.graql();
         Match match = qb.match(var("x").sub(metaTypeName));
         List<ConceptMap> result = match.get().execute();

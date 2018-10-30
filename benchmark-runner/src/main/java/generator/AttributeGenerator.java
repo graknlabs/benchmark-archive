@@ -18,7 +18,7 @@
 
 package generator;
 
-import ai.grakn.GraknTx;
+import ai.grakn.client.Grakn;
 import ai.grakn.concept.ConceptId;
 import ai.grakn.graql.Graql;
 import ai.grakn.graql.Query;
@@ -44,7 +44,7 @@ public class AttributeGenerator<OwnerDatatype, ValueDatatype> extends Generator<
      * @param strategy
      * @param tx
      */
-    public AttributeGenerator(AttributeStrategy<OwnerDatatype, ValueDatatype> strategy, GraknTx tx) {
+    public AttributeGenerator(AttributeStrategy<OwnerDatatype, ValueDatatype> strategy, Grakn.Transaction tx) {
         super(strategy, tx);
     }
 

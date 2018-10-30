@@ -18,7 +18,7 @@
 
 package pick;
 
-import ai.grakn.GraknTx;
+import ai.grakn.Grakn.Transaction;
 import ai.grakn.client.Grakn;
 import pdf.PDF;
 

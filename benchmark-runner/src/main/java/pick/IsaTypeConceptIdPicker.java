@@ -18,7 +18,7 @@
 
 package pick;
 
-import ai.grakn.GraknTx;
+import ai.grakn.client.Grakn;
 import storage.ConceptTypeCountStore;
 
 import java.util.Random;
@@ -40,7 +40,7 @@ public class IsaTypeConceptIdPicker extends ConceptIdPicker {
     }
 
     @Override
-    protected Integer getConceptCount(GraknTx tx) {
+    protected Integer getConceptCount(Grakn.Transaction tx) {
         return conceptTypeCountStore.get(this.typeLabel);
     }
 }

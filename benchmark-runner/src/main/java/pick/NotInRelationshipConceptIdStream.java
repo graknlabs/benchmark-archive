@@ -18,7 +18,7 @@
 
 package pick;
 
-import ai.grakn.GraknTx;
+import ai.grakn.client.Grakn;
 import ai.grakn.concept.ConceptId;
 import ai.grakn.graql.Graql;
 import ai.grakn.graql.QueryBuilder;
@@ -47,7 +47,7 @@ public class NotInRelationshipConceptIdStream implements StreamInterface<Concept
     }
 
     @Override
-    public Stream<ConceptId> getStream(int streamLength, GraknTx tx) {
+    public Stream<ConceptId> getStream(int streamLength, Grakn.Transaction tx) {
 
         Stream<ConceptId> stream = this.conceptIdStreamer.getStream(streamLength, tx);
 
