@@ -19,11 +19,13 @@
 package pick;
 
 import ai.grakn.GraknTx;
+import ai.grakn.client.Grakn;
+
 import java.util.stream.Stream;
 
 /**
  * @param <T>
  */
 public interface StreamInterface<T> {
-    Stream<T> getStream(int streamLength, GraknTx tx);
+    Stream<T> getStream(int streamLength, Grakn.Transaction tx);
 }

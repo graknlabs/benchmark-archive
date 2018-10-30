@@ -25,17 +25,16 @@ import java.util.TreeMap;
 /**
  * @param <T>
  */
-//TODO Shouldn't have name including "Collection"?
-public class RouletteWheelCollection<T> implements PickableCollection {
+public class RouletteWheel<T> implements PickableCollection {
     private final NavigableMap<Double, T> map = new TreeMap<Double, T>();
     private final Random random;
     private double total = 0;
 
-    public RouletteWheelCollection(Random random) {
+    public RouletteWheel(Random random) {
         this.random = random;
     }
 
-    public RouletteWheelCollection<T> add(double weight, T result) {
+    public RouletteWheel<T> add(double weight, T result) {
         if (weight <= 0) return this;
         total += weight;
         map.put(total, result);

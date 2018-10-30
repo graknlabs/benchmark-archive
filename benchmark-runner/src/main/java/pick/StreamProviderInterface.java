@@ -18,7 +18,7 @@
 
 package pick;
 
-import ai.grakn.GraknTx;
+import ai.grakn.client.Grakn;
 import pdf.PDF;
 
 import java.util.stream.Stream;
@@ -27,7 +27,7 @@ import java.util.stream.Stream;
  * @param <T>
  */
 public interface StreamProviderInterface<T> {
-        Stream<T> getStream(PDF pdf, GraknTx tx);  // TODO Change from pdf to streamLength for the benefit of AttributeGenerator
+        Stream<T> getStream(PDF pdf, Grakn.Transaction tx);  // TODO Change from pdf to streamLength for the benefit of AttributeGenerator
 
         void reset();
 }

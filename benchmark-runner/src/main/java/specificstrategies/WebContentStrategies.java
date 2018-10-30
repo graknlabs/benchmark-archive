@@ -1,27 +1,33 @@
 package specificstrategies;
 
 import ai.grakn.concept.ConceptId;
-import com.google.common.collect.ImmutableSet;
+import pdf.BoundedZipfPDF;
 import pdf.ConstantPDF;
+import pdf.DiscreteGaussianPDF;
 import pdf.PDF;
 import pdf.UniformPDF;
 import pick.CentralStreamProvider;
 import pick.FromIdStoragePicker;
 import pick.NotInRelationshipConceptIdStream;
+import pick.StreamInterface;
 import pick.StreamProvider;
 import pick.StreamProviderInterface;
+import random.RandomString;
+import random.RandomValue;
+import random.StringPicker;
 import storage.ConceptStore;
 import storage.IdStoreInterface;
 import storage.SchemaManager;
+import strategy.AttributeStrategy;
 import strategy.EntityStrategy;
+import strategy.GeneratedRoulette;
 import strategy.RelationshipStrategy;
 import strategy.RolePlayerTypeStrategy;
-import strategy.RouletteWheelCollection;
+import strategy.RouletteWheel;
 import strategy.TypeStrategyInterface;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -31,26 +37,26 @@ public class WebContentStrategies implements SpecificStrategy {
     private SchemaManager schemaManager;
     private ConceptStore storage;
 
-    private RouletteWheelCollection<TypeStrategyInterface> entityStrategies;
-    private RouletteWheelCollection<TypeStrategyInterface> relationshipStrategies;
-    private RouletteWheelCollection<TypeStrategyInterface> attributeStrategies;
-    private RouletteWheelCollection<RouletteWheelCollection<TypeStrategyInterface>> operationStrategies;
+    private RouletteWheel<TypeStrategyInterface> entityStrategies;
+    private RouletteWheel<TypeStrategyInterface> relationshipStrategies;
+    private RouletteWheel<TypeStrategyInterface> attributeStrategies;
+    private RouletteWheel<RouletteWheel<TypeStrategyInterface>> operationStrategies;
 
     public WebContentStrategies(Random random, SchemaManager schemaManager, ConceptStore storage) {
         this.random = random;
         this.schemaManager = schemaManager;
         this.storage = storage;
 
-        this.entityStrategies = new RouletteWheelCollection<>(random);
-        this.relationshipStrategies = new RouletteWheelCollection<>(random);
-        this.attributeStrategies = new RouletteWheelCollection<>(random);
-        this.operationStrategies = new RouletteWheelCollection<>(random);
+        this.entityStrategies = new RouletteWheel<>(random);
+        this.relationshipStrategies = new RouletteWheel<>(random);
+        this.attributeStrategies = new RouletteWheel<>(random);
+        this.operationStrategies = new RouletteWheel<>(random);
 
         setup();
     }
 
     @Override
-    public RouletteWheelCollection<RouletteWheelCollection<TypeStrategyInterface>> getStrategy() {
+    public RouletteWheel<RouletteWheel<TypeStrategyInterface>> getStrategy() {
         return this.operationStrategies;
     }
 
@@ -116,44 +122,161 @@ public class WebContentStrategies implements SpecificStrategy {
 
             relationships
 
+            general idea: add relationships to bottom level entities of the various hierarchies
+            (people to teams, projects to teams) plus build the hierarchies (connect departments to companies etc)
+
          */
 
         // people (any) - company employment (1 with no previous employments (central stream picker(NotInRelationship...))),
-        // Zipf, 1-10k employments to the company
+        // Zipf, 1-5k employments to the company
+        // NOTE: will will also add people to teams that belong to companies as members etc
+        // but its too complicated to conditionally add new employees if the person is already a member etc.
+        add(1, relationshipStrategy(
+                "employment",
+                zipf(5000,1.5),
+                rolePlayerTypeStrategy(
+                        "employee",
+                        "person",
+                        constant(1),
+                        new StreamProvider<>(fromIdStoragePicker("person"))
+                ),
+                rolePlayerTypeStrategy(
+                        "employer",
+                        "company",
+                        constant(1),
+                        new StreamProvider<>(fromIdStoragePicker("company"))
+                )
+        ));
 
 
         // people (any) - university employment (1 with no previous employments) (same as above)
         // Normal, mu=200, sigma^2=50^2 employments to the university
+        // NOTE: same as above except with universities
+        add(1, relationshipStrategy(
+                "employment",
+                gaussian(200, 50*50),
+                rolePlayerTypeStrategy(
+                        "employee",
+                        "person",
+                        constant(1),
+                        new StreamProvider<>(fromIdStoragePicker("person"))
+                ),
+                rolePlayerTypeStrategy(
+                        "employer",
+                        "university",
+                        constant(1),
+                        new StreamProvider<>(fromIdStoragePicker("university"))
+                )
+         ));
 
         // person (any) - project (any) membership
         // Normal, mu=6, sigma^2=3
+        add(1, relationshipStrategy(
+                "membership",
+                gaussian(6, 3),
+                rolePlayerTypeStrategy(
+                        "member",
+                        "person",
+                        constant(1),
+                        new StreamProvider<>(fromIdStoragePicker("person"))
+                ),
+                rolePlayerTypeStrategy(
+                        "group",
+                        "team",
+                        constant(1),
+                        new StreamProvider<>(fromIdStoragePicker("team"))
+                )
+        ));
 
         // person (any) - team membership (all to 1 (centralstream picker))
         // Normal, mu=10, sigma^2=3^2
+        add(1, relationshipStrategy(
+                "membership",
+                gaussian(10, 9),
+                rolePlayerTypeStrategy(
+                        "member",
+                        "person",
+                        constant(1),
+                        new StreamProvider<>(fromIdStoragePicker("person"))
+                ),
+                rolePlayerTypeStrategy(
+                        "group",
+                        "team",
+                        constant(1),
+                        new CentralStreamProvider<>(fromIdStoragePicker("team"))
+                )
+        ));
 
-        // person (any) - department membership (all to 1 (centralstream picker))
-        // Normal, mu=30, sigma^2=5^2
 
         // company (any 1) - department (not owned) ownership
-        // Uniform, [1,15], Central stream picker , NotInRelationship
-
-        // university (any 1) - department (not owned) ownership
-        // Uniform, [1,10]
-
-        // department (any 1) - team (not owned) ownership
-        // Uniform [2,10]
+        // Uniform, [1,8], Central stream picker , NotInRelationship
+        // ie. pick any company, assign N unassigned departments to it
         add(1, relationshipStrategy(
                 "ownership",
-                uniform(2, 10),
+                uniform(1, 8),
                 rolePlayerTypeStrategy(
                         "owner",
-                        "department",
+                        "company",
                         constant(1),
-                        new CentralStreamProvider<ConceptId>(fromIdStoragePicker("department"))
+                        new StreamProvider<>(fromIdStoragePicker("company"))
                 ),
                 rolePlayerTypeStrategy(
                         "property",
-                        "project",
+                        "department",
+                        constant(1),
+                        new StreamProvider<>(
+                                new NotInRelationshipConceptIdStream(
+                                        "ownership",
+                                        "property",
+                                        100,
+                                        fromIdStoragePicker("department")
+                                )
+                        )
+                )
+        ));
+
+        // university (any 1) - department (not owned) ownership
+        // Uniform, [1,4]
+        // ie. pick a university, assign N unassigned departments to it
+        add(1, relationshipStrategy(
+                "ownership",
+                uniform(1, 4),
+                rolePlayerTypeStrategy(
+                        "owner",
+                        "university",
+                        constant(1),
+                        new StreamProvider<>(fromIdStoragePicker("company"))
+                ),
+                rolePlayerTypeStrategy(
+                        "property",
+                        "department",
+                        constant(1),
+                        new StreamProvider<>(
+                                new NotInRelationshipConceptIdStream(
+                                        "ownership",
+                                        "property",
+                                        100,
+                                        fromIdStoragePicker("department")
+                                )
+                        )
+                )
+        ));
+
+        // department (any 1) - team (any not owned) ownership
+        // normal mu=5, sigma^2=1.5^2 teams in a department
+        // ie. pick a department, assign N teams that don't aren't owned yet
+        add(1, relationshipStrategy(
+                "ownership",
+                gaussian(5, 1.5*1.5),
+                rolePlayerTypeStrategy(
+                        "owner",
+                        "department",
+                        constant(1),  // pick 1 department for this n from uniform(2,10)
+                        new CentralStreamProvider<>(fromIdStoragePicker("department"))
+                ),
+                rolePlayerTypeStrategy(
+                        "property",
+                        "team",
                         constant(1),
                         new StreamProvider<>(
                                 new NotInRelationshipConceptIdStream(
@@ -163,10 +286,11 @@ public class WebContentStrategies implements SpecificStrategy {
                                         fromIdStoragePicker("project")
                                 ))
                 )
-        ))
+        ));
 
         // team (any) - project ownership (any)
         // Uniform [1,3]
+        // ie. pick some team and some project and assign ownership, teams can share projects OK
         add(1, relationshipStrategy(
                 "ownership",
                 uniform( 1, 3),
@@ -196,6 +320,14 @@ public class WebContentStrategies implements SpecificStrategy {
         // person.forename
         // person.middle-name
         // person.surname
+        // above can all be generated from same set of names
+
+        RandomValue<String> randomString = new RandomString(6, random);
+        GeneratedRoulette<String> attributeNamesRoulette = new GeneratedRoulette<>(random, 100, randomString, constant(1));
+
+        this.attributeStrategies.add(1.0, new AttributeStrategy<>("forename", ))
+
+
 
         // employment.job-title
 
@@ -213,8 +345,20 @@ public class WebContentStrategies implements SpecificStrategy {
 
     }
 
+    private add(double weight, String attributeLabel, String ownerLabel, PDF )
+
+
+    // ---- helpers ----
     private UniformPDF uniform(int lowerBound, int upperBound) {
         return new UniformPDF(random, lowerBound, upperBound);
+    }
+
+    private DiscreteGaussianPDF gaussian(double mean, double variance) {
+        return new DiscreteGaussianPDF(random, mean, variance);
+    }
+
+    private BoundedZipfPDF zipf(int rangeLimit, double exponent) {
+        return new BoundedZipfPDF(random, rangeLimit, exponent);
     }
 
     private ConstantPDF constant(int constant) {
@@ -243,6 +387,8 @@ public class WebContentStrategies implements SpecificStrategy {
         this.relationshipStrategies.add(weight, relationshipStrategy);
     }
 
+
+    // ---- end helpders ----
 
     /**
      * secondary instances of the schema, related to publishing/web content

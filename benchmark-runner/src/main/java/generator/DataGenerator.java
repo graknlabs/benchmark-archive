@@ -18,14 +18,12 @@
 
 package generator;
 
-import ai.grakn.GraknTx;
 import ai.grakn.GraknTxType;
 import ai.grakn.client.Grakn;
 import ai.grakn.concept.AttributeType;
 import ai.grakn.concept.Concept;
 import ai.grakn.concept.EntityType;
 import ai.grakn.concept.RelationshipType;
-import ai.grakn.concept.Role;
 import ai.grakn.graql.InsertQuery;
 import ai.grakn.graql.Query;
 import ai.grakn.graql.answer.ConceptMap;
@@ -35,7 +33,7 @@ import storage.ConceptStore;
 import storage.IgniteConceptIdStore;
 import storage.InsertionAnalysis;
 import storage.SchemaManager;
-import strategy.RouletteWheelCollection;
+import strategy.RouletteWheel;
 import strategy.TypeStrategyInterface;
 
 import java.util.HashSet;
@@ -92,7 +90,7 @@ public class DataGenerator {
             throw new GeneratorUninitializedException("generate() can only be called after initializing the generation strategies");
         }
 
-        RouletteWheelCollection<RouletteWheelCollection<TypeStrategyInterface>> operationStrategies = this.dataStrategies.getStrategy();
+        RouletteWheel<RouletteWheel<TypeStrategyInterface>> operationStrategies = this.dataStrategies.getStrategy();
         /*
         This method can be called multiple times, with a higher numConceptsLimit each time, so that the generation can be
         effectively paused while benchmarking takes place

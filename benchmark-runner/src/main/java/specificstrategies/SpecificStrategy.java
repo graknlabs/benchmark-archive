@@ -1,9 +1,9 @@
 package specificstrategies;
 
-import strategy.RouletteWheelCollection;
+import strategy.RouletteWheel;
 import strategy.TypeStrategyInterface;
 
 
 public interface SpecificStrategy {
-    RouletteWheelCollection<RouletteWheelCollection<TypeStrategyInterface>> getStrategy();
+    RouletteWheel<RouletteWheel<TypeStrategyInterface>> getStrategy();
 }

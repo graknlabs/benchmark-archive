@@ -19,6 +19,7 @@
 package pick;
 
 import ai.grakn.GraknTx;
+import ai.grakn.client.Grakn;
 import pdf.PDF;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class CentralStreamProvider<T> implements StreamProviderInterface<T> {
     }
 
     @Override
-    public Stream<T> getStream(PDF pdf, GraknTx tx) {
+    public Stream<T> getStream(PDF pdf, Grakn.Transaction tx) {
         // Get the same list as used previously, or generate one if not seen before
         // Only create a new stream if reset() has been called prior
 

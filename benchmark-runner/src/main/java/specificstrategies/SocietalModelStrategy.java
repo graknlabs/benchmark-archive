@@ -12,13 +12,12 @@ import pick.PickableCollectionValuePicker;
 import pick.StreamProvider;
 import storage.ConceptStore;
 import storage.IdStoreInterface;
-import storage.SchemaManager;
 import strategy.AttributeOwnerTypeStrategy;
 import strategy.AttributeStrategy;
 import strategy.EntityStrategy;
 import strategy.RelationshipStrategy;
 import strategy.RolePlayerTypeStrategy;
-import strategy.RouletteWheelCollection;
+import strategy.RouletteWheel;
 import strategy.TypeStrategyInterface;
 
 import java.util.HashSet;
@@ -30,25 +29,25 @@ public class SocietalModelStrategy implements SpecificStrategy {
     private Random random;
     private ConceptStore storage;
 
-    private RouletteWheelCollection<TypeStrategyInterface> entityStrategies;
-    private RouletteWheelCollection<TypeStrategyInterface> relationshipStrategies;
-    private RouletteWheelCollection<TypeStrategyInterface> attributeStrategies;
-    private RouletteWheelCollection<RouletteWheelCollection<TypeStrategyInterface>> operationStrategies;
+    private RouletteWheel<TypeStrategyInterface> entityStrategies;
+    private RouletteWheel<TypeStrategyInterface> relationshipStrategies;
+    private RouletteWheel<TypeStrategyInterface> attributeStrategies;
+    private RouletteWheel<RouletteWheel<TypeStrategyInterface>> operationStrategies;
 
     public SocietalModelStrategy(Random random, ConceptStore storage) {
         this.random = random;
         this.storage = storage;
 
-        this.entityStrategies = new RouletteWheelCollection<>(random);
-        this.relationshipStrategies = new RouletteWheelCollection<>(random);
-        this.attributeStrategies = new RouletteWheelCollection<>(random);
-        this.operationStrategies = new RouletteWheelCollection<>(random);
+        this.entityStrategies = new RouletteWheel<>(random);
+        this.relationshipStrategies = new RouletteWheel<>(random);
+        this.attributeStrategies = new RouletteWheel<>(random);
+        this.operationStrategies = new RouletteWheel<>(random);
 
         setup();
     }
 
     @Override
-    public RouletteWheelCollection<RouletteWheelCollection<TypeStrategyInterface>> getStrategy() {
+    public RouletteWheel<RouletteWheel<TypeStrategyInterface>> getStrategy() {
         return this.operationStrategies;
     }
 
@@ -114,7 +113,7 @@ public class SocietalModelStrategy implements SpecificStrategy {
                         employmentRoleStrategies)
         );
 
-        RouletteWheelCollection<String> nameValueOptions = new RouletteWheelCollection<String>(random)
+        RouletteWheel<String> nameValueOptions = new RouletteWheel<String>(random)
                 .add(0.5, "Da Vinci")
                 .add(0.5, "Nero")
                 .add(0.5, "Grakn")
@@ -150,7 +149,7 @@ public class SocietalModelStrategy implements SpecificStrategy {
         );
 
 
-//            RouletteWheelCollection<String> genderValueOptions = new RouletteWheelCollection<String>(this.rand)
+//            RouletteWheel<String> genderValueOptions = new RouletteWheel<String>(this.rand)
 //            .add(0.5, "male")
 //            .add(0.5, "female");
 //
@@ -176,7 +175,7 @@ public class SocietalModelStrategy implements SpecificStrategy {
 //                    )
 //            );
 
-//            RouletteWheelCollection<Integer> ratingValueOptions = new RouletteWheelCollection<Integer>(this.rand)
+//            RouletteWheel<Integer> ratingValueOptions = new RouletteWheel<Integer>(this.rand)
 //            .add(0.5, 1)
 //            .add(0.5, 2)
 //            .add(0.5, 3)

@@ -19,6 +19,7 @@
 package pick;
 
 import ai.grakn.GraknTx;
+import ai.grakn.client.Grakn;
 import strategy.PickableCollection;
 
 import java.util.stream.Stream;
@@ -35,7 +36,7 @@ public class PickableCollectionValuePicker<T> implements StreamInterface<T> {
     }
 
     @Override
-    public Stream<T> getStream(int streamLength, GraknTx tx) {
+    public Stream<T> getStream(int streamLength, Grakn.Transaction tx) {
         return Stream.generate(() -> valueOptions.next()).limit(streamLength);
     }
 }

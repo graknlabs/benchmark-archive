@@ -31,15 +31,29 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Random;
+import java.util.stream.IntStream;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.apache.commons.math3.distribution.ZipfDistribution;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.random.RandomGeneratorFactory;
+
 /**
  *
  */
 public class InsertionAnalysisTest {
+
+    @Test
+    public void testing() {
+        RandomGenerator gen = RandomGeneratorFactory.createRandomGenerator(new Random());
+        ZipfDistribution dist = new ZipfDistribution(gen, 10000, 1.5);
+        System.out.println(dist.getNumericalMean());
+        IntStream.range(0,100).boxed().iterator().forEachRemaining(x -> System.out.println(dist.sample()));
+    }
 
     private ArrayList<ConceptMap> mockConceptMaps(Map<Var, String> variables) {
 

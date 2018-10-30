@@ -19,6 +19,7 @@
 package pick;
 
 import ai.grakn.GraknTx;
+import ai.grakn.client.Grakn;
 
 import java.util.Random;
 import java.util.stream.Stream;
@@ -39,7 +40,7 @@ public class IntegerPicker implements StreamInterface<Integer>{
     private int upperBound;
 
     @Override
-    public Stream<Integer> getStream(int streamLength, GraknTx tx) {
+    public Stream<Integer> getStream(int streamLength, Grakn.Transaction tx) {
         return rand.ints(lowerBound, upperBound + 1).boxed();
     }
 }

@@ -20,6 +20,7 @@ package pick;
 
 
 import ai.grakn.GraknTx;
+import ai.grakn.client.Grakn;
 import storage.IdStoreInterface;
 
 import java.util.Random;
@@ -42,7 +43,7 @@ public class FromIdStoragePicker<T> extends Picker<T> {
     }
 
     @Override
-    public Stream<T> getStream(int streamLength, GraknTx tx) {
+    public Stream<T> getStream(int streamLength, Grakn.Transaction tx) {
         Stream<Integer> randomUniqueOffsetStream = this.getRandomOffsetStream(streamLength, tx);
         if (randomUniqueOffsetStream == null ) {
             return Stream.empty();

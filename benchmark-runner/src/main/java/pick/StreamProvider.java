@@ -18,7 +18,7 @@
 
 package pick;
 
-import ai.grakn.GraknTx;
+import ai.grakn.client.Grakn;
 import pdf.PDF;
 
 import java.util.stream.Stream;
@@ -38,7 +38,7 @@ public class StreamProvider<T> implements StreamProviderInterface<T> {
     }
 
     @Override
-    public Stream<T> getStream(PDF pdf, GraknTx tx) {
+    public Stream<T> getStream(PDF pdf, Grakn.Transaction tx) {
         // Simply limit the stream of ConceptIds to the number given by the pdf
         int streamLength = pdf.next();
 

@@ -74,6 +74,15 @@ department sub organisation;
 university sub organisation,
     plays employer;
 team sub organisation;
+
+transitive-organisation-membership sub rule,
+when {
+    $top isa organisation;
+    (owner: $top, property: $bottom) isa ownership;
+    (group: $bottom, member: $memb) isa membership;
+} then {
+    (group: $top, member: $memb) isa membership;
+}
 ##################################################################
 # Projects
 ##################################################################

@@ -18,6 +18,8 @@
 
 package pdf;
 
+
+
 import java.util.Random;
 
 /**
@@ -27,6 +29,7 @@ public class DiscreteGaussianPDF extends PDF {
     private Random rand;
     private Double mean;
     private Double variance;
+
 
     /**
      * @param rand
