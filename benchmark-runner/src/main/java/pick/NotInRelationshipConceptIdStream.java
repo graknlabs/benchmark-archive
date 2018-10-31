@@ -36,6 +36,8 @@ public class NotInRelationshipConceptIdStream implements StreamInterface<Concept
     private StreamInterface<ConceptId> conceptIdStreamer;
     private Integer numAttemptsLimit;
 
+    private int requiredLength = 1;
+
     public NotInRelationshipConceptIdStream(String relationshipLabel,
                                             String roleLabel,
                                             Integer numAttemptsLimit,
@@ -44,18 +46,35 @@ public class NotInRelationshipConceptIdStream implements StreamInterface<Concept
         this.relationshipLabel = relationshipLabel;
         this.roleLabel = roleLabel;
         this.numAttemptsLimit = numAttemptsLimit;
+
+    }
+
+
+    @Override
+    public boolean checkAvailable(int requiredLength, Grakn.Transaction tx) {
+        return this.conceptIdStreamer.checkAvailable(requiredLength, tx);
+    }
+
+    /**
+     * TODO remove this hack when have negation
+     * @param requiredLength
+     */
+    public void setRequiredLength(int requiredLength) {
+        this.requiredLength = requiredLength;
     }
 
     @Override
-    public Stream<ConceptId> getStream(int streamLength, Grakn.Transaction tx) {
+    public Stream<ConceptId> getStream(Grakn.Transaction tx) {
 
-        Stream<ConceptId> stream = this.conceptIdStreamer.getStream(streamLength, tx);
+        Stream<ConceptId> stream = this.conceptIdStreamer.getStream(tx);
 
         QueryBuilder qb = tx.graql();
 
+        // TODO remove hack when we have negation
+
         // TODO Ideally this should also terminate when it's no longer possible to find the number of concepts required.
         // TODO Shouldn't the limit for the number of attempts be before the filter? Otherwise it will always wait
-        return stream.limit(this.numAttemptsLimit * streamLength).filter(conceptId -> { //TODO Should probably be using stream.filter instead
+        return stream.limit(this.numAttemptsLimit * this.requiredLength).filter(conceptId -> { //TODO Should probably be using stream.filter instead
                 // Keep looking for a concept not in this kind of relationship, stop when one is found (by returning)
                 // or the max number of attempts to find one has been reached
 

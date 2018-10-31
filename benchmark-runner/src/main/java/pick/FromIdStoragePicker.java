@@ -42,11 +42,8 @@ public class FromIdStoragePicker<T> extends Picker<T> {
     }
 
     @Override
-    public Stream<T> getStream(int streamLength, Grakn.Transaction tx) {
-        Stream<Integer> randomUniqueOffsetStream = this.getRandomOffsetStream(streamLength, tx);
-        if (randomUniqueOffsetStream == null ) {
-            return Stream.empty();
-        }
+    public Stream<T> getStream(Grakn.Transaction tx) {
+        Stream<Integer> randomUniqueOffsetStream = this.getStreamOfRandomOffsets(tx);
         return randomUniqueOffsetStream.map(randomOffset -> this.conceptStore.get(this.typeLabel, this.datatype, randomOffset));
     }
 

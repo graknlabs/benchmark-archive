@@ -1,18 +1,21 @@
-package random;
+package pick;
 
 
+
+import ai.grakn.client.Grakn;
 
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
+import java.util.stream.Stream;
 
 /**
  * adapted from https://stackoverflow.com/questions/41107/how-to-generate-a-random-alpha-numeric-string
  *
- * TODO this has substantial overlap in responsibility with IntegerPicker ie. StreamInterface<T>
+ * TODO this has substantial overlap in responsibility with IntegerStreamGenerator ie. StreamInterface<T>
  * TODO also has overlap with
  */
-public class RandomString implements RandomValue<String> {
+public class StringStreamGenerator implements StreamInterface<String> {
 
     /**
      * Generate a random string.
@@ -21,6 +24,16 @@ public class RandomString implements RandomValue<String> {
         for (int idx = 0; idx < buf.length; ++idx)
             buf[idx] = symbols[random.nextInt(symbols.length)];
         return new String(buf);
+    }
+
+    @Override
+    public Stream<String> getStream(Grakn.Transaction tx) {
+        return Stream.generate(() -> this.next());
+    }
+
+    @Override
+    public boolean checkAvailable(int rqeuiredLength, Grakn.Transaction tx) {
+        return true;
     }
 
 
@@ -38,7 +51,7 @@ public class RandomString implements RandomValue<String> {
 
     private final char[] buf;
 
-    public RandomString(int length, Random random, String symbols) {
+    public StringStreamGenerator(int length, Random random, String symbols) {
         if (length < 1) throw new IllegalArgumentException();
         if (symbols.length() < 2) throw new IllegalArgumentException();
         this.random = Objects.requireNonNull(random);
@@ -49,7 +62,7 @@ public class RandomString implements RandomValue<String> {
     /**
      * Create an alphanumeric string generator.
      */
-    public RandomString(int length, Random random) {
+    public StringStreamGenerator(int length, Random random) {
         this(length, random, alphanum);
     }
 

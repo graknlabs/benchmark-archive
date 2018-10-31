@@ -26,6 +26,7 @@ import java.util.stream.Stream;
 /**
  * @param <T>
  */
+// TODO rename to PDFLimitedStreamProviderInterface
 public interface StreamProviderInterface<T> {
         Stream<T> getStream(PDF pdf, Grakn.Transaction tx);  // TODO Change from pdf to streamLength for the benefit of AttributeGenerator
 

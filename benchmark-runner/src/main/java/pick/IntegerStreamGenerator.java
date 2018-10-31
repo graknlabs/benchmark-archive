@@ -26,10 +26,10 @@ import java.util.stream.Stream;
 /**
  *
  */
-public class IntegerPicker implements StreamInterface<Integer>{
+public class IntegerStreamGenerator implements StreamInterface<Integer>{
     private Random rand;
 
-    public IntegerPicker(Random rand, int lowerBound, int upperBound) {
+    public IntegerStreamGenerator(Random rand, int lowerBound, int upperBound) {
         this.rand = rand;
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
@@ -39,7 +39,12 @@ public class IntegerPicker implements StreamInterface<Integer>{
     private int upperBound;
 
     @Override
-    public Stream<Integer> getStream(int streamLength, Grakn.Transaction tx) {
+    public Stream<Integer> getStream(Grakn.Transaction tx) {
         return rand.ints(lowerBound, upperBound + 1).boxed();
+    }
+
+    @Override
+    public boolean checkAvailable(int requiredLength, Grakn.Transaction tx) {
+        return true;
     }
 }

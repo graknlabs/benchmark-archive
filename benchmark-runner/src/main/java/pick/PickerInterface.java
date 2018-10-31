@@ -27,5 +27,5 @@ import java.util.stream.Stream;
  */
 public interface PickerInterface<T> extends StreamInterface<T> {
 
-    Stream<Integer> getRandomOffsetStream(int streamLength, Grakn.Transaction tx);
+    Stream<Integer> getStreamOfRandomOffsets(Grakn.Transaction tx);
 }

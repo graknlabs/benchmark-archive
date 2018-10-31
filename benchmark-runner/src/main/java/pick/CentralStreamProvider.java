@@ -18,7 +18,6 @@
 
 package pick;
 
-import ai.grakn.Grakn.Transaction;
 import ai.grakn.client.Grakn;
 import pdf.PDF;
 
@@ -37,6 +36,7 @@ public class CentralStreamProvider<T> implements StreamProviderInterface<T> {
     public CentralStreamProvider(StreamInterface<T> streamer) {
         this.streamer = streamer;
         this.isReset = true;
+        this.conceptIdList = new ArrayList<>();
     }
 
     @Override
@@ -52,10 +52,17 @@ public class CentralStreamProvider<T> implements StreamProviderInterface<T> {
         int streamLength = pdf.next();
         if (this.isReset) {
 
-            Stream<T> stream = this.streamer.getStream(streamLength,tx);
+            // TODO remove this hack when we have negation
+            if (this.streamer instanceof NotInRelationshipConceptIdStream) {
+                ((NotInRelationshipConceptIdStream)this.streamer).setRequiredLength(streamLength);
+            }
+
             //Read stream to list and store to be used again later
             this.conceptIdList.clear();
-            stream.limit(streamLength).map(conceptId -> this.conceptIdList.add(conceptId));
+
+            // don't bother with checking if the stream is long enough here, might just return a reduced length...
+            Stream<T> stream = this.streamer.getStream(tx);
+            stream.limit(streamLength).forEach(conceptId -> this.conceptIdList.add(conceptId));
 
             this.isReset = false;
         }

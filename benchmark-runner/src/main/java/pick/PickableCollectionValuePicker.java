@@ -35,7 +35,14 @@ public class PickableCollectionValuePicker<T> implements StreamInterface<T> {
     }
 
     @Override
-    public Stream<T> getStream(int streamLength, Grakn.Transaction tx) {
-        return Stream.generate(() -> valueOptions.next()).limit(streamLength);
+    public Stream<T> getStream(Grakn.Transaction tx) {
+        return Stream.generate(() -> valueOptions.next());
     }
+
+    // TODO could implement replacement/no replacement in PickableCollections if we want
+    @Override
+    public boolean checkAvailable(int requiredLength, Grakn.Transaction tx) {
+        return true;
+    }
+
 }

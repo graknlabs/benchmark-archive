@@ -28,6 +28,7 @@ import static ai.grakn.graql.Graql.var;
 /**
  *
  */
+@Deprecated
 public class IsaTypeConceptIdPicker extends ConceptIdPicker {
 
     private ConceptTypeCountStore conceptTypeCountStore;

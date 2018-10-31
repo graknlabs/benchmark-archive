@@ -26,5 +26,7 @@ import java.util.stream.Stream;
  * @param <T>
  */
 public interface StreamInterface<T> {
-    Stream<T> getStream(int streamLength, Grakn.Transaction tx);
+    Stream<T> getStream(Grakn.Transaction tx);
+    boolean checkAvailable(int requiredLength, Grakn.Transaction tx);
 }
+

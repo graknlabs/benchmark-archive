@@ -20,7 +20,6 @@ package pick;
 
 
 import ai.grakn.client.Grakn;
-
 import java.util.Random;
 import java.util.stream.Stream;
 
@@ -34,13 +33,15 @@ public abstract class Picker<T> implements PickerInterface<T> {
         this.rand = rand;
     }
 
-    public Stream<Integer> getRandomOffsetStream(int streamLength, Grakn.Transaction tx) {
+    public Stream<Integer> getStreamOfRandomOffsets(Grakn.Transaction tx) {
         int typeCount = getConceptCount(tx);
-
-        // If there aren't enough concepts to fulfill the number requested, then return null
-        if (typeCount < streamLength) return null;
-
         return RandomOffsetGenerator.generate(this.rand, typeCount);
+    }
+
+    public boolean checkAvailable(int requiredLength, Grakn.Transaction tx) {
+        // If there aren't enough concepts to fulfill the number requested, then return false
+        int typeCount = getConceptCount(tx);
+        return (typeCount < requiredLength);
     }
 
     abstract Integer getConceptCount(Grakn.Transaction tx);

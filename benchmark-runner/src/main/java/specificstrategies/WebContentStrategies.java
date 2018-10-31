@@ -11,8 +11,7 @@ import pick.FromIdStoragePicker;
 import pick.NotInRelationshipConceptIdStream;
 import pick.StreamProvider;
 import pick.StreamProviderInterface;
-import random.RandomString;
-import random.RandomValue;
+import pick.StringStreamGenerator;
 import storage.ConceptStore;
 import storage.IdStoreInterface;
 import storage.SchemaManager;
@@ -319,8 +318,8 @@ public class WebContentStrategies implements SpecificStrategy {
         // person.surname
         // above can all be generated from same set of names
 
-        RandomValue<String> randomString = new RandomString(6, random);
-        GeneratedRoulette<String> attributeNamesRoulette = new GeneratedRoulette<>(random, 100, randomString, constant(1));
+//        RandomValue<String> randomString = new StringStreamGenerator(6, random);
+//        GeneratedRoulette<String> attributeNamesRoulette = new GeneratedRoulette<>(random, 100, randomString, constant(1));
 
         // TODO
 //        this.attributeStrategies.add(1.0, new AttributeStrategy<>("forename", ))

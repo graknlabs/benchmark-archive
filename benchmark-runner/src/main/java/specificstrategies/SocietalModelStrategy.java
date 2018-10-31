@@ -6,7 +6,7 @@ import pdf.DiscreteGaussianPDF;
 import pdf.UniformPDF;
 import pick.CentralStreamProvider;
 import pick.FromIdStoragePicker;
-import pick.IntegerPicker;
+import pick.IntegerStreamGenerator;
 import pick.NotInRelationshipConceptIdStream;
 import pick.PickableCollectionValuePicker;
 import pick.StreamProvider;
@@ -204,7 +204,7 @@ public class SocietalModelStrategy implements SpecificStrategy {
                                 )
                         ),
                         new StreamProvider<>(
-                                new IntegerPicker(random, 0, 100)
+                                new IntegerStreamGenerator(random, 0, 100)
                         )
                 )
         );
@@ -226,7 +226,7 @@ public class SocietalModelStrategy implements SpecificStrategy {
                                 )
                         ),
                         new StreamProvider<>(
-                                new IntegerPicker(random, 0, 1000000)
+                                new IntegerStreamGenerator(random, 0, 1000000)
                         )
                 )
         );
@@ -248,7 +248,7 @@ public class SocietalModelStrategy implements SpecificStrategy {
                                 )
                         ),
                         new StreamProvider<>(
-                                new IntegerPicker(random, 1, 10)
+                                new IntegerStreamGenerator(random, 1, 10)
                         )
                 )
         );

@@ -35,6 +35,7 @@ import static ai.grakn.graql.Graql.count;
 /**
  *
  */
+@Deprecated
 public class ConceptIdPicker extends Picker<ConceptId> {
 
     protected Pattern matchVarPattern;
@@ -47,14 +48,13 @@ public class ConceptIdPicker extends Picker<ConceptId> {
     }
 
     /**
-     * @param streamLength
      * @param tx
      * @return
      */
     @Override
-    public Stream<ConceptId> getStream(int streamLength, Grakn.Transaction tx) {
+    public Stream<ConceptId> getStream(Grakn.Transaction tx) {
 
-        Stream<Integer> randomUniqueOffsetStream = this.getRandomOffsetStream(streamLength, tx);
+        Stream<Integer> randomUniqueOffsetStream = this.getStreamOfRandomOffsets(tx);
         if (randomUniqueOffsetStream == null ) {
             return Stream.empty();
         }
