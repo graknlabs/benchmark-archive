@@ -41,7 +41,7 @@ public abstract class Picker<T> implements PickerInterface<T> {
     public boolean checkAvailable(int requiredLength, Grakn.Transaction tx) {
         // If there aren't enough concepts to fulfill the number requested, then return false
         int typeCount = getConceptCount(tx);
-        return (typeCount < requiredLength);
+        return (requiredLength <= typeCount);
     }
 
     abstract Integer getConceptCount(Grakn.Transaction tx);

@@ -51,19 +51,19 @@ public class StringStreamGenerator implements StreamInterface<String> {
 
     private final char[] buf;
 
-    public StringStreamGenerator(int length, Random random, String symbols) {
-        if (length < 1) throw new IllegalArgumentException();
+    public StringStreamGenerator(Random random, int stringLength, String symbols) {
+        if (stringLength < 1) throw new IllegalArgumentException();
         if (symbols.length() < 2) throw new IllegalArgumentException();
         this.random = Objects.requireNonNull(random);
         this.symbols = symbols.toCharArray();
-        this.buf = new char[length];
+        this.buf = new char[stringLength];
     }
 
     /**
      * Create an alphanumeric string generator.
      */
-    public StringStreamGenerator(int length, Random random) {
-        this(length, random, alphanum);
+    public StringStreamGenerator(Random random, int stringLength) {
+        this(random, stringLength, alphanum);
     }
 
 }

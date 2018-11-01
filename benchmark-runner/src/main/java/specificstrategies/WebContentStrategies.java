@@ -1,6 +1,9 @@
 package specificstrategies;
 
 import ai.grakn.concept.ConceptId;
+import antlr.ASdebug.IASDebugStream;
+import org.apache.avro.ipc.trace.ID;
+import org.apache.commons.collections.list.GrowthList;
 import pdf.BoundedZipfPDF;
 import pdf.ConstantPDF;
 import pdf.DiscreteGaussianPDF;
@@ -9,14 +12,17 @@ import pdf.UniformPDF;
 import pick.CentralStreamProvider;
 import pick.FromIdStoragePicker;
 import pick.NotInRelationshipConceptIdStream;
+import pick.PickableCollectionValuePicker;
 import pick.StreamProvider;
 import pick.StreamProviderInterface;
 import pick.StringStreamGenerator;
 import storage.ConceptStore;
 import storage.IdStoreInterface;
 import storage.SchemaManager;
+import strategy.AttributeOwnerTypeStrategy;
+import strategy.AttributeStrategy;
 import strategy.EntityStrategy;
-import strategy.GeneratedRoulette;
+import strategy.GrowableGeneratedRouletteWheel;
 import strategy.RelationshipStrategy;
 import strategy.RolePlayerTypeStrategy;
 import strategy.RouletteWheel;
@@ -318,11 +324,33 @@ public class WebContentStrategies implements SpecificStrategy {
         // person.surname
         // above can all be generated from same set of names
 
-//        RandomValue<String> randomString = new StringStreamGenerator(6, random);
-//        GeneratedRoulette<String> attributeNamesRoulette = new GeneratedRoulette<>(random, 100, randomString, constant(1));
+        StringStreamGenerator stringGenerator = new StringStreamGenerator(random, 6);
+        // Populate 100 random names for use as forename/middle/surname
+        // all with equal weights (PDF = constant(1))
+        GrowableGeneratedRouletteWheel<String> attributeNames = new GrowableGeneratedRouletteWheel<>(random, stringGenerator, constant(1));
+        attributeNames.growTo(100);
 
-        // TODO
-//        this.attributeStrategies.add(1.0, new AttributeStrategy<>("forename", ))
+        this.attributeStrategies.add(
+                1.0,
+                new AttributeStrategy<>(
+                        "forename",
+                        new UniformPDF(random, 10, 70),     // same as people
+                        new AttributeOwnerTypeStrategy<>(
+                                "person",
+                                new StreamProvider<> (
+                                        new FromIdStoragePicker<>(
+                                                random,
+                                                (IdStoreInterface) this.storage,
+                                                "person",
+                                                ConceptId.class
+                                        )
+                                )
+                        ),
+                        new StreamProvider<>(
+                                new PickableCollectionValuePicker<String>(attributeNames)
+                        )
+                )
+        );
 
 
 

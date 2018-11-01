@@ -75,7 +75,7 @@ public class BenchmarkManager {
     public BenchmarkManager(BenchmarkConfiguration configuration, DataGenerator dataGenerator, QueryExecutor queryExecutor) {
         this.dataGenerator = dataGenerator;
         this.queryExecutor = queryExecutor;
-        this.numQueryRepetitions = configuration.noQueryRepetitions();
+        this.numQueryRepetitions = configuration.numQueryRepetitions();
         this.configuration = configuration;
     }
 

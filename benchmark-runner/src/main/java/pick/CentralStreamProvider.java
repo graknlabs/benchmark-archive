@@ -22,7 +22,6 @@ import ai.grakn.client.Grakn;
 import pdf.PDF;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.stream.Stream;
 
 /**
@@ -57,11 +56,12 @@ public class CentralStreamProvider<T> implements StreamProviderInterface<T> {
                 ((NotInRelationshipConceptIdStream)this.streamer).setRequiredLength(streamLength);
             }
 
+            // don't bother with checking if the stream is long enough here, might just return a reduced length...
+            Stream<T> stream = this.streamer.getStream(tx);
+
             //Read stream to list and store to be used again later
             this.conceptIdList.clear();
 
-            // don't bother with checking if the stream is long enough here, might just return a reduced length...
-            Stream<T> stream = this.streamer.getStream(tx);
             stream.limit(streamLength).forEach(conceptId -> this.conceptIdList.add(conceptId));
 
             this.isReset = false;

@@ -75,6 +75,7 @@ public class SchemaManager {
                 qb.undefine(z.id(element.get(y).id())).execute();
             }
 
+            tx.commit();
         }
     }
 

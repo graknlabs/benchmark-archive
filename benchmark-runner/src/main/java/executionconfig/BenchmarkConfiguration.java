@@ -120,7 +120,7 @@ public class BenchmarkConfiguration {
         return this.noDataGeneration;
     }
 
-    public int noQueryRepetitions() {
+    public int numQueryRepetitions() {
         return this.benchmarkConfigFile.getRepeatsPerQuery();
     }
 
