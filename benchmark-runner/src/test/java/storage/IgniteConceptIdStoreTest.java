@@ -141,7 +141,7 @@ public class IgniteConceptIdStoreTest {
 
         int index = 0;
         this.store.add(this.conceptMocks.get(index));
-        ConceptId personConceptId = this.store.get(this.typeLabel, ConceptId.class, index);
+        ConceptId personConceptId = this.store.getConceptId(this.typeLabel, index);
         System.out.println("Found id: " + personConceptId.toString());
         assertEquals(personConceptId, this.conceptIds.get(index));
     }
@@ -157,7 +157,7 @@ public class IgniteConceptIdStoreTest {
             this.store.add(conceptMock);
         }
 
-        ConceptId personConceptId = this.store.get(this.typeLabel, ConceptId.class, index);
+        ConceptId personConceptId = this.store.getConceptId(this.typeLabel, index);
         System.out.println("Found id: " + personConceptId.toString());
         assertEquals(this.conceptIds.get(index), personConceptId);
     }

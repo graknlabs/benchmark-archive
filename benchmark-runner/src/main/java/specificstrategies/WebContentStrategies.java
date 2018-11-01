@@ -1,6 +1,5 @@
 package specificstrategies;
 
-import ai.grakn.client.Grakn;
 import ai.grakn.concept.ConceptId;
 import pdf.BoundedZipfPDF;
 import pdf.ConstantPDF;
@@ -8,6 +7,7 @@ import pdf.DiscreteGaussianPDF;
 import pdf.PDF;
 import pdf.UniformPDF;
 import pick.CentralStreamProvider;
+import storage.FromIdStorageConceptIdPicker;
 import storage.FromIdStoragePicker;
 import pick.NotInRelationshipConceptIdStream;
 import pick.PickableCollectionValuePicker;
@@ -15,6 +15,7 @@ import pick.StreamProvider;
 import pick.StreamProviderInterface;
 import pick.StringStreamGenerator;
 import storage.ConceptStore;
+import storage.FromIdStorageStringAttrPicker;
 import storage.IdStoreInterface;
 import storage.SchemaManager;
 import strategy.AttributeOwnerTypeStrategy;
@@ -60,10 +61,8 @@ public class WebContentStrategies implements SpecificStrategy {
         return this.operationStrategies;
     }
 
-    private void setup(Grakn.Transaction tx) {
-
+    private void setup() {
         primarySetup();
-
     }
 
 
@@ -82,7 +81,7 @@ public class WebContentStrategies implements SpecificStrategy {
                 1,
                 new EntityStrategy(
                         "person",
-                        new UniformPDF(random, 10, 70) // on avg, per 40 people
+                        uniform(10, 70) // on avg, for every 40 people
                 ));
 
         // --- company organisation ---
@@ -90,7 +89,7 @@ public class WebContentStrategies implements SpecificStrategy {
                 1,
                 new EntityStrategy(
                         "company",
-                        new UniformPDF(random, 1, 5) // create 3 companies
+                        uniform( 1, 5) // ...create 3 companies
                 ));
 
         // --- university organisation ---
@@ -98,7 +97,7 @@ public class WebContentStrategies implements SpecificStrategy {
                 1,
                 new EntityStrategy(
                         "university",
-                        new UniformPDF(random, 1, 3) // 2 universities
+                        uniform( 1, 3) // ...2 universities
                 ));
 
         // --- department organisation ---
@@ -106,7 +105,7 @@ public class WebContentStrategies implements SpecificStrategy {
                 1,
                 new EntityStrategy(
                         "department",
-                        new UniformPDF(random, 3, 9) // 6 departments
+                        uniform(3, 7) // 5 departments
                 ));
 
         // --- team organisation ---
@@ -114,9 +113,16 @@ public class WebContentStrategies implements SpecificStrategy {
                 1,
                 new EntityStrategy(
                         "team",
-                        new UniformPDF(random, 10, 16) // 13 teams
+                        uniform( 7, 13) // 10 teams
                 ));
 
+        // --- project ---
+        this.entityStrategies.add(
+                1,
+                new EntityStrategy(
+                        "team",
+                        uniform( 10, 30) // 15 projects
+                ));
 
         /*
 
@@ -138,13 +144,13 @@ public class WebContentStrategies implements SpecificStrategy {
                         "employee",
                         "person",
                         constant(1),
-                        new StreamProvider<>(fromIdStoragePicker("person"))
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("person"))
                 ),
                 rolePlayerTypeStrategy(
                         "employer",
                         "company",
                         constant(1),
-                        new StreamProvider<>(fromIdStoragePicker("company"))
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("company"))
                 )
         ));
 
@@ -159,13 +165,13 @@ public class WebContentStrategies implements SpecificStrategy {
                         "employee",
                         "person",
                         constant(1),
-                        new StreamProvider<>(fromIdStoragePicker("person"))
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("person"))
                 ),
                 rolePlayerTypeStrategy(
                         "employer",
                         "university",
                         constant(1),
-                        new StreamProvider<>(fromIdStoragePicker("university"))
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("university"))
                 )
          ));
 
@@ -178,13 +184,13 @@ public class WebContentStrategies implements SpecificStrategy {
                         "member",
                         "person",
                         constant(1),
-                        new StreamProvider<>(fromIdStoragePicker("person"))
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("person"))
                 ),
                 rolePlayerTypeStrategy(
                         "group",
                         "team",
                         constant(1),
-                        new StreamProvider<>(fromIdStoragePicker("team"))
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("team"))
                 )
         ));
 
@@ -197,13 +203,13 @@ public class WebContentStrategies implements SpecificStrategy {
                         "member",
                         "person",
                         constant(1),
-                        new StreamProvider<>(fromIdStoragePicker("person"))
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("person"))
                 ),
                 rolePlayerTypeStrategy(
                         "group",
                         "team",
                         constant(1),
-                        new CentralStreamProvider<>(fromIdStoragePicker("team"))
+                        new CentralStreamProvider<>(fromIdStorageConceptIdPicker("team"))
                 )
         ));
 
@@ -218,7 +224,7 @@ public class WebContentStrategies implements SpecificStrategy {
                         "owner",
                         "company",
                         constant(1),
-                        new StreamProvider<>(fromIdStoragePicker("company"))
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("company"))
                 ),
                 rolePlayerTypeStrategy(
                         "property",
@@ -229,7 +235,7 @@ public class WebContentStrategies implements SpecificStrategy {
                                         "ownership",
                                         "property",
                                         100,
-                                        fromIdStoragePicker("department")
+                                        fromIdStorageConceptIdPicker("department")
                                 )
                         )
                 )
@@ -245,7 +251,7 @@ public class WebContentStrategies implements SpecificStrategy {
                         "owner",
                         "university",
                         constant(1),
-                        new StreamProvider<>(fromIdStoragePicker("company"))
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("company"))
                 ),
                 rolePlayerTypeStrategy(
                         "property",
@@ -256,7 +262,7 @@ public class WebContentStrategies implements SpecificStrategy {
                                         "ownership",
                                         "property",
                                         100,
-                                        fromIdStoragePicker("department")
+                                        fromIdStorageConceptIdPicker("department")
                                 )
                         )
                 )
@@ -272,7 +278,7 @@ public class WebContentStrategies implements SpecificStrategy {
                         "owner",
                         "department",
                         constant(1),  // pick 1 department for this n from uniform(2,10)
-                        new CentralStreamProvider<>(fromIdStoragePicker("department"))
+                        new CentralStreamProvider<>(fromIdStorageConceptIdPicker("department"))
                 ),
                 rolePlayerTypeStrategy(
                         "property",
@@ -283,7 +289,7 @@ public class WebContentStrategies implements SpecificStrategy {
                                         "ownership",
                                         "property",
                                         100,
-                                        fromIdStoragePicker("project")
+                                        fromIdStorageConceptIdPicker("project")
                                 ))
                 )
         ));
@@ -298,13 +304,13 @@ public class WebContentStrategies implements SpecificStrategy {
                         "owner",
                         "team",
                         constant(1),
-                        new StreamProvider<>(fromIdStoragePicker("team"))
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("team"))
                 ),
                 rolePlayerTypeStrategy(
                         "property",
                         "project",
                         constant(1),
-                        new StreamProvider<>(fromIdStoragePicker("project"))
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("project"))
                 ))
         );
 
@@ -316,60 +322,121 @@ public class WebContentStrategies implements SpecificStrategy {
 
          */
 
-        // person.name
         // person.forename
         // person.middle-name
         // person.surname
         // above can all be generated from same set of names
 
-        StringStreamGenerator stringGenerator = new StringStreamGenerator(random, 6);
-        // Populate 100 random names for use as forename/middle/surname
+        StringStreamGenerator sixCharStringGenerator = new StringStreamGenerator(random, 6);
+        // Populate 200 random names for use as forename/middle/surname, company name etc.
         // all with equal weights (PDF = constant(1))
-        GrowableGeneratedRouletteWheel<String> attributeNames = new GrowableGeneratedRouletteWheel<>(random, stringGenerator, constant(1));
-        attributeNames.growTo(100);
+        GrowableGeneratedRouletteWheel<String> names = new GrowableGeneratedRouletteWheel<>(random, sixCharStringGenerator, constant(1));
+        names.growTo(200);
 
-        this.<String, String>addAttributes(1.0, "name", uniform(10, 70), "person", String.class, new StreamProvider<>(new PickableCollectionValuePicker<>(attributeNames)));
-
-
-        this.attributeStrategies.add(
+        addAttributes(
                 1.0,
-                new AttributeStrategy<>(
-                        "name",
-                        new UniformPDF(random, 10, 70),     // same as people
-                        new AttributeOwnerTypeStrategy<>(
-                                "person",
-                                new StreamProvider<> (
-                                        new FromIdStoragePicker<>(
-                                                random,
-                                                (IdStoreInterface) this.storage,
-                                                "person",
-                                                ConceptId.class
-                                        )
-                                )
-                        ),
-                        new StreamProvider<>(
-                                new PickableCollectionValuePicker<String>(attributeNames)
-                        )
-                )
+                "forename",
+                uniform(10, 70),
+                "person",
+                fromIdStorageConceptIdPicker("person"),
+                new StreamProvider<>(new PickableCollectionValuePicker<String>(names))
         );
 
+        addAttributes(
+                1.0,
+                "surname",
+                uniform(10, 70),
+                "person",
+                fromIdStorageConceptIdPicker("person"),
+                new StreamProvider<>(new PickableCollectionValuePicker<String>(names))
+        );
 
-
+        addAttributes(
+                1.0,
+                "middle-name",
+                uniform(10, 50),
+                "person",
+                fromIdStorageConceptIdPicker("person"),
+                new StreamProvider<>(new PickableCollectionValuePicker<String>(names))
+        );
 
         // employment.job-title
+        GrowableGeneratedRouletteWheel<String> jobtitles = new GrowableGeneratedRouletteWheel<>(random, sixCharStringGenerator, constant(1));
+        jobtitles.growTo(50);
+        addAttributes(
+                1.0,
+                "job-title",
+                gaussian(200, 50*50),
+                "employment",
+                fromIdStorageConceptIdPicker("employment"),
+                new StreamProvider<>(new PickableCollectionValuePicker<String>(jobtitles))
+        );
 
-        // job-title.abbreviation
+        // job-title.abbreviation (job-title is a type of name, which `has abbreviation`
+        StringStreamGenerator twoCharStringGenerator = new StringStreamGenerator(random, 2);
+        GrowableGeneratedRouletteWheel<String> jobtitleAbbrs = new GrowableGeneratedRouletteWheel<>(random, twoCharStringGenerator, constant(1));
+        jobtitles.growTo(50);
+        addAttributes(
+                1.0,
+                "abbreviation",
+                gaussian(200, 50*50),
+                "job-title",
+                fromIdStorageStringAttrPicker("job-title"), // NOTE we need to retrieve StringAttrs from storage!
+                new StreamProvider<>(new PickableCollectionValuePicker<String>(jobtitleAbbrs))
+        );
 
         // company.name
+        addAttributes(
+                1.0,
+                "name",
+                uniform(1, 5),
+                "company",
+                fromIdStorageConceptIdPicker("company"),
+                new StreamProvider<>(new PickableCollectionValuePicker<String>(names))
+        );
 
         // university.name
+        addAttributes(
+                1.0,
+                "name",
+                uniform(1, 3),
+                "university",
+                fromIdStorageConceptIdPicker("university"),
+                new StreamProvider<>(new PickableCollectionValuePicker<String>(names))
+        );
 
-        // team.name
+         // team.name
+         StringStreamGenerator fourCharStringGenerator = new StringStreamGenerator(random, 4);
+         GrowableGeneratedRouletteWheel<String> shortNames = new GrowableGeneratedRouletteWheel<>(random, fourCharStringGenerator, constant(1));
+         jobtitles.growTo(100);
+         addAttributes(
+                1.0,
+                "name",
+                uniform(7, 13),
+                "team",
+                fromIdStorageConceptIdPicker("team"),
+                new StreamProvider<>(new PickableCollectionValuePicker<String>(shortNames))
+        );
 
         // department.name
+        addAttributes(
+                1.0,
+                "name",
+                uniform(3, 9),
+                "department",
+                fromIdStorageConceptIdPicker("department"),
+                new StreamProvider<>(new PickableCollectionValuePicker<String>(shortNames))
+        );
 
         // project.name
-
+        addAttributes(
+                1.0,
+                "name",
+                uniform(10, 30),
+                "project",
+                fromIdStorageConceptIdPicker("project"),
+                new StreamProvider<>(new PickableCollectionValuePicker<String>(shortNames))
+        );
     }
 
 
@@ -390,8 +457,11 @@ public class WebContentStrategies implements SpecificStrategy {
         return new ConstantPDF(constant);
     }
 
-    private FromIdStoragePicker<ConceptId> fromIdStoragePicker(String typeLabel) {
-        return new FromIdStoragePicker<>(random, (IdStoreInterface) this.storage, typeLabel, ConceptId.class);
+    private FromIdStoragePicker<ConceptId> fromIdStorageConceptIdPicker(String typeLabel) {
+        return new FromIdStorageConceptIdPicker(random, (IdStoreInterface) this.storage, typeLabel);
+    }
+    private FromIdStoragePicker<String> fromIdStorageStringAttrPicker(String typeLabel) {
+        return new FromIdStorageStringAttrPicker(random, (IdStoreInterface) this.storage, typeLabel);
     }
 
     private RolePlayerTypeStrategy rolePlayerTypeStrategy(
@@ -413,8 +483,7 @@ public class WebContentStrategies implements SpecificStrategy {
     }
 
 
-    private <C, T> void addAttributes(double weight, String attributeLabel, PDF quantityPDF, String ownerLabel, String ownerType, StreamProviderInterface<T> valueProvider) {
-
+    private <C, T> void addAttributes(double weight, String attributeLabel, PDF quantityPDF, String ownerLabel, FromIdStoragePicker<C> ownerPicker, StreamProviderInterface<T> valueProvider) {
         this.attributeStrategies.add(
             weight,
             new AttributeStrategy<>(
@@ -423,12 +492,7 @@ public class WebContentStrategies implements SpecificStrategy {
                  new AttributeOwnerTypeStrategy<>(
                                 ownerLabel,
                                 new StreamProvider<> (
-                                        new FromIdStoragePicker<C>(
-                                                random,
-                                                (IdStoreInterface) this.storage,
-                                                ownerLabel,
-                                                ownerType
-                                        )
+                                       ownerPicker
                                 )
                         ),
                         valueProvider

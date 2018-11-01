@@ -5,12 +5,14 @@ import pdf.ConstantPDF;
 import pdf.DiscreteGaussianPDF;
 import pdf.UniformPDF;
 import pick.CentralStreamProvider;
+import storage.FromIdStorageConceptIdPicker;
 import storage.FromIdStoragePicker;
 import pick.IntegerStreamGenerator;
 import pick.NotInRelationshipConceptIdStream;
 import pick.PickableCollectionValuePicker;
 import pick.StreamProvider;
 import storage.ConceptStore;
+import storage.FromIdStorageStringAttrPicker;
 import storage.IdStoreInterface;
 import strategy.AttributeOwnerTypeStrategy;
 import strategy.AttributeStrategy;
@@ -76,11 +78,10 @@ public class SocietalModelStrategy implements SpecificStrategy {
                         "person",
                         new ConstantPDF(1),
                         new StreamProvider<>(
-                                new FromIdStoragePicker<>(
+                                new FromIdStorageConceptIdPicker(
                                         random,
                                         (IdStoreInterface) this.storage,
-                                        "person",
-                                        ConceptId.class)
+                                        "person")
                         )
                 )
         );
@@ -95,11 +96,10 @@ public class SocietalModelStrategy implements SpecificStrategy {
                                         "employment",
                                         "employer",
                                         100,
-                                        new FromIdStoragePicker<>(
+                                        new FromIdStorageConceptIdPicker(
                                                 random,
                                                 (IdStoreInterface) this.storage,
-                                                "company",
-                                                ConceptId.class)
+                                                "company")
                                 )
                         )
                 )
@@ -135,11 +135,10 @@ public class SocietalModelStrategy implements SpecificStrategy {
                         new AttributeOwnerTypeStrategy<>(
                                 "company",
                                 new StreamProvider<>(
-                                        new FromIdStoragePicker<>(
+                                        new FromIdStorageConceptIdPicker(
                                                 random,
                                                 (IdStoreInterface) this.storage,
-                                                "company",
-                                                ConceptId.class)
+                                                "company")
                                 )
                         ),
                         new StreamProvider<>(
@@ -196,11 +195,10 @@ public class SocietalModelStrategy implements SpecificStrategy {
                         new AttributeOwnerTypeStrategy<>(
                                 "name",
                                 new StreamProvider<>(
-                                        new FromIdStoragePicker<>(
+                                        new FromIdStorageStringAttrPicker(
                                                 random,
                                                 (IdStoreInterface) this.storage,
-                                                "name",
-                                                String.class)
+                                                "name")
                                 )
                         ),
                         new StreamProvider<>(
@@ -218,11 +216,10 @@ public class SocietalModelStrategy implements SpecificStrategy {
                         new AttributeOwnerTypeStrategy<>(
                                 "company",
                                 new StreamProvider<>(
-                                        new FromIdStoragePicker<>(
+                                        new FromIdStorageConceptIdPicker(
                                                 random,
                                                 (IdStoreInterface) this.storage,
-                                                "company",
-                                                ConceptId.class)
+                                                "company")
                                 )
                         ),
                         new StreamProvider<>(
@@ -240,11 +237,10 @@ public class SocietalModelStrategy implements SpecificStrategy {
                         new AttributeOwnerTypeStrategy<>(
                                 "employment",
                                 new StreamProvider<>(
-                                        new FromIdStoragePicker<>(
+                                        new FromIdStorageConceptIdPicker(
                                                 random,
                                                 (IdStoreInterface) this.storage,
-                                                "employment",
-                                                ConceptId.class)
+                                                "employment")
                                 )
                         ),
                         new StreamProvider<>(
