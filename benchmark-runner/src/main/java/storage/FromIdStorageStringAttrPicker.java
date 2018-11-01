@@ -13,6 +13,7 @@ public class FromIdStorageStringAttrPicker extends FromIdStoragePicker<String> {
 
     @Override
     public Stream<String> getStream(Grakn.Transaction tx) {
-        return null;
+        Stream<Integer> randomUniqueOffsetStream = this.getStreamOfRandomOffsets(tx);
+        return randomUniqueOffsetStream.map(randomOffset -> this.conceptStore.getString(this.typeLabel, randomOffset));
     }
 }

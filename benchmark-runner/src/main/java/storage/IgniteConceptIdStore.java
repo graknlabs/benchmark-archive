@@ -304,7 +304,7 @@ public class IgniteConceptIdStore implements IdStoreInterface {
         try (Statement stmt = conn.createStatement()) {
             try (ResultSet rs = stmt.executeQuery(sqlGet(typeLabel, offset))) {
                 if (rs != null && rs.next()) { // Need to do this to increment one line in the ResultSet
-                    return Double.parseDouble(rs.getString(ID_INDEX));
+                    return rs.getDouble(ID_INDEX);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -319,7 +319,7 @@ public class IgniteConceptIdStore implements IdStoreInterface {
         try (Statement stmt = conn.createStatement()) {
             try (ResultSet rs = stmt.executeQuery(sqlGet(typeLabel, offset))) {
                 if (rs != null && rs.next()) { // Need to do this to increment one line in the ResultSet
-                    return Long.parseLong(rs.getString(ID_INDEX));
+                    return rs.getLong(ID_INDEX);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -334,7 +334,7 @@ public class IgniteConceptIdStore implements IdStoreInterface {
         try (Statement stmt = conn.createStatement()) {
             try (ResultSet rs = stmt.executeQuery(sqlGet(typeLabel, offset))) {
                 if (rs != null && rs.next()) { // Need to do this to increment one line in the ResultSet
-                    return Boolean.parseBoolean(rs.getString(ID_INDEX));
+                    return rs.getBoolean(ID_INDEX);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -349,7 +349,7 @@ public class IgniteConceptIdStore implements IdStoreInterface {
         try (Statement stmt = conn.createStatement()) {
             try (ResultSet rs = stmt.executeQuery(sqlGet(typeLabel, offset))) {
                 if (rs != null && rs.next()) { // Need to do this to increment one line in the ResultSet
-                    return Date.valueOf(rs.getString(ID_INDEX));
+                    return rs.getDate(ID_INDEX);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -359,48 +359,6 @@ public class IgniteConceptIdStore implements IdStoreInterface {
         }
         return null;
     }
-
-//    public <T> T get(String typeLabel, String datatype, int offset) {
-////        ResultSet rs = this.runQuery(sql);
-//        try (Statement stmt = conn.createStatement()) {
-//            try (ResultSet rs = stmt.executeQuery(sql)) {
-//
-//                if (rs != null && rs.next()) { // Need to do this to increment one line in the ResultSet
-//                    if (datatype == "ConceptId") {
-//                        return ConceptId.of(rs.getString(ID_INDEX));
-//
-//                    } else if (datatype == "String") {
-//                        return datatype.cast(rs.getString(ID_INDEX));
-//
-//                    } else if (datatype == Double.class) {
-//                        return datatype.cast(rs.getDouble(ID_INDEX));
-//
-//                    } else if (datatype == Integer.class) {
-//                        return datatype.cast(rs.getInt(ID_INDEX));
-//
-//                    } else if (datatype == Long.class) {
-//                        return datatype.cast(rs.getLong(ID_INDEX));
-//
-//                    } else if (datatype == Boolean.class) {
-//                        return datatype.cast(rs.getBoolean(ID_INDEX));
-//
-//                    } else if (datatype == Date.class) {
-//                        return datatype.cast(rs.getDate(ID_INDEX));
-//                    } else {
-//                        throw new UnsupportedOperationException(String.format("Datatype %s isn't supported by Grakn", datatype));
-//                    }
-//                } else {
-//                    return null;
-//                }
-//
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
 
     public int getConceptCount(String typeLabel) {
 

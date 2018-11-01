@@ -14,6 +14,8 @@ public class FromIdStorageDateAttrPicker extends FromIdStoragePicker<Date> {
 
     @Override
     public Stream<Date> getStream(Grakn.Transaction tx) {
-        return null;
+        Stream<Integer> randomUniqueOffsetStream = this.getStreamOfRandomOffsets(tx);
+        return randomUniqueOffsetStream.map(randomOffset -> this.conceptStore.getDate(this.typeLabel, randomOffset));
     }
+
 }

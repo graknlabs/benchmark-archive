@@ -25,19 +25,20 @@ import java.util.Random;
 
 /**
  * Base class for the various different FromIdStoragePickers
- * This removes the need for generics in specific use cases
+ * This removes the need for generics in children
  * @param <T>
  */
 public abstract class FromIdStoragePicker<T> extends Picker<T> {
 
-    private IdStoreInterface conceptStore;
-    private String typeLabel;
+    protected IdStoreInterface conceptStore;
+    protected String typeLabel;
 
     public FromIdStoragePicker(Random rand, IdStoreInterface conceptStore, String typeLabel) {
         super(rand);
         this.conceptStore = conceptStore;
         this.typeLabel = typeLabel;
     }
+
 
     protected Integer getConceptCount(Grakn.Transaction tx) {
         return this.conceptStore.getConceptCount(this.typeLabel);
