@@ -44,5 +44,5 @@ public abstract class Picker<T> implements PickerInterface<T> {
         return (requiredLength <= typeCount);
     }
 
-    abstract Integer getConceptCount(Grakn.Transaction tx);
+    protected abstract Integer getConceptCount(Grakn.Transaction tx);
 }

@@ -25,8 +25,6 @@ import ai.grakn.graql.Query;
 import ai.grakn.graql.QueryBuilder;
 import ai.grakn.graql.Var;
 import pdf.ConstantPDF;
-import pick.FromIdStoragePicker;
-import pick.StreamProvider;
 import pick.StreamProviderInterface;
 import strategy.AttributeOwnerTypeStrategy;
 import strategy.AttributeStrategy;

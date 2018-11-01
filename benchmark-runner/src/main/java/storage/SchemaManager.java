@@ -20,7 +20,9 @@ package storage;
 
 import ai.grakn.GraknTxType;
 import ai.grakn.client.Grakn;
+import ai.grakn.concept.Label;
 import ai.grakn.concept.Role;
+import ai.grakn.concept.SchemaConcept;
 import ai.grakn.concept.Type;
 import ai.grakn.graql.Graql;
 import ai.grakn.graql.Match;
@@ -104,4 +106,14 @@ public class SchemaManager {
     }
 
 
+    public static boolean isTypeLabelAttribute(Grakn.Transaction tx, String label) {
+        SchemaConcept concept= tx.getSchemaConcept(Label.of(label));
+        return concept.isAttributeType();
+    }
+
+    public static Class getAttributeDatatype(Grakn.Transaction tx, String label) throws ClassNotFoundException {
+        SchemaConcept concept = tx.getSchemaConcept(Label.of(label));
+        String name = concept.asAttributeType().dataType().getName();
+        return Class.forName(name);
+    }
 }

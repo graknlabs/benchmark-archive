@@ -1,16 +1,14 @@
 package specificstrategies;
 
+import ai.grakn.client.Grakn;
 import ai.grakn.concept.ConceptId;
-import antlr.ASdebug.IASDebugStream;
-import org.apache.avro.ipc.trace.ID;
-import org.apache.commons.collections.list.GrowthList;
 import pdf.BoundedZipfPDF;
 import pdf.ConstantPDF;
 import pdf.DiscreteGaussianPDF;
 import pdf.PDF;
 import pdf.UniformPDF;
 import pick.CentralStreamProvider;
-import pick.FromIdStoragePicker;
+import storage.FromIdStoragePicker;
 import pick.NotInRelationshipConceptIdStream;
 import pick.PickableCollectionValuePicker;
 import pick.StreamProvider;
@@ -62,7 +60,7 @@ public class WebContentStrategies implements SpecificStrategy {
         return this.operationStrategies;
     }
 
-    private void setup() {
+    private void setup(Grakn.Transaction tx) {
 
         primarySetup();
 
@@ -330,10 +328,13 @@ public class WebContentStrategies implements SpecificStrategy {
         GrowableGeneratedRouletteWheel<String> attributeNames = new GrowableGeneratedRouletteWheel<>(random, stringGenerator, constant(1));
         attributeNames.growTo(100);
 
+        this.<String, String>addAttributes(1.0, "name", uniform(10, 70), "person", String.class, new StreamProvider<>(new PickableCollectionValuePicker<>(attributeNames)));
+
+
         this.attributeStrategies.add(
                 1.0,
                 new AttributeStrategy<>(
-                        "forename",
+                        "name",
                         new UniformPDF(random, 10, 70),     // same as people
                         new AttributeOwnerTypeStrategy<>(
                                 "person",
@@ -409,6 +410,30 @@ public class WebContentStrategies implements SpecificStrategy {
 
     private void add(double weight, RelationshipStrategy relationshipStrategy) {
         this.relationshipStrategies.add(weight, relationshipStrategy);
+    }
+
+
+    private <C, T> void addAttributes(double weight, String attributeLabel, PDF quantityPDF, String ownerLabel, String ownerType, StreamProviderInterface<T> valueProvider) {
+
+        this.attributeStrategies.add(
+            weight,
+            new AttributeStrategy<>(
+                 attributeLabel,
+                 quantityPDF,
+                 new AttributeOwnerTypeStrategy<>(
+                                ownerLabel,
+                                new StreamProvider<> (
+                                        new FromIdStoragePicker<C>(
+                                                random,
+                                                (IdStoreInterface) this.storage,
+                                                ownerLabel,
+                                                ownerType
+                                        )
+                                )
+                        ),
+                        valueProvider
+                        )
+                );
     }
 
 

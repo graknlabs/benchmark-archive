@@ -5,7 +5,7 @@ import pdf.ConstantPDF;
 import pdf.DiscreteGaussianPDF;
 import pdf.UniformPDF;
 import pick.CentralStreamProvider;
-import pick.FromIdStoragePicker;
+import storage.FromIdStoragePicker;
 import pick.IntegerStreamGenerator;
 import pick.NotInRelationshipConceptIdStream;
 import pick.PickableCollectionValuePicker;

@@ -16,38 +16,30 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package pick;
+package storage;
 
 
 import ai.grakn.client.Grakn;
-import storage.IdStoreInterface;
-
+import pick.Picker;
 import java.util.Random;
-import java.util.stream.Stream;
 
 /**
+ * Base class for the various different FromIdStoragePickers
+ * This removes the need for generics in specific use cases
  * @param <T>
  */
-public class FromIdStoragePicker<T> extends Picker<T> {
+public abstract class FromIdStoragePicker<T> extends Picker<T> {
 
     private IdStoreInterface conceptStore;
     private String typeLabel;
-    private final Class<T> datatype;
 
-    public FromIdStoragePicker(Random rand, IdStoreInterface conceptStore, String typeLabel, Class<T> datatype) {
+    public FromIdStoragePicker(Random rand, IdStoreInterface conceptStore, String typeLabel) {
         super(rand);
         this.conceptStore = conceptStore;
         this.typeLabel = typeLabel;
-        this.datatype = datatype;
     }
 
-    @Override
-    public Stream<T> getStream(Grakn.Transaction tx) {
-        Stream<Integer> randomUniqueOffsetStream = this.getStreamOfRandomOffsets(tx);
-        return randomUniqueOffsetStream.map(randomOffset -> this.conceptStore.get(this.typeLabel, this.datatype, randomOffset));
-    }
-
-    public Integer getConceptCount(Grakn.Transaction tx) {
+    protected Integer getConceptCount(Grakn.Transaction tx) {
         return this.conceptStore.getConceptCount(this.typeLabel);
     }
 }

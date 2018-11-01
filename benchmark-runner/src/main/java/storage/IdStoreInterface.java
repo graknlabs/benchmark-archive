@@ -18,6 +18,10 @@
 
 package storage;
 
+import ai.grakn.concept.ConceptId;
+
+import java.util.Date;
+
 /**
  *
  */
@@ -25,5 +29,10 @@ public interface IdStoreInterface extends ConceptStore {
 
     int getConceptCount(String typeLabel);
 
-    <T> T get(String typeLabel, Class<T> datatype, int offset);
+    ConceptId getConceptId(String typeLabel, int offset);
+    String getString(String typeLabel, int offset);
+    Double getDouble(String typeLabel, int offset);
+    Long getLong(String typeLabel, int offset);
+    Boolean getBoolean(String typeLabel, int offset);
+    Date getDate(String typeLabel, int offset);
 }

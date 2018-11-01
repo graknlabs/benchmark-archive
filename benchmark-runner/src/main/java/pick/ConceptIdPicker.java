@@ -86,7 +86,7 @@ public class ConceptIdPicker extends Picker<ConceptId> {
      * @param tx
      * @return
      */
-    protected Integer getConceptCount(Grakn.Transaction tx) {
+    public Integer getConceptCount(Grakn.Transaction tx) {
         QueryBuilder qb = tx.graql();
         // TODO This isn't working, waiting on bug fix - this was likely due to a mismatch between the Grakn active code and the Grakn build on my machine. Test to check if this is still a problem
         Value count_value = qb.match(this.matchVarPattern).aggregate(count()).execute().get(0);
