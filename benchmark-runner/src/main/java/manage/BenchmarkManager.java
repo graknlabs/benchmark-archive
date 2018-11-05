@@ -263,6 +263,7 @@ public class BenchmarkManager {
 
         Grakn client = new Grakn(new SimpleURI(Configs.GRAKN_URI));
 
+        // TODO fix sometime
         // workaround to make deletions work...
         if (!benchmarkConfiguration.noSchemaLoad()) {
             System.out.println("Deleting keyspace `" + benchmarkConfiguration.getKeyspace() + "`");
