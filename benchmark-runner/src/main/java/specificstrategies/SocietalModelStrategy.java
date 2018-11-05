@@ -128,7 +128,7 @@ public class SocietalModelStrategy implements SpecificStrategy {
 //            schemaManager.getDatatype("company", this.entityTypes),
 
         this.attributeStrategies.add(
-                2.0,
+                1.0,
                 new AttributeStrategy<>(
                         "name",
                         new UniformPDF(random, 3, 100),
@@ -209,7 +209,7 @@ public class SocietalModelStrategy implements SpecificStrategy {
 
 
         this.attributeStrategies.add(
-                2.0,
+                5.0,
                 new AttributeStrategy<>(
                         "rating",
                         new UniformPDF(random, 3, 40),
@@ -230,7 +230,7 @@ public class SocietalModelStrategy implements SpecificStrategy {
 
 
         this.attributeStrategies.add(
-                2.0,
+                3.0,
                 new AttributeStrategy<>(
                         "rating",
                         new UniformPDF(random, 40, 60),
