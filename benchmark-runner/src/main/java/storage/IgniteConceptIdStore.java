@@ -27,6 +27,7 @@ import ai.grakn.concept.Label;
 import ai.grakn.concept.RelationshipType;
 import ai.grakn.concept.SchemaConcept;
 import com.google.common.collect.ImmutableMap;
+import scala.Int;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -68,7 +69,6 @@ public class IgniteConceptIdStore implements IdStoreInterface {
             .put(BOOLEAN, "BOOLEAN")
             .put(LONG, "LONG")
             .put(DOUBLE, "DOUBLE")
-            .put(INTEGER, "INTEGER")
             .put(FLOAT, "FLOAT")
             .put(DATE, "DATE")
             .build();
@@ -209,10 +209,7 @@ public class IgniteConceptIdStore implements IdStoreInterface {
                 } else if (value.getClass() == Double.class) {
                     stmt.setDouble(ID_INDEX, (Double) value);
 
-                } else if (value.getClass() == Integer.class) {
-                    stmt.setInt(ID_INDEX, (Integer) value);
-
-                } else if (value.getClass() == Long.class) {
+                } else if (value.getClass() == Long.class || value.getClass() == Integer.class) {
                     stmt.setLong(ID_INDEX, (Long) value);
 
                 } else if (value.getClass() == Boolean.class) {

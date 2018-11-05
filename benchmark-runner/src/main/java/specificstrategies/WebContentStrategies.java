@@ -17,7 +17,6 @@ import pick.StringStreamGenerator;
 import storage.ConceptStore;
 import storage.FromIdStorageStringAttrPicker;
 import storage.IdStoreInterface;
-import storage.SchemaManager;
 import strategy.AttributeOwnerTypeStrategy;
 import strategy.AttributeStrategy;
 import strategy.EntityStrategy;
@@ -35,7 +34,6 @@ import java.util.Set;
 public class WebContentStrategies implements SpecificStrategy {
 
     private Random random;
-    private SchemaManager schemaManager;
     private ConceptStore storage;
 
     private RouletteWheel<TypeStrategyInterface> entityStrategies;
@@ -43,9 +41,8 @@ public class WebContentStrategies implements SpecificStrategy {
     private RouletteWheel<TypeStrategyInterface> attributeStrategies;
     private RouletteWheel<RouletteWheel<TypeStrategyInterface>> operationStrategies;
 
-    public WebContentStrategies(Random random, SchemaManager schemaManager, ConceptStore storage) {
+    public WebContentStrategies(Random random, ConceptStore storage) {
         this.random = random;
-        this.schemaManager = schemaManager;
         this.storage = storage;
 
         this.entityStrategies = new RouletteWheel<>(random);
@@ -63,6 +60,11 @@ public class WebContentStrategies implements SpecificStrategy {
 
     private void setup() {
         primarySetup();
+
+        //TODO needs tweaks to make nice outputs
+        this.operationStrategies.add(1.0, entityStrategies);
+        this.operationStrategies.add(1.2, relationshipStrategies);
+        this.operationStrategies.add(0.4, attributeStrategies);
     }
 
 
@@ -70,6 +72,7 @@ public class WebContentStrategies implements SpecificStrategy {
      * primary instances eg people/companies/employment etc.
      */
     private void primarySetup() {
+        // TODO needs tweaks to make nice outputs
 
         /*
 
@@ -113,15 +116,15 @@ public class WebContentStrategies implements SpecificStrategy {
                 1,
                 new EntityStrategy(
                         "team",
-                        uniform( 7, 13) // 10 teams
+                        uniform( 4, 10) // 7 teams
                 ));
 
         // --- project ---
         this.entityStrategies.add(
                 1,
                 new EntityStrategy(
-                        "team",
-                        uniform( 10, 30) // 15 projects
+                        "project",
+                        uniform( 5, 19) // 12 projects
                 ));
 
         /*
@@ -134,12 +137,12 @@ public class WebContentStrategies implements SpecificStrategy {
          */
 
         // people (any) - company employment (1 with no previous employments (central stream picker(NotInRelationship...))),
-        // Zipf, 1-5k employments to the company
+        // Zipf, 1-2k employments to the company
         // NOTE: will will also add people to teams that belong to companies as members etc
         // but its too complicated to conditionally add new employees if the person is already a member etc.
-        add(1, relationshipStrategy(
+        add(2, relationshipStrategy(
                 "employment",
-                zipf(5000,1.5),
+                zipf(2000,1.5),
                 rolePlayerTypeStrategy(
                         "employee",
                         "person",
@@ -150,17 +153,22 @@ public class WebContentStrategies implements SpecificStrategy {
                         "employer",
                         "company",
                         constant(1),
-                        new StreamProvider<>(fromIdStorageConceptIdPicker("company"))
+                        new CentralStreamProvider<>(
+                                new NotInRelationshipConceptIdStream(
+                                        "employment",
+                                        "employer",
+                                        100,
+                                        fromIdStorageConceptIdPicker("company")
+                                )
+                        )
                 )
         ));
 
 
         // people (any) - university employment (1 with no previous employments) (same as above)
-        // Normal, mu=200, sigma^2=50^2 employments to the university
-        // NOTE: same as above except with universities
-        add(1, relationshipStrategy(
+        add(2, relationshipStrategy(
                 "employment",
-                gaussian(200, 50*50),
+                zipf(1000, 1.6),
                 rolePlayerTypeStrategy(
                         "employee",
                         "person",
@@ -171,15 +179,21 @@ public class WebContentStrategies implements SpecificStrategy {
                         "employer",
                         "university",
                         constant(1),
-                        new StreamProvider<>(fromIdStorageConceptIdPicker("university"))
+                        new CentralStreamProvider<>(
+                                new NotInRelationshipConceptIdStream(
+                                        "employment",
+                                        "employer",
+                                        100,
+                                        fromIdStorageConceptIdPicker("university"))
+                        )
                 )
          ));
 
         // person (any) - project (any) membership
-        // Normal, mu=6, sigma^2=3
-        add(1, relationshipStrategy(
+        // Normal, mu=9, sigma^2=5
+        add(2, relationshipStrategy(
                 "membership",
-                gaussian(6, 3),
+                gaussian(9, 5),
                 rolePlayerTypeStrategy(
                         "member",
                         "person",
@@ -188,15 +202,15 @@ public class WebContentStrategies implements SpecificStrategy {
                 ),
                 rolePlayerTypeStrategy(
                         "group",
-                        "team",
+                        "project",
                         constant(1),
-                        new StreamProvider<>(fromIdStorageConceptIdPicker("team"))
+                        new CentralStreamProvider<>(fromIdStorageConceptIdPicker("project"))
                 )
         ));
 
         // person (any) - team membership (all to 1 (centralstream picker))
         // Normal, mu=10, sigma^2=3^2
-        add(1, relationshipStrategy(
+        add(2, relationshipStrategy(
                 "membership",
                 gaussian(10, 9),
                 rolePlayerTypeStrategy(
@@ -289,7 +303,7 @@ public class WebContentStrategies implements SpecificStrategy {
                                         "ownership",
                                         "property",
                                         100,
-                                        fromIdStorageConceptIdPicker("project")
+                                        fromIdStorageConceptIdPicker("team")
                                 ))
                 )
         ));
@@ -336,7 +350,7 @@ public class WebContentStrategies implements SpecificStrategy {
         addAttributes(
                 1.0,
                 "forename",
-                uniform(10, 70),
+                uniform(5, 20),
                 "person",
                 fromIdStorageConceptIdPicker("person"),
                 new StreamProvider<>(new PickableCollectionValuePicker<String>(names))
@@ -345,7 +359,7 @@ public class WebContentStrategies implements SpecificStrategy {
         addAttributes(
                 1.0,
                 "surname",
-                uniform(10, 70),
+                uniform(5, 20),
                 "person",
                 fromIdStorageConceptIdPicker("person"),
                 new StreamProvider<>(new PickableCollectionValuePicker<String>(names))
@@ -354,7 +368,7 @@ public class WebContentStrategies implements SpecificStrategy {
         addAttributes(
                 1.0,
                 "middle-name",
-                uniform(10, 50),
+                uniform(5, 20),
                 "person",
                 fromIdStorageConceptIdPicker("person"),
                 new StreamProvider<>(new PickableCollectionValuePicker<String>(names))
@@ -366,7 +380,7 @@ public class WebContentStrategies implements SpecificStrategy {
         addAttributes(
                 1.0,
                 "job-title",
-                gaussian(200, 50*50),
+                gaussian(20, 5*5),
                 "employment",
                 fromIdStorageConceptIdPicker("employment"),
                 new StreamProvider<>(new PickableCollectionValuePicker<String>(jobtitles))
@@ -375,11 +389,11 @@ public class WebContentStrategies implements SpecificStrategy {
         // job-title.abbreviation (job-title is a type of name, which `has abbreviation`
         StringStreamGenerator twoCharStringGenerator = new StringStreamGenerator(random, 2);
         GrowableGeneratedRouletteWheel<String> jobtitleAbbrs = new GrowableGeneratedRouletteWheel<>(random, twoCharStringGenerator, constant(1));
-        jobtitles.growTo(50);
+        jobtitleAbbrs.growTo(50);
         addAttributes(
                 1.0,
                 "abbreviation",
-                gaussian(200, 50*50),
+                gaussian(20, 5*5),
                 "job-title",
                 fromIdStorageStringAttrPicker("job-title"), // NOTE we need to retrieve StringAttrs from storage!
                 new StreamProvider<>(new PickableCollectionValuePicker<String>(jobtitleAbbrs))
@@ -408,11 +422,11 @@ public class WebContentStrategies implements SpecificStrategy {
          // team.name
          StringStreamGenerator fourCharStringGenerator = new StringStreamGenerator(random, 4);
          GrowableGeneratedRouletteWheel<String> shortNames = new GrowableGeneratedRouletteWheel<>(random, fourCharStringGenerator, constant(1));
-         jobtitles.growTo(100);
+         shortNames.growTo(100);
          addAttributes(
                 1.0,
                 "name",
-                uniform(7, 13),
+                uniform(2, 5),
                 "team",
                 fromIdStorageConceptIdPicker("team"),
                 new StreamProvider<>(new PickableCollectionValuePicker<String>(shortNames))
@@ -432,11 +446,12 @@ public class WebContentStrategies implements SpecificStrategy {
         addAttributes(
                 1.0,
                 "name",
-                uniform(10, 30),
+                uniform(5, 20),
                 "project",
                 fromIdStorageConceptIdPicker("project"),
                 new StreamProvider<>(new PickableCollectionValuePicker<String>(shortNames))
         );
+
     }
 
 

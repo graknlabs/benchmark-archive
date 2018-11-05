@@ -5,7 +5,7 @@ name sub attribute datatype string,
     has abbreviation;
 url sub attribute datatype string;
 title sub attribute datatype string;
-date-published sub attribute datatype date;
+#date-published sub attribute datatype date;
 num-citations sub attribute datatype long;
 abstract sub attribute datatype string;
 tag sub attribute datatype string;
@@ -82,7 +82,7 @@ when {
     (group: $bottom, member: $memb) isa membership;
 } then {
     (group: $top, member: $memb) isa membership;
-}
+};
 ##################################################################
 # Projects
 ##################################################################
@@ -98,7 +98,7 @@ author-name sub name;
 publication sub entity,
     has title,
     has url,
-    has date-published,
+#    has date-published,
     has tag,
     has author-name,
     has abstract,

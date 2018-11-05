@@ -10,7 +10,7 @@ public class SpecificStrategyFactory {
     public static SpecificStrategy getSpecificStrategy(String name, Random random, ConceptStore storage) {
         switch (name) {
             case "web content":
-                return null;
+                return new WebContentStrategies(random, storage);
             case "societal model":
                 return new SocietalModelStrategy(random, storage);
             default:

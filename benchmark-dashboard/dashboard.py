@@ -54,7 +54,7 @@ class Dashboard(object):
 
             def route_execution_callback(method_name, exec_name):
                 # NOTE pass exec_name through to retain a copy from the loop, else python closures refer to last loop iter
-                print("creating callback router for {1}.{0}".format(method_name, exec_name))
+                # print("creating callback router for {1}.{0}".format(method_name, exec_name))
                 def wrapped_callback(*args):
                     # copy execution name using a lambda
                     print("Callback with args, method aname and execution name: {0}, {1}, {2}".format(args, method_name,

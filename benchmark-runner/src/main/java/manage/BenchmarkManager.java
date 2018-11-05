@@ -262,6 +262,13 @@ public class BenchmarkManager {
         executionName = String.join(" ", Arrays.asList(dateString, benchmarkConfiguration.getName(), executionName)).trim();
 
         Grakn client = new Grakn(new SimpleURI(Configs.GRAKN_URI));
+
+        // workaround to make deletions work...
+        if (!benchmarkConfiguration.noSchemaLoad()) {
+            System.out.println("Deleting keyspace `" + benchmarkConfiguration.getKeyspace() + "`");
+            client.keyspaces().delete(benchmarkConfiguration.getKeyspace());
+        }
+
         Grakn.Session session = client.session(benchmarkConfiguration.getKeyspace());
         int randomSeed = 0;
 
@@ -280,5 +287,3 @@ public class BenchmarkManager {
         ignite.close();
     }
 }
-
-
