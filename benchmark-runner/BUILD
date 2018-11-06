@@ -21,18 +21,22 @@ java_library(
     name = "benchmark_runner",
     srcs = glob(["src/**/*.java"]),
     deps = [
-        "@grakn_client_java//jar",
         "@slf4j//jar",
         "@ignite_core//jar",
         "@ignite_indexing//jar",
         "@mockito_core//jar",
-        "@jackson_yaml//jar",
         "@elasticsearch_rest_client//jar",
         "@apache_httpcore//jar",
         "@apache_httpclient//jar",
         "@apache_commons_cli//jar",
         "@apache_commons_math3//jar",
-        "@brave//jar"
+        "@brave//jar",
+
+        # External/transitive deps
+        "//dependencies/maven/artifacts/ai/grakn:client-java",
+        "//dependencies/maven/artifacts/ai/grakn:grakn-graql",
+        "//dependencies/maven/artifacts/com/fasterxml/jackson/core:jackson-databind",
+        "//dependencies/maven/artifacts/com/fasterxml/jackson/dataformat:jackson-dataformat-yaml"
     ]
 )
 

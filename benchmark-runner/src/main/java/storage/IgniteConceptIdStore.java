@@ -27,7 +27,6 @@ import ai.grakn.concept.Label;
 import ai.grakn.concept.RelationshipType;
 import ai.grakn.concept.SchemaConcept;
 import com.google.common.collect.ImmutableMap;
-import scala.Int;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -45,7 +44,6 @@ import static ai.grakn.concept.AttributeType.DataType.BOOLEAN;
 import static ai.grakn.concept.AttributeType.DataType.DATE;
 import static ai.grakn.concept.AttributeType.DataType.DOUBLE;
 import static ai.grakn.concept.AttributeType.DataType.FLOAT;
-import static ai.grakn.concept.AttributeType.DataType.INTEGER;
 import static ai.grakn.concept.AttributeType.DataType.LONG;
 import static ai.grakn.concept.AttributeType.DataType.STRING;
 

@@ -18,12 +18,21 @@
 
 workspace(name = "benchmark")
 
+# Load additional build tools, such bazel-deps and unused-deps
+load("//dependencies/tools:dependencies.bzl", "tools_dependencies")
+tools_dependencies()
+#
+#
+load("//dependencies/maven:dependencies.bzl", "maven_dependencies")
+maven_dependencies()
+
+
 # --- Grakn client-java ---
-maven_jar(
-    name = "grakn_client_java",
-    artifact = "ai.grakn:client-java:1.5.0-SNAPSHOT",
-    repository = "http://maven.grakn.ai/nexus/content/repositories/bazel-test-snapshot/"
-)
+#maven_jar(
+#    name = "grakn_client_java",
+#    artifact = "ai.grakn:client-java:1.5.0-SNAPSHOT",
+#    repository = "http://maven.grakn.ai/nexus/content/repositories/bazel-test-snapshot/"
+#)
 
 # --- Logging ---
 maven_jar(
@@ -47,12 +56,6 @@ maven_jar(
     artifact = "org.mockito:mockito-core:2.6.4"
 )
 
-# --- YAML parsing ---
-maven_jar(
-    name = "jackson_yaml",
-    artifact = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.2"
-)
-
 # --- Elasticsearch client ---
 maven_jar(
     name = "elasticsearch_rest_client",
@@ -67,7 +70,6 @@ maven_jar(
     name = "apache_httpclient",
     artifact = "org.apache.httpcomponents:httpclient:4.5.6"
 )
-
 
 # --- Apache CLI commons for cmd line options parsing ---
 maven_jar(
@@ -86,3 +88,6 @@ maven_jar(
     name = "brave",
     artifact = "io.zipkin.brave:brave:5.1.2"
 )
+
+
+
