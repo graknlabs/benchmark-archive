@@ -37,7 +37,7 @@ We have a dashboard that reads ElasticSearch and creates graphs via Dash and Plo
 To get up and running, you need pipenv and python >=3.6.0
 
 1. `pipenv install` (installs package dependencies for the dashboard)
-2. `pipenv shell` (you may need to modify the `python_version = "3.6"` if the python version you have is newer/not quite the same. Alternatively manage your python versions with `pyenv`.
+2. `pipenv shell` (you may need to modify the `python_version = "3.6"` if the python version you have is newer/not quite the same. Alternatively runner your python versions with `pyenv`.
 3. in the `dashboard/` directory, run `python dashboard.py`
 4. Navigate to `http:localhost:8050` to see the dashboard
 
@@ -68,6 +68,7 @@ Rebuild Grakn server, stop and remove the old one, untar, then run
 Rebuild Benchmarking and its dependencies and execute
 `run.py --build-benchmark--alldeps --config grakn-benchmark/src/main/resources/societal_config_1.yml`
 
+** TODO revisit the run.py to see if we need it at all, especially with Bazel (no more need to collect classpath) **
 
 
 ### Adding new spans to measure code segments

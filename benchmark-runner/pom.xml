@@ -36,9 +36,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <grakn.version>1.5.0-SNAPSHOT</grakn.version>
         <brave.version>5.1.2</brave.version>
-        <brave-grpc.version>5.1.2</brave-grpc.version>
         <ignite.version>2.6.0</ignite.version>
-        <h2.version>1.4.196</h2.version>
         <mockito.version>2.6.4</mockito.version>
         <jackson.version>2.9.2</jackson.version>
     </properties>
@@ -116,20 +114,8 @@
         <dependency>
             <groupId>io.zipkin.brave</groupId>
             <artifactId>brave</artifactId>
+            <version>${brave.version}</version>
         </dependency>
 
     </dependencies>
-    <dependencyManagement>
-        <dependencies>
-
-            <!--Brave-->
-            <dependency>
-                <groupId>io.zipkin.brave</groupId>
-                <artifactId>brave-bom</artifactId>
-                <version>${brave.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 </project>

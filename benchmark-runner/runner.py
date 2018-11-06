@@ -137,7 +137,7 @@ classpath.append(os.path.join(grakn_root, 'grakn-benchmark', 'conf'))
 
 # run benchmarking 
 classpath = ":".join(classpath)
-command = ['java', '-cp', classpath, 'manage.BenchmarkManager']
+command = ['java', '-cp', classpath, 'runner.BenchmarkRunner']
 run_args = ['--config', args.config, '--execution-name', args.execution_name]
 if args.keyspace is not None:
     run_args += ["--keyspace", args.keyspace]

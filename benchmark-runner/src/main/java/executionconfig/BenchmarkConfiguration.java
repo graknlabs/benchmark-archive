@@ -20,17 +20,14 @@ package executionconfig;
 
 
 import ai.grakn.Keyspace;
-import ai.grakn.graql.Graql;
-import ai.grakn.graql.Query;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.google.common.io.Files;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  *  Contains the configuration for an execution of the benchmarking system
@@ -47,6 +44,7 @@ public class BenchmarkConfiguration {
     private String keyspace;
 
     public BenchmarkConfiguration(Path configFilePath, BenchmarkConfigurationFile config) throws IOException {
+
         this.configFilePath = configFilePath;
         this.benchmarkConfigFile = config;
 
@@ -57,7 +55,7 @@ public class BenchmarkConfiguration {
 
         try {
             Path schemaFilePath = this.configFilePath.getParent().resolve(config.getRelativeSchemaFile());
-            schemaGraql = Files.readLines(schemaFilePath.toFile(), StandardCharsets.UTF_8);
+            schemaGraql = Files.readAllLines(schemaFilePath, StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

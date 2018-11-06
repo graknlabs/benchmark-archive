@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package manage;
+package runner;
 
 import ai.grakn.client.Grakn;
 import ai.grakn.util.SimpleURI;
@@ -24,7 +24,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import executionconfig.BenchmarkConfiguration;
 import executionconfig.BenchmarkConfigurationFile;
-import executor.QueryExecutor;
 import generator.DataGenerator;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -64,15 +63,15 @@ import java.util.List;
 /**
  *
  */
-public class BenchmarkManager {
+public class BenchmarkRunner {
     private DataGenerator dataGenerator;
     private QueryExecutor queryExecutor;
     private int numQueryRepetitions;
     private BenchmarkConfiguration configuration;
 
-    private static final Logger LOG = LoggerFactory.getLogger(BenchmarkManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BenchmarkRunner.class);
 
-    public BenchmarkManager(BenchmarkConfiguration configuration, DataGenerator dataGenerator, QueryExecutor queryExecutor) {
+    public BenchmarkRunner(BenchmarkConfiguration configuration, DataGenerator dataGenerator, QueryExecutor queryExecutor) {
         this.dataGenerator = dataGenerator;
         this.queryExecutor = queryExecutor;
         this.numQueryRepetitions = configuration.numQueryRepetitions();
@@ -282,8 +281,8 @@ public class BenchmarkManager {
                                             Configs.GRAKN_URI,
                                             executionName,
                                             benchmarkConfiguration.getQueries());
-        BenchmarkManager manager = new BenchmarkManager(benchmarkConfiguration, dataGenerator, queryExecutor);
-        manager.run();
+        BenchmarkRunner runner = new BenchmarkRunner(benchmarkConfiguration, dataGenerator, queryExecutor);
+        runner.run();
 
         ignite.close();
     }
