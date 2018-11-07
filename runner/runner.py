@@ -63,16 +63,16 @@ if args.build_grakn:
 
 if build_benchmark_and_deps:
     print("... Building Benchmarking and its dependencies")
-    benchmark_and_deps_result = subprocess.run(['mvn', 'package', '-DskipTests', '--projects', 'grakn-benchmark/benchmark-runner', '-am'], cwd=grakn_root)
+    benchmark_and_deps_result = subprocess.run(['mvn', 'package', '-DskipTests', '--projects', 'grakn-benchmark/runner', '-am'], cwd=grakn_root)
     benchmark_and_deps_result.check_returncode()
 
 if build_benchmark:
     print("...Building Benchmarking (only)")
-    benchmark_result = subprocess.run(['mvn', 'package', '-DskipTests', '--projects', 'grakn-benchmark/benchmark-runner'], cwd=grakn_root)
+    benchmark_result = subprocess.run(['mvn', 'package', '-DskipTests', '--projects', 'grakn-benchmark/runner'], cwd=grakn_root)
     benchmark_result.check_returncode()
 
 # --- folder structures sanity checks ---
-target_folder = os.path.join(grakn_root, *["grakn-benchmark", "benchmark-runner", "target"])
+target_folder = os.path.join(grakn_root, *["grakn-benchmark", "runner", "target"])
 if not os.path.isdir(target_folder):
     raise Exception("Missing target folder {0}, please build benchmarking first".format(target_folder))
 

@@ -16,15 +16,15 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.benchmarkrunner.runner;
+package ai.grakn.benchmark.runner.runner;
 
 import ai.grakn.client.Grakn;
 import ai.grakn.util.SimpleURI;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import ai.grakn.benchmark.benchmarkrunner.executionconfig.BenchmarkConfiguration;
-import ai.grakn.benchmark.benchmarkrunner.executionconfig.BenchmarkConfigurationFile;
-import ai.grakn.benchmark.benchmarkrunner.generator.DataGenerator;
+import ai.grakn.benchmark.runner.executionconfig.BenchmarkConfiguration;
+import ai.grakn.benchmark.runner.executionconfig.BenchmarkConfigurationFile;
+import ai.grakn.benchmark.runner.generator.DataGenerator;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -48,7 +48,7 @@ import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ai.grakn.benchmark.benchmarkrunner.sharedconfig.Configs;
+import ai.grakn.benchmark.runner.sharedconfig.Configs;
 
 import java.io.IOException;
 import java.nio.file.Path;

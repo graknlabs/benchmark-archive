@@ -29,7 +29,7 @@ public class Configs {
     public static String GRAKN_URI = "localhost:48555";
 
     public static final Path GRAKN_PATH  = Paths.get(".").toAbsolutePath();
-    public static final Path CONF_PATH = GRAKN_PATH.resolve(Paths.get("grakn-benchmark", "benchmark-runner", "conf"));
+    public static final Path CONF_PATH = GRAKN_PATH.resolve(Paths.get("grakn-benchmark", "runner", "conf"));
 
 
     /**
