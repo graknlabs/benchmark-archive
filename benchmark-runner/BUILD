@@ -21,24 +21,29 @@ java_library(
     name = "benchmark_runner",
     srcs = glob(["src/**/*.java"]),
     deps = [
-        "@slf4j//jar",
-        "@ignite_core//jar",
-        "@ignite_indexing//jar",
-        "@elasticsearch_rest_client//jar",
-        "@apache_httpcore//jar",
-        "@apache_httpclient//jar",
-        "@apache_commons_cli//jar",
-        "@apache_commons_math3//jar",
-        "@brave//jar",
-        "@mockito_core//jar",
-        "@junit//jar",
-
-        # External/transitive deps
         "//dependencies/maven/artifacts/ai/grakn:client-java",
         "//dependencies/maven/artifacts/ai/grakn:grakn-graql",
+
         "//dependencies/maven/artifacts/com/fasterxml/jackson/core:jackson-core",
         "//dependencies/maven/artifacts/com/fasterxml/jackson/core:jackson-databind",
-        "//dependencies/maven/artifacts/com/fasterxml/jackson/dataformat:jackson-dataformat-yaml"
+        "//dependencies/maven/artifacts/com/fasterxml/jackson/dataformat:jackson-dataformat-yaml",
+
+        "//dependencies/maven/artifacts/io/zipkin/brave:brave",
+
+        "//dependencies/maven/artifacts/org/slf4j:slf4j-api",
+
+        "//dependencies/maven/artifacts/org/apache/ignite:ignite-core",
+        "//dependencies/maven/artifacts/org/apache/ignite:ignite-indexing",
+
+        "//dependencies/maven/artifacts/org/elasticsearch/client:elasticsearch-rest-client",
+        "//dependencies/maven/artifacts/org/apache/httpcomponents:httpcore",
+        "//dependencies/maven/artifacts/org/apache/httpcomponents:httpclient",
+
+        "//dependencies/maven/artifacts/commons-cli",
+        "//dependencies/maven/artifacts/org/apache/commons:commons-math3",
+
+        "//dependencies/maven/artifacts/junit:junit",
+        "//dependencies/maven/artifacts/org/mockito:mockito-core"
     ]
 )
 

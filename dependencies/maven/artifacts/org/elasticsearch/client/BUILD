@@ -12,7 +12,7 @@ java_library(
         "//dependencies/maven/artifacts/org/apache/httpcomponents:httpcore-nio"
     ],
     visibility = [
-        "//dependencies/maven/artifacts:__subpackages__"
+        "//visibility:public"
     ]
 )
 

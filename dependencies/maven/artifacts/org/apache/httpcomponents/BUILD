@@ -21,7 +21,7 @@ java_library(
         ":httpcore"
     ],
     visibility = [
-        "//dependencies/maven/artifacts:__subpackages__"
+        "//visibility:public"
     ]
 )
 
@@ -33,7 +33,7 @@ java_library(
         "//external:jar/org/apache/httpcomponents/httpcore"
     ],
     visibility = [
-        "//dependencies/maven/artifacts:__subpackages__"
+        "//visibility:public"
     ]
 )
 
