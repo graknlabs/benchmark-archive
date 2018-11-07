@@ -1,4 +1,4 @@
-package ai.grakn.benchmark.benchmarkrunner.storage;
+package ai.grakn.benchmark.runner.storage;
 
 import ai.grakn.client.Grakn;
 import ai.grakn.concept.ConceptId;

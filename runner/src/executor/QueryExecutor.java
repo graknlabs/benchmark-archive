@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.runner.runner;
+package ai.grakn.benchmark.runner.executor;
 
 import ai.grakn.GraknTxType;
 import ai.grakn.Keyspace;

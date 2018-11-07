@@ -1,4 +1,4 @@
-package ai.grakn.benchmark.benchmarkrunner.pick;
+package ai.grakn.benchmark.runner.pick;
 
 
 

@@ -16,11 +16,11 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.benchmarkrunner.strategy;
+package ai.grakn.benchmark.runner.strategy;
 
 import ai.grakn.concept.AttributeType;
-import ai.grakn.benchmark.benchmarkrunner.pdf.PDF;
-import ai.grakn.benchmark.benchmarkrunner.pick.StreamProviderInterface;
+import ai.grakn.benchmark.runner.pdf.PDF;
+import ai.grakn.benchmark.runner.pick.StreamProviderInterface;
 
 
 /**

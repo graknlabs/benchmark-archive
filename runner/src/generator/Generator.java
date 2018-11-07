@@ -16,11 +16,11 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.benchmarkrunner.generator;
+package ai.grakn.benchmark.runner.generator;
 
 import ai.grakn.client.Grakn;
 import ai.grakn.graql.Query;
-import ai.grakn.benchmark.benchmarkrunner.strategy.TypeStrategy;
+import ai.grakn.benchmark.runner.strategy.TypeStrategy;
 
 import java.util.stream.Stream;
 

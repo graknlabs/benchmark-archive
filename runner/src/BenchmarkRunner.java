@@ -16,8 +16,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.runner.runner;
+package ai.grakn.benchmark.runner;
 
+import ai.grakn.benchmark.runner.executor.QueryExecutor;
 import ai.grakn.client.Grakn;
 import ai.grakn.util.SimpleURI;
 import com.fasterxml.jackson.databind.ObjectMapper;

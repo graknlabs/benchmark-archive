@@ -16,9 +16,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.benchmarkrunner.strategy;
+package ai.grakn.benchmark.runner.strategy;
 
-import ai.grakn.benchmark.benchmarkrunner.pick.StreamProviderInterface;
+import ai.grakn.benchmark.runner.pick.StreamProviderInterface;
 
 /**
  * @param <T>

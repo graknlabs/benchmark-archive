@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.benchmarkrunner.generator;
+package ai.grakn.benchmark.runner.generator;
 
 import ai.grakn.GraknTxType;
 import ai.grakn.client.Grakn;
@@ -27,14 +27,14 @@ import ai.grakn.concept.RelationshipType;
 import ai.grakn.graql.InsertQuery;
 import ai.grakn.graql.Query;
 import ai.grakn.graql.answer.ConceptMap;
-import ai.grakn.benchmark.benchmarkrunner.specificstrategies.SpecificStrategy;
-import ai.grakn.benchmark.benchmarkrunner.specificstrategies.SpecificStrategyFactory;
-import ai.grakn.benchmark.benchmarkrunner.storage.ConceptStore;
-import ai.grakn.benchmark.benchmarkrunner.storage.IgniteConceptIdStore;
-import ai.grakn.benchmark.benchmarkrunner.storage.InsertionAnalysis;
-import ai.grakn.benchmark.benchmarkrunner.storage.SchemaManager;
-import ai.grakn.benchmark.benchmarkrunner.strategy.RouletteWheel;
-import ai.grakn.benchmark.benchmarkrunner.strategy.TypeStrategyInterface;
+import ai.grakn.benchmark.runner.specificstrategies.SpecificStrategy;
+import ai.grakn.benchmark.runner.specificstrategies.SpecificStrategyFactory;
+import ai.grakn.benchmark.runner.storage.ConceptStore;
+import ai.grakn.benchmark.runner.storage.IgniteConceptIdStore;
+import ai.grakn.benchmark.runner.storage.InsertionAnalysis;
+import ai.grakn.benchmark.runner.storage.SchemaManager;
+import ai.grakn.benchmark.runner.strategy.RouletteWheel;
+import ai.grakn.benchmark.runner.strategy.TypeStrategyInterface;
 
 import java.util.HashSet;
 import java.util.List;

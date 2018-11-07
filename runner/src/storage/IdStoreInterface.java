@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.benchmarkrunner.storage;
+package ai.grakn.benchmark.runner.storage;
 
 import ai.grakn.concept.ConceptId;
 

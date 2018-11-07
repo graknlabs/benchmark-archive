@@ -1,7 +1,7 @@
-package ai.grakn.benchmark.benchmarkrunner.specificstrategies;
+package ai.grakn.benchmark.runner.specificstrategies;
 
-import ai.grakn.benchmark.benchmarkrunner.strategy.RouletteWheel;
-import ai.grakn.benchmark.benchmarkrunner.strategy.TypeStrategyInterface;
+import ai.grakn.benchmark.runner.strategy.RouletteWheel;
+import ai.grakn.benchmark.runner.strategy.TypeStrategyInterface;
 
 
 public interface SpecificStrategy {

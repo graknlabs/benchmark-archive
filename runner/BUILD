@@ -18,7 +18,7 @@
 
 
 java_library(
-    name = "benchmark_runner",
+    name = "benchmark-runner",
     srcs = glob(["src/**/*.java"]),
     deps = [
         "//dependencies/maven/artifacts/ai/grakn:client-java",
@@ -47,19 +47,38 @@ java_library(
     ],
 
     resources = [
-        "//benchmark-runner:src/resources/logback.xml"
+        "//runner:src/logback.xml"
     ]
 )
 
 java_binary(
-    name = "benchmark_runner_binary",
-    main_class = "runner.BenchmarkRunner",
-    runtime_deps = ["//benchmark-runner:benchmark_runner"],
+    name = "benchmark-runner-binary",
+    main_class = "ai.grakn.benchmark.runner.BenchmarkRunner",
+    runtime_deps = ["//runner:benchmark-runner"],
     visibility = ["//visibility:public"]
 )
 
 
-# TODO
-#java_test()
 
+java_test(
+    name = "ignite-conceptid-store-test",
+    test_class = "ai.grakn.benchmark.runner.storage.IgniteConceptIdStoreTest",
+    srcs = ["test/storage/IgniteConceptIdStoreTest.java"],
 
+    deps = [
+        ":benchmark-runner",
+        "//dependencies/maven/artifacts/org/mockito:mockito-core",
+        "//dependencies/maven/artifacts/ai/grakn:grakn-graql",
+    ]
+)
+
+java_test(
+    name = "insertion-analysis-test",
+    test_class = "ai.grakn.benchmark.runner.storage.InsertionAnalysisTest",
+    srcs = ["test/storage/InsertionAnalysisTest.java"],
+    deps = [
+        ":benchmark-runner",
+        "//dependencies/maven/artifacts/org/mockito:mockito-core",
+        "//dependencies/maven/artifacts/ai/grakn:grakn-graql",
+    ]
+)

@@ -16,9 +16,8 @@
  * along with Grakn. If not, see <http://www.gnu.org/licenses/agpl.txt>.
  */
 
-package storage;
+package ai.grakn.benchmark.runner.storage;
 
-import ai.grakn.benchmark.benchmarkrunner.storage.IgniteConceptIdStore;
 import ai.grakn.concept.AttributeType;
 import ai.grakn.concept.Concept;
 import ai.grakn.concept.ConceptId;
