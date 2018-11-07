@@ -37,7 +37,7 @@ We have a dashboard that reads ElasticSearch and creates graphs via Dash and Plo
 To get up and running, you need pipenv and python >=3.6.0
 
 1. `pipenv install` (installs package dependencies for the dashboard)
-2. `pipenv shell` (you may need to modify the `python_version = "3.6"` if the python version you have is newer/not quite the same. Alternatively runner your python versions with `pyenv`.
+2. `pipenv shell` (you may need to modify the `python_version = "3.6"` if the python version you have is newer/not quite the same. Alternatively manager your python versions with `pyenv`.
 3. in the `dashboard/` directory, run `python dashboard.py`
 4. Navigate to `http:localhost:8050` to see the dashboard
 
