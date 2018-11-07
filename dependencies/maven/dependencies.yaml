@@ -38,9 +38,14 @@ dependencies:
     client-java:
       version: "1.5.0-SNAPSHOT"
       lang: java
+      exclude:
+        - "org.slf4j:slf4j-log4j12"
     grakn-graql:
       version: "1.5.0-SNAPSHOT"
       lang: java
+      exclude:
+        - "org.slf4j:slf4j-log4j12"
+
 
   # -- YAML parsing --
   com.fasterxml.jackson.core:

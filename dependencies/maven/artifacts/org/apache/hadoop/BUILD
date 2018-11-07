@@ -22,8 +22,7 @@ java_library(
         "//dependencies/maven/artifacts/org/apache/directory/server:apacheds-kerberos-codec",
         "//dependencies/maven/artifacts/org/apache/httpcomponents:httpclient",
         "//dependencies/maven/artifacts/org/apache/zookeeper:zookeeper",
-        "//dependencies/maven/artifacts/org/slf4j:slf4j-api",
-        "//dependencies/maven/artifacts/org/slf4j:slf4j-log4j12"
+        "//dependencies/maven/artifacts/org/slf4j:slf4j-api"
     ],
     visibility = [
         "//dependencies/maven/artifacts:__subpackages__"
@@ -92,7 +91,6 @@ java_library(
         "//dependencies/maven/artifacts/org/mortbay/jetty:jetty",
         "//dependencies/maven/artifacts/org/mortbay/jetty:jetty-util",
         "//dependencies/maven/artifacts/org/slf4j:slf4j-api",
-        "//dependencies/maven/artifacts/org/slf4j:slf4j-log4j12",
         "//dependencies/maven/artifacts/xmlenc:xmlenc",
         ":hadoop-annotations",
         ":hadoop-auth"
@@ -141,7 +139,6 @@ java_library(
     runtime_deps = [
         "//dependencies/maven/artifacts/com/google/protobuf:protobuf-java",
         "//dependencies/maven/artifacts/org/slf4j:slf4j-api",
-        "//dependencies/maven/artifacts/org/slf4j:slf4j-log4j12",
         ":hadoop-mapreduce-client-common",
         ":hadoop-mapreduce-client-shuffle"
     ],
@@ -160,7 +157,6 @@ java_library(
     runtime_deps = [
         "//dependencies/maven/artifacts/com/google/protobuf:protobuf-java",
         "//dependencies/maven/artifacts/org/slf4j:slf4j-api",
-        "//dependencies/maven/artifacts/org/slf4j:slf4j-log4j12",
         ":hadoop-mapreduce-client-core",
         ":hadoop-yarn-client",
         ":hadoop-yarn-common",
@@ -184,7 +180,6 @@ java_library(
         "//dependencies/maven/artifacts/io/netty:netty",
         "//dependencies/maven/artifacts/org/apache/avro:avro",
         "//dependencies/maven/artifacts/org/slf4j:slf4j-api",
-        "//dependencies/maven/artifacts/org/slf4j:slf4j-log4j12",
         ":hadoop-annotations",
         ":hadoop-yarn-common"
     ],
@@ -203,7 +198,6 @@ java_library(
     runtime_deps = [
         "//dependencies/maven/artifacts/com/google/protobuf:protobuf-java",
         "//dependencies/maven/artifacts/org/slf4j:slf4j-api",
-        "//dependencies/maven/artifacts/org/slf4j:slf4j-log4j12",
         ":hadoop-mapreduce-client-common",
         ":hadoop-mapreduce-client-shuffle"
     ],
@@ -223,7 +217,6 @@ java_library(
         "//dependencies/maven/artifacts/com/google/protobuf:protobuf-java",
         "//dependencies/maven/artifacts/org/fusesource/leveldbjni:leveldbjni-all",
         "//dependencies/maven/artifacts/org/slf4j:slf4j-api",
-        "//dependencies/maven/artifacts/org/slf4j:slf4j-log4j12",
         ":hadoop-mapreduce-client-common",
         ":hadoop-yarn-server-common",
         ":hadoop-yarn-server-nodemanager"

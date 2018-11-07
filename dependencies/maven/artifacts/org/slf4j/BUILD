@@ -54,19 +54,3 @@ java_library(
 )
 
 
-
-java_library(
-    name = "slf4j-log4j12",
-    exports = [
-        "//external:jar/org/slf4j/slf4j-log4j12"
-    ],
-    runtime_deps = [
-        "//dependencies/maven/artifacts/log4j:log4j",
-        ":slf4j-api"
-    ],
-    visibility = [
-        "//dependencies/maven/artifacts:__subpackages__"
-    ]
-)
-
-

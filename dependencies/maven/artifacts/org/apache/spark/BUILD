@@ -44,7 +44,6 @@ java_library(
         "//dependencies/maven/artifacts/org/slf4j:jcl-over-slf4j",
         "//dependencies/maven/artifacts/org/slf4j:jul-to-slf4j",
         "//dependencies/maven/artifacts/org/slf4j:slf4j-api",
-        "//dependencies/maven/artifacts/org/slf4j:slf4j-log4j12",
         "//dependencies/maven/artifacts/org/spark-project/spark:unused",
         "//dependencies/maven/artifacts/org/xerial/snappy:snappy-java",
         "//dependencies/maven/artifacts/oro:oro",
