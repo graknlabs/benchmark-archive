@@ -44,6 +44,10 @@ java_library(
 
         "//dependencies/maven/artifacts/junit:junit",
         "//dependencies/maven/artifacts/org/mockito:mockito-core"
+    ],
+
+    resources = [
+        "//benchmark-runner:src/main/resources/logback.xml"
     ]
 )
 
