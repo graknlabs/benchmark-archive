@@ -47,7 +47,7 @@ java_library(
     ],
 
     resources = [
-        "//benchmark-runner:src/main/resources/logback.xml"
+        "//benchmark-runner:src/resources/logback.xml"
     ]
 )
 
@@ -59,8 +59,7 @@ java_binary(
 )
 
 
-
 # TODO
-# java_test()
+#java_test()
 
 
