@@ -44,6 +44,9 @@ dependencies:
     jackson-databind:
       version: "2.9.2"
       lang: java
+    jackson-core:
+      version: "2.9.2"
+      lang: java
 
   com.fasterxml.jackson.dataformat:
     jackson-dataformat-yaml:

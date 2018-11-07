@@ -23,6 +23,7 @@ import ai.grakn.Keyspace;
 import ai.grakn.client.Grakn;
 import ai.grakn.graql.Graql;
 import ai.grakn.graql.Query;
+import ai.grakn.graql.answer.Answer;
 import ai.grakn.graql.answer.Value;
 import ai.grakn.util.SimpleURI;
 import brave.Span;
@@ -119,7 +120,7 @@ public class QueryExecutor {
                     span.start();
 
                     try (Tracer.SpanInScope ws = tracer.withSpanInScope(span)) {
-                        query.execute();
+                        List<Answer> answer = query.execute();
                     } catch (RuntimeException | Error e) {
                         span.error(e);
                         throw e;

@@ -50,12 +50,6 @@ maven_jar(
     artifact = "org.apache.ignite:ignite-indexing:2.6.0"
 )
 
-# --- Testing ---
-maven_jar(
-    name = "mockito_core",
-    artifact = "org.mockito:mockito-core:2.6.4"
-)
-
 # --- Elasticsearch client ---
 maven_jar(
     name = "elasticsearch_rest_client",
@@ -91,3 +85,14 @@ maven_jar(
 
 
 
+
+# --- Testing ---
+# NOTE this is an old junit! (2014)
+maven_jar(
+    name = "junit",
+    artifact = "junit:junit:4.12"
+)
+maven_jar(
+    name = "mockito_core",
+    artifact = "org.mockito:mockito-core:2.6.4"
+)

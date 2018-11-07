@@ -24,17 +24,19 @@ java_library(
         "@slf4j//jar",
         "@ignite_core//jar",
         "@ignite_indexing//jar",
-        "@mockito_core//jar",
         "@elasticsearch_rest_client//jar",
         "@apache_httpcore//jar",
         "@apache_httpclient//jar",
         "@apache_commons_cli//jar",
         "@apache_commons_math3//jar",
         "@brave//jar",
+        "@mockito_core//jar",
+        "@junit//jar",
 
         # External/transitive deps
         "//dependencies/maven/artifacts/ai/grakn:client-java",
         "//dependencies/maven/artifacts/ai/grakn:grakn-graql",
+        "//dependencies/maven/artifacts/com/fasterxml/jackson/core:jackson-core",
         "//dependencies/maven/artifacts/com/fasterxml/jackson/core:jackson-databind",
         "//dependencies/maven/artifacts/com/fasterxml/jackson/dataformat:jackson-dataformat-yaml"
     ]

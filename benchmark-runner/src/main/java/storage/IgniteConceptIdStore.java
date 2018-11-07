@@ -26,7 +26,6 @@ import ai.grakn.concept.EntityType;
 import ai.grakn.concept.Label;
 import ai.grakn.concept.RelationshipType;
 import ai.grakn.concept.SchemaConcept;
-import com.google.common.collect.ImmutableMap;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -35,6 +34,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -62,14 +62,17 @@ public class IgniteConceptIdStore implements IdStoreInterface {
     private final String cachingMethod = "REPLICATED";
     private final int ID_INDEX = 1;
 
-    public static final ImmutableMap<AttributeType.DataType<?>, String> DATATYPE_MAPPING = ImmutableMap.<AttributeType.DataType<?>, String>builder()
-            .put(STRING, "VARCHAR")
-            .put(BOOLEAN, "BOOLEAN")
-            .put(LONG, "LONG")
-            .put(DOUBLE, "DOUBLE")
-            .put(FLOAT, "FLOAT")
-            .put(DATE, "DATE")
-            .build();
+    public static final Map<AttributeType.DataType<?>, String> DATATYPE_MAPPING;
+    static {
+        Map<AttributeType.DataType<?>, String> mapBuilder = new HashMap<>();
+        mapBuilder.put(STRING, "VARCHAR");
+        mapBuilder.put(BOOLEAN, "BOOLEAN");
+        mapBuilder.put(LONG, "LONG");
+        mapBuilder.put(DOUBLE, "DOUBLE");
+        mapBuilder.put(FLOAT, "FLOAT");
+        mapBuilder.put(DATE, "DATE");
+        DATATYPE_MAPPING = Collections.unmodifiableMap(mapBuilder);
+    }
 
     public IgniteConceptIdStore(HashSet<EntityType> entityTypes,
                                 HashSet<RelationshipType> relationshipTypes,

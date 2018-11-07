@@ -29,6 +29,7 @@ import ai.grakn.graql.Match;
 import ai.grakn.graql.Query;
 import ai.grakn.graql.QueryBuilder;
 import ai.grakn.graql.Var;
+import ai.grakn.graql.answer.Answer;
 import ai.grakn.graql.answer.ConceptMap;
 import ai.grakn.util.Schema;
 import java.util.HashSet;
@@ -40,8 +41,8 @@ import static ai.grakn.graql.internal.pattern.Patterns.var;
 /**
  *
  */
+@SuppressWarnings("CheckReturnValue")
 public class SchemaManager {
-
 
     public static void initialiseKeyspace(Grakn.Session session, List<String> graqlSchemaQueries) {
         clearKeyspace(session);
