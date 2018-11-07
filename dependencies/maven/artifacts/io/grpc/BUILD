@@ -26,7 +26,7 @@ java_library(
         ":grpc-context"
     ],
     visibility = [
-        "//dependencies/maven/artifacts:__subpackages__"
+        "//visibility:public"
     ]
 )
 
