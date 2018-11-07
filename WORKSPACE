@@ -21,7 +21,7 @@ workspace(name = "benchmark")
 # Load additional build tools, such bazel-deps and unused-deps
 load("//dependencies/tools:dependencies.bzl", "tools_dependencies")
 tools_dependencies()
-#
-#
+
+
 load("//dependencies/maven:dependencies.bzl", "maven_dependencies")
 maven_dependencies()

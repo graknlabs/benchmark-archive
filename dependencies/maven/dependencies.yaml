@@ -36,12 +36,12 @@ dependencies:
   # -- Grakn --
   ai.grakn:
     client-java:
-      version: "1.5.0-SNAPSHOT"
+      version: "1.5.0-3b59a34f4f6c193e81ffb03280acc0cea42c29da-SNAPSHOT"
       lang: java
       exclude:
         - "org.slf4j:slf4j-log4j12"
     grakn-graql:
-      version: "1.5.0-SNAPSHOT"
+      version: "1.5.0-3b59a34f4f6c193e81ffb03280acc0cea42c29da-SNAPSHOT"
       lang: java
       exclude:
         - "org.slf4j:slf4j-log4j12"
