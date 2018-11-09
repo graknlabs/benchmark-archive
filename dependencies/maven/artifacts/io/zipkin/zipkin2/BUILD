@@ -4,7 +4,7 @@ java_library(
         "//external:jar/io/zipkin/zipkin2/zipkin"
     ],
     visibility = [
-        "//dependencies/maven/artifacts:__subpackages__"
+        "//visibility:public"
     ]
 )
 

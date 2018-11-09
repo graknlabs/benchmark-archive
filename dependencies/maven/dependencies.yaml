@@ -45,6 +45,9 @@ dependencies:
       lang: java
       exclude:
         - "org.slf4j:slf4j-log4j12"
+    rpc:
+      version: "1.5.0-SNAPSHOT"
+      lang: java
 
 
   # -- YAML parsing --
@@ -61,10 +64,23 @@ dependencies:
       version: "2.9.2"
       lang: java
 
-  # -- Brave --
+  # -- Tracing --
   io.zipkin.brave:
     brave:
       version: "5.1.2"
+      lang: java
+
+  io.zipkin.zipkin2:
+    zipkin:
+      version: 2.11.8
+      lang: java
+
+  io.zipkin.reporter2:
+    zipkin-reporter:
+      version: 2.7.10
+      lang: java
+    zipkin-sender-urlconnection:
+      version: 2.7.10
       lang: java
 
   # -- Logging --
@@ -129,3 +145,21 @@ dependencies:
    grpc-core:
       version: "1.15.0"
       lang: java
+
+
+  com.google.protobuf:
+    protobuf-java:
+      version: 3.5.1
+      lang: java
+
+
+
+replacements:
+  ai.grakn:
+    client-java:
+      lang: java
+      target: "//dependencies/grakn_local:grakn-client-java"
+
+    grakn-graql:
+      lang: java
+      target: "//dependencies/grakn_local:grakn-graql"
