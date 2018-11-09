@@ -102,7 +102,7 @@ public class QueryExecutor {
                 Query query = queryIterator.next().withTx(tx);
                 LOG.info("Running query: " + query.toString());
 
-                Span batchSpan = tracer.newTrace().name("batch-query-span");
+                Span batchSpan = tracer.newTrace().name("batch-query");
                 batchSpan.tag("concepts", Integer.toString(numConcepts));
                 batchSpan.tag("query", query.toString());
                 batchSpan.tag("executionName", this.executionName);
@@ -115,7 +115,7 @@ public class QueryExecutor {
 
                 for (int i = 0; i < numRepeats; i++) {
 
-                    Span span = tracer.newChild(batchSpan.context()).name("query-span");
+                    Span span = tracer.newChild(batchSpan.context()).name("query-repetition");
                     span.tag("repetition", Integer.toString(i));
                     span.start();
 

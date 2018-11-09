@@ -4,8 +4,7 @@ queries: "queries.yml"
 concepts:
   - 100
   - 500
-  - 1000
-repeatsPerQuery: 5
+repeatsPerQuery: 3
 # TODO
 # concurrency:
 #   clients: 1

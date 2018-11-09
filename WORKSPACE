@@ -25,3 +25,5 @@ tools_dependencies()
 
 load("//dependencies/maven:dependencies.bzl", "maven_dependencies")
 maven_dependencies()
+
+

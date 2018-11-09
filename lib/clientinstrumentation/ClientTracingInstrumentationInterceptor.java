@@ -16,9 +16,8 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.lib.interceptor;
+package ai.grakn.benchmark.lib.clientinstrumentation;
 
-import ai.grakn.benchmark.lib.util.GrpcMessageConversion;
 import ai.grakn.rpc.proto.SessionProto;
 import brave.Span;
 import brave.Tracer;
@@ -35,21 +34,40 @@ import io.grpc.MethodDescriptor;
 import io.grpc.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import zipkin2.reporter.AsyncReporter;
+import zipkin2.reporter.urlconnection.URLConnectionSender;
 
 import static ai.grakn.benchmark.lib.util.HexCodec.toLowerHex;
 
 
 /**
- * Custom gRPC client-side message interceptor that utilizes contexts per message, and calculates
- * time taken on the server close to the network (in gRPC thread, rather than the user thread)
- * This should allow us to see, at some point, if we spend a lot of time in a queue somewhere
+ *
+ * A Grakn-specific client-side instrumentation that we can attach to client-java at the gRPC level, transparently
+ * handling things such as passing Tracing contexts to the server (using the metadata field in our proto messages)
+ * and recording the time taken for individual message requests as individual child spans
+ *
+ * Target functionality:
+ * 1) record round-trip time taken for individual messages/requests sent to the server
+ * 2) pass tracing context to the server to reconstruct & join the current in progress-trace
+ * recall that AsyncReporters report traces to Zipkin out of band (ie. async and independently)
+ *
  */
-public class GrpcClientInterceptor implements ClientInterceptor {
-    private static final Logger LOG = LoggerFactory.getLogger(GrpcClientInterceptor.class);
+public class ClientTracingInstrumentationInterceptor implements ClientInterceptor {
+    private static final Logger LOG = LoggerFactory.getLogger(ClientTracingInstrumentationInterceptor.class);
     private Tracer tracer;
 
+    public ClientTracingInstrumentationInterceptor(String tracingServiceName) {
 
-    public GrpcClientInterceptor(Tracing tracing) {
+        // create a Zipkin reporter for the client
+        AsyncReporter<zipkin2.Span> reporter = AsyncReporter.create(URLConnectionSender.create("http://localhost:9411/api/v2/spans"));
+
+        // create a global Tracing instance with reporting
+        Tracing tracing = Tracing.newBuilder()
+            .localServiceName(tracingServiceName)
+            .spanReporter(reporter)
+            .build();
+
+        // save this tracer
         this.tracer = tracing.tracer();
     }
 
@@ -60,6 +78,8 @@ public class GrpcClientInterceptor implements ClientInterceptor {
 
         // this is called once per gRPC endpoint call
         // the SimpleForwardingClientCall does the work on intercepting messages/responses
+        // creating child spans for each message that is sent across the network, even if use calls something
+        // transparent like `.execute()` rather than timing each retrieval off the stream manually
 
 
         /*
@@ -69,10 +89,8 @@ public class GrpcClientInterceptor implements ClientInterceptor {
          */
         return new ForwardingClientCall.SimpleForwardingClientCall<ReqT, RespT>(next.newCall(method, callOptions)) {
 
-
             Span currentClientSpan = tracer.nextSpan(); //initialize to pass compilation, then abandon it
-            int childMsgNumber = 0;
-
+            long childMsgNumber = 0; // for ordering at later point
 
             @Override
             public void start(Listener<RespT> responseListener, Metadata headers) {
@@ -102,26 +120,19 @@ public class GrpcClientInterceptor implements ClientInterceptor {
 
             @Override
             public void sendMessage(ReqT message) {
-                if (message instanceof SessionProto.Transaction.Req &&
-                        ((SessionProto.Transaction.Req) message).
-                                getMetadataOrDefault("traceIdLow", "").
-                                length() > 0) {
+                if (message instanceof SessionProto.Transaction.Req && tracer.currentSpan() != null) {
                     SessionProto.Transaction.Req txReq = (SessionProto.Transaction.Req) message;
-                    String traceIdHigh = txReq.getMetadataOrThrow("traceIdHigh");
-                    String traceIdLow = txReq.getMetadataOrThrow("traceIdLow");
-                    String spanId = txReq.getMetadataOrThrow("spanId");
-                    String parentId = txReq.getMetadataOrDefault("parentId", "");
 
                     String msgField= txReq.getReqCase().name();
 
-                    TraceContext reconstructedContext = GrpcMessageConversion.stringsToContext(traceIdHigh, traceIdLow, spanId, parentId);
-                    currentClientSpan = tracer.newChild(reconstructedContext).name("Client: " + msgField);
+                    currentClientSpan = tracer.newChild(tracer.currentSpan().context()).name("client: " + msgField);
                     currentClientSpan.start();
                     if (LOG.isDebugEnabled()) {
-                        currentClientSpan.tag("sendMessage", message.toString());
+                        // if verbose, attach message
+                        currentClientSpan.tag("gRPC message sent: ", message.toString());
                     }
 
-                    currentClientSpan.tag("childNumber", Integer.toString(childMsgNumber));
+                    currentClientSpan.tag("childNumber", Long.toString(childMsgNumber));
                     childMsgNumber++;
 
                     // --- re-pack the message with the child's data ---
@@ -139,6 +150,12 @@ public class GrpcClientInterceptor implements ClientInterceptor {
                     } else {
                         builder.putMetadata("parentId", toLowerHex(newParentId));
                     }
+
+                    // trace ID
+                    String traceIdLow = toLowerHex(childContext.traceId());
+                    String traceIdHigh = toLowerHex(childContext.traceIdHigh());
+                    builder.putMetadata("traceIdLow", traceIdLow);
+                    builder.putMetadata("traceIdHigh", traceIdHigh);
 
                     // Trace ID remains the same
                     message = (ReqT) builder.build(); // update the request

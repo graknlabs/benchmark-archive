@@ -1,7 +1,8 @@
+
 java_library(
     name = "client-java",
     exports = [
-        "//external:jar/ai/grakn/client-java"
+        "//dependencies/grakn_local:grakn-client-java"
     ],
     runtime_deps = [
         "//dependencies/maven/artifacts/ch/qos/logback:logback-classic",
@@ -34,7 +35,8 @@ java_library(
 java_library(
     name = "grakn-graql",
     exports = [
-        "//external:jar/ai/grakn/grakn-graql"
+#        "//external:jar/ai/grakn/grakn-graql"
+        "//dependencies/grakn_local:grakn-graql"
     ],
     runtime_deps = [
         "//dependencies/maven/artifacts/ch/qos/logback:logback-classic",
@@ -67,6 +69,24 @@ java_library(
         "//dependencies/maven/artifacts/org/scala-lang:scala-library",
         "//dependencies/maven/artifacts/org/scala-lang:scalap",
         "//dependencies/maven/artifacts/org/slf4j:slf4j-api"
+    ],
+    visibility = [
+        "//visibility:public"
+    ]
+)
+
+
+java_library(
+    name = "rpc",
+    exports = [
+        "//external:jar/ai/grakn/rpc"
+    ],
+    runtime_deps = [
+        "//dependencies/maven/artifacts/com/google/guava:guava",
+        "//dependencies/maven/artifacts/com/google/protobuf:protobuf-java",
+        "//dependencies/maven/artifacts/io/grpc:grpc-core",
+        "//dependencies/maven/artifacts/io/grpc:grpc-protobuf",
+        "//dependencies/maven/artifacts/io/grpc:grpc-stub"
     ],
     visibility = [
         "//visibility:public"
