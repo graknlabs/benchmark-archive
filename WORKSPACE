@@ -27,3 +27,9 @@ load("//dependencies/maven:dependencies.bzl", "maven_dependencies")
 maven_dependencies()
 
 
+########################################
+#     Load Deployment Dependencies     #
+########################################
+
+load("//dependencies/deployment/maven:dependencies.bzl", maven_dependencies_for_deployment = "maven_dependencies")
+maven_dependencies_for_deployment()
