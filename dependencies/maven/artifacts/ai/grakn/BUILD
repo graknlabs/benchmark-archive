@@ -83,7 +83,10 @@ java_library(
     ],
     runtime_deps = [
         "//dependencies/maven/artifacts/com/google/guava:guava",
+<<<<<<< HEAD
         "//dependencies/maven/artifacts/com/google/protobuf:protobuf-java",
+=======
+>>>>>>> 86f48e57957370c1614272a4a9cbe9545e32939d
         "//dependencies/maven/artifacts/io/grpc:grpc-core",
         "//dependencies/maven/artifacts/io/grpc:grpc-protobuf",
         "//dependencies/maven/artifacts/io/grpc:grpc-stub"

@@ -16,27 +16,19 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-
-load("//dependencies/deployment/maven:rules.bzl", "deploy_maven_jar")
-
 java_library(
-    name = "lib",
-    srcs = glob(["**/*.java"]),
+    name = "clientinstrumentation",
+    srcs = glob(["*.java"]),
     deps = [
-        "//dependencies/maven/artifacts/io/grpc:grpc-core",
+        "//lib/util:util",
         "//dependencies/maven/artifacts/ai/grakn:rpc",
         "//dependencies/maven/artifacts/com/google/protobuf:protobuf-java",
+        "//dependencies/maven/artifacts/io/grpc:grpc-core",
         "//dependencies/maven/artifacts/io/zipkin/brave:brave",
         "//dependencies/maven/artifacts/io/zipkin/zipkin2:zipkin",
-        "//dependencies/maven/artifacts/io/zipkin/reporter2:zipkin-reporter",
         "//dependencies/maven/artifacts/io/zipkin/reporter2:zipkin-sender-urlconnection",
-        "//dependencies/maven/artifacts/org/slf4j:slf4j-api",
+        "//dependencies/maven/artifacts/io/zipkin/reporter2:zipkin-reporter",
+        "//dependencies/maven/artifacts/org/slf4j:slf4j-api"
     ],
-    tags = ["maven_coordinates=ai.grakn:benchmark.lib:{pom_version}"],
-)
-
-deploy_maven_jar(
-    name = "deploy-maven-jar",
-    targets = [":lib"],
-    version_file = "//:VERSION",
+    visibility = ["//visibility:public"]
 )
