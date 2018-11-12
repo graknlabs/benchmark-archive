@@ -16,13 +16,14 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-#load("//dependencies/deployment/maven:rules.bzl", "deploy_maven_jar")
+
+
+load("//dependencies/deployment/maven:rules.bzl", "deploy_maven_jar")
 
 java_library(
     name = "lib",
     srcs = glob(["**/*.java"]),
     deps = [
-        "//lib/util:util",
         "//dependencies/maven/artifacts/io/grpc:grpc-core",
         "//dependencies/maven/artifacts/ai/grakn:rpc",
         "//dependencies/maven/artifacts/com/google/protobuf:protobuf-java",
@@ -31,11 +32,12 @@ java_library(
         "//dependencies/maven/artifacts/io/zipkin/reporter2:zipkin-reporter",
         "//dependencies/maven/artifacts/io/zipkin/reporter2:zipkin-sender-urlconnection",
         "//dependencies/maven/artifacts/org/slf4j:slf4j-api",
-    ]
+    ],
+    tags = ["maven_coordinates=ai.grakn:benchmark.lib:{pom_version}"],
 )
 
-#deploy_maven_jar(
-#    name = "deploy-maven-jar",
-#    targets = [":lib"],
-#    version_file = "//:VERSION",
-#)
+deploy_maven_jar(
+    name = "deploy-maven-jar",
+    targets = [":lib"],
+    version_file = "//:VERSION",
+)

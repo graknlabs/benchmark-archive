@@ -18,6 +18,12 @@
 
 workspace(name = "benchmark")
 
+git_repository(
+    name = "bazel_skylib",
+    remote = "https://github.com/bazelbuild/bazel-skylib.git",
+    tag = "0.1.0",  # change this to use a different release
+)
+
 # Load additional build tools, such bazel-deps and unused-deps
 load("//dependencies/tools:dependencies.bzl", "tools_dependencies")
 tools_dependencies()
