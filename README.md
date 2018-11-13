@@ -90,6 +90,17 @@ Then add a child span that propogates in thread-local storage
 ```
 
 
+Some packages in `grakn.core` are not currently depending on `benchmark.lib` which contains the instrumentation.
+In the `dependencies.yaml` make sure
+```
+ai.grakn:
+    benchmark.lib:
+        version: ...
+        lang: java
+```
+is present, and in the BUILD file this dependency is referenced.
+
+
 
 
 ## Kibana
