@@ -153,15 +153,3 @@ dependencies:
     protobuf-java:
       version: 3.5.1
       lang: java
-#
-#
-#
-#replacements:
-#  ai.grakn:
-#    client-java:
-#      lang: java
-#      target: "//dependencies/grakn_local:grakn-client-java"
-#
-#    grakn-graql:
-#      lang: java
-#      target: "//dependencies/grakn_local:grakn-graql"
