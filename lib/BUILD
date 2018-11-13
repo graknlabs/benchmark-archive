@@ -32,7 +32,7 @@ java_library(
         "//dependencies/maven/artifacts/io/zipkin/reporter2:zipkin-sender-urlconnection",
         "//dependencies/maven/artifacts/org/slf4j:slf4j-api",
     ],
-    tags = ["maven_coordinates=ai.grakn:benchmark.lib:{pom_version}"],
+    tags = ["maven_coordinates=grakn.benchmark:lib:{pom_version}"],
 )
 
 deploy_maven_jar(
