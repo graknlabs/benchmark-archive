@@ -18,6 +18,8 @@
 
 workspace(name = "benchmark")
 
+# TODO remove this when graknlabs/benchmark issue #58 is resolved
+# (this shouldn't have to be stated here?)
 git_repository(
     name = "bazel_skylib",
     remote = "https://github.com/bazelbuild/bazel-skylib.git",
