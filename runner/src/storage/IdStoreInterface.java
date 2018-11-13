@@ -16,9 +16,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.runner.storage;
+package grakn.benchmark.runner.storage;
 
-import ai.grakn.concept.ConceptId;
+import grakn.core.concept.ConceptId;
 
 import java.util.Date;
 

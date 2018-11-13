@@ -16,9 +16,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.runner.generator;
+package grakn.benchmark.runner.generator;
 
-import ai.grakn.graql.Query;
+import grakn.core.graql.Query;
 
 import java.util.stream.Stream;
 

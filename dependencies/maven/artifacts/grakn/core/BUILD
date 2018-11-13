@@ -1,29 +1,22 @@
-
 java_library(
-    name = "client-java",
+    name = "client",
     exports = [
-        "//dependencies/grakn_local:grakn-client-java"
+        "//external:jar/grakn/core/client"
     ],
     runtime_deps = [
-        "//dependencies/maven/artifacts/ch/qos/logback:logback-classic",
-        "//dependencies/maven/artifacts/ch/qos/logback:logback-core",
         "//dependencies/maven/artifacts/com/google/auto/value:auto-value",
         "//dependencies/maven/artifacts/com/google/code/findbugs:jsr305",
         "//dependencies/maven/artifacts/com/google/guava:guava",
-        "//dependencies/maven/artifacts/com/google/protobuf:protobuf-java",
         "//dependencies/maven/artifacts/io/grpc:grpc-core",
-        "//dependencies/maven/artifacts/io/grpc:grpc-netty",
-        "//dependencies/maven/artifacts/io/grpc:grpc-protobuf",
         "//dependencies/maven/artifacts/io/grpc:grpc-stub",
-        "//dependencies/maven/artifacts/io/netty:netty-all",
         "//dependencies/maven/artifacts/io/zipkin/brave:brave",
         "//dependencies/maven/artifacts/io/zipkin/brave:brave-instrumentation-grpc",
         "//dependencies/maven/artifacts/io/zipkin/reporter2:zipkin-reporter",
         "//dependencies/maven/artifacts/io/zipkin/reporter2:zipkin-sender-urlconnection",
         "//dependencies/maven/artifacts/io/zipkin/zipkin2:zipkin",
-        "//dependencies/maven/artifacts/net/jodah:failsafe",
         "//dependencies/maven/artifacts/org/slf4j:slf4j-api",
-        ":grakn-graql"
+        ":grakn-graql",
+        ":protocol"
     ],
     visibility = [
         "//visibility:public"
@@ -35,20 +28,15 @@ java_library(
 java_library(
     name = "grakn-graql",
     exports = [
-#        "//external:jar/ai/grakn/grakn-graql"
-        "//dependencies/grakn_local:grakn-graql"
+        "//external:jar/grakn/core/grakn-graql"
     ],
     runtime_deps = [
-        "//dependencies/maven/artifacts/ch/qos/logback:logback-classic",
-        "//dependencies/maven/artifacts/ch/qos/logback:logback-core",
         "//dependencies/maven/artifacts/com/datastax/cassandra:cassandra-driver-core",
         "//dependencies/maven/artifacts/com/google/auto/value:auto-value",
         "//dependencies/maven/artifacts/com/google/code/findbugs:annotations",
         "//dependencies/maven/artifacts/com/google/guava:guava",
         "//dependencies/maven/artifacts/commons-configuration:commons-configuration",
         "//dependencies/maven/artifacts/commons-lang:commons-lang",
-        "//dependencies/maven/artifacts/io/netty:netty-tcnative-boringssl-static",
-        "//dependencies/maven/artifacts/io/zipkin/brave:brave",
         "//dependencies/maven/artifacts/org/antlr:antlr4-runtime",
         "//dependencies/maven/artifacts/org/apache/cassandra:cassandra-all",
         "//dependencies/maven/artifacts/org/apache/cassandra:cassandra-thrift",
@@ -76,10 +64,11 @@ java_library(
 )
 
 
+
 java_library(
-    name = "rpc",
+    name = "protocol",
     exports = [
-        "//external:jar/ai/grakn/rpc"
+        "//external:jar/grakn/core/protocol"
     ],
     runtime_deps = [
         "//dependencies/maven/artifacts/com/google/guava:guava",
@@ -87,6 +76,24 @@ java_library(
         "//dependencies/maven/artifacts/io/grpc:grpc-core",
         "//dependencies/maven/artifacts/io/grpc:grpc-protobuf",
         "//dependencies/maven/artifacts/io/grpc:grpc-stub"
+    ],
+    visibility = [
+        "//visibility:public"
+    ]
+)
+
+
+
+java_library(
+    name = "util",
+    exports = [
+        "//external:jar/grakn/core/util"
+    ],
+    runtime_deps = [
+        "//dependencies/maven/artifacts/com/google/auto/value:auto-value",
+        "//dependencies/maven/artifacts/com/google/code/findbugs:annotations",
+        "//dependencies/maven/artifacts/com/google/guava:guava",
+        "//dependencies/maven/artifacts/org/slf4j:slf4j-api"
     ],
     visibility = [
         "//visibility:public"

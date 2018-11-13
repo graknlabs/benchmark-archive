@@ -21,8 +21,9 @@ java_library(
     name = "benchmark-runner",
     srcs = glob(["src/**/*.java"]),
     deps = [
-        "//dependencies/maven/artifacts/ai/grakn:client-java",
-        "//dependencies/maven/artifacts/ai/grakn:grakn-graql",
+        "//dependencies/maven/artifacts/grakn/core:client",
+        "//dependencies/maven/artifacts/grakn/core:grakn-graql",
+        "//dependencies/maven/artifacts/grakn/core:util",
 
         "//dependencies/maven/artifacts/com/fasterxml/jackson/core:jackson-core",
         "//dependencies/maven/artifacts/com/fasterxml/jackson/core:jackson-databind",
@@ -53,7 +54,7 @@ java_library(
 
 java_binary(
     name = "benchmark-runner-binary",
-    main_class = "ai.grakn.benchmark.runner.BenchmarkRunner",
+    main_class = "grakn.benchmark.runner.BenchmarkRunner",
     runtime_deps = ["//runner:benchmark-runner"],
     visibility = ["//visibility:public"]
 )
@@ -62,23 +63,23 @@ java_binary(
 
 java_test(
     name = "ignite-conceptid-store-test",
-    test_class = "ai.grakn.benchmark.runner.storage.IgniteConceptIdStoreTest",
+    test_class = "grakn.benchmark.runner.storage.IgniteConceptIdStoreTest",
     srcs = ["test/storage/IgniteConceptIdStoreTest.java"],
 
     deps = [
         ":benchmark-runner",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
-        "//dependencies/maven/artifacts/ai/grakn:grakn-graql",
+        "//dependencies/maven/artifacts/grakn/core:grakn-graql",
     ]
 )
 
 java_test(
     name = "insertion-analysis-test",
-    test_class = "ai.grakn.benchmark.runner.storage.InsertionAnalysisTest",
+    test_class = "grakn.benchmark.runner.storage.InsertionAnalysisTest",
     srcs = ["test/storage/InsertionAnalysisTest.java"],
     deps = [
         ":benchmark-runner",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
-        "//dependencies/maven/artifacts/ai/grakn:grakn-graql",
+        "//dependencies/maven/artifacts/grakn/core:grakn-graql",
     ]
 )

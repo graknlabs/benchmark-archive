@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.runner.sharedconfig;
+package grakn.benchmark.runner.sharedconfig;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

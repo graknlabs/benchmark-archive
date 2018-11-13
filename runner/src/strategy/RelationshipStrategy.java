@@ -16,10 +16,10 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.runner.strategy;
+package grakn.benchmark.runner.strategy;
 
-import ai.grakn.concept.RelationshipType;
-import ai.grakn.benchmark.runner.pdf.PDF;
+import grakn.core.concept.RelationshipType;
+import grakn.benchmark.runner.pdf.PDF;
 
 import java.util.Set;
 

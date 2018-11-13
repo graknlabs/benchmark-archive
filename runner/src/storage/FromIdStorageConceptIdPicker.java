@@ -1,7 +1,7 @@
-package ai.grakn.benchmark.runner.storage;
+package grakn.benchmark.runner.storage;
 
-import ai.grakn.client.Grakn;
-import ai.grakn.concept.ConceptId;
+import grakn.core.client.Grakn;
+import grakn.core.concept.ConceptId;
 
 import java.util.Random;
 import java.util.stream.Stream;

@@ -16,15 +16,15 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.runner.storage;
+package grakn.benchmark.runner.storage;
 
-import ai.grakn.concept.Concept;
-import ai.grakn.graql.InsertQuery;
-import ai.grakn.graql.Match;
-import ai.grakn.graql.Var;
-import ai.grakn.graql.admin.VarPatternAdmin;
-import ai.grakn.graql.answer.ConceptMap;
-import ai.grakn.graql.internal.pattern.property.IdProperty;
+import grakn.core.concept.Concept;
+import grakn.core.graql.InsertQuery;
+import grakn.core.graql.Match;
+import grakn.core.graql.Var;
+import grakn.core.graql.admin.VarPatternAdmin;
+import grakn.core.graql.answer.ConceptMap;
+import grakn.core.graql.internal.pattern.property.IdProperty;
 
 import java.util.HashSet;
 import java.util.Iterator;

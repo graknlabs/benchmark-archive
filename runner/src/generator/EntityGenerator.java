@@ -16,16 +16,16 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.runner.generator;
+package grakn.benchmark.runner.generator;
 
-import ai.grakn.client.Grakn;
-import ai.grakn.graql.Query;
-import ai.grakn.graql.QueryBuilder;
-import ai.grakn.benchmark.runner.strategy.EntityStrategy;
+import grakn.core.client.Grakn;
+import grakn.core.graql.Query;
+import grakn.core.graql.QueryBuilder;
+import grakn.benchmark.runner.strategy.EntityStrategy;
 
 import java.util.stream.Stream;
 
-import static ai.grakn.graql.internal.pattern.Patterns.var;
+import static grakn.core.graql.internal.pattern.Patterns.var;
 
 /**
  *

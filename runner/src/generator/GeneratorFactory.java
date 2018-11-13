@@ -16,13 +16,13 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.runner.generator;
+package grakn.benchmark.runner.generator;
 
-import ai.grakn.client.Grakn;
-import ai.grakn.benchmark.runner.strategy.AttributeStrategy;
-import ai.grakn.benchmark.runner.strategy.EntityStrategy;
-import ai.grakn.benchmark.runner.strategy.RelationshipStrategy;
-import ai.grakn.benchmark.runner.strategy.TypeStrategyInterface;
+import grakn.core.client.Grakn;
+import grakn.benchmark.runner.strategy.AttributeStrategy;
+import grakn.benchmark.runner.strategy.EntityStrategy;
+import grakn.benchmark.runner.strategy.RelationshipStrategy;
+import grakn.benchmark.runner.strategy.TypeStrategyInterface;
 
 /**
  *

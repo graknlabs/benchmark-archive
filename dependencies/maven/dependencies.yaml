@@ -32,21 +32,23 @@ options:
 
 
 dependencies:
-
   # -- Grakn --
-  ai.grakn:
-    client-java:
-      version: "1.5.0-3b59a34f4f6c193e81ffb03280acc0cea42c29da-SNAPSHOT"
+  grakn.core:
+    client:
+      version: "1.5.0-72f664ecd4354197bf035ef74c0c277e6893bb05-SNAPSHOT"
       lang: java
       exclude:
         - "org.slf4j:slf4j-log4j12"
     grakn-graql:
-      version: "1.5.0-3b59a34f4f6c193e81ffb03280acc0cea42c29da-SNAPSHOT"
+      version: "1.5.0-72f664ecd4354197bf035ef74c0c277e6893bb05-SNAPSHOT"
       lang: java
       exclude:
         - "org.slf4j:slf4j-log4j12"
-    rpc:
-      version: "1.5.0-SNAPSHOT"
+    protocol:
+      version: "1.5.0-72f664ecd4354197bf035ef74c0c277e6893bb05-SNAPSHOT"
+      lang: java
+    util:
+      version: "1.5.0-72f664ecd4354197bf035ef74c0c277e6893bb05-SNAPSHOT"
       lang: java
 
 
@@ -151,15 +153,15 @@ dependencies:
     protobuf-java:
       version: 3.5.1
       lang: java
-
-
-
-replacements:
-  ai.grakn:
-    client-java:
-      lang: java
-      target: "//dependencies/grakn_local:grakn-client-java"
-
-    grakn-graql:
-      lang: java
-      target: "//dependencies/grakn_local:grakn-graql"
+#
+#
+#
+#replacements:
+#  ai.grakn:
+#    client-java:
+#      lang: java
+#      target: "//dependencies/grakn_local:grakn-client-java"
+#
+#    grakn-graql:
+#      lang: java
+#      target: "//dependencies/grakn_local:grakn-graql"

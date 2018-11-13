@@ -1,7 +1,7 @@
-package ai.grakn.benchmark.runner.strategy;
+package grakn.benchmark.runner.strategy;
 
-import ai.grakn.benchmark.runner.pdf.PDF;
-import ai.grakn.benchmark.runner.pick.StreamInterface;
+import grakn.benchmark.runner.pdf.PDF;
+import grakn.benchmark.runner.pick.StreamInterface;
 
 import java.util.Iterator;
 import java.util.Random;

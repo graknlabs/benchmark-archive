@@ -16,27 +16,26 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.runner.storage;
+package grakn.benchmark.runner.storage;
 
-import ai.grakn.GraknTxType;
-import ai.grakn.client.Grakn;
-import ai.grakn.concept.Label;
-import ai.grakn.concept.Role;
-import ai.grakn.concept.SchemaConcept;
-import ai.grakn.concept.Type;
-import ai.grakn.graql.Graql;
-import ai.grakn.graql.Match;
-import ai.grakn.graql.Query;
-import ai.grakn.graql.QueryBuilder;
-import ai.grakn.graql.Var;
-import ai.grakn.graql.answer.Answer;
-import ai.grakn.graql.answer.ConceptMap;
-import ai.grakn.util.Schema;
+import grakn.core.GraknTxType;
+import grakn.core.client.Grakn;
+import grakn.core.concept.Label;
+import grakn.core.concept.Role;
+import grakn.core.concept.SchemaConcept;
+import grakn.core.concept.Type;
+import grakn.core.graql.Graql;
+import grakn.core.graql.Match;
+import grakn.core.graql.Query;
+import grakn.core.graql.QueryBuilder;
+import grakn.core.graql.Var;
+import grakn.core.graql.answer.ConceptMap;
+import grakn.core.graql.internal.Schema;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ai.grakn.graql.internal.pattern.Patterns.var;
+import static grakn.core.graql.internal.pattern.Patterns.var;
 
 /**
  *

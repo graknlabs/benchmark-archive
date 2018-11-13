@@ -16,11 +16,11 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.runner.storage;
+package grakn.benchmark.runner.storage;
 
 
-import ai.grakn.client.Grakn;
-import ai.grakn.benchmark.runner.pick.Picker;
+import grakn.core.client.Grakn;
+import grakn.benchmark.runner.pick.Picker;
 import java.util.Random;
 
 /**

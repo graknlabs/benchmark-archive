@@ -16,10 +16,10 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.runner.executionconfig;
+package grakn.benchmark.runner.executionconfig;
 
 
-import ai.grakn.Keyspace;
+import grakn.core.Keyspace;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 

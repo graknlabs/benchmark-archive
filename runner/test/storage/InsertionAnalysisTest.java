@@ -16,15 +16,15 @@
  * along with Grakn. If not, see <http://www.gnu.org/licenses/agpl.txt>.
  */
 
-package ai.grakn.benchmark.runner.storage;
+package grakn.benchmark.runner.storage;
 
-import ai.grakn.concept.Concept;
-import ai.grakn.concept.ConceptId;
-import ai.grakn.concept.Thing;
-import ai.grakn.graql.Graql;
-import ai.grakn.graql.InsertQuery;
-import ai.grakn.graql.Var;
-import ai.grakn.graql.answer.ConceptMap;
+import grakn.core.concept.Concept;
+import grakn.core.concept.ConceptId;
+import grakn.core.concept.Thing;
+import grakn.core.graql.Graql;
+import grakn.core.graql.InsertQuery;
+import grakn.core.graql.Var;
+import grakn.core.graql.answer.ConceptMap;
 import org.junit.Test;
 
 import java.util.ArrayList;

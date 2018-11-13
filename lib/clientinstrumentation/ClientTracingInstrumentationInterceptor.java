@@ -16,9 +16,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.lib.clientinstrumentation;
+package grakn.benchmark.lib.clientinstrumentation;
 
-import ai.grakn.rpc.proto.SessionProto;
+import grakn.core.protocol.SessionProto;
 import brave.Span;
 import brave.Tracer;
 import brave.Tracing;
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 import zipkin2.reporter.AsyncReporter;
 import zipkin2.reporter.urlconnection.URLConnectionSender;
 
-import static ai.grakn.benchmark.lib.util.HexCodec.toLowerHex;
+import static grakn.benchmark.lib.util.HexCodec.toLowerHex;
 
 
 /**

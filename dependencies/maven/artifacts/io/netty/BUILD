@@ -53,52 +53,6 @@ java_library(
 
 
 java_library(
-    name = "netty-codec-http",
-    exports = [
-        "//external:jar/io/netty/netty-codec-http"
-    ],
-    runtime_deps = [
-        ":netty-codec"
-    ],
-    visibility = [
-        "//dependencies/maven/artifacts:__subpackages__"
-    ]
-)
-
-
-
-java_library(
-    name = "netty-codec-http2",
-    exports = [
-        "//external:jar/io/netty/netty-codec-http2"
-    ],
-    runtime_deps = [
-        ":netty-codec-http",
-        ":netty-handler"
-    ],
-    visibility = [
-        "//dependencies/maven/artifacts:__subpackages__"
-    ]
-)
-
-
-
-java_library(
-    name = "netty-codec-socks",
-    exports = [
-        "//external:jar/io/netty/netty-codec-socks"
-    ],
-    runtime_deps = [
-        ":netty-codec"
-    ],
-    visibility = [
-        "//dependencies/maven/artifacts:__subpackages__"
-    ]
-)
-
-
-
-java_library(
     name = "netty-common",
     exports = [
         "//external:jar/io/netty/netty-common"
@@ -128,57 +82,12 @@ java_library(
 
 
 java_library(
-    name = "netty-handler-proxy",
-    exports = [
-        "//external:jar/io/netty/netty-handler-proxy"
-    ],
-    runtime_deps = [
-        ":netty-codec-http",
-        ":netty-codec-socks",
-        ":netty-transport"
-    ],
-    visibility = [
-        "//dependencies/maven/artifacts:__subpackages__"
-    ]
-)
-
-
-
-java_library(
-    name = "netty-resolver",
-    exports = [
-        "//external:jar/io/netty/netty-resolver"
-    ],
-    runtime_deps = [
-        ":netty-common"
-    ],
-    visibility = [
-        "//dependencies/maven/artifacts:__subpackages__"
-    ]
-)
-
-
-
-java_library(
-    name = "netty-tcnative-boringssl-static",
-    exports = [
-        "//external:jar/io/netty/netty-tcnative-boringssl-static"
-    ],
-    visibility = [
-        "//dependencies/maven/artifacts:__subpackages__"
-    ]
-)
-
-
-
-java_library(
     name = "netty-transport",
     exports = [
         "//external:jar/io/netty/netty-transport"
     ],
     runtime_deps = [
-        ":netty-buffer",
-        ":netty-resolver"
+        ":netty-buffer"
     ],
     visibility = [
         "//dependencies/maven/artifacts:__subpackages__"

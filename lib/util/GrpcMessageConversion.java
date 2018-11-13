@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.lib.util;
+package grakn.benchmark.lib.util;
 
 import brave.propagation.TraceContext;
 

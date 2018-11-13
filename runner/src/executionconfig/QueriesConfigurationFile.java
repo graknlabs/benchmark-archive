@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.runner.executionconfig;
+package grakn.benchmark.runner.executionconfig;
 
 import java.util.List;
 

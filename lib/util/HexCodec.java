@@ -1,4 +1,4 @@
-package ai.grakn.benchmark.lib.util;
+package grakn.benchmark.lib.util;
 
 /**
  * Various utils borrowed from Zipkin and Brave utility methods

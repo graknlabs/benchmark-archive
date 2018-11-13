@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.runner.strategy;
+package grakn.benchmark.runner.strategy;
 
 import java.util.NavigableMap;
 import java.util.Random;

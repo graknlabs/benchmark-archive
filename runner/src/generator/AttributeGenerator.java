@@ -16,18 +16,18 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.runner.generator;
+package grakn.benchmark.runner.generator;
 
-import ai.grakn.client.Grakn;
-import ai.grakn.concept.ConceptId;
-import ai.grakn.graql.Graql;
-import ai.grakn.graql.Query;
-import ai.grakn.graql.QueryBuilder;
-import ai.grakn.graql.Var;
-import ai.grakn.benchmark.runner.pdf.ConstantPDF;
-import ai.grakn.benchmark.runner.pick.StreamProviderInterface;
-import ai.grakn.benchmark.runner.strategy.AttributeOwnerTypeStrategy;
-import ai.grakn.benchmark.runner.strategy.AttributeStrategy;
+import grakn.core.client.Grakn;
+import grakn.core.concept.ConceptId;
+import grakn.core.graql.Graql;
+import grakn.core.graql.Query;
+import grakn.core.graql.QueryBuilder;
+import grakn.core.graql.Var;
+import grakn.benchmark.runner.pdf.ConstantPDF;
+import grakn.benchmark.runner.pick.StreamProviderInterface;
+import grakn.benchmark.runner.strategy.AttributeOwnerTypeStrategy;
+import grakn.benchmark.runner.strategy.AttributeStrategy;
 
 import java.util.Objects;
 import java.util.Optional;

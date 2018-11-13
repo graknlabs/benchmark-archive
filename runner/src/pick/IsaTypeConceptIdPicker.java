@@ -16,14 +16,14 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.runner.pick;
+package grakn.benchmark.runner.pick;
 
-import ai.grakn.client.Grakn;
-import ai.grakn.benchmark.runner.storage.ConceptTypeCountStore;
+import grakn.core.client.Grakn;
+import grakn.benchmark.runner.storage.ConceptTypeCountStore;
 
 import java.util.Random;
 
-import static ai.grakn.graql.Graql.var;
+import static grakn.core.graql.Graql.var;
 
 /**
  *

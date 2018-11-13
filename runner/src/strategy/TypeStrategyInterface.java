@@ -16,10 +16,10 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.runner.strategy;
+package grakn.benchmark.runner.strategy;
 
-import ai.grakn.concept.Type;
-import ai.grakn.benchmark.runner.pdf.PDF;
+import grakn.core.concept.Type;
+import grakn.benchmark.runner.pdf.PDF;
 
 /**
  * @param <T>

@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.runner.pdf;
+package grakn.benchmark.runner.pdf;
 
 
 

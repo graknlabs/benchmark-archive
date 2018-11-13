@@ -16,25 +16,25 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.runner.generator;
+package grakn.benchmark.runner.generator;
 
-import ai.grakn.client.Grakn;
-import ai.grakn.concept.ConceptId;
-import ai.grakn.graql.Pattern;
-import ai.grakn.graql.Query;
-import ai.grakn.graql.QueryBuilder;
-import ai.grakn.graql.VarPattern;
-import ai.grakn.graql.Var;
-import ai.grakn.graql.Graql;
-import ai.grakn.benchmark.runner.strategy.RelationshipStrategy;
-import ai.grakn.benchmark.runner.strategy.RolePlayerTypeStrategy;
+import grakn.core.client.Grakn;
+import grakn.core.concept.ConceptId;
+import grakn.core.graql.Pattern;
+import grakn.core.graql.Query;
+import grakn.core.graql.QueryBuilder;
+import grakn.core.graql.VarPattern;
+import grakn.core.graql.Var;
+import grakn.core.graql.Graql;
+import grakn.benchmark.runner.strategy.RelationshipStrategy;
+import grakn.benchmark.runner.strategy.RolePlayerTypeStrategy;
 
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static ai.grakn.graql.internal.pattern.Patterns.var;
+import static grakn.core.graql.internal.pattern.Patterns.var;
 
 /**
  *

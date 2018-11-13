@@ -1,4 +1,4 @@
-package ai.grakn.benchmark.runner.pdf;
+package grakn.benchmark.runner.pdf;
 
 import org.apache.commons.math3.distribution.ZipfDistribution;
 import org.apache.commons.math3.random.RandomGenerator;

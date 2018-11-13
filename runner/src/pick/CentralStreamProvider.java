@@ -16,10 +16,10 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.runner.pick;
+package grakn.benchmark.runner.pick;
 
-import ai.grakn.client.Grakn;
-import ai.grakn.benchmark.runner.pdf.PDF;
+import grakn.core.client.Grakn;
+import grakn.benchmark.runner.pdf.PDF;
 
 import java.util.ArrayList;
 import java.util.stream.Stream;

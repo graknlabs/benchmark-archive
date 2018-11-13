@@ -16,21 +16,21 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.runner.pick;
+package grakn.benchmark.runner.pick;
 
-import ai.grakn.client.Grakn;
-import ai.grakn.concept.ConceptId;
-import ai.grakn.graql.Pattern;
-import ai.grakn.graql.QueryBuilder;
-import ai.grakn.graql.Var;
-import ai.grakn.graql.answer.ConceptMap;
-import ai.grakn.graql.answer.Value;
+import grakn.core.client.Grakn;
+import grakn.core.concept.ConceptId;
+import grakn.core.graql.Pattern;
+import grakn.core.graql.QueryBuilder;
+import grakn.core.graql.Var;
+import grakn.core.graql.answer.ConceptMap;
+import grakn.core.graql.answer.Value;
 
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
 
-import static ai.grakn.graql.Graql.count;
+import static grakn.core.graql.Graql.count;
 
 /**
  *

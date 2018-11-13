@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.runner.pick;
+package grakn.benchmark.runner.pick;
 
 import java.util.HashSet;
 import java.util.Random;

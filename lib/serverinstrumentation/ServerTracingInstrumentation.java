@@ -1,6 +1,6 @@
-package ai.grakn.benchmark.lib.serverinstrumentation;
+package grakn.benchmark.lib.serverinstrumentation;
 
-import ai.grakn.benchmark.lib.util.GrpcMessageConversion;
+import grakn.benchmark.lib.util.GrpcMessageConversion;
 import brave.ScopedSpan;
 import brave.Tracer;
 import brave.Tracing;
@@ -9,7 +9,7 @@ import brave.Span;
 import zipkin2.reporter.AsyncReporter;
 import zipkin2.reporter.urlconnection.URLConnectionSender;
 
-import ai.grakn.rpc.proto.SessionProto;
+import grakn.core.protocol.SessionProto;
 
 
 /**

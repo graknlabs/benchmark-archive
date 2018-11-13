@@ -16,16 +16,16 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package ai.grakn.benchmark.runner.storage;
+package grakn.benchmark.runner.storage;
 
-import ai.grakn.concept.Attribute;
-import ai.grakn.concept.AttributeType;
-import ai.grakn.concept.Concept;
-import ai.grakn.concept.ConceptId;
-import ai.grakn.concept.EntityType;
-import ai.grakn.concept.Label;
-import ai.grakn.concept.RelationshipType;
-import ai.grakn.concept.SchemaConcept;
+import grakn.core.concept.Attribute;
+import grakn.core.concept.AttributeType;
+import grakn.core.concept.Concept;
+import grakn.core.concept.ConceptId;
+import grakn.core.concept.EntityType;
+import grakn.core.concept.Label;
+import grakn.core.concept.RelationshipType;
+import grakn.core.concept.SchemaConcept;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -40,12 +40,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static ai.grakn.concept.AttributeType.DataType.BOOLEAN;
-import static ai.grakn.concept.AttributeType.DataType.DATE;
-import static ai.grakn.concept.AttributeType.DataType.DOUBLE;
-import static ai.grakn.concept.AttributeType.DataType.FLOAT;
-import static ai.grakn.concept.AttributeType.DataType.LONG;
-import static ai.grakn.concept.AttributeType.DataType.STRING;
+import static grakn.core.concept.AttributeType.DataType.BOOLEAN;
+import static grakn.core.concept.AttributeType.DataType.DATE;
+import static grakn.core.concept.AttributeType.DataType.DOUBLE;
+import static grakn.core.concept.AttributeType.DataType.FLOAT;
+import static grakn.core.concept.AttributeType.DataType.LONG;
+import static grakn.core.concept.AttributeType.DataType.STRING;
 
 /**
  * Stores identifiers for all concepts in a Grakn

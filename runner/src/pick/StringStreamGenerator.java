@@ -1,8 +1,7 @@
-package ai.grakn.benchmark.runner.pick;
+package grakn.benchmark.runner.pick;
 
 
-
-import ai.grakn.client.Grakn;
+import grakn.core.client.Grakn;
 
 import java.util.Locale;
 import java.util.Objects;

@@ -1,6 +1,6 @@
-package ai.grakn.benchmark.runner.storage;
+package grakn.benchmark.runner.storage;
 
-import ai.grakn.client.Grakn;
+import grakn.core.client.Grakn;
 
 import java.util.Date;
 import java.util.Random;

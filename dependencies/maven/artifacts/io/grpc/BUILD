@@ -33,23 +33,6 @@ java_library(
 
 
 java_library(
-    name = "grpc-netty",
-    exports = [
-        "//external:jar/io/grpc/grpc-netty"
-    ],
-    runtime_deps = [
-        "//dependencies/maven/artifacts/io/netty:netty-codec-http2",
-        "//dependencies/maven/artifacts/io/netty:netty-handler-proxy",
-        ":grpc-core"
-    ],
-    visibility = [
-        "//dependencies/maven/artifacts:__subpackages__"
-    ]
-)
-
-
-
-java_library(
     name = "grpc-protobuf",
     exports = [
         "//external:jar/io/grpc/grpc-protobuf"

@@ -23,8 +23,8 @@ java_library(
     name = "lib",
     srcs = glob(["**/*.java"]),
     deps = [
+        "//dependencies/maven/artifacts/grakn/core:protocol",
         "//dependencies/maven/artifacts/io/grpc:grpc-core",
-        "//dependencies/maven/artifacts/ai/grakn:rpc",
         "//dependencies/maven/artifacts/com/google/protobuf:protobuf-java",
         "//dependencies/maven/artifacts/io/zipkin/brave:brave",
         "//dependencies/maven/artifacts/io/zipkin/zipkin2:zipkin",

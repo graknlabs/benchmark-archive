@@ -1,6 +1,6 @@
-package ai.grakn.benchmark.runner.specificstrategies;
+package grakn.benchmark.runner.specificstrategies;
 
-import ai.grakn.benchmark.runner.storage.ConceptStore;
+import grakn.benchmark.runner.storage.ConceptStore;
 
 import java.util.Random;
 
