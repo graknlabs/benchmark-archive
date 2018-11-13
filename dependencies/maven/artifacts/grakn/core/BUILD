@@ -16,7 +16,8 @@ java_library(
         "//dependencies/maven/artifacts/io/zipkin/zipkin2:zipkin",
         "//dependencies/maven/artifacts/org/slf4j:slf4j-api",
         ":grakn-graql",
-        ":protocol"
+        ":protocol",
+        ":util"
     ],
     visibility = [
         "//visibility:public"
@@ -56,7 +57,8 @@ java_library(
         "//dependencies/maven/artifacts/org/janusgraph:janusgraph-hadoop",
         "//dependencies/maven/artifacts/org/scala-lang:scala-library",
         "//dependencies/maven/artifacts/org/scala-lang:scalap",
-        "//dependencies/maven/artifacts/org/slf4j:slf4j-api"
+        "//dependencies/maven/artifacts/org/slf4j:slf4j-api",
+        ":util"
     ],
     visibility = [
         "//visibility:public"

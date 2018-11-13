@@ -23,8 +23,6 @@ options:
   - id: mavencentral
     type: default
     url: https://repo.maven.apache.org/maven2/
-  - id: mavengraknaitest
-    url: http://maven.grakn.ai/nexus/content/repositories/bazel-test-snapshot/
   - id: mavengraknai
     url: http://maven.grakn.ai/nexus/content/repositories/snapshots/
   strictVisibility: true
@@ -37,17 +35,17 @@ dependencies:
   # -- Grakn --
   grakn.core:
     client:
-      version: "1.5.0-72f664ecd4354197bf035ef74c0c277e6893bb05-SNAPSHOT"
+      version: "1.5.0-48e57e1c848a5a2d61dc8d3e1b4e6a8d2a3d8f22-SNAPSHOT"
       lang: java
       exclude:
         - "org.slf4j:slf4j-log4j12"
     grakn-graql:
-      version: "1.5.0-72f664ecd4354197bf035ef74c0c277e6893bb05-SNAPSHOT"
+      version: "1.5.0-48e57e1c848a5a2d61dc8d3e1b4e6a8d2a3d8f22-SNAPSHOT"
       lang: java
       exclude:
         - "org.slf4j:slf4j-log4j12"
     protocol:
-      version: "1.5.0-72f664ecd4354197bf035ef74c0c277e6893bb05-SNAPSHOT"
+      version: "1.5.0-48e57e1c848a5a2d61dc8d3e1b4e6a8d2a3d8f22-SNAPSHOT"
       lang: java
     util:
       version: "1.5.0-48e57e1c848a5a2d61dc8d3e1b4e6a8d2a3d8f22-SNAPSHOT"
