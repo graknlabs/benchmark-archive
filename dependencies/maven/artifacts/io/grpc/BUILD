@@ -33,6 +33,21 @@ java_library(
 
 
 java_library(
+    name = "grpc-netty-shaded",
+    exports = [
+        "//external:jar/io/grpc/grpc-netty-shaded"
+    ],
+    runtime_deps = [
+        ":grpc-core"
+    ],
+    visibility = [
+        "//visibility:public"
+    ]
+)
+
+
+
+java_library(
     name = "grpc-protobuf",
     exports = [
         "//external:jar/io/grpc/grpc-protobuf"
