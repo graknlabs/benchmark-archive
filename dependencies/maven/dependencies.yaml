@@ -141,12 +141,13 @@ dependencies:
       lang: java
 
 
-
-  # ----- For lib/ -----
   io.grpc:
    grpc-core:
       version: "1.15.0"
       lang: java
+   grpc-netty-shaded:
+     version: "1.15.0"
+     lang: java
 
 
   com.google.protobuf:

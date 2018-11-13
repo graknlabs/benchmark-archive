@@ -46,6 +46,9 @@ java_library(
         "//dependencies/maven/artifacts/junit:junit",
         "//dependencies/maven/artifacts/org/mockito:mockito-core"
     ],
+    runtime_deps = [
+        "//dependencies/maven/artifacts/io/grpc:grpc-netty-shaded"
+    ],
 
     resources = [
         "//runner:src/logback.xml"
