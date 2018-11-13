@@ -7,9 +7,8 @@ https://www.elastic.co/guide/en/elasticsearch/reference/6.3/zip-targz.html
 
 In the elasticsearch installation directory, do:
 ```
-./bin/elasticsearch -E path.logs=[GRAKN_PATH]/grakn-benchmark/data/logs/elasticsearch/ -E path.data=[GRAKN_PATH]/grakn-benchmark/data/data/elasticsearch/
+./bin/elasticsearch -E path.logs=[REPOSITORY_PATH]/data/logs/elasticsearch/ -E path.data=[REPOSITORY_PATH]/data/data/elasticsearch/
 ```
-Here, `[GRAKN_PATH]` is the path to your `grakn` directory.
 
 ## Zipkin
 https://github.com/openzipkin/zipkin/blob/master/zipkin-server/README.md
@@ -32,20 +31,20 @@ Check elasticsearch is running by receiving a response from http://localhost:920
 
 ## Plotly Dashboard
 
-We have a dashboard that reads ElasticSearch and creates graphs via Dash and Plotly.
+The visualisation dashboard reads ElasticSearch and creates graphs via Dash and Plotly.
 
-To get up and running, you need pipenv and python >=3.6.0
+Getting it up and running requires pipenv and python >=3.6.0
 
 1. `pipenv install` (installs package dependencies for the dashboard)
-2. `pipenv shell` (you may need to modify the `python_version = "3.6"` if the python version you have is newer/not quite the same. Alternatively manager your python versions with `pyenv`.
-3. in the `dashboard/` directory, run `python dashboard.py`
+2. `pipenv shell` (may need to modify the `python_version = "3.6"` if the python version is newer/not quite the same. Alternatively manage the python version with `pyenv`.
+3. In the `dashboard/` directory, run `python dashboard.py`
 4. Navigate to `http:localhost:8050` to see the dashboard
 
 The box plots are individually clickable to drill down, bar charts (default if only 1 repetition is being displayed) cycle through drill downs on each click.
 
 ## Executing Benchmarks and Generating Data
 
-We define YAML config files to execute under `grakn-benchmark/src/main/resources/`
+We define YAML config files to execute under `benchmark/runner/conf/somedir`
 
 The entry point to rebuild, generate, and name executions of config files is `run.py`
 
@@ -55,9 +54,12 @@ Basic usage:
 Notes:
 * Naming the execution not required, default name is always prepended with current Date and `name` tag in the YAML file
 * Keyspace is not required, defaults to `name` in the YAML file
-* Because ignite is not currently embedded, we need the directory of the ignite bin folder to search for `jar` files which contain ignite drivers
 
 Further examples:
+
+
+** TODO revisit run.py to see if it is needed all, was primarily intended to collect classpath, Bazel now does already **
+
 
 Stop and re-unpack Grakn server, then run
 `run.py --unpack-tar --config grakn-benchmark/src/main/resources/societal_config_1.yml`
@@ -68,37 +70,23 @@ Rebuild Grakn server, stop and remove the old one, untar, then run
 Rebuild Benchmarking and its dependencies and execute
 `run.py --build-benchmark--alldeps --config grakn-benchmark/src/main/resources/societal_config_1.yml`
 
-** TODO revisit the run.py to see if we need it at all, especially with Bazel (no more need to collect classpath) **
-
 
 ### Adding new spans to measure code segments
 
-* On the server (or in the Java client), we can obtain the current Tracer with:
-```
-Tracer tracer = Tracing.currentTracer(); 
-```
+* On the server, the intended usage is as follows:
 
-Then add a child span
+Then add a child span that propogates in thread-local storage
 ```
-
-        Tracer tracer = Tracing.currentTracer();
-        ScopedSpan childSpan = null;
-        if (tracer != null) {
-            Span s = tracer.currentSpan();
-            if (s != null) {
-                childSpan = tracer.startScopedSpanWithParent("planForConjunction", s.context());
-            } else {
-                childSpan = tracer.startScopedSpan("planForConjunction");
-            }
-        }
-```
-
-and finish with 
-```
-        if (tracer != null && childSpan != null) {
-            childSpan.finish();
-        }
-
+    ScopedSpan childSpan = null;
+    if (ServerTracingInstrumentation.tracingActive()) {
+        childSpan = ServerTracingInstrumentation.createScopedChildSpan("newchild");
+    }
+    ...
+    ... code to time/instrument further ...
+    ...
+    if (childSpan != null) {
+        childSpan.finish();
+    }
 ```
 
 

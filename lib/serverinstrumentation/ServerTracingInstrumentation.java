@@ -50,7 +50,7 @@ public class ServerTracingInstrumentation {
     /**
      * Determine if tracing is enabled on the server and there is a thread-local active span
      */
-    public static boolean existsCurrentSpan() {
+    public static boolean tracingActive() {
         return tracingEnabled() && currentSpan() != null;
     }
 
@@ -84,7 +84,7 @@ public class ServerTracingInstrumentation {
      * @param parentContext
      * @return A new Span with the given parent Context, NOT thread-local and NOT `.start()`-ed
      */
-    public static Span createChildSpan(String spanName, TraceContext parentContext) {
+    public static Span createChildSpanWithParentContext(String spanName, TraceContext parentContext) {
         Tracer tracing = Tracing.currentTracer();
         Span child = tracing.newChild(parentContext);
         child.name(spanName);
@@ -95,11 +95,33 @@ public class ServerTracingInstrumentation {
      *
      * @param spanName
      * @param parentContext
-     * @return A new ScopedSpan with the given parent Context (ie. thread-local and `.start()` already has been called)
+     * @return A new started ScopedSpan with the given parent Context (ie. one that is thread-local, `.start()` already has been called on it)
      */
-    public static ScopedSpan startScopedChildSpan(String spanName, TraceContext parentContext) {
+    public static ScopedSpan startScopedChildSpanWithParentContext(String spanName, TraceContext parentContext) {
         Tracer tracing = Tracing.currentTracer();
         ScopedSpan child = tracing.startScopedSpanWithParent(spanName, parentContext);
         return child;
+    }
+
+    /**
+     * Looks up the current Span in thread-local storage, then creates a new child span on it with the given name
+     * that is NOT thread-local nor started.
+     * @param spanName
+     * @return
+     */
+    public static Span createChildSpan(String spanName) {
+        Span currentSpan = currentSpan();
+        return createChildSpanWithParentContext(spanName, currentSpan.context());
+    }
+
+    /**
+     * Looks up the current Span in thread-local storage, create a new scoped child span with the given name
+     * that IS thread-local AND has been started.
+     * @param spanName
+     * @return
+     */
+    public static ScopedSpan createScopedChildSpan(String spanName) {
+        Span currentSpan = currentSpan();
+        return startScopedChildSpanWithParentContext(spanName, currentSpan.context());
     }
 }
