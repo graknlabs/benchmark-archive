@@ -1,6 +1,6 @@
 # Benchmark
 
-Benchmarks is a software used for measuring the performance of Grakn. It supports two main use cases:
+Benchmark is a piece of software used for measuring the performance of Grakn. It supports two main use cases:
 
 1. Benchmarking (done using the `runner` package)
 2. Visualising the benchmark result (done using the `dashboard` package)
