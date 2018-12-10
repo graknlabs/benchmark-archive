@@ -6,3 +6,4 @@ data/
 benchmark-runner/target/
 bazel-*
 .ijwb
+graph_metrics/sample_data
