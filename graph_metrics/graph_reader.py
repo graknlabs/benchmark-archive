@@ -97,6 +97,12 @@ class GraphReader:
     def edge_list(self):
         return self.edge_list
 
+    def num_edges(self):
+        return self.edge_list.shape[0]
+
+    def num_vertices(self):
+        return len(self.vertices)
+
     def adjacency(self):
         """
         Return adjacency list of undirected edges in form of a python dictionary
