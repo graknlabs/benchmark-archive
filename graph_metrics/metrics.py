@@ -19,9 +19,9 @@ graph_file = args.graph
 
 graph_reader = GraphReader(edge_list_file=graph_file)
 vertices = graph_reader.vertices
-sub_vertices = np.random.choice(list(vertices), int(len(vertices)/2), replace=False)
-print("Reduced graph from {1} to {0} vertices".format(len(sub_vertices), len(vertices)))
-graph_reader = graph_reader.subgraph(sub_vertices)
+# sub_vertices = np.random.choice(list(vertices), int(len(vertices)/2), replace=False)
+# print("Reduced graph from {1} to {0} vertices".format(len(sub_vertices), len(vertices)))
+# graph_reader = graph_reader.subgraph(sub_vertices)
 double_adjacency = graph_reader.double_adjacency()
 
 # degree distribution
