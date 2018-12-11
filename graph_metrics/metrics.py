@@ -49,7 +49,7 @@ print("Degree assortativity: {0}".format(assortativity.compute_degree_assortativ
 
 # clustering coefficient
 cc = ClusteringCoefficient(double_adjacency=double_adjacency, edge_list=graph_reader.edge_list)
-print("Clustering coefficient: {0}".format(cc.get_coefficient()))
+print("Global transitivity: {0}".format(cc.get_coefficient()))
 
 
 # fig = plt.hist(vertex_out_degree, bins=int(vertex_out_degree.shape[0]*HIST_BINS_PROPORTION), label="Vertex out degree")
