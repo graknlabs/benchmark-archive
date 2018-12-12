@@ -4,7 +4,7 @@ import numpy as np
 from graph_reader import GraphReader
 from degree_distribution import DegreeDistribution
 from degree_assortativity import DegreeAssortativity
-from clustering_coefficient import ClusteringCoefficient
+from transitivity import Transitivity
 
 # plotting histograms
 # import matplotlib
@@ -48,7 +48,7 @@ print("Degree assortativity: {0}".format(assortativity.compute_degree_assortativ
 
 
 # clustering coefficient
-cc = ClusteringCoefficient(double_adjacency=double_adjacency, edge_list=graph_reader.edge_list)
+cc = Transitivity(double_adjacency=double_adjacency, edge_list=graph_reader.edge_list)
 print("Global transitivity: {0}".format(cc.get_coefficient()))
 
 

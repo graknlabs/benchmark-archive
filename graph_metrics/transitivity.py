@@ -1,9 +1,6 @@
 from itertools import combinations
 
-
-
-
-class ClusteringCoefficient:
+class Transitivity:
     """
         Implementation of generalized hypergraph clustering coefficient from Dewar 2017
         Currently assumes adjacency list is actually just binary edges (ie. collection of neighbor vertices,
@@ -12,7 +9,7 @@ class ClusteringCoefficient:
 
     def __init__(self, double_adjacency, edge_list):
 
-        self.adjacency = double_adjacency # TODO update to handle hyperedge adjacencies
+        self.double_adjacency = double_adjacency # TODO update to handle hyperedge adjacencies
         self.edge_list = edge_list
 
     def get_coefficient(self):
@@ -28,8 +25,8 @@ class ClusteringCoefficient:
 
     def _stream_intersecting_edge_pairs(self):
         counter = 0
-        total = self._possible_triangles(self.adjacency)
-        for start, neighbors in self.adjacency.items():
+        total = self._possible_triangles()
+        for start, neighbors in self.double_adjacency.items():
             # stream pairwise edges from this start vertex
             for (end1, end2) in combinations(neighbors, 2):
                 if counter % 500000 == 0:
@@ -37,13 +34,15 @@ class ClusteringCoefficient:
                 counter += 1
                 yield (set((start, end1)), set((start, end2)))
 
-    def _possible_triangles(self, adjacency):
+    def _possible_triangles(self):
         """
         Small helper to count number of possible triangles that will be streamed as pairwise edges. Mostly for
         printing progress
+        TODO needs to be  reconsidered for hyperedges (possible triangles increases!) (or not, since we only use this for printing)
+
         """
         poss = 0
-        for adj in adjacency.values():
+        for adj in self.double_adjacency.values():
             n_neighbors = len(adj)
             n_pairs = n_neighbors * (n_neighbors - 1) / 2
             poss += n_pairs
@@ -60,7 +59,12 @@ class ClusteringCoefficient:
         neighbors_diff1 = self._neighbors_of(diff1)
         neighbors_diff2 = self._neighbors_of(diff2)
 
+        # for undirected binary graphs, I'm 99% sure that the two intersections are always the same
+        # so technically we don't need to compute both
+        # however, when generalizing to hypergraphs this becomes necessary so we keep it for consistency
+
         return ( len(neighbors_diff1.intersection(diff2)) + len(neighbors_diff2.intersection(diff1)) ) / (len(diff1) + len(diff2))
+        # return ( len(neighbors_diff1.intersection(diff2)) *2) / (len(diff1) + len(diff2))
 
 
     def _set_subtract(self, a, b):
@@ -70,7 +74,7 @@ class ClusteringCoefficient:
     def _neighbors_of(self, vertex_set):
         neighbors = set()
         for vertex in vertex_set:
-            neighbors |= self.adjacency[vertex]
+            neighbors |= self.double_adjacency[vertex]
 
         return neighbors
 
