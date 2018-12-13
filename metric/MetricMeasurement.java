@@ -38,7 +38,7 @@ public class MetricMeasurement {
         GraphProperties properties = new StandardGraphProperties(edgelist);
 
 
-        double[] metrics = new double[7];
+        double[] metrics = new double[percentiles.length + 2];
 
         metrics[0] = Assortativity.computeAssortativity(properties);
         metrics[1] = GlobalTransitivity.computeTransitivity(properties);

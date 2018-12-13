@@ -27,8 +27,7 @@ java_library(
         "//dependencies/maven/artifacts/commons-cli",
         "//dependencies/maven/artifacts/org/apache/commons:commons-math3",
 
-        "//dependencies/maven/artifacts/junit:junit",
-        "//dependencies/maven/artifacts/org/mockito:mockito-core"
+        "//dependencies/maven/artifacts/org/nd4j:nd4j-api"
     ],
     runtime_deps = [
         "//dependencies/maven/artifacts/io/grpc:grpc-netty-shaded"
@@ -41,7 +40,7 @@ java_library(
 java_binary(
     name = "metric-binary",
     main_class = "grakn.benchmark.metric.MetricMeasurement",
-#    runtime_deps = ["//:metric"],
+    runtime_deps = [":metric"],
     visibility = ["//visibility:public"]
 )
 
@@ -52,6 +51,8 @@ java_test(
     srcs = ["test/MetricMeasurementEndToEnd.java"],
     deps = [
         "//metric:metric",
+        "//dependencies/maven/artifacts/junit:junit",
+        "//dependencies/maven/artifacts/org/mockito:mockito-core",
         "//dependencies/maven/artifacts/org/hamcrest:hamcrest-library"
     ]
 )

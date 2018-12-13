@@ -155,7 +155,7 @@ dependencies:
       version: 3.5.1
       lang: java
 
-  # hamcrest
+  # hamcrest testing
   org.hamcrest:
     hamcrest-all:
       version: "1.3"
@@ -165,4 +165,11 @@ dependencies:
       lang: java
     hamcrest-library:
       version: "1.3"
+      lang: java
+
+
+  # ND4J -- numpy-ish equivalent for handling data arrays
+  org.nd4j:
+    nd4j-api:
+      version: "1.0.0-beta3"
       lang: java
