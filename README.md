@@ -26,7 +26,7 @@ Benchmark is a piece of software used for measuring the performance of Grakn. It
 
 In the Elasticsearch installation directory, do:
 ```
-$ ./bin/elasticsearch -E path.logs=<REPOSITORY_PATH>/data/logs/elasticsearch/ -E path.data=<REPOSITORY_PATH>/data/data/elasticsearch/
+$ ./bin/elasticsearch -E path.logs=<REPOSITORY_PATH>/data/elasticsearch/logs -E path.data=<REPOSITORY_PATH>/data/data/elasticsearch/
 ```
 
 Check if Elasticsearch is running by accessing http://localhost:9200 from the browser.

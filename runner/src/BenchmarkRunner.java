@@ -176,7 +176,7 @@ public class BenchmarkRunner {
                 .type(String.class)
                 .build();
 
-        Option graknAddressOption = Option.builder("g")
+        Option graknAddressOption = Option.builder("u")
                 .longOpt("uri")
                 .hasArg(true)
                 .desc("Address of the grakn cluster (default: localhost:48555)")
