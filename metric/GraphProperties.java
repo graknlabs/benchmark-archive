@@ -1,4 +1,4 @@
-package metric;
+package grakn.benchmark.metric;
 
 import org.apache.commons.math3.util.Pair;
 

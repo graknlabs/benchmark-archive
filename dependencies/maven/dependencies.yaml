@@ -154,3 +154,15 @@ dependencies:
     protobuf-java:
       version: 3.5.1
       lang: java
+
+  # hamcrest
+  org.hamcrest:
+    hamcrest-all:
+      version: "1.3"
+      lang: java
+    hamcrest-core:
+      version: "1.3"
+      lang: java
+    hamcrest-library:
+      version: "1.3"
+      lang: java

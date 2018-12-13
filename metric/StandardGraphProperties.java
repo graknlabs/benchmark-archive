@@ -1,11 +1,22 @@
-package metric;
+package grakn.benchmark.metric;
 
 import org.apache.commons.math3.util.Pair;
 
+import java.io.File;
 import java.util.Set;
 import java.util.stream.Stream;
 
 public class StandardGraphProperties implements GraphProperties {
+
+    public StandardGraphProperties(File edgelistFile) {
+        // TODO parse vertices
+    }
+
+    public StandardGraphProperties(File edgelistFile, File vertexListFile) {
+        this(edgelistFile);
+        // TODO parse vertices
+    }
+
     @Override
     public int maxDegree() {
         return 0;

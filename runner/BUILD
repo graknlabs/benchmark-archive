@@ -84,5 +84,6 @@ java_test(
         ":benchmark-runner",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
         "//dependencies/maven/artifacts/grakn/core:grakn-graql",
+        "//dependencies/maven/artifacts/org/hamcrest:hamcrest-all"
     ]
 )

@@ -1,4 +1,4 @@
-package metric;
+package grakn.benchmark.metric;
 
 public class Assortativity {
 }

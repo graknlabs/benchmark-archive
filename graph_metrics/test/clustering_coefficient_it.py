@@ -90,3 +90,35 @@ class TransitivityIt(unittest.TestCase):
         correct_transitivity = nx.transitivity(networkx_graph)
 
         np.testing.assert_approx_equal(computed_transitivty, correct_transitivity)
+
+
+    def test_transitivity_dissortative_network_binary(self):
+        adjacency = {
+            1: [], # degree 1 connnected to degree 2
+            2: [], # degree 1 connected to degree 2
+            3: [1, 2],  # degree 2 connected to degree 1 twice
+            4: [], # 1 -> 3
+            5: [], # 1 -> 3
+            6: [4, 5, 7], # 3 -> 1, 1, 2
+            7: [], # 2 -> 3, 4
+            8: [7, 9, 10], # 4 -> 2, 1, 1, 1
+            9: [10], # 1 -> 4
+            10: [], # 1 -> 4
+        }
+        edge_list = adjacency_to_edge_list(adjacency)
+        reader = GraphReader(edge_list=edge_list)
+        double_adjacency = reader.double_adjacency()
+
+        transitivity_measure = Transitivity(double_adjacency=double_adjacency, edge_list=reader.edge_list)
+        computed_transitivty = transitivity_measure.get_coefficient()
+
+        # this is the expected input format in networkx
+        vertex_ids = adjacency.keys()
+        edge_list = reader.edge_list
+
+        networkx_graph = nx.Graph()  # using undirected graphs
+        networkx_graph.add_nodes_from(vertex_ids)
+        networkx_graph.add_edges_from(edge_list)
+        correct_transitivity = nx.transitivity(networkx_graph)
+
+        np.testing.assert_approx_equal(computed_transitivty, correct_transitivity)

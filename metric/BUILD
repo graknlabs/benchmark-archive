@@ -34,13 +34,24 @@ java_library(
         "//dependencies/maven/artifacts/io/grpc:grpc-netty-shaded"
     ],
     resources = [
-        "//runner:src/logback.xml"
+        "//metric:logback.xml"
     ]
 )
 
 java_binary(
     name = "metric-binary",
     main_class = "grakn.benchmark.metric.MetricMeasurement",
-    runtime_deps = ["//runner:metric"],
+#    runtime_deps = ["//:metric"],
     visibility = ["//visibility:public"]
+)
+
+
+java_test(
+    name = "metric-end-to-end",
+    test_class = "grakn.benchmark.metric.test.MetricMeasurementEndToEnd",
+    srcs = ["test/MetricMeasurementEndToEnd.java"],
+    deps = [
+        "//metric:metric",
+        "//dependencies/maven/artifacts/org/hamcrest:hamcrest-library"
+    ]
 )
