@@ -4,7 +4,7 @@ java_library(
         "//external:jar/org/apache/commons/commons-compress"
     ],
     runtime_deps = [
-        "//dependencies/maven/artifacts/org/tukaani:xz"
+        "//dependencies/maven/artifacts/org/objenesis:objenesis"
     ],
     visibility = [
         "//dependencies/maven/artifacts:__subpackages__"

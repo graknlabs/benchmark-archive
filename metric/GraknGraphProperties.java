@@ -1,6 +1,5 @@
 package grakn.benchmark.metric;
 
-import grakn.core.client.Grakn;
 import org.apache.commons.math3.util.Pair;
 
 import java.util.Set;
@@ -14,7 +13,7 @@ public class GraknGraphProperties implements GraphProperties {
 
 
     @Override
-    public int maxDegree() {
+    public long maxDegree() {
         return 0;
     }
 

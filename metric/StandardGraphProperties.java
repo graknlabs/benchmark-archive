@@ -18,7 +18,7 @@ public class StandardGraphProperties implements GraphProperties {
     }
 
     @Override
-    public int maxDegree() {
+    public long maxDegree() {
         return 0;
     }
 

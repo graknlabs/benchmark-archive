@@ -1,7 +1,7 @@
 java_library(
-    name = "xz",
+    name = "flatbuffers-java",
     exports = [
-        "//external:jar/org/tukaani/xz"
+        "//external:jar/com/google/flatbuffers/flatbuffers-java"
     ],
     visibility = [
         "//dependencies/maven/artifacts:__subpackages__"

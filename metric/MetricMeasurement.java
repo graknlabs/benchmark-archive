@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import grakn.benchmark.metric.Assortativity;
+import org.nd4j.linalg.api.ndarray.INDArray;
 
 public class MetricMeasurement {
 
@@ -40,7 +41,9 @@ public class MetricMeasurement {
 
         double[] metrics = new double[percentiles.length + 2];
 
-        metrics[0] = Assortativity.computeAssortativity(properties);
+        INDArray jointDegreeOccurrence = Assortativity.jointDegreeOccurrence(properties);
+        metrics[0] = Assortativity.computeAssortativity(jointDegreeOccurrence);
+
         metrics[1] = GlobalTransitivity.computeTransitivity(properties);
         double[] discreteDistribution = DegreeDistribution.discreteDistribution(properties, percentiles);
 

@@ -170,6 +170,15 @@ dependencies:
 
   # ND4J -- numpy-ish equivalent for handling data arrays
   org.nd4j:
-    nd4j-api:
-      version: "1.0.0-beta3"
+#    nd4j-api:
+#      version: "1.0.0-beta3"
+#      lang: java
+    nd4j-native:
+      version: "0.9.1"
       lang: java
+#    nd4j-backend-impls:
+#      version: "1.0.0-beta3"
+#      lang: java
+#    nd4j-backend-impls:
+#      version: "0.9.1"
+#      lang: java

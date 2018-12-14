@@ -56,3 +56,16 @@ java_test(
         "//dependencies/maven/artifacts/org/hamcrest:hamcrest-library"
     ]
 )
+
+java_test(
+    name = "assortativity-test",
+    test_class = "grakn.benchmark.metric.test.AssortativityTest",
+    srcs = ["test/AssortativityTest.java"],
+    deps = [
+        "//metric:metric",
+        "//dependencies/maven/artifacts/org/apache/commons:commons-math3",
+        "//dependencies/maven/artifacts/junit:junit",
+        "//dependencies/maven/artifacts/org/mockito:mockito-core",
+        "//dependencies/maven/artifacts/org/nd4j:nd4j-api"
+    ]
+)
