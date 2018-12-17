@@ -33,7 +33,7 @@ public class StandardGraphProperties implements GraphProperties {
     }
 
     @Override
-    public Stream<Integer> vertexDegree() {
+    public Stream<Long> vertexDegree() {
         return null;
     }
 

@@ -51,7 +51,7 @@ java_library(
         ":nd4j-context"
     ],
     visibility = [
-        "//dependencies/maven/artifacts:__subpackages__"
+        "//visibility:public"
     ]
 )
 

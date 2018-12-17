@@ -45,7 +45,7 @@ public class MetricMeasurement {
         metrics[0] = Assortativity.computeAssortativity(jointDegreeOccurrence);
 
         metrics[1] = GlobalTransitivity.computeTransitivity(properties);
-        double[] discreteDistribution = DegreeDistribution.discreteDistribution(properties, percentiles);
+        long[] discreteDistribution = DegreeDistribution.discreteDistribution(properties, percentiles);
 
         metrics[2] = discreteDistribution[0];
         metrics[3] = discreteDistribution[1];

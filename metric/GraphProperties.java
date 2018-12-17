@@ -13,7 +13,7 @@ public interface GraphProperties {
      IE. an edge between a vertex of degree 1 and degree 2 produces two connected vertex degrees: (1,2) and (2,1)
       */
      public Stream<Pair<Integer, Integer>> connectedVertexDegrees();
-     public Stream<Integer> vertexDegree();
+     public Stream<Long> vertexDegree();
      public Stream<Pair<Set<String>, Set<String>>> connectedEdgePairs();
      public Set<String> neighbors(String vertexId);
 }

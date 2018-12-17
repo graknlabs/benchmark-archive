@@ -185,6 +185,9 @@ dependencies:
     nd4j-native-api:
       version: "1.0.0-beta3"
       lang: java
+    nd4j-buffer:
+      version: "1.0.0-beta3"
+      lang: java
     nd4j-native:jar:macosx-x86_64:
       version: "1.0.0-beta3"
       lang: java

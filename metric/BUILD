@@ -57,6 +57,7 @@ java_library(
          "//dependencies/maven/artifacts/org/nd4j:nd4j-native",
          "//dependencies/maven/artifacts/org/nd4j:nd4j-api",
          "//dependencies/maven/artifacts/org/nd4j:nd4j-native-api",
+         "//dependencies/maven/artifacts/org/nd4j:nd4j-buffer",
          ":nd4j-native-platform-independent"
     ],
     runtime_deps = [
@@ -103,28 +104,20 @@ java_test(
           "//dependencies/maven/artifacts/org/nd4j:nd4j-native-api",
           ":nd4j-native-platform-independent"
      ]
+)
+
+java_test(
+     name = "degree-distribution-test",
+     test_class = "grakn.benchmark.metric.test.DegreeDistributionTest",
+     srcs = ["test/DegreeDistributionTest.java"],
+     deps = [
+         "//metric:metric",
+         "//dependencies/maven/artifacts/junit:junit",
+         "//dependencies/maven/artifacts/org/mockito:mockito-core",
+
+          "//dependencies/maven/artifacts/org/nd4j:nd4j-native",
+          "//dependencies/maven/artifacts/org/nd4j:nd4j-api",
+          "//dependencies/maven/artifacts/org/nd4j:nd4j-native-api",
+          ":nd4j-native-platform-independent"
+     ]
  )
-
-
-# ----- short term hack while can't run nd4j tests ----
-java_library(
-    name = "assortativity-test-lib",
-    srcs = ["test/AssortativityTest.java"],
-    deps = [
-        "//metric:metric",
-        "//dependencies/maven/artifacts/org/apache/commons:commons-math3",
-        "//dependencies/maven/artifacts/junit:junit",
-        "//dependencies/maven/artifacts/org/mockito:mockito-core",
-
-         "//dependencies/maven/artifacts/org/nd4j:nd4j-native",
-         "//dependencies/maven/artifacts/org/nd4j:nd4j-api",
-         "//dependencies/maven/artifacts/org/nd4j:nd4j-native-api",
-         ":nd4j-native-platform-independent"
-    ]
-)
-
-java_binary(
-    name = "assortativity-test-lib-binary",
-    main_class = "grakn.benchmark.metric.test.AssortativityTest",
-    runtime_deps = [":assortativity-test-lib"]
-)

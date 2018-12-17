@@ -28,7 +28,7 @@ public class GraknGraphProperties implements GraphProperties {
     }
 
     @Override
-    public Stream<Integer> vertexDegree() {
+    public Stream<Long> vertexDegree() {
         return null;
     }
 

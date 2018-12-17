@@ -88,7 +88,7 @@ public class AssortativityTest {
         IE. an edge between a vertex of degree 1 and degree 2 produces two connected vertex degrees: (1,2) and (2,1)
          */
 
-        List<Pair<Integer, Integer>> vertexDegrees = Arrays.asList(
+        List<Pair<Integer, Integer>> connectedVertexDegrees = Arrays.asList(
                 new Pair<>(1, 2),
                 new Pair<>(1, 2),
                 new Pair<>(2, 1),
@@ -112,7 +112,7 @@ public class AssortativityTest {
                 new Pair<>(2, 2)
         );
 
-        when(mockProperties.connectedVertexDegrees()).thenReturn(vertexDegrees.stream());
+        when(mockProperties.connectedVertexDegrees()).thenReturn(connectedVertexDegrees.stream());
         when(mockProperties.maxDegree()).thenReturn(3l);
 
         INDArray jointDegreeMatrix = Assortativity.jointDegreeOccurrence(mockProperties);
