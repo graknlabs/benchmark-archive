@@ -93,3 +93,89 @@ java_library(
 )
 
 
+
+java_library(
+    name = "nd4j-native",
+    exports = [
+        "//external:jar/org/nd4j/nd4j-native"
+    ],
+    runtime_deps = [
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl",
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl-dnn",
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl-dnn-jar-macosx-x86-64",
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl-jar-macosx-x86-64",
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:openblas",
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:openblas-jar-macosx-x86-64",
+        "//dependencies/maven/artifacts/org/bytedeco:javacpp",
+        ":nd4j-api",
+        ":nd4j-native-api"
+    ],
+    visibility = [
+        "//visibility:public"
+    ]
+)
+
+
+
+java_library(
+    name = "nd4j-native-api",
+    exports = [
+        "//external:jar/org/nd4j/nd4j-native-api"
+    ],
+    runtime_deps = [
+        "//dependencies/maven/artifacts/org/bytedeco:javacpp",
+        ":nd4j-api",
+        ":nd4j-buffer"
+    ],
+    visibility = [
+        "//visibility:public"
+    ]
+)
+
+
+
+java_library(
+    name = "nd4j-native-jar-linux-x86-64",
+    exports = [
+        "//external:jar/org/nd4j/nd4j-native-jar-linux-x86-64"
+    ],
+    runtime_deps = [
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl",
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl-dnn",
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl-dnn-jar-macosx-x86-64",
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl-jar-macosx-x86-64",
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:openblas",
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:openblas-jar-macosx-x86-64",
+        "//dependencies/maven/artifacts/org/bytedeco:javacpp",
+        ":nd4j-api",
+        ":nd4j-native-api"
+    ],
+    visibility = [
+        "//visibility:public"
+    ]
+)
+
+
+
+java_library(
+    name = "nd4j-native-jar-macosx-x86-64",
+    exports = [
+        "//external:jar/org/nd4j/nd4j-native-jar-macosx-x86-64"
+    ],
+    runtime_deps = [
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl",
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl-dnn",
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl-dnn-jar-macosx-x86-64",
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl-jar-macosx-x86-64",
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:openblas",
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:openblas-jar-macosx-x86-64",
+        "//dependencies/maven/artifacts/org/bytedeco:javacpp",
+        ":nd4j-api",
+        ":nd4j-native-api"
+    ],
+    visibility = [
+        "//visibility:public"
+    ]
+)
+
+

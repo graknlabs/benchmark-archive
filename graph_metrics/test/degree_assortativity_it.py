@@ -102,16 +102,16 @@ class DegreeAssortativityIT(unittest.TestCase):
 
     def test_degree_disassortative_binary(self):
         adjacency = {
-            1: [], # degree 1 connnected to degree 2
-            2: [], # degree 1 connected to degree 2
+            1: [],  # degree 1 connnected to degree 2
+            2: [],  # degree 1 connected to degree 2
             3: [1, 2],  # degree 2 connected to degree 1 twice
-            4: [6], # 1 -> 3
-            5: [6], # 1 -> 3
-            6: [7], # 3 -> 1, 1, 2
-            7: [8], # 2 -> 3, 4
-            8: [9, 10], # 4 -> 2, 1, 1, 1
-            9: [10], # 1 -> 4
-            10: [], # 1 -> 4
+            4: [],  # 1 -> 3
+            5: [],  # 1 -> 3
+            6: [4, 5, 7],  # 3 -> 1, 1, 2
+            7: [],  # 2 -> 3, 4
+            8: [7, 9, 10],  # 4 -> 2, 1, 1, 1
+            9: [10],  # 1 -> 4
+            10: [],  # 1 -> 4
         }
         edge_list = adjacency_to_edge_list(adjacency)
         reader = GraphReader(edge_list=edge_list)

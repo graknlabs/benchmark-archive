@@ -23,7 +23,7 @@
 GRAKN_CORE_HOME=$(cd "$(dirname "${path}")" && pwd -P)/../../
 pushd "$GRAKN_CORE_HOME" > /dev/null
 
-bazel run //dependencies/tools:bazel-deps -- generate -r $GRAKN_CORE_HOME -s dependencies/maven/dependencies.bzl -d dependencies/maven/dependencies.yaml
+bazel run //dependencies/tools:bazel-deps --incompatible_remove_native_http_archive=false -- generate -r $GRAKN_CORE_HOME -s dependencies/maven/dependencies.bzl -d dependencies/maven/dependencies.yaml
 
 # Fix formatting for BUILD files
 #bazel run //tools/formatter -- --path $(pwd)/third_party --build &>/dev/null

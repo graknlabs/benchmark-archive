@@ -16,6 +16,33 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+# ----- Nd4j platform specific binaries -----
+
+config_setting(
+    name = "osx_build",
+    constraint_values = [
+   		"@bazel_tools//platforms:osx",
+        "@bazel_tools//platforms:x86_64",
+    ]
+)
+
+config_setting(
+    name = "linux_build",
+    constraint_values = [
+   		"@bazel_tools//platforms:linux",
+        "@bazel_tools//platforms:x86_64",
+    ]
+)
+
+java_library(
+	name = "nd4j-native-platform-independent",
+	exports = select({
+		":linux_build": ["//dependencies/maven/artifacts/org/nd4j:nd4j-native-jar-linux-x86-64"],
+		":osx_build": ["//dependencies/maven/artifacts/org/nd4j:nd4j-native-jar-macosx-x86-64"]
+	})
+)
+
+
 java_library(
     name = "metric",
     srcs = glob(["*.java"]),
@@ -27,7 +54,10 @@ java_library(
         "//dependencies/maven/artifacts/commons-cli",
         "//dependencies/maven/artifacts/org/apache/commons:commons-math3",
 
-        "//dependencies/maven/artifacts/org/nd4j:nd4j-api"
+         "//dependencies/maven/artifacts/org/nd4j:nd4j-native",
+         "//dependencies/maven/artifacts/org/nd4j:nd4j-api",
+         "//dependencies/maven/artifacts/org/nd4j:nd4j-native-api",
+         ":nd4j-native-platform-independent"
     ],
     runtime_deps = [
         "//dependencies/maven/artifacts/io/grpc:grpc-netty-shaded"
@@ -57,15 +87,44 @@ java_test(
     ]
 )
 
+
 java_test(
-    name = "assortativity-test",
-    test_class = "grakn.benchmark.metric.test.AssortativityTest",
+     name = "assortativity-test",
+     test_class = "grakn.benchmark.metric.test.AssortativityTest",
+     srcs = ["test/AssortativityTest.java"],
+     deps = [
+         "//metric:metric",
+         "//dependencies/maven/artifacts/org/apache/commons:commons-math3",
+         "//dependencies/maven/artifacts/junit:junit",
+         "//dependencies/maven/artifacts/org/mockito:mockito-core",
+
+          "//dependencies/maven/artifacts/org/nd4j:nd4j-native",
+          "//dependencies/maven/artifacts/org/nd4j:nd4j-api",
+          "//dependencies/maven/artifacts/org/nd4j:nd4j-native-api",
+          ":nd4j-native-platform-independent"
+     ]
+ )
+
+
+# ----- short term hack while can't run nd4j tests ----
+java_library(
+    name = "assortativity-test-lib",
     srcs = ["test/AssortativityTest.java"],
     deps = [
         "//metric:metric",
         "//dependencies/maven/artifacts/org/apache/commons:commons-math3",
         "//dependencies/maven/artifacts/junit:junit",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
-        "//dependencies/maven/artifacts/org/nd4j:nd4j-api"
+
+         "//dependencies/maven/artifacts/org/nd4j:nd4j-native",
+         "//dependencies/maven/artifacts/org/nd4j:nd4j-api",
+         "//dependencies/maven/artifacts/org/nd4j:nd4j-native-api",
+         ":nd4j-native-platform-independent"
     ]
+)
+
+java_binary(
+    name = "assortativity-test-lib-binary",
+    main_class = "grakn.benchmark.metric.test.AssortativityTest",
+    runtime_deps = [":assortativity-test-lib"]
 )

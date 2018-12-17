@@ -1,4 +1,4 @@
-package grakn.benchmark.metrics.test;
+package grakn.benchmark.metric.test;
 
 import grakn.benchmark.metric.Assortativity;
 import grakn.benchmark.metric.StandardGraphProperties;
@@ -12,8 +12,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.mockito.Mockito.*;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+
 
 public class AssortativityTest {
 
@@ -33,19 +34,21 @@ public class AssortativityTest {
 
     @Test
     public void dissortativeJointDegreeMatrixToAssortativity() {
-//        originating adjacency lists:
-//        adjacency = {
-//                1: [], # degree 1 connnected to degree 2
-//        2: [], # degree 1 connected to degree 2
-//        3: [1, 2],  # degree 2 connected to degree 1 twice
-//        4: [], # 1 -> 3
-//        5: [], # 1 -> 3
-//        6: [4, 5, 7], # 3 -> 1, 1, 2
-//        7: [], # 2 -> 3, 4
-//        8: [7, 9, 10], # 4 -> 2, 1, 1, 1
-//        9: [10], # 1 -> 4
-//        10: [], # 1 -> 4
-//        }
+        /*
+        originating adjacency lists:
+        adjacency = {
+        1: [], # degree 1 connnected to degree 2
+        2: [], # degree 1 connected to degree 2
+        3: [1, 2],  # degree 2 connected to degree 1 twice
+        4: [], # 1 -> 3
+        5: [], # 1 -> 3
+        6: [4, 5, 7], # 3 -> 1, 1, 2
+        7: [], # 2 -> 3, 4
+        8: [7, 9, 10], # 4 -> 2, 1, 1, 1
+        9: [10], # 2 -> 4, 2
+        10: [], # 1 -> 4
+        }
+        */
 
         INDArray jointDegreeMatrix = Nd4j.zeros(4,4);
 
@@ -70,6 +73,8 @@ public class AssortativityTest {
 
         double allowedDeviation = 0.000001;
         assertEquals(correctAssortativity, computedAssortativity, allowedDeviation);
+        System.out.println(correctAssortativity);
+        System.out.println(computedAssortativity);
 
     }
 
@@ -132,6 +137,8 @@ public class AssortativityTest {
 
         double allowedDelta = 0.000001;
         assertArrayEquals(correctJointDegreeMatrix.ravel().toDoubleVector(), jointDegreeMatrix.ravel().toDoubleVector(), allowedDelta);
+        System.out.println(Arrays.toString(correctJointDegreeMatrix.ravel().toDoubleVector()));
+        System.out.println(Arrays.toString(jointDegreeMatrix.ravel().toDoubleVector()));
 
     }
 

@@ -62,6 +62,5 @@ class DegreeAssortativity(object):
             for end in neighbors:
                 end_degree = 1+len(double_adjacency[end]) if end in double_adjacency[end] else len(double_adjacency[end])
                 distribution[start_degree, end_degree] += 1
-                distribution[end_degree, start_degree] += 1
 
         return distribution/distribution.sum()
