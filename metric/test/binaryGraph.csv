@@ -1,7 +1,7 @@
 # test comment, some graphs have headers or descriptions that need to be ignored
 # metrics for this graph:
-# degree distribution: [1, 1, 1, 1, 1, 2, 2, 2, 3, 3]
-# compressed degree distribution [0th, 20th, 50th, 70th, 100th]: [1, 1, 1, 2, 3]
+# degree distribution: [1, 1, 2, 2, 2, 2, 2, 2, 3, 3]
+# compressed degree distribution [0th, 20th, 50th, 70th, 100th]: [1, 2, 2, 2, 3]
 # degree assortativity = -0.43181818181818193
 # transitivity: 0.3
 1, 2

@@ -10,6 +10,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -18,12 +19,12 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 
 public class MetricMeasurement {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         // TODO passthrough for testing only
         mainImpl(args);
     }
 
-    public static double[] mainImpl(String[] args) {
+    public static double[] mainImpl(String[] args) throws IOException {
 
         // TODO turn this into CommandLineArgParser
         String standardGraphEdgeList = args[0];
@@ -34,9 +35,8 @@ public class MetricMeasurement {
         double percentile5 = Double.parseDouble(args[5]);
         double[] percentiles = new double[] {percentile1, percentile2, percentile3, percentile4, percentile5};
 
-        File edgelist = Paths.get(standardGraphEdgeList).toFile();
 
-        GraphProperties properties = new StandardGraphProperties(edgelist);
+        GraphProperties properties = new StandardGraphProperties(Paths.get(standardGraphEdgeList), ',');
 
 
         double[] metrics = new double[percentiles.length + 2];

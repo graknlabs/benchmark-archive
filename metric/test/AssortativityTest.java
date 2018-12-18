@@ -18,6 +18,7 @@ import static org.mockito.Mockito.when;
 
 public class AssortativityTest {
 
+
     @Test
     public void fullyAssortatitiveJointDegreeToAssortativity() {
 
