@@ -1,7 +1,7 @@
 package grakn.benchmark.metric.test;
 
 import grakn.benchmark.metric.Assortativity;
-import grakn.benchmark.metric.StandardGraphProperties;
+import grakn.benchmark.metric.GraphProperties;
 import org.apache.commons.math3.util.Pair;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -81,7 +81,7 @@ public class AssortativityTest {
 
     @Test
     public void fullyAssortativeGraphPropertiesToJointDegreeMatrix() {
-        StandardGraphProperties mockProperties = Mockito.mock(StandardGraphProperties.class);
+        GraphProperties mockProperties = Mockito.mock(GraphProperties.class);
 
         /*
         We stream the undirected edge's endpoint's degrees twice each - in each direction

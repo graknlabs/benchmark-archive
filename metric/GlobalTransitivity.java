@@ -41,7 +41,7 @@ public class GlobalTransitivity {
 
         // diff2 = e2 \ e1
         Set<String> edgeDiff2 = (new HashSet<>(edge2));
-        edgeDiff1.removeAll(edge1);
+        edgeDiff2.removeAll(edge1);
 
         // neighbors of edgeDiff1
         Set<String> neighborsEdgeDiff1 = neighborsOfSet(properties, edgeDiff1);

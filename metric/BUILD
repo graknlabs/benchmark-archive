@@ -121,3 +121,20 @@ java_test(
           ":nd4j-native-platform-independent"
      ]
  )
+
+java_test(
+    name = "global-transitivity-test",
+    test_class = "grakn.benchmark.metric.test.GlobalTransitivityTest",
+    srcs = ["test/GlobalTransitivityTest.java"],
+    deps = [
+        "//metric:metric",
+        "//dependencies/maven/artifacts/junit:junit",
+        "//dependencies/maven/artifacts/org/mockito:mockito-core",
+        "//dependencies/maven/artifacts/org/apache/commons:commons-math3",
+
+#         "//dependencies/maven/artifacts/org/nd4j:nd4j-native",
+#         "//dependencies/maven/artifacts/org/nd4j:nd4j-api",
+#         "//dependencies/maven/artifacts/org/nd4j:nd4j-native-api",
+#         ":nd4j-native-platform-independent"
+    ]
+)
