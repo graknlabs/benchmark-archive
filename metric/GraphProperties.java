@@ -14,6 +14,12 @@ public interface GraphProperties {
       */
      public Stream<Pair<Integer, Integer>> connectedVertexDegrees();
      public Stream<Long> vertexDegree();
+
+     /*
+     Stream pairs of sets of vertex/entity IDs, each of which represents a hyperedge
+     In other words, get all pairs of connected (hyper)edges sharing at least one vertex - this
+     pair should only be returned once!
+      */
      public Stream<Pair<Set<String>, Set<String>>> connectedEdgePairs();
      public Set<String> neighbors(String vertexId);
 }
