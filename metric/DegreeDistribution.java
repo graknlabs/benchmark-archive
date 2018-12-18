@@ -1,14 +1,11 @@
 package grakn.benchmark.metric;
 
-import org.nd4j.linalg.api.buffer.factory.DataBufferFactory;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
-import org.nd4j.linalg.api.buffer.DataBuffer;
 import org.nd4j.linalg.indexing.BooleanIndexing;
 import org.nd4j.linalg.indexing.conditions.Conditions;
 
 import java.util.LinkedList;
-import java.util.List;
 
 public class DegreeDistribution {
 
@@ -43,7 +40,7 @@ public class DegreeDistribution {
     }
 
     /**
-     * Clip given array with min and max values IN PLACE
+     * Clip given ND4J array with min and max values IN PLACE
      * @param array
      * @param minValue
      * @param maxValue

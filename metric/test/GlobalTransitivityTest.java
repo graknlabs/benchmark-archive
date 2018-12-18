@@ -109,7 +109,6 @@ public class GlobalTransitivityTest {
 
         when(mockProperties.connectedEdgePairs()).thenReturn(connectedEdgePairs.stream());
 
-
         // also need to setup neighbors
         when(mockProperties.neighbors("1")).thenReturn(new HashSet<>(Arrays.asList("3")));
         when(mockProperties.neighbors("2")).thenReturn(new HashSet<>(Arrays.asList("3")));
@@ -124,22 +123,8 @@ public class GlobalTransitivityTest {
 
         double transitivity = GlobalTransitivity.computeTransitivity(mockProperties);
 
-        ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
+//        ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
 
-        verify(mockProperties, atLeastOnce()).neighbors(argument.capture());
-//        verify(mockProperties, atLeastOnce()).neighbors("3");
-//        verify(mockProperties, atLeastOnce()).neighbors("1");
-//        verify(mockProperties, atLeastOnce()).neighbors("4");
-//        verify(mockProperties, atLeastOnce()).neighbors("5");
-//        verify(mockProperties, atLeastOnce()).neighbors("6");
-//        verify(mockProperties, atLeastOnce()).neighbors("7");
-//        verify(mockProperties, atLeastOnce()).neighbors("8");
-//        verify(mockProperties).neighbors("9");
-//        verify(mockProperties).neighbors("10");
-
-
-//
-//
         // (1+1+1)/(1+3+1+3+1+1) = 3/10
         double correctTransitivity = 0.3;
 
