@@ -42,13 +42,13 @@ public class StandardGraphProperties implements GraphProperties {
             doubleAdjacencyList.put(id, new HashSet<>());
         }
 
+        // convert edge list to double adjacency lists for easier/faster accesses
         for (Pair<String, String> edge : edgeList) {
             String start = edge.getFirst();
             String end = edge.getSecond();
             doubleAdjacencyList.get(start).add(end);
             doubleAdjacencyList.get(end).add(start);
         }
-        System.out.println("test");
     }
 
 //    public StandardGraphProperties(File edgelistFile, File vertexListFile) {
@@ -58,7 +58,7 @@ public class StandardGraphProperties implements GraphProperties {
 
     @Override
     public long maxDegree() {
-        return 0;
+        return this.vertexDegree().max(Comparator.naturalOrder()).orElse(0l);
     }
 
     @Override
