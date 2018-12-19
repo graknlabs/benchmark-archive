@@ -151,7 +151,11 @@ java_test(
     srcs = ["test/GlobalTransitivityIT.java"],
     deps = [
         "//metric:metric",
-        "//dependencies/maven/artifacts/junit:junit"
+        "//dependencies/maven/artifacts/junit:junit",
+
+        "//dependencies/maven/artifacts/grakn/core:client",
+        "//dependencies/maven/artifacts/grakn/core:grakn-graql",
+        "//dependencies/maven/artifacts/grakn/core:util"
     ]
 )
 

@@ -67,13 +67,13 @@ public class StandardGraphProperties implements GraphProperties {
      * @return
      */
     @Override
-    public Stream<Pair<Set<String>, Set<String>>> connectedEdgePairs(boolean requireAtLeastThreeUniqueVertices) {
+    public Stream<Pair<Set<String>, Set<String>>> connectedEdgePairs(boolean edgeCardinalitiesGreaterThanOne) {
         return doubleAdjacencyList.entrySet().stream()
             .map(
                 stringSetEntry -> {
                     String start = stringSetEntry.getKey();
                     Set<String> neighbors = stringSetEntry.getValue();
-                    List<Pair<Set<String>, Set<String>>> neighborPairs = combinations(start, neighbors, requireAtLeastThreeUniqueVertices);
+                    List<Pair<Set<String>, Set<String>>> neighborPairs = combinations(start, neighbors, edgeCardinalitiesGreaterThanOne);
                     return neighborPairs.stream();
                 }
             )

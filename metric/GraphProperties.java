@@ -19,8 +19,10 @@ public interface GraphProperties {
      Stream pairs of sets of vertex/entity IDs, each of which represents a hyperedge
      In other words, get all pairs of connected (hyper)edges sharing at least one vertex - this
      pair should only be returned once!
+
+     if edgeCardinalityGreaterThanOne is set to true, then we ignore pure looping edges
       */
-     public Stream<Pair<Set<String>, Set<String>>> connectedEdgePairs(boolean requireAtLeastThreeUniqueVertices);
+     public Stream<Pair<Set<String>, Set<String>>> connectedEdgePairs(boolean edgeCardinalitiesGreaterThanOne);
      public Set<String> neighbors(String vertexId);
 }
 
