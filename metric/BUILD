@@ -88,6 +88,19 @@ java_test(
     ]
 )
 
+java_test(
+     name = "assortativity-it",
+     test_class = "grakn.benchmark.metric.test.AssortativityIT",
+     srcs = ["test/AssortativityIT.java"],
+     deps = [
+         "//metric:metric",
+         "//dependencies/maven/artifacts/junit:junit",
+
+        "//dependencies/maven/artifacts/grakn/core:client",
+        "//dependencies/maven/artifacts/grakn/core:grakn-graql",
+        "//dependencies/maven/artifacts/grakn/core:util"
+     ]
+ )
 
 java_test(
      name = "assortativity-test",

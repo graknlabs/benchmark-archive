@@ -117,7 +117,10 @@ public class StandardGraphProperties implements GraphProperties {
     }
 
     /**
-     * Stream the degree of
+     * Return degrees of pairs of connected vertices
+     * ie. for all connected vertices A, B, return (deg(A), deg(B))
+     * we actually return each undirected edge twice,
+     * so for connected vertices A,B, both (deg(A), deg(B) and (deg(B), deg(A)) are returned
      *
      * Self-edges count as degree +2 instead of +1
      * @return

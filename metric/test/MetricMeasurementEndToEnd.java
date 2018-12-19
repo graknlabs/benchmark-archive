@@ -2,13 +2,16 @@ package grakn.benchmark.metric.test;
 
 import grakn.benchmark.metric.MetricMeasurement;
 import org.junit.Test;
+
+import java.io.IOException;
+
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 public class MetricMeasurementEndToEnd {
 
     @Test
-    public void standardGraphMetrics() {
+    public void standardGraphMetrics() throws IOException {
         String standardGraphEdgeList = "/Users/joshua/Documents/benchmark/metric/test/binaryGraph.csv";
         double[] percentiles = new double[] {1.0, 30.0, 50.0, 70.0, 100.0};
         String[] args = new String[] {standardGraphEdgeList};

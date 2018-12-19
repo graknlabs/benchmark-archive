@@ -2,7 +2,7 @@
 # metrics for this graph:
 # degree distribution: [1, 1, 2, 2, 2, 2, 2, 2, 3, 3]
 # compressed degree distribution [0th, 20th, 50th, 70th, 100th]: [1, 2, 2, 2, 3]
-# degree assortativity = -0.43181818181818193
+# degree assortativity = -0.38888888888888995
 # transitivity: 0.25
 # NOTE this is not the same graph as is used in the unit tests! Similar but not quite
 1, 2

@@ -7,8 +7,8 @@ public class Assortativity {
 
     public static double computeAssortativity(INDArray jointDegreeOccurrence) {
 
-        if (jointDegreeOccurrence.sumNumber().doubleValue() != 1.0) {
-            throw new RuntimeException("Assortativity required normalized joint degree occurrence matrix");
+        if (Math.abs(jointDegreeOccurrence.sumNumber().doubleValue()  - 1.0) > 0.000001) {
+            throw new RuntimeException("Assortativity requires normalized joint degree occurrence matrix");
         }
 
         // calculate degree assortativity
@@ -56,6 +56,7 @@ public class Assortativity {
 
         INDArray jointDegreeOccurrence = Nd4j.zeros(maxDegree+1, maxDegree+1);
 
+        // jointDegreeOccurrence[deg1][deg2] += 1 for each deg1, deg2
         properties.connectedVertexDegrees().forEach(
                 degrees ->
                         jointDegreeOccurrence.putScalar(
