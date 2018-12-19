@@ -113,7 +113,11 @@ java_test(
      srcs = ["test/DegreeDistributionIT.java"],
      deps = [
          "//metric:metric",
-         "//dependencies/maven/artifacts/junit:junit"
+         "//dependencies/maven/artifacts/junit:junit",
+
+        "//dependencies/maven/artifacts/grakn/core:client",
+        "//dependencies/maven/artifacts/grakn/core:grakn-graql",
+        "//dependencies/maven/artifacts/grakn/core:util"
      ]
  )
 
