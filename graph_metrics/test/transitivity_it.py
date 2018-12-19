@@ -122,3 +122,44 @@ class TransitivityIt(unittest.TestCase):
         correct_transitivity = nx.transitivity(networkx_graph)
 
         np.testing.assert_approx_equal(computed_transitivty, correct_transitivity)
+
+
+    def test_transitivity_unary_binary_ignores_unary(self):
+        """
+        The concept of "transitivity" or "triangles" isn't definable when one edge is a self-edge, ie. the "triangle"
+        is effectively composed of only two vertices A and B. We gain no information by saying "A --- A, and A -- B,
+        so A -- B with likelihood x" (cf. "A -- B, B -- C, so A -- C with likelihood y").
+
+        So choosing to ignore self-edges/loops, when measuring transitivity
+        :return:
+        """
+        adjacency = {
+            1: [],
+            2: [],
+            3: [1, 2, 3],   # loop
+            4: [4],         # loop
+            5: [5],         # loop
+            6: [4, 5, 7],
+            7: [],
+            8: [7, 9, 10],
+            9: [10],
+            10: [],
+        }
+        edge_list = adjacency_to_edge_list(adjacency)
+        reader = GraphReader(edge_list=edge_list)
+        double_adjacency = reader.double_adjacency()
+
+        transitivity_measure = Transitivity(double_adjacency=double_adjacency, edge_list=reader.edge_list)
+        computed_transitivty = transitivity_measure.get_coefficient()
+
+        # this is the expected input format in networkx
+        vertex_ids = adjacency.keys()
+        edge_list = reader.edge_list
+
+        networkx_graph = nx.Graph()  # using undirected graphs
+        networkx_graph.add_nodes_from(vertex_ids)
+        networkx_graph.add_edges_from(edge_list)
+        # networkx does ignore loops in transitivity calculations, safe to use as a reference again
+        correct_transitivity = nx.transitivity(networkx_graph)
+
+        np.testing.assert_approx_equal(computed_transitivty, correct_transitivity)

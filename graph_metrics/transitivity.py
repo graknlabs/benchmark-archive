@@ -24,11 +24,17 @@ class Transitivity:
 
 
     def _stream_intersecting_edge_pairs(self):
+        """
+        Stream intersecting edge pairs, that also involve more than two different vertices!
+        :return:
+        """
         counter = 0
         total = self._possible_triangles()
         for start, neighbors in self.double_adjacency.items():
             # stream pairwise edges from this start vertex
             for (end1, end2) in combinations(neighbors, 2):
+                if start == end1 or start == end2:
+                    continue
                 if counter % 500000 == 0:
                     print("Completed {0}/{1} --- {2:.2f}%".format(counter, total, 100*counter/total))
                 counter += 1
