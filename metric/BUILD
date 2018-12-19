@@ -129,6 +129,16 @@ java_test(
  )
 
 java_test(
+    name = "global-transitivity-it",
+    test_class = "grakn.benchmark.metric.test.GlobalTransitivityIT",
+    srcs = ["test/GlobalTransitivityIT.java"],
+    deps = [
+        "//metric:metric",
+        "//dependencies/maven/artifacts/junit:junit"
+    ]
+)
+
+java_test(
     name = "global-transitivity-test",
     test_class = "grakn.benchmark.metric.test.GlobalTransitivityTest",
     srcs = ["test/GlobalTransitivityTest.java"],

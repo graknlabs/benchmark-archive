@@ -4,7 +4,6 @@ import grakn.benchmark.metric.GlobalTransitivity;
 import grakn.benchmark.metric.GraphProperties;
 import org.apache.commons.math3.util.Pair;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
@@ -107,7 +106,7 @@ public class GlobalTransitivityTest {
         connectedEdgePairs.add( new Pair<>(edges.get(6), edges.get(8)) ); // (9,8) -- (9,10)
         connectedEdgePairs.add( new Pair<>(edges.get(8), edges.get(7)) ); // (9,10) -- (8,10)
 
-        when(mockProperties.connectedEdgePairs()).thenReturn(connectedEdgePairs.stream());
+        when(mockProperties.connectedEdgePairs(true)).thenReturn(connectedEdgePairs.stream());
 
         // also need to setup neighbors
         when(mockProperties.neighbors("1")).thenReturn(new HashSet<>(Arrays.asList("3")));

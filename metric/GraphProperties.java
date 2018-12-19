@@ -20,7 +20,7 @@ public interface GraphProperties {
      In other words, get all pairs of connected (hyper)edges sharing at least one vertex - this
      pair should only be returned once!
       */
-     public Stream<Pair<Set<String>, Set<String>>> connectedEdgePairs();
+     public Stream<Pair<Set<String>, Set<String>>> connectedEdgePairs(boolean requireAtLeastThreeUniqueVertices);
      public Set<String> neighbors(String vertexId);
 }
 

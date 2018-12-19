@@ -51,24 +51,94 @@ public class StandardGraphProperties implements GraphProperties {
         }
     }
 
-//    public StandardGraphProperties(File edgelistFile, File vertexListFile) {
-//        this(edgelistFile);
-//        // TODO parse vertices
-//    }
-
     @Override
     public long maxDegree() {
         return this.vertexDegree().max(Comparator.naturalOrder()).orElse(0l);
     }
 
+    /**
+     * Stream pairs of intersecting edges (ie. share at least one vertex)
+     * if requireAtLeastThreeUniqueVertices is true, only return pairs of edges
+     * that involve separate vertices (say, A, B, C), because sometimes we may wish to ignore
+     * looping edges (self-edges)
+     *
+     * In the case of a triangle (A, B, C fully connected), each combination of pairs will be returned once
+     * (A -- B, B -- C), (B -- A, A -- C), (B -- C, C -- A)
+     * @return
+     */
     @Override
-    public Stream<Pair<Set<String>, Set<String>>> connectedEdgePairs() {
-        return null;
+    public Stream<Pair<Set<String>, Set<String>>> connectedEdgePairs(boolean requireAtLeastThreeUniqueVertices) {
+        return doubleAdjacencyList.entrySet().stream()
+            .map(
+                stringSetEntry -> {
+                    String start = stringSetEntry.getKey();
+                    Set<String> neighbors = stringSetEntry.getValue();
+                    List<Pair<Set<String>, Set<String>>> neighborPairs = combinations(start, neighbors, requireAtLeastThreeUniqueVertices);
+                    return neighborPairs.stream();
+                }
+            )
+            .flatMap(e -> e);
     }
 
+    /**
+     * Example: Giveen element `e`, set `set`: find all 2-combinations of `set` -> (x,y), then
+     * return pairs with the given element `e` as [(e, x), (e, y)]
+     *
+     * @param element The element that must be present in each returned set
+     * @param set The set that we draw all possible two-combinations from
+     * @param requireUniqueElements require that `e`, `x` and `y` are all different
+     * @return
+     */
+    private List<Pair<Set<String>, Set<String>>> combinations(String element, Set<String> set, boolean requireUniqueElements) {
+        LinkedList<Pair<Set<String>, Set<String>>> combinations = new LinkedList<>();
+        // convert set to array to iterate over in order
+        String[] orderedSet = set.toArray(new String[set.size()]);
+        for (int i = 0; i < orderedSet.length; i++) {
+            String e1 = orderedSet[i];
+            for (int j = i+1; j < orderedSet.length; j++) {
+                String e2 = orderedSet[j];
+
+                if (requireUniqueElements && (element.equals(e1) || element.equals(e2) || e1.equals(e2))) {
+                    continue;
+                }
+
+                Set<String> firstSet = new HashSet<>();
+                firstSet.add(element);
+                firstSet.add(e1);
+
+                Set<String> secondSet = new HashSet<>();
+                secondSet.add(element);
+                secondSet.add(e2);
+
+                combinations.add(new Pair<>(firstSet, secondSet));
+            }
+        }
+        return combinations;
+    }
+
+    /**
+     * Stream the degree of
+     *
+     * Self-edges count as degree +2 instead of +1
+     * @return
+     */
     @Override
     public Stream<Pair<Integer, Integer>> connectedVertexDegrees() {
-        return null;
+        return doubleAdjacencyList.entrySet().stream()
+            .map(
+                stringSetEntry -> {
+                    String start = stringSetEntry.getKey();
+                    Set<String> neighbors = stringSetEntry.getValue();
+                    Integer startDegree = neighbors.contains(start) ? 1 + neighbors.size() : neighbors.size();
+
+                    return neighbors.stream().map(end -> {
+                        Set<String> endNeighbors = doubleAdjacencyList.get(end);
+                        Integer endDegree = endNeighbors.contains(end) ? 1 + endNeighbors.size() : endNeighbors.size();
+                        return new Pair<>(startDegree, endDegree);
+                    });
+                }
+            )
+            .flatMap(e -> e);
     }
 
     /**

@@ -1,6 +1,5 @@
 package grakn.benchmark.metric;
 
-import com.sun.corba.se.impl.orbutil.graph.Graph;
 import org.apache.commons.math3.util.Pair;
 
 import java.util.HashSet;
@@ -24,7 +23,7 @@ public class GlobalTransitivity {
         long pairs = 0;
         double clusteringCoefficient = 0.0;
 
-        Iterator<Pair<Set<String>, Set<String>>> iter = properties.connectedEdgePairs().iterator();
+        Iterator<Pair<Set<String>, Set<String>>> iter = properties.connectedEdgePairs(true).iterator();
         while (iter.hasNext()) {
             Pair<Set<String>, Set<String>> edgePair = iter.next();
             clusteringCoefficient += extraOverlap(properties, edgePair.getFirst(), edgePair.getSecond());

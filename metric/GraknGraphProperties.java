@@ -18,7 +18,7 @@ public class GraknGraphProperties implements GraphProperties {
     }
 
     @Override
-    public Stream<Pair<Set<String>, Set<String>>> connectedEdgePairs() {
+    public Stream<Pair<Set<String>, Set<String>>> connectedEdgePairs(boolean requireAtLeastThreeUniqueVertices) {
         return null;
     }
 
