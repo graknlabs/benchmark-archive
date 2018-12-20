@@ -53,7 +53,7 @@ public class StandardGraphProperties implements GraphProperties {
 
     @Override
     public long maxDegree() {
-        return this.vertexDegree().max(Comparator.naturalOrder()).orElse(0l);
+        return this.vertexDegree().stream().max(Comparator.naturalOrder()).orElse(0l);
     }
 
     /**
@@ -67,7 +67,7 @@ public class StandardGraphProperties implements GraphProperties {
      * @return
      */
     @Override
-    public Stream<Pair<Set<String>, Set<String>>> connectedEdgePairs(boolean edgeCardinalitiesGreaterThanOne) {
+    public List<Pair<Set<String>, Set<String>>> connectedEdgePairs(boolean edgeCardinalitiesGreaterThanOne) {
         return doubleAdjacencyList.entrySet().stream()
             .map(
                 stringSetEntry -> {
@@ -77,7 +77,8 @@ public class StandardGraphProperties implements GraphProperties {
                     return neighborPairs.stream();
                 }
             )
-            .flatMap(e -> e);
+            .flatMap(e -> e)
+            .collect(Collectors.toList());
     }
 
     /**
@@ -126,7 +127,7 @@ public class StandardGraphProperties implements GraphProperties {
      * @return
      */
     @Override
-    public Stream<Pair<Long, Long>> connectedVertexDegrees() {
+    public List<Pair<Long, Long>> connectedVertexDegrees() {
         return doubleAdjacencyList.entrySet().stream()
             .map(
                 stringSetEntry -> {
@@ -141,7 +142,8 @@ public class StandardGraphProperties implements GraphProperties {
                     });
                 }
             )
-            .flatMap(e -> e);
+            .flatMap(e -> e)
+            .collect(Collectors.toList());
     }
 
     /**
@@ -151,7 +153,7 @@ public class StandardGraphProperties implements GraphProperties {
      * @return
      */
     @Override
-    public Stream<Long> vertexDegree() {
+    public List<Long> vertexDegree() {
         return this.doubleAdjacencyList.entrySet().stream().map(
                 entrySet -> {
                     String vertexId = entrySet.getKey();
@@ -162,7 +164,7 @@ public class StandardGraphProperties implements GraphProperties {
                     }
                     return degree;
                 }
-        );
+        ).collect(Collectors.toList());
     }
 
     @Override

@@ -53,7 +53,7 @@ public class GraknGraphProperties implements GraphProperties {
     }
 
     @Override
-    public Stream<Pair<Set<String>, Set<String>>> connectedEdgePairs(boolean edgeCardinalitesGreaterThanOne) {
+    public List<Pair<Set<String>, Set<String>>> connectedEdgePairs(boolean edgeCardinalitesGreaterThanOne) {
         Stream<Pair<Set<String>, Set<String>>> edgePairs;
 
 
@@ -99,16 +99,15 @@ public class GraknGraphProperties implements GraphProperties {
                 );
             }
         }
-        return edgePairs;
+        return edgePairs.collect(Collectors.toList());
     }
 
     @Override
-    public Stream<Pair<Long, Long>> connectedVertexDegrees() {
-        Stream<Pair<Long, Long>> connectedVertexDegrees = Stream.empty();
+    public List<Pair<Long, Long>> connectedVertexDegrees() {
+        List<Pair<Long, Long>> connectedVertexDegrees;
 
         // TODO do we need inference enabled here?
-//        try (Grakn.Transaction tx = getTx(false)) {
-        Grakn.Transaction tx = getTx(false);
+        try (Grakn.Transaction tx = getTx(false)) {
             // compute degree of each entity
             // compute degree of each  entitiy
             // returns mapping { deg_n : set(entity ids) }
@@ -136,13 +135,14 @@ public class GraknGraphProperties implements GraphProperties {
                                 entityDegreeMap.get(conceptMap.get("x").id().toString()),
                                 entityDegreeMap.get(conceptMap.get("y").id().toString())
                             )
-                    );
-//        }
+                    )
+            .collect(Collectors.toList());
+        }
         return connectedVertexDegrees;
     }
 
     @Override
-    public Stream<Long> vertexDegree() {
+    public List<Long> vertexDegree() {
 
         Stream<Long> nonzeroDegrees = Stream.empty();
         long numNonzeroDegrees = 0;
@@ -182,7 +182,9 @@ public class GraknGraphProperties implements GraphProperties {
             numZeroDegrees = totalVertices - numNonzeroDegrees;
         }
 
-        return Stream.concat(nonzeroDegrees, IntStream.range(0, (int)(numZeroDegrees)).map(i->0).asLongStream().boxed());
+        return Stream.concat(nonzeroDegrees,
+                IntStream.range(0, (int)(numZeroDegrees)).map(i->0).asLongStream().boxed())
+                .collect(Collectors.toList());
     }
 
     @Override
