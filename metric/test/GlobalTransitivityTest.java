@@ -106,7 +106,7 @@ public class GlobalTransitivityTest {
         connectedEdgePairs.add( new Pair<>(edges.get(6), edges.get(8)) ); // (9,8) -- (9,10)
         connectedEdgePairs.add( new Pair<>(edges.get(8), edges.get(7)) ); // (9,10) -- (8,10)
 
-        when(mockProperties.connectedEdgePairs(true)).thenReturn(connectedEdgePairs.stream());
+        when(mockProperties.connectedEdgePairs(true)).thenReturn(connectedEdgePairs);
 
         // also need to setup neighbors
         when(mockProperties.neighbors("1")).thenReturn(new HashSet<>(Arrays.asList("3")));

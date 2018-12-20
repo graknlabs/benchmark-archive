@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.mockito.Mockito.when;
@@ -25,7 +26,7 @@ public class DegreeDistributionTest {
                 4,
                 10
         };
-        when(mockProperties.vertexDegree()).thenReturn(Arrays.stream(vertexDegrees).boxed());
+        when(mockProperties.vertexDegree()).thenReturn(Arrays.stream(vertexDegrees).boxed().collect(Collectors.toList()));
 
         double[] percentiles = new double[] {0, 20, 50, 80, 100};
         long[] correctDegreeDistribution = new long[] {0, 0, 2, 3, 10};

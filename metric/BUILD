@@ -75,19 +75,6 @@ java_binary(
     visibility = ["//visibility:public"]
 )
 
-
-java_test(
-    name = "metric-end-to-end",
-    test_class = "grakn.benchmark.metric.test.MetricMeasurementEndToEnd",
-    srcs = ["test/MetricMeasurementEndToEnd.java"],
-    deps = [
-        "//metric:metric",
-        "//dependencies/maven/artifacts/junit:junit",
-        "//dependencies/maven/artifacts/org/mockito:mockito-core",
-        "//dependencies/maven/artifacts/org/hamcrest:hamcrest-library"
-    ]
-)
-
 java_test(
      name = "assortativity-it",
      test_class = "grakn.benchmark.metric.test.AssortativityIT",

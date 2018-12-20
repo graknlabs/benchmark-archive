@@ -89,31 +89,31 @@ public class AssortativityTest {
         IE. an edge between a vertex of degree 1 and degree 2 produces two connected vertex degrees: (1,2) and (2,1)
          */
 
-        List<Pair<Integer, Integer>> connectedVertexDegrees = Arrays.asList(
-                new Pair<>(1, 2),
-                new Pair<>(1, 2),
-                new Pair<>(2, 1),
-                new Pair<>(2, 1),
+        List<Pair<Long, Long>> connectedVertexDegrees = Arrays.asList(
+                new Pair<>(1l, 2l),
+                new Pair<>(1l, 2l),
+                new Pair<>(2l, 1l),
+                new Pair<>(2l, 1l),
 
-                new Pair<>(1, 3),
-                new Pair<>(1, 3),
-                new Pair<>(3, 1),
-                new Pair<>(3, 1),
+                new Pair<>(1l, 3l),
+                new Pair<>(1l, 3l),
+                new Pair<>(3l, 1l),
+                new Pair<>(3l, 1l),
 
-                new Pair<>(2, 3),
-                new Pair<>(2, 3),
-                new Pair<>(2, 3),
-                new Pair<>(2, 3),
-                new Pair<>(3, 2),
-                new Pair<>(3, 2),
-                new Pair<>(3, 2),
-                new Pair<>(3, 2),
+                new Pair<>(2l, 3l),
+                new Pair<>(2l, 3l),
+                new Pair<>(2l, 3l),
+                new Pair<>(2l, 3l),
+                new Pair<>(3l, 2l),
+                new Pair<>(3l, 2l),
+                new Pair<>(3l, 2l),
+                new Pair<>(3l, 2l),
 
-                new Pair<>(2, 2),
-                new Pair<>(2, 2)
+                new Pair<>(2l, 2l),
+                new Pair<>(2l, 2l)
         );
 
-        when(mockProperties.connectedVertexDegrees()).thenReturn(connectedVertexDegrees.stream());
+        when(mockProperties.connectedVertexDegrees()).thenReturn(connectedVertexDegrees);
         when(mockProperties.maxDegree()).thenReturn(3l);
 
         INDArray jointDegreeMatrix = Assortativity.jointDegreeOccurrence(mockProperties);

@@ -39,7 +39,6 @@ public class GraknGraphProperties implements GraphProperties {
         }
     }
 
-
     @Override
     public long maxDegree() {
         // TODO do we need inference here?
@@ -54,7 +53,7 @@ public class GraknGraphProperties implements GraphProperties {
 
     @Override
     public List<Pair<Set<String>, Set<String>>> connectedEdgePairs(boolean edgeCardinalitesGreaterThanOne) {
-        Stream<Pair<Set<String>, Set<String>>> edgePairs;
+        List<Pair<Set<String>, Set<String>>> edgePairs;
 
 
         // TODO do we need inference here?
@@ -68,7 +67,7 @@ public class GraknGraphProperties implements GraphProperties {
                     var("x").isa("entity")
             ).get(var("r1"), var("r2"));
 
-            edgePairs = query.stream().map(
+            Stream<Pair<Set<String>, Set<String>>> edgePairsStream= query.stream().map(
                     conceptMap -> {
                         Concept r1 = conceptMap.get("r1");
                         Concept r2 = conceptMap.get("r2");
@@ -94,12 +93,13 @@ public class GraknGraphProperties implements GraphProperties {
             if (edgeCardinalitesGreaterThanOne) {
                 // filter out edge pairs that don't touch at least 3 vertices (for instance)
                 // we use a slightly stronger condition: each edge needs to touch more than 1 vertex each
-                edgePairs = edgePairs.filter(
+                edgePairsStream = edgePairsStream.filter(
                         pair -> (pair.getFirst().size() > 1 && pair.getSecond().size() > 1)
                 );
             }
+            edgePairs = edgePairsStream.collect(Collectors.toList());
         }
-        return edgePairs.collect(Collectors.toList());
+        return edgePairs;
     }
 
     @Override
