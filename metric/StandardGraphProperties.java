@@ -126,17 +126,17 @@ public class StandardGraphProperties implements GraphProperties {
      * @return
      */
     @Override
-    public Stream<Pair<Integer, Integer>> connectedVertexDegrees() {
+    public Stream<Pair<Long, Long>> connectedVertexDegrees() {
         return doubleAdjacencyList.entrySet().stream()
             .map(
                 stringSetEntry -> {
                     String start = stringSetEntry.getKey();
                     Set<String> neighbors = stringSetEntry.getValue();
-                    Integer startDegree = neighbors.contains(start) ? 1 + neighbors.size() : neighbors.size();
+                    Long startDegree = neighbors.contains(start) ? 1l + neighbors.size() : neighbors.size();
 
                     return neighbors.stream().map(end -> {
                         Set<String> endNeighbors = doubleAdjacencyList.get(end);
-                        Integer endDegree = endNeighbors.contains(end) ? 1 + endNeighbors.size() : endNeighbors.size();
+                        Long endDegree = endNeighbors.contains(end) ? 1l + endNeighbors.size() : endNeighbors.size();
                         return new Pair<>(startDegree, endDegree);
                     });
                 }

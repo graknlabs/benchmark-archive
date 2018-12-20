@@ -93,7 +93,7 @@ public class GlobalTransitivityIT {
         List<?> answer = tx.graql().parse("define vertex sub entity, plays endpt; edge sub relationship, relates endpt;").execute();
         tx.commit();
 
-        // insert same data as `binaryGraph.csv`
+        // insert same data as `unaryBinaryGraph.csv`
         tx = session.transaction(GraknTxType.WRITE);
         answer = tx.graql().parse("insert" +
                 "$v1 isa vertex; $v2 isa vertex; $v3 isa vertex; $v4 isa vertex; $v5 isa vertex; $v6 isa vertex;" +
