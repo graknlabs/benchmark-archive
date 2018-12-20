@@ -20,7 +20,7 @@ public class AssortativityIT {
 
     @Test
     public void standardBinaryGraphAssortativity() throws IOException {
-        Path edgeListFilePath = Paths.get("/Users/joshua/Documents/benchmark/metric/test/binaryGraph.csv");
+        Path edgeListFilePath = Paths.get("metric/test/binaryGraph.csv");
         StandardGraphProperties graphProperties = new StandardGraphProperties(edgeListFilePath, ',');
         double computedAssortativity = Assortativity.computeAssortativity(Assortativity.jointDegreeOccurrence(graphProperties));
         double correctAssortativity = -0.38888888888888995;
@@ -30,7 +30,7 @@ public class AssortativityIT {
 
     @Test
     public void standardUnaryBinaryGraphAssortativity() throws IOException {
-        Path edgeListFilePath = Paths.get("/Users/joshua/Documents/benchmark/metric/test/unaryBinaryGraph.csv");
+        Path edgeListFilePath = Paths.get("metric/test/unaryBinaryGraph.csv");
         StandardGraphProperties graphProperties = new StandardGraphProperties(edgeListFilePath, ',');
         double computedAssortativity = Assortativity.computeAssortativity(Assortativity.jointDegreeOccurrence(graphProperties));
         double correctAssortativity = -0.2767857142857146;

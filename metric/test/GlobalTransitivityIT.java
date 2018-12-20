@@ -20,7 +20,7 @@ public class GlobalTransitivityIT {
 
     @Test
     public void standardBinaryGraphTransitivity() throws IOException {
-        Path edgeListFilePath = Paths.get("/Users/joshua/Documents/benchmark/metric/test/binaryGraph.csv");
+        Path edgeListFilePath = Paths.get("metric/test/binaryGraph.csv");
         StandardGraphProperties graphProperties = new StandardGraphProperties(edgeListFilePath, ',');
         double computedTransitivity = GlobalTransitivity.computeTransitivity(graphProperties);
         double correctTransitivity = 0.25;
@@ -35,7 +35,7 @@ public class GlobalTransitivityIT {
      */
     @Test
     public void standardUnaryBinaryGraphTransitivity() throws IOException {
-        Path edgeListFilePath = Paths.get("/Users/joshua/Documents/benchmark/metric/test/unaryBinaryGraph.csv");
+        Path edgeListFilePath = Paths.get("metric/test/unaryBinaryGraph.csv");
         StandardGraphProperties graphProperties = new StandardGraphProperties(edgeListFilePath, ',');
         double computedTransitivity = GlobalTransitivity.computeTransitivity(graphProperties);
         double correctTransitivity = 0.25;

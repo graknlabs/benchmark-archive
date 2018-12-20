@@ -86,7 +86,8 @@ java_test(
         "//dependencies/maven/artifacts/grakn/core:client",
         "//dependencies/maven/artifacts/grakn/core:grakn-graql",
         "//dependencies/maven/artifacts/grakn/core:util"
-     ]
+     ],
+     data = [":test/binaryGraph.csv", ":test/unaryBinaryGraph.csv"]
  )
 
 java_test(
@@ -118,7 +119,8 @@ java_test(
         "//dependencies/maven/artifacts/grakn/core:client",
         "//dependencies/maven/artifacts/grakn/core:grakn-graql",
         "//dependencies/maven/artifacts/grakn/core:util"
-     ]
+     ],
+     data = [":test/binaryGraph.csv", ":test/unaryBinaryGraph.csv"]
  )
 
 java_test(
@@ -143,7 +145,8 @@ java_test(
         "//dependencies/maven/artifacts/grakn/core:client",
         "//dependencies/maven/artifacts/grakn/core:grakn-graql",
         "//dependencies/maven/artifacts/grakn/core:util"
-    ]
+    ],
+    data = [":test/binaryGraph.csv", ":test/unaryBinaryGraph.csv"]
 )
 
 java_test(

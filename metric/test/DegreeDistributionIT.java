@@ -20,7 +20,7 @@ public class DegreeDistributionIT {
 
     @Test
     public void standardBinaryGraphToPercentiles() throws IOException {
-        Path edgeListFilePath = Paths.get("/Users/joshua/Documents/benchmark/metric/test/binaryGraph.csv");
+        Path edgeListFilePath = Paths.get("metric/test/binaryGraph.csv");
         // degree distribution: [1, 1, 2, 2, 2, 2, 2, 2, 3, 3]
         // compressed degree distribution [0th, 20th, 50th, 70th, 100th]: [1, 2, 2, 2, 3]
 
@@ -38,7 +38,7 @@ public class DegreeDistributionIT {
      */
     @Test
     public void standardUnaryBinaryGraphToPercentiles() throws IOException {
-        Path edgeListFilePath = Paths.get("/Users/joshua/Documents/benchmark/metric/test/unaryBinaryGraph.csv");
+        Path edgeListFilePath = Paths.get("metric/test/unaryBinaryGraph.csv");
         StandardGraphProperties graphProperties = new StandardGraphProperties(edgeListFilePath, ',');
         double[] percentiles = new double[] {0, 20, 50, 70, 100};
         long[] discreteDegreeDistribution = DegreeDistribution.discreteDistribution(graphProperties, percentiles);
