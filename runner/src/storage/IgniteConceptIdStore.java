@@ -390,6 +390,15 @@ public class IgniteConceptIdStore implements IdStoreInterface {
         return total;
     }
 
+    @Override
+    public int totalEntities() {
+        int total = 0;
+        for (String typeLabel : this.entityTypeLabels) {
+            total += this.getConceptCount(typeLabel);
+        }
+        return total;
+    }
+
 //    private ResultSet runQuery(String sql) {
 //        try (Statement stmt = conn.createStatement()) {
 //            try (ResultSet rs = stmt.executeQuery(sql)) {

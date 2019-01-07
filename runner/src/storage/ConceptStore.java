@@ -28,4 +28,6 @@ public interface ConceptStore {
     void add(Concept concept);
 
     int total();
+
+    int totalEntities();
 }
