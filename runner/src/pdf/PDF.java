@@ -21,10 +21,6 @@ package grakn.benchmark.runner.pdf;
 /**
  *
  */
-//TODO Should be/have an interface?
-public abstract class PDF {
-    /**
-     * @return
-     */
-    public abstract int next();
+public interface PDF {
+    int next();
 }

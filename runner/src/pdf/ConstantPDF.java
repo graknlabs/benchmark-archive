@@ -21,7 +21,7 @@ package grakn.benchmark.runner.pdf;
 /**
  *
  */
-public class ConstantPDF extends PDF {
+public class ConstantPDF implements PDF {
 
     private int constant;
 

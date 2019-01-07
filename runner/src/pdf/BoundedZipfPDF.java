@@ -6,7 +6,7 @@ import org.apache.commons.math3.random.RandomGeneratorFactory;
 
 import java.util.Random;
 
-public class BoundedZipfPDF extends PDF {
+public class BoundedZipfPDF implements PDF {
     private Random rand;
     private int rangeLimit;
     private double exponent;

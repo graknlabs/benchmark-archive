@@ -25,7 +25,7 @@ import java.util.Random;
 /**
  *
  */
-public class DiscreteGaussianPDF extends PDF {
+public class DiscreteGaussianPDF implements PDF {
     private Random rand;
     private Double mean;
     private Double variance;
