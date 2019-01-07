@@ -24,7 +24,7 @@ import java.util.stream.IntStream;
 /**
  *
  */
-public class UniformPDF implements PDF {
+public class UniformPDF implements InvariantPDF {
 
     private Random rand;
     private int lowerBound;

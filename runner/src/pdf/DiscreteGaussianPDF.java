@@ -25,21 +25,21 @@ import java.util.Random;
 /**
  *
  */
-public class DiscreteGaussianPDF implements PDF {
+public class DiscreteGaussianPDF implements InvariantPDF {
     private Random rand;
-    private Double mean;
-    private Double variance;
+    private double mean;
+    private double stddev;
 
 
     /**
      * @param rand
      * @param mean
-     * @param variance
+     * @param stddev
      */
-    public DiscreteGaussianPDF(Random rand, Double mean, Double variance) {
+    public DiscreteGaussianPDF(Random rand, double mean, double stddev) {
         this.rand = rand;
         this.mean = mean;
-        this.variance = variance;
+        this.stddev = stddev;
     }
 
     /**
@@ -47,6 +47,6 @@ public class DiscreteGaussianPDF implements PDF {
      */
     public int next() {
         double z = rand.nextGaussian();
-        return (int) (Math.pow(variance, 0.5) * z + mean);
+        return (int) (stddev * z + mean);
     }
 }

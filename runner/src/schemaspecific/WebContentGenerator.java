@@ -193,7 +193,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         // Normal, mu=9, sigma^2=5
         add(2, relationshipStrategy(
                 "membership",
-                gaussian(9, 5),
+                gaussian(9, 2.5),
                 rolePlayerTypeStrategy(
                         "member",
                         "person",
@@ -212,7 +212,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         // Normal, mu=10, sigma^2=3^2
         add(2, relationshipStrategy(
                 "membership",
-                gaussian(10, 9),
+                gaussian(10, 3),
                 rolePlayerTypeStrategy(
                         "member",
                         "person",
@@ -287,7 +287,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         // ie. pick a department, assign N teams that don't aren't owned yet
         add(1, relationshipStrategy(
                 "ownership",
-                gaussian(5, 1.5*1.5),
+                gaussian(5, 1.5),
                 rolePlayerTypeStrategy(
                         "owner",
                         "department",
@@ -460,8 +460,8 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         return new UniformPDF(random, lowerBound, upperBound);
     }
 
-    private DiscreteGaussianPDF gaussian(double mean, double variance) {
-        return new DiscreteGaussianPDF(random, mean, variance);
+    private DiscreteGaussianPDF gaussian(double mean, double stddev) {
+        return new DiscreteGaussianPDF(random, mean, stddev);
     }
 
     private BoundedZipfPDF zipf(int rangeLimit, double exponent) {
