@@ -1,9 +1,9 @@
-package grakn.benchmark.runner.specificstrategies;
+package grakn.benchmark.runner.schemaspecific;
 
 import grakn.benchmark.runner.strategy.RouletteWheel;
 import grakn.benchmark.runner.strategy.TypeStrategyInterface;
 
 
-public interface SpecificStrategy {
+public interface SchemaSpecificDataGenerator {
     RouletteWheel<RouletteWheel<TypeStrategyInterface>> getStrategy();
 }

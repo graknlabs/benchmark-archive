@@ -1,4 +1,4 @@
-package grakn.benchmark.runner.specificstrategies;
+package grakn.benchmark.runner.schemaspecific;
 
 import grakn.core.concept.ConceptId;
 import grakn.benchmark.runner.pdf.BoundedZipfPDF;
@@ -31,7 +31,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-public class WebContentStrategies implements SpecificStrategy {
+public class WebContentGenerator implements SchemaSpecificDataGenerator {
 
     private Random random;
     private ConceptStore storage;
@@ -41,7 +41,7 @@ public class WebContentStrategies implements SpecificStrategy {
     private RouletteWheel<TypeStrategyInterface> attributeStrategies;
     private RouletteWheel<RouletteWheel<TypeStrategyInterface>> operationStrategies;
 
-    public WebContentStrategies(Random random, ConceptStore storage) {
+    public WebContentGenerator(Random random, ConceptStore storage) {
         this.random = random;
         this.storage = storage;
 

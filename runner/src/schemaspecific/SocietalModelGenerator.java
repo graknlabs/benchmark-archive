@@ -1,4 +1,4 @@
-package grakn.benchmark.runner.specificstrategies;
+package grakn.benchmark.runner.schemaspecific;
 
 import grakn.benchmark.runner.pdf.ConstantPDF;
 import grakn.benchmark.runner.pdf.DiscreteGaussianPDF;
@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-public class SocietalModelStrategy implements SpecificStrategy {
+public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
 
     private Random random;
     private ConceptStore storage;
@@ -34,7 +34,7 @@ public class SocietalModelStrategy implements SpecificStrategy {
     private RouletteWheel<TypeStrategyInterface> attributeStrategies;
     private RouletteWheel<RouletteWheel<TypeStrategyInterface>> operationStrategies;
 
-    public SocietalModelStrategy(Random random, ConceptStore storage) {
+    public SocietalModelGenerator(Random random, ConceptStore storage) {
         this.random = random;
         this.storage = storage;
 
