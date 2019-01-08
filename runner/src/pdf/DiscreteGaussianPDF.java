@@ -22,6 +22,8 @@ package grakn.benchmark.runner.pdf;
 
 import java.util.Random;
 
+import static java.lang.Integer.max;
+
 /**
  *
  */
@@ -29,7 +31,6 @@ public class DiscreteGaussianPDF implements InvariantPDF {
     private Random rand;
     private double mean;
     private double stddev;
-
 
     /**
      * @param rand
@@ -47,6 +48,6 @@ public class DiscreteGaussianPDF implements InvariantPDF {
      */
     public int next() {
         double z = rand.nextGaussian();
-        return (int) (stddev * z + mean);
+        return max(0, (int) (stddev * z + mean));
     }
 }

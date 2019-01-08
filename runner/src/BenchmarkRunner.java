@@ -80,10 +80,7 @@ public class BenchmarkRunner {
     }
 
     public void run() {
-        // load schema if not disabled
-        if (!this.configuration.noSchemaLoad()) {
-            this.dataGenerator.loadSchema();
-        }
+
 
         // initialize data generation if not disabled
         if (!this.configuration.noDataGeneration()) {
@@ -273,10 +270,17 @@ public class BenchmarkRunner {
         Grakn.Session session = client.session(benchmarkConfiguration.getKeyspace());
         int randomSeed = 0;
 
+
+
         // no data generation means NEITHER schema load NOR data generate
         DataGenerator dataGenerator = benchmarkConfiguration.noDataGeneration() ?
                 null :
                 new DataGenerator(session, benchmarkConfiguration.getName(), benchmarkConfiguration.getSchemaGraql(), randomSeed);
+
+        // load schema if not disabled
+        if (!benchmarkConfiguration.noSchemaLoad()) {
+            dataGenerator.loadSchema();
+        }
 
         QueryExecutor queryExecutor = new QueryExecutor(benchmarkConfiguration.getKeyspace(),
                                             Configs.GRAKN_URI,

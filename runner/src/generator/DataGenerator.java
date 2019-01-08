@@ -29,8 +29,6 @@ import grakn.core.concept.RelationshipType;
 import grakn.core.graql.InsertQuery;
 import grakn.core.graql.Query;
 import grakn.core.graql.answer.ConceptMap;
-import grakn.benchmark.runner.specificstrategies.SpecificStrategy;
-import grakn.benchmark.runner.specificstrategies.SpecificStrategyFactory;
 import grakn.benchmark.runner.storage.ConceptStore;
 import grakn.benchmark.runner.storage.IgniteConceptIdStore;
 import grakn.benchmark.runner.storage.InsertionAnalysis;

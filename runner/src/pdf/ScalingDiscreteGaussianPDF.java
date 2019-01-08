@@ -3,6 +3,8 @@ package grakn.benchmark.runner.pdf;
 import java.util.Random;
 import java.util.function.Supplier;
 
+import static java.lang.Integer.max;
+
 /**
  *
  */
@@ -29,6 +31,6 @@ public class ScalingDiscreteGaussianPDF implements InvariantPDF {
         int scale = scaleSupplier.get();
         double stddev = scale * stddevScaleFraction;
         double mean =  scale * meanScaleFraction;
-        return (int) (stddev * z + mean);
+        return max(0, (int) (stddev * z + mean));
     }
 }

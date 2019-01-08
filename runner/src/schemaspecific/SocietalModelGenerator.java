@@ -1,8 +1,6 @@
 package grakn.benchmark.runner.schemaspecific;
 
-import grakn.benchmark.runner.pdf.ConstantPDF;
-import grakn.benchmark.runner.pdf.DiscreteGaussianPDF;
-import grakn.benchmark.runner.pdf.UniformPDF;
+import grakn.benchmark.runner.pdf.*;
 import grakn.benchmark.runner.pick.CentralStreamProvider;
 import grakn.benchmark.runner.storage.FromIdStorageConceptIdPicker;
 import grakn.benchmark.runner.pick.IntegerStreamGenerator;
@@ -107,7 +105,7 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
                 0.3,
                 new RelationshipStrategy(
                         "employment",
-                        new DiscreteGaussianPDF(random, 30.0, 30.0),
+                        new ScalingDiscreteGaussianPDF(random, ()->storage.totalEntities(), 0.5, 0.25),
                         employmentRoleStrategies)
         );
 
@@ -129,7 +127,7 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
                 1.0,
                 new AttributeStrategy<>(
                         "name",
-                        new UniformPDF(random, 3, 100),
+                        new ScalingUniformPDF(random, ()->storage.totalEntities(), 0.75,1.25),
                         new AttributeOwnerTypeStrategy<>(
                                 "company",
                                 new StreamProvider<>(
@@ -189,7 +187,7 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
                 1.0,
                 new AttributeStrategy<>(
                         "rating",
-                        new UniformPDF(random, 10, 20),
+                        new ScalingUniformPDF(random, ()->storage.totalEntities(), 0.33, 0.50),
                         new AttributeOwnerTypeStrategy<>(
                                 "name",
                                 new StreamProvider<>(
@@ -210,7 +208,7 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
                 5.0,
                 new AttributeStrategy<>(
                         "rating",
-                        new UniformPDF(random, 3, 40),
+                        new ScalingUniformPDF(random, ()->storage.totalEntities(),0.1, 1.0),
                         new AttributeOwnerTypeStrategy<>(
                                 "company",
                                 new StreamProvider<>(
@@ -231,7 +229,7 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
                 3.0,
                 new AttributeStrategy<>(
                         "rating",
-                        new UniformPDF(random, 40, 60),
+                        new ScalingUniformPDF(random, ()->storage.totalEntities(), 1.0, 1.5),
                         new AttributeOwnerTypeStrategy<>(
                                 "employment",
                                 new StreamProvider<>(

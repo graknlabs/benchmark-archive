@@ -70,9 +70,10 @@ java_library(
 
 java_binary(
     name = "metric-binary",
-    main_class = "grakn.benchmark.metric.MetricMeasurement",
+    main_class = "grakn.benchmark.metric.AllMetrics",
     runtime_deps = [":metric"],
-    visibility = ["//visibility:public"]
+    visibility = ["//visibility:public"],
+    classpath_resources = [":logback.xml"]
 )
 
 java_test(
@@ -87,7 +88,7 @@ java_test(
         "//dependencies/maven/artifacts/grakn/core:grakn-graql",
         "//dependencies/maven/artifacts/grakn/core:util"
      ],
-     data = [":test/binaryGraph.csv", ":test/unaryBinaryGraph.csv"]
+     data = [":test/binaryGraph.csv", ":test/unaryBinaryGraph.csv"],
  )
 
 java_test(
@@ -120,7 +121,7 @@ java_test(
         "//dependencies/maven/artifacts/grakn/core:grakn-graql",
         "//dependencies/maven/artifacts/grakn/core:util"
      ],
-     data = [":test/binaryGraph.csv", ":test/unaryBinaryGraph.csv"]
+     data = [":test/binaryGraph.csv", ":test/unaryBinaryGraph.csv"],
  )
 
 java_test(
@@ -146,7 +147,7 @@ java_test(
         "//dependencies/maven/artifacts/grakn/core:grakn-graql",
         "//dependencies/maven/artifacts/grakn/core:util"
     ],
-    data = [":test/binaryGraph.csv", ":test/unaryBinaryGraph.csv"]
+    data = [":test/binaryGraph.csv", ":test/unaryBinaryGraph.csv"],
 )
 
 java_test(
