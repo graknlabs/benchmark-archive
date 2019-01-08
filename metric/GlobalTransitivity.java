@@ -52,7 +52,11 @@ public class GlobalTransitivity {
 //        }
 
         double extraOverlapTotal = extraOverlaps.stream().reduce(0.0, (a,b) -> a+b);
-        return extraOverlapTotal/extraOverlaps.size();
+        double transitivity = extraOverlapTotal/extraOverlaps.size();
+
+        propertiesList.stream().forEach(props -> props.close());
+
+        return transitivity;
     }
 
     private static double extraOverlap(GraphProperties properties, Set<String> edge1, Set<String> edge2) {

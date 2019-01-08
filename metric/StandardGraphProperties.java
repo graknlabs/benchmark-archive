@@ -7,9 +7,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class StandardGraphProperties implements GraphProperties {
+
+
 
     private HashMap<String, Set<String>> doubleAdjacencyList;
 
@@ -58,6 +59,11 @@ public class StandardGraphProperties implements GraphProperties {
     @Override
     public StandardGraphProperties copy() {
         return new StandardGraphProperties(doubleAdjacencyList);
+    }
+
+    @Override
+    public void close() {
+         return;
     }
 
     @Override

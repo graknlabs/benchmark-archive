@@ -7,6 +7,7 @@ import java.util.Set;
 
 public interface GraphProperties {
 
+     void close();
      GraphProperties copy();
 
      long maxDegree();
