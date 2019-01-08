@@ -24,13 +24,22 @@ import static grakn.core.graql.Graql.var;
 
 public class GraknGraphProperties implements GraphProperties {
 
+    String uri;
+    String keyspace;
     Grakn client;
     Grakn.Session session;
 
     public GraknGraphProperties(String uri, String keyspace) {
+        this.uri = uri;
+        this.keyspace = keyspace;
         this.client = new Grakn(new SimpleURI(uri));
         this.session = client.session(Keyspace.of(keyspace));
     }
+
+    public GraknGraphProperties copy() {
+        return new GraknGraphProperties(uri, keyspace);
+    }
+
 
     public void close() {
         this.session.close();
@@ -92,12 +101,12 @@ public class GraknGraphProperties implements GraphProperties {
                                 .collect(Collectors.toSet());
 
                         return new Pair<>(edge1, edge2);
-                    }
-            );
+                    });
 
             if (edgeCardinalitesGreaterThanOne) {
-                // filter out edge pairs that don't touch at least 3 vertices (for instance)
+                // filter out edge pairs that don't touch at least 3 vertices
                 // we use a slightly stronger condition: each edge needs to touch more than 1 vertex each
+                // this also eliminates
                 edgePairsStream = edgePairsStream.filter(
                         pair -> (pair.getFirst().size() > 1 && pair.getSecond().size() > 1)
                 );

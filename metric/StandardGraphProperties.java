@@ -51,6 +51,15 @@ public class StandardGraphProperties implements GraphProperties {
         }
     }
 
+    public StandardGraphProperties(HashMap<String, Set<String>> doubleAdjacencyList) {
+        this.doubleAdjacencyList = doubleAdjacencyList;
+    }
+
+    @Override
+    public StandardGraphProperties copy() {
+        return new StandardGraphProperties(doubleAdjacencyList);
+    }
+
     @Override
     public long maxDegree() {
         return this.vertexDegree().stream().max(Comparator.naturalOrder()).orElse(0l);
