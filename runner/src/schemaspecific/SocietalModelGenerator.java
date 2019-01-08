@@ -183,25 +183,25 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
 //            .add(0.5, 10);
 
 
-        this.attributeStrategies.add(
-                1.0,
-                new AttributeStrategy<>(
-                        "rating",
-                        new ScalingUniformPDF(random, ()->storage.totalEntities(), 0.33, 0.50),
-                        new AttributeOwnerTypeStrategy<>(
-                                "name",
-                                new StreamProvider<>(
-                                        new FromIdStorageStringAttrPicker(
-                                                random,
-                                                (IdStoreInterface) this.storage,
-                                                "name")
-                                )
-                        ),
-                        new StreamProvider<>(
-                                new IntegerStreamGenerator(random, 0, 100)
-                        )
-                )
-        );
+//        this.attributeStrategies.add(
+//                1.0,
+//                new AttributeStrategy<>(
+//                        "rating",
+//                        new ScalingUniformPDF(random, ()->storage.totalEntities(), 0.33, 0.50),
+//                        new AttributeOwnerTypeStrategy<>(
+//                                "name",
+//                                new StreamProvider<>(
+//                                        new FromIdStorageStringAttrPicker(
+//                                                random,
+//                                                (IdStoreInterface) this.storage,
+//                                                "name")
+//                                )
+//                        ),
+//                        new StreamProvider<>(
+//                                new IntegerStreamGenerator(random, 0, 100)
+//                        )
+//                )
+//        );
 
 
         this.attributeStrategies.add(
@@ -225,25 +225,25 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
         );
 
 
-        this.attributeStrategies.add(
-                3.0,
-                new AttributeStrategy<>(
-                        "rating",
-                        new ScalingUniformPDF(random, ()->storage.totalEntities(), 1.0, 1.5),
-                        new AttributeOwnerTypeStrategy<>(
-                                "employment",
-                                new StreamProvider<>(
-                                        new FromIdStorageConceptIdPicker(
-                                                random,
-                                                (IdStoreInterface) this.storage,
-                                                "employment")
-                                )
-                        ),
-                        new StreamProvider<>(
-                                new IntegerStreamGenerator(random, 1, 10)
-                        )
-                )
-        );
+//        this.attributeStrategies.add(
+//                3.0,
+//                new AttributeStrategy<>(
+//                        "rating",
+//                        new ScalingUniformPDF(random, ()->storage.totalEntities(), 1.0, 1.5),
+//                        new AttributeOwnerTypeStrategy<>(
+//                                "employment",
+//                                new StreamProvider<>(
+//                                        new FromIdStorageConceptIdPicker(
+//                                                random,
+//                                                (IdStoreInterface) this.storage,
+//                                                "employment")
+//                                )
+//                        ),
+//                        new StreamProvider<>(
+//                                new IntegerStreamGenerator(random, 1, 10)
+//                        )
+//                )
+//        );
 
         this.operationStrategies.add(0.6, this.entityStrategies);
         this.operationStrategies.add(0.2, this.relationshipStrategies);
