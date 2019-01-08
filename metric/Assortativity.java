@@ -7,7 +7,7 @@ public class Assortativity {
 
     public static double computeAssortativity(INDArray jointDegreeOccurrence) {
 
-        if (Math.abs(jointDegreeOccurrence.sumNumber().doubleValue()  - 1.0) > 0.000001) {
+        if (Math.abs(jointDegreeOccurrence.sumNumber().doubleValue()  - 1.0) > 0.00001) {
             throw new RuntimeException("Assortativity requires normalized joint degree occurrence matrix");
         }
 
