@@ -139,7 +139,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         // but its too complicated to conditionally add new employees if the person is already a member etc.
         add(2, relationshipStrategy(
                 "employment",
-                zipf(2000,1.5),
+                scalingZipf(0.6,1.5),
                 rolePlayerTypeStrategy(
                         "employee",
                         "person",
@@ -165,7 +165,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         // people (any) - university employment (1 with no previous employments) (same as above)
         add(2, relationshipStrategy(
                 "employment",
-                zipf(1000, 1.6),
+                scalingZipf(0.1, 1.6),
                 rolePlayerTypeStrategy(
                         "employee",
                         "person",
@@ -477,9 +477,8 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         return new ScalingDiscreteGaussianPDF(random, () -> storage.totalEntities(), meanScaleFraction, stddevScaleFraction);
     }
 
-    private ScalingBoundedZipfPDF scalingZipf(double rangeLimitFraction, double exponentFraction) {
-        // TODO
-        return new ScalingBoundedZipfPDF();
+    private ScalingBoundedZipfPDF scalingZipf(double rangeLimitFraction, double initialExponentForScale40) {
+        return new ScalingBoundedZipfPDF(random, () -> storage.totalEntities(), rangeLimitFraction, initialExponentForScale40);
     }
 
     private ScalingConstantPDF scalingConstant(double constantFraction) {
