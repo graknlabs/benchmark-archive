@@ -1,11 +1,7 @@
 package grakn.benchmark.runner.schemaspecific;
 
+import grakn.benchmark.runner.pdf.*;
 import grakn.core.concept.ConceptId;
-import grakn.benchmark.runner.pdf.BoundedZipfPDF;
-import grakn.benchmark.runner.pdf.ConstantPDF;
-import grakn.benchmark.runner.pdf.DiscreteGaussianPDF;
-import grakn.benchmark.runner.pdf.PDF;
-import grakn.benchmark.runner.pdf.UniformPDF;
 import grakn.benchmark.runner.pick.CentralStreamProvider;
 import grakn.benchmark.runner.storage.FromIdStorageConceptIdPicker;
 import grakn.benchmark.runner.storage.FromIdStoragePicker;
@@ -30,6 +26,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Supplier;
 
 public class WebContentGenerator implements SchemaSpecificDataGenerator {
 
@@ -190,10 +187,10 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
          ));
 
         // person (any) - project (any) membership
-        // Normal, mu=9, sigma^2=5
+        // Normal, mu=9, sigma=2.5
         add(2, relationshipStrategy(
                 "membership",
-                gaussian(9, 2.5),
+                scalingGaussian(9/40.0, 2.5/40.0),
                 rolePlayerTypeStrategy(
                         "member",
                         "person",
@@ -209,10 +206,10 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         ));
 
         // person (any) - team membership (all to 1 (centralstream picker))
-        // Normal, mu=10, sigma^2=3^2
+        // Normal, mu=10, sigma=3 => fraction
         add(2, relationshipStrategy(
                 "membership",
-                gaussian(10, 3),
+                scalingGaussian( 10/40.0, 3/40.0),
                 rolePlayerTypeStrategy(
                         "member",
                         "person",
@@ -233,7 +230,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         // ie. pick any company, assign N unassigned departments to it
         add(1, relationshipStrategy(
                 "ownership",
-                uniform(1, 8),
+                scalingUniform( 1.0/40, 8/40.0),
                 rolePlayerTypeStrategy(
                         "owner",
                         "company",
@@ -260,7 +257,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         // ie. pick a university, assign N unassigned departments to it
         add(1, relationshipStrategy(
                 "ownership",
-                uniform(1, 4),
+                scalingUniform( 1/40.0, 4/40.0),
                 rolePlayerTypeStrategy(
                         "owner",
                         "university",
@@ -287,7 +284,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         // ie. pick a department, assign N teams that don't aren't owned yet
         add(1, relationshipStrategy(
                 "ownership",
-                gaussian(5, 1.5),
+                scalingGaussian( 5/40.0, 1.5/40.0),
                 rolePlayerTypeStrategy(
                         "owner",
                         "department",
@@ -313,7 +310,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         // ie. pick some team and some project and assign ownership, teams can share projects OK
         add(1, relationshipStrategy(
                 "ownership",
-                uniform( 1, 3),
+                scalingUniform( 1/40.0, 3/40.0),
                 rolePlayerTypeStrategy(
                         "owner",
                         "team",
@@ -350,7 +347,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         addAttributes(
                 1.0,
                 "forename",
-                uniform(5, 20),
+                scalingUniform(5/40.0, 20/40.0),
                 "person",
                 fromIdStorageConceptIdPicker("person"),
                 new StreamProvider<>(new PickableCollectionValuePicker<String>(names))
@@ -359,7 +356,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         addAttributes(
                 1.0,
                 "surname",
-                uniform(5, 20),
+                scalingUniform( 5/40.0, 20/40.0),
                 "person",
                 fromIdStorageConceptIdPicker("person"),
                 new StreamProvider<>(new PickableCollectionValuePicker<String>(names))
@@ -368,7 +365,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         addAttributes(
                 1.0,
                 "middle-name",
-                uniform(5, 20),
+                scalingUniform(5/40.0, 20/40.0),
                 "person",
                 fromIdStorageConceptIdPicker("person"),
                 new StreamProvider<>(new PickableCollectionValuePicker<String>(names))
@@ -380,7 +377,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         addAttributes(
                 1.0,
                 "job-title",
-                gaussian(20, 5*5),
+                scalingGaussian(20/40.0, 5/40.0),
                 "employment",
                 fromIdStorageConceptIdPicker("employment"),
                 new StreamProvider<>(new PickableCollectionValuePicker<String>(jobtitles))
@@ -393,7 +390,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         addAttributes(
                 1.0,
                 "abbreviation",
-                gaussian(20, 5*5),
+                scalingGaussian(20/40.0, 5/40.0),
                 "job-title",
                 fromIdStorageStringAttrPicker("job-title"), // NOTE we need to retrieve StringAttrs from storage!
                 new StreamProvider<>(new PickableCollectionValuePicker<String>(jobtitleAbbrs))
@@ -403,7 +400,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         addAttributes(
                 1.0,
                 "name",
-                uniform(1, 5),
+                scalingUniform(1/40.0, 5/40.0),
                 "company",
                 fromIdStorageConceptIdPicker("company"),
                 new StreamProvider<>(new PickableCollectionValuePicker<String>(names))
@@ -413,7 +410,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         addAttributes(
                 1.0,
                 "name",
-                uniform(1, 3),
+                scalingUniform(1/40.0, 3/40.0),
                 "university",
                 fromIdStorageConceptIdPicker("university"),
                 new StreamProvider<>(new PickableCollectionValuePicker<String>(names))
@@ -426,7 +423,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
          addAttributes(
                 1.0,
                 "name",
-                uniform(2, 5),
+                scalingUniform(2/40.0, 5/40.0),
                 "team",
                 fromIdStorageConceptIdPicker("team"),
                 new StreamProvider<>(new PickableCollectionValuePicker<String>(shortNames))
@@ -436,7 +433,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         addAttributes(
                 1.0,
                 "name",
-                uniform(3, 9),
+                scalingUniform(3/40.0, 9/40.0),
                 "department",
                 fromIdStorageConceptIdPicker("department"),
                 new StreamProvider<>(new PickableCollectionValuePicker<String>(shortNames))
@@ -446,7 +443,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         addAttributes(
                 1.0,
                 "name",
-                uniform(5, 20),
+                scalingUniform(5/40.0, 20/40.0),
                 "project",
                 fromIdStorageConceptIdPicker("project"),
                 new StreamProvider<>(new PickableCollectionValuePicker<String>(shortNames))
@@ -470,6 +467,23 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
 
     private ConstantPDF constant(int constant) {
         return new ConstantPDF(constant);
+    }
+
+    private ScalingUniformPDF scalingUniform(double lowerBoundFraction, double upperBoundFraction) {
+        return new ScalingUniformPDF(random, () -> storage.totalEntities(), lowerBoundFraction, upperBoundFraction);
+    }
+
+    private ScalingDiscreteGaussianPDF scalingGaussian(double meanScaleFraction, double stddevScaleFraction) {
+        return new ScalingDiscreteGaussianPDF(random, () -> storage.totalEntities(), meanScaleFraction, stddevScaleFraction);
+    }
+
+    private ScalingBoundedZipfPDF scalingZipf(double rangeLimitFraction, double exponentFraction) {
+        // TODO
+        return new ScalingBoundedZipfPDF();
+    }
+
+    private ScalingConstantPDF scalingConstant(double constantFraction) {
+        return new ScalingConstantPDF(() -> storage.totalEntities(), constantFraction);
     }
 
     private FromIdStoragePicker<ConceptId> fromIdStorageConceptIdPicker(String typeLabel) {
