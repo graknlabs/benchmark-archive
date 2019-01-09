@@ -10,8 +10,6 @@ import java.util.stream.Collectors;
 
 public class StandardGraphProperties implements GraphProperties {
 
-
-
     private HashMap<String, Set<String>> doubleAdjacencyList;
 
     /**

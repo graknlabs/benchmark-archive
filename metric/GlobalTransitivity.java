@@ -22,7 +22,6 @@ public class GlobalTransitivity {
     public static double computeTransitivity(GraphProperties properties) {
 
         List<Pair<Set<String>, Set<String>>> connectedEdgePairs = properties.connectedEdgePairs(true);
-        System.out.println("Obtained connected edge pairs");
 
         // parallelize the following neighbor checking since they are each checked independently and aggregated
         BlockingQueue<GraphProperties> propertiesList = new LinkedBlockingQueue<>(
