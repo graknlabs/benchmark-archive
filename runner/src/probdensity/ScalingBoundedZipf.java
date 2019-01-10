@@ -5,11 +5,16 @@ import org.apache.commons.math3.analysis.solvers.BrentSolver;
 import org.apache.commons.math3.distribution.ZipfDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.random.RandomGeneratorFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Random;
 import java.util.function.Supplier;
 
 public class ScalingBoundedZipf implements ProbabilityDensityFunction {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ScalingBoundedZipf.class);
+
     private Random rand;
     RandomGenerator randomGenerator;
 
@@ -17,10 +22,17 @@ public class ScalingBoundedZipf implements ProbabilityDensityFunction {
 
     private int previousScale;
     private double previousExponent;
-    private ZipfDistribution previousZipf;
+    private ZipfDistribution zipf;
 
     private Supplier<Integer> scaleSupplier;
 
+    /**
+     *
+     * @param random
+     * @param scaleSupplier
+     * @param rangeLimitFactor -- fraction of scale supplied by scaleSupplier.get() to use as the upper bound of the Zipf dist
+     * @param startingExponentForScale40 -- Greater than 1.0: this parameter tells us what the exponent for the zipf dist would be, if the scale supplied by scaleSupplier.get() is 40
+     */
     public ScalingBoundedZipf(Random random, Supplier<Integer> scaleSupplier, double rangeLimitFactor, double startingExponentForScale40) {
 
         if (startingExponentForScale40 <= 1.0) {
@@ -40,14 +52,15 @@ public class ScalingBoundedZipf implements ProbabilityDensityFunction {
         randomGenerator = RandomGeneratorFactory.createRandomGenerator(this.rand);
         // initialize zipf
         int startingRange = (int)(this.previousScale* this.rangeLimitFraction);
-        this.previousZipf = new ZipfDistribution(randomGenerator, startingRange, this.previousExponent);
+        this.zipf = new ZipfDistribution(randomGenerator, startingRange, this.previousExponent);
 
-        System.out.println("Initialized dummy zipf distribution with limit: " + this.previousScale +
-                ", that has mean: " + getNumericalMean());
+        LOG.debug("Initialized dummy zipf distribution with limit: " + this.previousScale +
+                ", exponent: " + startingExponentForScale40 +
+                ", which therefore has mean: " + getNumericalMean());
     }
 
     public double getNumericalMean() {
-        return this.previousZipf.getNumericalMean();
+        return this.zipf.getNumericalMean();
     }
 
     @Override
@@ -60,7 +73,7 @@ public class ScalingBoundedZipf implements ProbabilityDensityFunction {
             double expLowerBound = 1.0;
             double expUpperBound = 100.0;
 
-            NewExponentFinder func = new NewExponentFinder(previousScale, newScale, previousZipf);
+            NewExponentFinder func = new NewExponentFinder(previousScale, newScale, zipf);
             double newExponent;
             int newRange = (int) (newScale * this.rangeLimitFraction);
 
@@ -81,12 +94,12 @@ public class ScalingBoundedZipf implements ProbabilityDensityFunction {
             }
             previousScale = newScale;
             previousExponent = newExponent;
-            this.previousZipf = new ZipfDistribution(randomGenerator, previousScale, previousExponent);
+            this.zipf = new ZipfDistribution(randomGenerator, previousScale, previousExponent);
         } else if (newScale == 0) {
             // just return 0 if the allowed range is 0 length
             return 0;
         }
-        return this.previousZipf.sample();
+        return this.zipf.sample();
     }
 
 
