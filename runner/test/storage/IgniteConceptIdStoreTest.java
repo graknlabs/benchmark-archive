@@ -60,10 +60,6 @@ public class IgniteConceptIdStoreTest {
     public void setUp() {
 
         typeLabel = "person";
-//        typeLabels = new ArrayList<>();
-//        typeLabels.add(typeLabel);
-//        typeLabels.add("company");
-//        typeLabels.add("dinosaur");
         typeLabelsSet = new HashSet<>();
         typeLabelsSet.add(typeLabel);
 

@@ -399,39 +399,12 @@ public class IgniteConceptIdStore implements IdStoreInterface {
         return total;
     }
 
-//    private ResultSet runQuery(String sql) {
-//        try (Statement stmt = conn.createStatement()) {
-//            try (ResultSet rs = stmt.executeQuery(sql)) {
-//                return rs;
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
 
     /**
      * Clean all elements in the storage
      */
     public void clean(Set<String> typeLabels) throws SQLException {
-//        Connection conn = DriverManager.getConnection("jdbc:ignite:thin://127.0.0.1/");
-//        try (Statement stmt = conn.createStatement()) {
-//            try (ResultSet rs = stmt.executeQuery("SHOW TABLES")) {
-//                rs.sample();
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
 
-//        try (PreparedStatement stmt = conn.prepareStatement("DROP DATABASE ")) {
-//            stmt.executeUpdate();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
 
         // TODO figure out how to drop all tables
         for (String typeLabel : typeLabels) {
