@@ -16,11 +16,27 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.runner.pdf;
+package grakn.benchmark.runner.probdensity;
 
 /**
  *
  */
-public interface PDF {
-    int next();
+public class FixedConstant implements ProbabilityDensityFunction {
+
+    private int constant;
+
+    /**
+     * @param constant
+     */
+    public FixedConstant(int constant) {
+        this.constant = constant;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public int sample() {
+        return this.constant;
+    }
 }

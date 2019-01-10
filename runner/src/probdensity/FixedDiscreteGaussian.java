@@ -16,37 +16,38 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.runner.pdf;
+package grakn.benchmark.runner.probdensity;
+
+
 
 import java.util.Random;
-import java.util.stream.IntStream;
+
+import static java.lang.Integer.max;
 
 /**
  *
  */
-public class UniformPDF implements InvariantPDF {
-
+public class FixedDiscreteGaussian implements ProbabilityDensityFunction {
     private Random rand;
-    private int lowerBound;
-    private int upperBound;
+    private double mean;
+    private double stddev;
 
     /**
      * @param rand
-     * @param lowerBound
-     * @param upperBound
+     * @param mean
+     * @param stddev
      */
-    public UniformPDF(Random rand, int lowerBound, int upperBound) {
+    public FixedDiscreteGaussian(Random rand, double mean, double stddev) {
         this.rand = rand;
-        this.lowerBound = lowerBound;
-        this.upperBound = upperBound;
+        this.mean = mean;
+        this.stddev = stddev;
     }
 
     /**
      * @return
      */
-    @Override
-    public int next() {
-        IntStream intStream = rand.ints(1, lowerBound, upperBound + 1);
-        return intStream.findFirst().getAsInt();
+    public int sample() {
+        double z = rand.nextGaussian();
+        return max(0, (int) (stddev * z + mean));
     }
 }

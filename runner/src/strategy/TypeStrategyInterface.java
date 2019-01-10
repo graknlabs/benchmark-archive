@@ -18,8 +18,8 @@
 
 package grakn.benchmark.runner.strategy;
 
+import grakn.benchmark.runner.probdensity.ProbabilityDensityFunction;
 import grakn.core.concept.Type;
-import grakn.benchmark.runner.pdf.PDF;
 
 /**
  * @param <T>
@@ -28,5 +28,5 @@ public interface TypeStrategyInterface<T extends Type> {
 
     String getTypeLabel();
 
-    PDF getNumInstancesPDF();
+    ProbabilityDensityFunction getNumInstancesPDF();
 }

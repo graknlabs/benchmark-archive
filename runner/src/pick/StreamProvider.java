@@ -19,7 +19,7 @@
 package grakn.benchmark.runner.pick;
 
 import grakn.core.client.Grakn;
-import grakn.benchmark.runner.pdf.PDF;
+import grakn.benchmark.runner.probdensity.ProbabilityDensityFunction;
 
 import java.util.stream.Stream;
 
@@ -38,9 +38,9 @@ public class StreamProvider<T> implements StreamProviderInterface<T> {
     }
 
     @Override
-    public Stream<T> getStream(PDF pdf, Grakn.Transaction tx) {
-        // Simply limit the stream of ConceptIds to the number given by the pdf
-        int streamLength = pdf.next();
+    public Stream<T> getStream(ProbabilityDensityFunction pdf, Grakn.Transaction tx) {
+        // Simply limit the stream of ConceptIds to the number given by the probdensity
+        int streamLength = pdf.sample();
 
         if (this.streamer.checkAvailable(streamLength, tx)) {
 

@@ -38,7 +38,7 @@ class RootSpansData(object):
     def partition_for_query_and_concept_count(self, query, concept_count, partition_indices=[1]):
         """
         Split the RootSpansData into sub-sections and returns graphs (ie split rows into chunks).
-        Splits UP TO the next index
+        Splits UP TO the sample index
         """
 
         partition_names = []

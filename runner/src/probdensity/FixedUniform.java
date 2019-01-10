@@ -16,27 +16,37 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.runner.pdf;
+package grakn.benchmark.runner.probdensity;
+
+import java.util.Random;
+import java.util.stream.IntStream;
 
 /**
  *
  */
-public class ConstantPDF implements InvariantPDF {
+public class FixedUniform implements ProbabilityDensityFunction {
 
-    private int constant;
+    private Random rand;
+    private int lowerBound;
+    private int upperBound;
 
     /**
-     * @param constant
+     * @param rand
+     * @param lowerBound
+     * @param upperBound
      */
-    public ConstantPDF(int constant) {
-        this.constant = constant;
+    public FixedUniform(Random rand, int lowerBound, int upperBound) {
+        this.rand = rand;
+        this.lowerBound = lowerBound;
+        this.upperBound = upperBound;
     }
 
     /**
      * @return
      */
     @Override
-    public int next() {
-        return this.constant;
+    public int sample() {
+        IntStream intStream = rand.ints(1, lowerBound, upperBound + 1);
+        return intStream.findFirst().getAsInt();
     }
 }

@@ -19,13 +19,13 @@
 package grakn.benchmark.runner.strategy;
 
 import grakn.core.concept.EntityType;
-import grakn.benchmark.runner.pdf.PDF;
+import grakn.benchmark.runner.probdensity.ProbabilityDensityFunction;
 
 /**
  *
  */
 public class EntityStrategy extends TypeStrategy<EntityType> {
-    public EntityStrategy(String typeLabel, PDF numInstancesPDF) {
+    public EntityStrategy(String typeLabel, ProbabilityDensityFunction numInstancesPDF) {
         super(typeLabel, numInstancesPDF);
     }
 }

@@ -16,38 +16,11 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.runner.pdf;
-
-
-
-import java.util.Random;
-
-import static java.lang.Integer.max;
+package grakn.benchmark.runner.probdensity;
 
 /**
  *
  */
-public class DiscreteGaussianPDF implements InvariantPDF {
-    private Random rand;
-    private double mean;
-    private double stddev;
-
-    /**
-     * @param rand
-     * @param mean
-     * @param stddev
-     */
-    public DiscreteGaussianPDF(Random rand, double mean, double stddev) {
-        this.rand = rand;
-        this.mean = mean;
-        this.stddev = stddev;
-    }
-
-    /**
-     * @return
-     */
-    public int next() {
-        double z = rand.nextGaussian();
-        return max(0, (int) (stddev * z + mean));
-    }
+public interface ProbabilityDensityFunction {
+    int sample();
 }

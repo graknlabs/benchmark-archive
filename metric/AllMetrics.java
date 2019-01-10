@@ -8,8 +8,8 @@ public class AllMetrics {
         System.out.println("Analyzing societal model 2k scale invariant");
         GraknGraphProperties graphProperties = new GraknGraphProperties("localhost:48555", keyspaceName);
         System.out.println("Total entities: " + graphProperties.numVertices());
-        double computedTransitivity = GlobalTransitivity.computeTransitivity(graphProperties);
-        System.out.println("Global transitivity: " + computedTransitivity);
+//        double computedTransitivity = GlobalTransitivity.computeTransitivity(graphProperties);
+//        System.out.println("Global transitivity: " + computedTransitivity);
 
         double assortativity = Assortativity.computeAssortativity(Assortativity.jointDegreeOccurrence(graphProperties));
         System.out.println("Degree assortativity: " + assortativity);
@@ -24,8 +24,8 @@ public class AllMetrics {
         System.out.println("Analyzing societal model 5k scale invariant");
         graphProperties = new GraknGraphProperties("localhost:48555", keyspaceName);
         System.out.println("Total entities: " + graphProperties.numVertices());
-        computedTransitivity = GlobalTransitivity.computeTransitivity(graphProperties);
-        System.out.println("Global transitivity: " + computedTransitivity);
+//        computedTransitivity = GlobalTransitivity.computeTransitivity(graphProperties);
+//        System.out.println("Global transitivity: " + computedTransitivity);
 
         assortativity = Assortativity.computeAssortativity(Assortativity.jointDegreeOccurrence(graphProperties));
         System.out.println("Degree assortativity: " + assortativity);
@@ -41,8 +41,8 @@ public class AllMetrics {
         graphProperties = new GraknGraphProperties("localhost:48555", keyspaceName);
         System.out.println("Total entities: " + graphProperties.numVertices());
 
-        computedTransitivity = GlobalTransitivity.computeTransitivity(graphProperties);
-        System.out.println("Global transitivity: " + computedTransitivity);
+//        computedTransitivity = GlobalTransitivity.computeTransitivity(graphProperties);
+//        System.out.println("Global transitivity: " + computedTransitivity);
 
         assortativity = Assortativity.computeAssortativity(Assortativity.jointDegreeOccurrence(graphProperties));
         System.out.println("Degree assortativity: " + assortativity);
@@ -59,8 +59,8 @@ public class AllMetrics {
         graphProperties = new GraknGraphProperties("localhost:48555", keyspaceName);
         System.out.println("Total entities: " + graphProperties.numVertices());
 
-        computedTransitivity = GlobalTransitivity.computeTransitivity(graphProperties);
-        System.out.println("Global transitivity: " + computedTransitivity);
+//        computedTransitivity = GlobalTransitivity.computeTransitivity(graphProperties);
+//        System.out.println("Global transitivity: " + computedTransitivity);
 
         assortativity = Assortativity.computeAssortativity(Assortativity.jointDegreeOccurrence(graphProperties));
         System.out.println("Degree assortativity: " + assortativity);
@@ -77,8 +77,8 @@ public class AllMetrics {
         graphProperties = new GraknGraphProperties("localhost:48555", keyspaceName);
         System.out.println("Total entities: " + graphProperties.numVertices());
 
-        computedTransitivity = GlobalTransitivity.computeTransitivity(graphProperties);
-        System.out.println("Global transitivity: " + computedTransitivity);
+//        computedTransitivity = GlobalTransitivity.computeTransitivity(graphProperties);
+//        System.out.println("Global transitivity: " + computedTransitivity);
 
         assortativity = Assortativity.computeAssortativity(Assortativity.jointDegreeOccurrence(graphProperties));
         System.out.println("Degree assortativity: " + assortativity);

@@ -18,8 +18,8 @@
 
 package grakn.benchmark.runner.strategy;
 
+import grakn.benchmark.runner.probdensity.ProbabilityDensityFunction;
 import grakn.core.concept.ConceptId;
-import grakn.benchmark.runner.pdf.PDF;
 import grakn.benchmark.runner.pick.StreamProviderInterface;
 
 /**
@@ -30,7 +30,7 @@ public class RolePlayerTypeStrategy extends TypeStrategy implements HasPicker {
     private final String roleLabel;
     private StreamProviderInterface<ConceptId> conceptPicker;
 
-    public RolePlayerTypeStrategy(String roleLabel, String typeLabel, PDF numInstancesPDF, StreamProviderInterface<ConceptId> conceptPicker) {
+    public RolePlayerTypeStrategy(String roleLabel, String typeLabel, ProbabilityDensityFunction numInstancesPDF, StreamProviderInterface<ConceptId> conceptPicker) {
         super(typeLabel, numInstancesPDF);
         this.roleLabel = roleLabel;
         this.conceptPicker = conceptPicker;

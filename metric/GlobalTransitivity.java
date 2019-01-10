@@ -45,7 +45,7 @@ public class GlobalTransitivity {
 
 //        Iterator<Pair<Set<String>, Set<String>>> iter = connectedEdgePairs.iterator();
 //        while (iter.hasNext()) {
-//            Pair<Set<String>, Set<String>> edgePair = iter.next();
+//            Pair<Set<String>, Set<String>> edgePair = iter.sample();
 //            clusteringCoefficient += extraOverlap(properties, edgePair.getFirst(), edgePair.getSecond());
 //            pairs++;
 //        }

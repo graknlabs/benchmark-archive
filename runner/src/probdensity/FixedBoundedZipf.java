@@ -1,4 +1,4 @@
-package grakn.benchmark.runner.pdf;
+package grakn.benchmark.runner.probdensity;
 
 import org.apache.commons.math3.distribution.ZipfDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -6,14 +6,14 @@ import org.apache.commons.math3.random.RandomGeneratorFactory;
 
 import java.util.Random;
 
-public class BoundedZipfPDF implements InvariantPDF {
+public class FixedBoundedZipf implements ProbabilityDensityFunction {
     private Random rand;
     private int rangeLimit;
     private double exponent;
 
     private ZipfDistribution zipf;
 
-    public BoundedZipfPDF(Random random, int rangeLimit, double exponent) {
+    public FixedBoundedZipf(Random random, int rangeLimit, double exponent) {
         this.rand = random;
         this.rangeLimit = rangeLimit;
         this.exponent = exponent;
@@ -31,7 +31,7 @@ public class BoundedZipfPDF implements InvariantPDF {
     }
 
     @Override
-    public int next() {
+    public int sample() {
         return this.zipf.sample();
     }
 }

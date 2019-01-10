@@ -1,6 +1,6 @@
 package grakn.benchmark.runner.schemaspecific;
 
-import grakn.benchmark.runner.pdf.*;
+import grakn.benchmark.runner.probdensity.*;
 import grakn.core.concept.ConceptId;
 import grakn.benchmark.runner.pick.CentralStreamProvider;
 import grakn.benchmark.runner.storage.FromIdStorageConceptIdPicker;
@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Supplier;
 
 public class WebContentGenerator implements SchemaSpecificDataGenerator {
 
@@ -340,7 +339,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
 
         StringStreamGenerator sixCharStringGenerator = new StringStreamGenerator(random, 6);
         // Populate 200 random names for use as forename/middle/surname, company name etc.
-        // all with equal weights (PDF = constant(1))
+        // all with equal weights (ProbabilityDensityFunction = constant(1))
         GrowableGeneratedRouletteWheel<String> names = new GrowableGeneratedRouletteWheel<>(random, sixCharStringGenerator, constant(1));
         names.growTo(200);
 
@@ -453,36 +452,36 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
 
 
     // ---- helpers ----
-    private UniformPDF uniform(int lowerBound, int upperBound) {
-        return new UniformPDF(random, lowerBound, upperBound);
+    private FixedUniform uniform(int lowerBound, int upperBound) {
+        return new FixedUniform(random, lowerBound, upperBound);
     }
 
-    private DiscreteGaussianPDF gaussian(double mean, double stddev) {
-        return new DiscreteGaussianPDF(random, mean, stddev);
+    private FixedDiscreteGaussian gaussian(double mean, double stddev) {
+        return new FixedDiscreteGaussian(random, mean, stddev);
     }
 
-    private BoundedZipfPDF zipf(int rangeLimit, double exponent) {
-        return new BoundedZipfPDF(random, rangeLimit, exponent);
+    private FixedBoundedZipf zipf(int rangeLimit, double exponent) {
+        return new FixedBoundedZipf(random, rangeLimit, exponent);
     }
 
-    private ConstantPDF constant(int constant) {
-        return new ConstantPDF(constant);
+    private FixedConstant constant(int constant) {
+        return new FixedConstant(constant);
     }
 
-    private ScalingUniformPDF scalingUniform(double lowerBoundFraction, double upperBoundFraction) {
-        return new ScalingUniformPDF(random, () -> storage.totalEntities(), lowerBoundFraction, upperBoundFraction);
+    private ScalingUniform scalingUniform(double lowerBoundFraction, double upperBoundFraction) {
+        return new ScalingUniform(random, () -> storage.totalEntities(), lowerBoundFraction, upperBoundFraction);
     }
 
-    private ScalingDiscreteGaussianPDF scalingGaussian(double meanScaleFraction, double stddevScaleFraction) {
-        return new ScalingDiscreteGaussianPDF(random, () -> storage.totalEntities(), meanScaleFraction, stddevScaleFraction);
+    private ScalingDiscreteGaussian scalingGaussian(double meanScaleFraction, double stddevScaleFraction) {
+        return new ScalingDiscreteGaussian(random, () -> storage.totalEntities(), meanScaleFraction, stddevScaleFraction);
     }
 
-    private ScalingBoundedZipfPDF scalingZipf(double rangeLimitFraction, double initialExponentForScale40) {
-        return new ScalingBoundedZipfPDF(random, () -> storage.totalEntities(), rangeLimitFraction, initialExponentForScale40);
+    private ScalingBoundedZipf scalingZipf(double rangeLimitFraction, double initialExponentForScale40) {
+        return new ScalingBoundedZipf(random, () -> storage.totalEntities(), rangeLimitFraction, initialExponentForScale40);
     }
 
-    private ScalingConstantPDF scalingConstant(double constantFraction) {
-        return new ScalingConstantPDF(() -> storage.totalEntities(), constantFraction);
+    private ScalingConstant scalingConstant(double constantFraction) {
+        return new ScalingConstant(() -> storage.totalEntities(), constantFraction);
     }
 
     private FromIdStoragePicker<ConceptId> fromIdStorageConceptIdPicker(String typeLabel) {
@@ -495,12 +494,12 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
     private RolePlayerTypeStrategy rolePlayerTypeStrategy(
             String roleLabel,
             String rolePlayerLabel,
-            PDF pdf,
+            ProbabilityDensityFunction pdf,
             StreamProviderInterface<ConceptId> conceptIdProvider) {
         return new RolePlayerTypeStrategy(roleLabel, rolePlayerLabel, pdf, conceptIdProvider);
     }
 
-    private RelationshipStrategy relationshipStrategy(String relationshipTypeLabel, PDF pdf, RolePlayerTypeStrategy... roleStrategiesList) {
+    private RelationshipStrategy relationshipStrategy(String relationshipTypeLabel, ProbabilityDensityFunction pdf, RolePlayerTypeStrategy... roleStrategiesList) {
         Set<RolePlayerTypeStrategy> roleStrategies = new HashSet<>(Arrays.asList(roleStrategiesList));
         return new RelationshipStrategy(relationshipTypeLabel, pdf, roleStrategies);
     }
@@ -511,7 +510,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
     }
 
 
-    private <C, T> void addAttributes(double weight, String attributeLabel, PDF quantityPDF, String ownerLabel, FromIdStoragePicker<C> ownerPicker, StreamProviderInterface<T> valueProvider) {
+    private <C, T> void addAttributes(double weight, String attributeLabel, ProbabilityDensityFunction quantityPDF, String ownerLabel, FromIdStoragePicker<C> ownerPicker, StreamProviderInterface<T> valueProvider) {
         this.attributeStrategies.add(
             weight,
             new AttributeStrategy<>(
@@ -540,7 +539,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
                 1,
                 new EntityStrategy(
                         "publication",
-                        new UniformPDF(random, 10, 50)
+                        new FixedUniform(random, 10, 50)
         ));
 
         // --- scientific-publication publication
@@ -548,7 +547,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
                 1,
                 new EntityStrategy(
                         "scientific-publication",
-                        new UniformPDF(random, 10, 50)
+                        new FixedUniform(random, 10, 50)
         ));
 
         // --- medium-post publication ---
@@ -556,7 +555,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
                 1,
                 new EntityStrategy(
                         "medium-post",
-                        new UniformPDF(random, 10, 50)
+                        new FixedUniform(random, 10, 50)
         ));
 
         // - article medium-post -
@@ -564,7 +563,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
                 1,
                 new EntityStrategy(
                         "article",
-                        new UniformPDF(random, 10, 50)
+                        new FixedUniform(random, 10, 50)
         ));
 
         // --- book publication ---
@@ -572,7 +571,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
                 1,
                 new EntityStrategy(
                         "book",
-                        new UniformPDF(random, 10, 50)
+                        new FixedUniform(random, 10, 50)
                 ));
 
         // --- scientific-journal publication ---
@@ -580,7 +579,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
                 1,
                 new EntityStrategy(
                         "scientific-journal",
-                        new UniformPDF(random, 10, 50)
+                        new FixedUniform(random, 10, 50)
                 ));
 
 
@@ -589,35 +588,35 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
                 1,
                 new EntityStrategy(
                         "symposium",
-                        new UniformPDF(random, 1, 3)
+                        new FixedUniform(random, 1, 3)
         ));
 
         // ----- publishing-platform -----
         this.entityStrategies.add(
                 1,
                 new EntityStrategy("publishing-platform",
-                        new UniformPDF(random, 1, 3)
+                        new FixedUniform(random, 1, 3)
         ));
 
         // --- web-service publishing-platform ---
         this.entityStrategies.add(
                 1,
                 new EntityStrategy("web-service",
-                        new UniformPDF(random, 1, 3)
+                        new FixedUniform(random, 1, 3)
         ));
 
         // --- website publishing-platform
         this.entityStrategies.add(
                 1,
                 new EntityStrategy("website",
-                        new UniformPDF(random, 1, 3)
+                        new FixedUniform(random, 1, 3)
         ));
 
         // ----- Object -----
         this.entityStrategies.add(
                 1,
                 new EntityStrategy("object",
-                        new UniformPDF(random, 10, 100)
+                        new FixedUniform(random, 10, 100)
         ));
 
 

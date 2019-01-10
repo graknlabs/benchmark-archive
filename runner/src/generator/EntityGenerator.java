@@ -48,7 +48,7 @@ public class EntityGenerator extends Generator<EntityStrategy> {
         String typeLabel = this.strategy.getTypeLabel();
         Query query = qb.insert(var("x").isa(typeLabel));
 
-        int numInstances = this.strategy.getNumInstancesPDF().next();
+        int numInstances = this.strategy.getNumInstancesPDF().sample();
 
         Stream<Query> stream = Stream.generate(() -> query)
 //                .map(q -> (Query) q)

@@ -1,6 +1,6 @@
 package grakn.benchmark.runner.schemaspecific;
 
-import grakn.benchmark.runner.pdf.*;
+import grakn.benchmark.runner.probdensity.*;
 import grakn.benchmark.runner.pick.CentralStreamProvider;
 import grakn.benchmark.runner.storage.FromIdStorageConceptIdPicker;
 import grakn.benchmark.runner.pick.IntegerStreamGenerator;
@@ -8,7 +8,6 @@ import grakn.benchmark.runner.pick.NotInRelationshipConceptIdStream;
 import grakn.benchmark.runner.pick.PickableCollectionValuePicker;
 import grakn.benchmark.runner.pick.StreamProvider;
 import grakn.benchmark.runner.storage.ConceptStore;
-import grakn.benchmark.runner.storage.FromIdStorageStringAttrPicker;
 import grakn.benchmark.runner.storage.IdStoreInterface;
 import grakn.benchmark.runner.strategy.AttributeOwnerTypeStrategy;
 import grakn.benchmark.runner.strategy.AttributeStrategy;
@@ -55,14 +54,14 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
                 0.5,
                 new EntityStrategy(
                         "person",
-                        new UniformPDF(random, 20, 40)
+                        new FixedUniform(random, 20, 40)
                 ));
 
         this.entityStrategies.add(
                 0.5,
                 new EntityStrategy(
                         "company",
-                        new UniformPDF(random, 1, 5)
+                        new FixedUniform(random, 1, 5)
                 )
         );
 
@@ -72,7 +71,7 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
                 new RolePlayerTypeStrategy(
                         "employee",
                         "person",
-                        new ConstantPDF(1),
+                        new FixedConstant(1),
                         new StreamProvider<>(
                                 new FromIdStorageConceptIdPicker(
                                         random,
@@ -86,7 +85,7 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
                 new RolePlayerTypeStrategy(
                         "employer",
                         "company",
-                        new ConstantPDF(1),
+                        new FixedConstant(1),
                         new CentralStreamProvider<>(
                                 new NotInRelationshipConceptIdStream(
                                         "employment",
@@ -105,7 +104,7 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
                 0.3,
                 new RelationshipStrategy(
                         "employment",
-                        new ScalingDiscreteGaussianPDF(random, ()->storage.totalEntities(), 0.5, 0.25),
+                        new ScalingDiscreteGaussian(random, ()->storage.totalEntities(), 0.5, 0.25),
                         employmentRoleStrategies)
         );
 
@@ -127,7 +126,7 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
                 1.0,
                 new AttributeStrategy<>(
                         "name",
-                        new ScalingUniformPDF(random, ()->storage.totalEntities(), 0.75,1.25),
+                        new ScalingUniform(random, ()->storage.totalEntities(), 0.75,1.25),
                         new AttributeOwnerTypeStrategy<>(
                                 "company",
                                 new StreamProvider<>(
@@ -153,7 +152,7 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
 //                    1.0,
 //                    new AttributeStrategy<String>(
 //                            schemaManager.getTypeFromString("gender", this.attributeTypes),
-//                            new UniformPDF(this.rand, 3, 20),
+//                            new FixedUniform(this.rand, 3, 20),
 //                            new AttributeOwnerTypeStrategy<>(
 //                                    schemaManager.getTypeFromString("name", this.attributeTypes),
 //                                    new StreamProvider<>(
@@ -187,7 +186,7 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
 //                1.0,
 //                new AttributeStrategy<>(
 //                        "rating",
-//                        new ScalingUniformPDF(random, ()->storage.totalEntities(), 0.33, 0.50),
+//                        new ScalingUniform(random, ()->storage.totalEntities(), 0.33, 0.50),
 //                        new AttributeOwnerTypeStrategy<>(
 //                                "name",
 //                                new StreamProvider<>(
@@ -208,7 +207,7 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
                 5.0,
                 new AttributeStrategy<>(
                         "rating",
-                        new ScalingUniformPDF(random, ()->storage.totalEntities(),0.1, 1.0),
+                        new ScalingUniform(random, ()->storage.totalEntities(),0.1, 1.0),
                         new AttributeOwnerTypeStrategy<>(
                                 "company",
                                 new StreamProvider<>(
@@ -229,7 +228,7 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
 //                3.0,
 //                new AttributeStrategy<>(
 //                        "rating",
-//                        new ScalingUniformPDF(random, ()->storage.totalEntities(), 1.0, 1.5),
+//                        new ScalingUniform(random, ()->storage.totalEntities(), 1.0, 1.5),
 //                        new AttributeOwnerTypeStrategy<>(
 //                                "employment",
 //                                new StreamProvider<>(

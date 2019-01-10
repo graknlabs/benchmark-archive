@@ -2,7 +2,7 @@ name: "web content"
 schema: "web_content_schema.gql"
 queries: "queries.yml"
 concepts:
-  - 10000
+  - 100000
 repeatsPerQuery: 0
 # TODO
 # concurrency:

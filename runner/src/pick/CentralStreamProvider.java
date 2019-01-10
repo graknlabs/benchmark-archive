@@ -19,7 +19,7 @@
 package grakn.benchmark.runner.pick;
 
 import grakn.core.client.Grakn;
-import grakn.benchmark.runner.pdf.PDF;
+import grakn.benchmark.runner.probdensity.ProbabilityDensityFunction;
 
 import java.util.ArrayList;
 import java.util.stream.Stream;
@@ -44,11 +44,11 @@ public class CentralStreamProvider<T> implements StreamProviderInterface<T> {
     }
 
     @Override
-    public Stream<T> getStream(PDF pdf, Grakn.Transaction tx) {
+    public Stream<T> getStream(ProbabilityDensityFunction pdf, Grakn.Transaction tx) {
         // Get the same list as used previously, or generate one if not seen before
         // Only create a new stream if reset() has been called prior
 
-        int streamLength = pdf.next();
+        int streamLength = pdf.sample();
         if (this.isReset) {
 
             // TODO remove this hack when we have negation

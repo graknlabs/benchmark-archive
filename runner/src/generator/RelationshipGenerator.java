@@ -56,7 +56,7 @@ public class RelationshipGenerator extends Generator<RelationshipStrategy> {
     public Stream<Query> generate() {
         QueryBuilder qb = this.tx.graql();
 
-        int numInstances = this.strategy.getNumInstancesPDF().next();
+        int numInstances = this.strategy.getNumInstancesPDF().sample();
 
         Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies = this.strategy.getRolePlayerTypeStrategies();
         for (RolePlayerTypeStrategy rolePlayerTypeStrategy : rolePlayerTypeStrategies) {

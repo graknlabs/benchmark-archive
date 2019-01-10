@@ -24,7 +24,7 @@ import grakn.core.graql.Graql;
 import grakn.core.graql.Query;
 import grakn.core.graql.QueryBuilder;
 import grakn.core.graql.Var;
-import grakn.benchmark.runner.pdf.ConstantPDF;
+import grakn.benchmark.runner.probdensity.FixedConstant;
 import grakn.benchmark.runner.pick.StreamProviderInterface;
 import grakn.benchmark.runner.strategy.AttributeOwnerTypeStrategy;
 import grakn.benchmark.runner.strategy.AttributeStrategy;
@@ -57,7 +57,7 @@ public class AttributeGenerator<OwnerDatatype, ValueDatatype> extends Generator<
 
         // TODO 2 lines common to all 3 generators
         QueryBuilder qb = this.tx.graql();
-        int numInstances = this.strategy.getNumInstancesPDF().next();
+        int numInstances = this.strategy.getNumInstancesPDF().sample();
 
         AttributeOwnerTypeStrategy<OwnerDatatype> attributeOwnerStrategy = this.strategy.getAttributeOwnerStrategy();
         StreamProviderInterface<OwnerDatatype> ownerPicker = attributeOwnerStrategy.getPicker();
@@ -68,7 +68,7 @@ public class AttributeGenerator<OwnerDatatype, ValueDatatype> extends Generator<
         valuePicker.reset();
         ownerPicker.reset();
 
-        ConstantPDF unityPDF = new ConstantPDF(1);
+        FixedConstant unityPDF = new FixedConstant(1);
 
         return Stream.generate(() -> {
 

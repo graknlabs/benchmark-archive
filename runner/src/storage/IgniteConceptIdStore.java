@@ -419,7 +419,7 @@ public class IgniteConceptIdStore implements IdStoreInterface {
 //        Connection conn = DriverManager.getConnection("jdbc:ignite:thin://127.0.0.1/");
 //        try (Statement stmt = conn.createStatement()) {
 //            try (ResultSet rs = stmt.executeQuery("SHOW TABLES")) {
-//                rs.next();
+//                rs.sample();
 //            } catch (SQLException e) {
 //                e.printStackTrace();
 //            }

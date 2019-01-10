@@ -1,4 +1,4 @@
-package grakn.benchmark.runner.pdf;
+package grakn.benchmark.runner.probdensity;
 
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.solvers.BrentSolver;
@@ -9,7 +9,7 @@ import org.apache.commons.math3.random.RandomGeneratorFactory;
 import java.util.Random;
 import java.util.function.Supplier;
 
-public class ScalingBoundedZipfPDF implements InvariantPDF {
+public class ScalingBoundedZipf implements ProbabilityDensityFunction {
     private Random rand;
     RandomGenerator randomGenerator;
 
@@ -21,14 +21,14 @@ public class ScalingBoundedZipfPDF implements InvariantPDF {
 
     private Supplier<Integer> scaleSupplier;
 
-    public ScalingBoundedZipfPDF(Random random, Supplier<Integer> scaleSupplier, double rangeLimitFraction, double startingExponentForScale40) {
+    public ScalingBoundedZipf(Random random, Supplier<Integer> scaleSupplier, double rangeLimitFactor, double startingExponentForScale40) {
 
         if (startingExponentForScale40 <= 1.0) {
             throw new RuntimeException("Require starting expontent for zipf to be > 1.0, is: " + startingExponentForScale40);
         }
 
         this.rand = random;
-        this.rangeLimitFraction = rangeLimitFraction;
+        this.rangeLimitFraction = rangeLimitFactor;
 
         int dummyStartingScale = 40;
         this.previousScale = dummyStartingScale;
@@ -51,7 +51,7 @@ public class ScalingBoundedZipfPDF implements InvariantPDF {
     }
 
     @Override
-    public int next() {
+    public int sample() {
 
         int newScale = this.scaleSupplier.get();
 
@@ -68,14 +68,20 @@ public class ScalingBoundedZipfPDF implements InvariantPDF {
             // if this condition is true, we are searching for an exponent that produces
             // a mean less than 1.0
             // in this case, skip (could also just use some upper bound
-            if (func.value(expLowerBound) < 0 && func.value(expUpperBound) < 0) {
-                newExponent = Double.MAX_VALUE;
+            if (func.value(expLowerBound) <= 0 && func.value(expUpperBound) <= 0) {
+//                newExponent = Double.MAX_VALUE;
+                return 1;
+            } else if (func.value(expLowerBound) > 0 && func.value(expUpperBound) > 0) {
+//                newExponent = previousExponent;
+                throw new RuntimeException("Shouldn't be here...");
             } else {
                 // updated scale means we need to update our zipf distribution
                 BrentSolver solver = new BrentSolver();
                 newExponent = solver.solve(100, func, expLowerBound, expUpperBound, previousExponent);
             }
-            this.previousZipf = new ZipfDistribution(randomGenerator, newRange, newExponent);
+            previousScale = newScale;
+            previousExponent = newExponent;
+            this.previousZipf = new ZipfDistribution(randomGenerator, previousScale, previousExponent);
         } else if (newScale == 0) {
             // just return 0 if the allowed range is 0 length
             return 0;

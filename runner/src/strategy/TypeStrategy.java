@@ -18,17 +18,17 @@
 
 package grakn.benchmark.runner.strategy;
 
+import grakn.benchmark.runner.probdensity.ProbabilityDensityFunction;
 import grakn.core.concept.Type;
-import grakn.benchmark.runner.pdf.PDF;
 
 /**
  * @param <T>
  */
 public class TypeStrategy<T extends Type> implements TypeStrategyInterface {
     private final String typeLabel;
-    private final PDF numInstancesPDF;
+    private final ProbabilityDensityFunction numInstancesPDF;
 
-    public TypeStrategy(String typeLabel, PDF numInstancesPDF){
+    public TypeStrategy(String typeLabel, ProbabilityDensityFunction numInstancesPDF){
         this.numInstancesPDF = numInstancesPDF;
         this.typeLabel = typeLabel;
     }
@@ -37,7 +37,7 @@ public class TypeStrategy<T extends Type> implements TypeStrategyInterface {
         return typeLabel;
     }
 
-    public PDF getNumInstancesPDF() {
+    public ProbabilityDensityFunction getNumInstancesPDF() {
         return numInstancesPDF;
     }
 }

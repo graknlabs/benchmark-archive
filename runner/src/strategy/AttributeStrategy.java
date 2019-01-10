@@ -18,8 +18,8 @@
 
 package grakn.benchmark.runner.strategy;
 
+import grakn.benchmark.runner.probdensity.ProbabilityDensityFunction;
 import grakn.core.concept.AttributeType;
-import grakn.benchmark.runner.pdf.PDF;
 import grakn.benchmark.runner.pick.StreamProviderInterface;
 
 
@@ -34,7 +34,7 @@ public class AttributeStrategy<OwnerDatatype, ValueDatatype> extends TypeStrateg
     private AttributeOwnerTypeStrategy<OwnerDatatype> attributeOwnerStrategy = null;
 
     public AttributeStrategy(String attributeTypeLabel,
-                             PDF numInstancesPDF,
+                             ProbabilityDensityFunction numInstancesPDF,
                              PickableCollection<AttributeOwnerTypeStrategy<OwnerDatatype>> attributeOwnerStrategies,
                              StreamProviderInterface<ValueDatatype> valuePicker) {
         super(attributeTypeLabel, numInstancesPDF);
@@ -43,7 +43,7 @@ public class AttributeStrategy<OwnerDatatype, ValueDatatype> extends TypeStrateg
     }
 
     public AttributeStrategy(String attributeTypeLabel,
-                             PDF numInstancesPDF,
+                             ProbabilityDensityFunction numInstancesPDF,
                              AttributeOwnerTypeStrategy<OwnerDatatype> attributeOwnerStrategy,
                              StreamProviderInterface<ValueDatatype> valuePicker) {
         super(attributeTypeLabel, numInstancesPDF);
