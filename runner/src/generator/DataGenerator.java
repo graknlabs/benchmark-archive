@@ -110,8 +110,10 @@ public class DataGenerator {
                 GeneratorInterface generator = gf.create(typeStrategy, tx); // TODO Can we do without creating a new generator each iteration
 
                 System.out.println("Using generator " + generator.getClass().toString());
+                // create the stream of insert/match-insert queries
                 Stream<Query> queryStream = generator.generate();
-                
+
+                // execute & parse the results
                 this.processQueryStream(queryStream);
 
                 iteration++;

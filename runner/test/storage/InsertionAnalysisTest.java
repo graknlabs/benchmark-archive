@@ -202,4 +202,14 @@ public class InsertionAnalysisTest {
         assertEquals(1, insertedConcepts.size());
         assertEquals(yId, insertedConcepts.iterator().next().asThing().id().toString());
     }
+
+    @Test
+    public void whenInsertRelationship_IdentifyRolePlayers() {
+        // TODO
+    }
+
+    @Test
+    public void whenInsertNonRelationship_ReturnEmptySet() {
+        // TODO
+    }
 }

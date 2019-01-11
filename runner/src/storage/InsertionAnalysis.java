@@ -78,6 +78,16 @@ public class InsertionAnalysis {
         return resultConcepts;
     }
 
+    /**
+     * Given the query and answers, return the IDs of the concepts that filled ROLES in any relationships
+     * that were added in the given insert query. Returns empty set if none/no relationships added
+     * @return
+     */
+    public static HashSet<Concept> getRolePlayers(InsertQuery query, List<ConceptMap> answers) {
+        // TODO
+        return null;
+    }
+
     private static HashSet<Var> getVars(Iterator<VarPatternAdmin> varPatternAdminIterator) {
         HashSet<Var> vars = new HashSet<>();
         while (varPatternAdminIterator.hasNext()) {
