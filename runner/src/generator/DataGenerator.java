@@ -22,10 +22,7 @@ import grakn.benchmark.runner.schemaspecific.SchemaSpecificDataGenerator;
 import grakn.benchmark.runner.schemaspecific.SchemaSpecificDataGeneratorFactory;
 import grakn.core.GraknTxType;
 import grakn.core.client.Grakn;
-import grakn.core.concept.AttributeType;
-import grakn.core.concept.Concept;
-import grakn.core.concept.EntityType;
-import grakn.core.concept.RelationshipType;
+import grakn.core.concept.*;
 import grakn.core.graql.InsertQuery;
 import grakn.core.graql.Query;
 import grakn.core.graql.answer.ConceptMap;
@@ -39,6 +36,7 @@ import grakn.benchmark.runner.strategy.TypeStrategyInterface;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -118,10 +116,12 @@ public class DataGenerator {
 
                 iteration++;
                 graphSize = getGraphSize();
-                System.out.printf(String.format("---- %d concepts (based on ignite data):----\n", graphSize), this.iteration);
-//                System.out.println(String.format("   %d entities", this.storage.totalEntities()));
-//                System.out.println(String.format("   %d relationships", this.storage.totalRelationships()));
-//                System.out.println(String.format("   %d attributes", this.storage.totalAttributes()));
+                System.out.printf(String.format("Size: %d (based on ignite data)\n", graphSize));
+                System.out.println(String.format("   %d role players", this.storage.totalRolePlayers()));
+                System.out.println(String.format("   %d entity orphans", this.storage.totalOrphanEntities()));
+                System.out.println(String.format("   %d attribute orphans", this.storage.totalOrphanAttributes()));
+                System.out.println(String.format("   %d Rel double counts", this.storage.totalRelationshipsRolePlayersOverlap()));
+                System.out.println(String.format("   %d Relationships", this.storage.totalRelationships()));
 
                 tx.commit();
             }
@@ -141,6 +141,9 @@ public class DataGenerator {
                             throw new RuntimeException("No concepts were inserted");
                         }
                         insertedConcepts.forEach(concept -> this.storage.addConcept(concept));
+
+                        Set<ConceptId> rolePlayers = InsertionAnalysis.getRolePlayers(q);
+                        rolePlayers.forEach(conceptId -> this.storage.addRolePlayer(conceptId.toString()));
                     });
                 });
     }

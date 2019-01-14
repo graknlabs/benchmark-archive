@@ -18,10 +18,8 @@
 
 package grakn.benchmark.runner.storage;
 
-import com.sun.javafx.beans.IDProperty;
 import grakn.core.concept.Concept;
 import grakn.core.concept.ConceptId;
-import grakn.core.graql.Graql;
 import grakn.core.graql.InsertQuery;
 import grakn.core.graql.Match;
 import grakn.core.graql.Var;
@@ -90,18 +88,19 @@ public class InsertionAnalysis {
         // find variables and their associated IDs
         HashMap<Var, ConceptId> varIds = new HashMap<>();
         Set<Var> rolePlayerVars = new HashSet<>();
+        if (query.admin().match() != null) {
+            for (VarPatternAdmin patternAdmin : query.admin().match().admin().getPattern().varPatterns()) {
+                Var var = patternAdmin.var();
+                Optional<IdProperty> idProperty = patternAdmin.getProperty(IdProperty.class);
+                if (idProperty.isPresent()) {
+                    varIds.put(var, idProperty.get().id());
+                }
+            }
+        }
         for (VarPatternAdmin patternAdmin : query.admin().varPatterns()) {
-            Var var = patternAdmin.var();
-
             Optional<RelationshipProperty> relationshipProperty = patternAdmin.getProperty(RelationshipProperty.class);
             if (relationshipProperty.isPresent()) {
                 rolePlayerVars.addAll(relationshipProperty.get().innerVarPatterns().map(vpa -> vpa.var()).collect(Collectors.toSet()));
-                continue;
-            }
-
-            Optional<IdProperty> idProperty = patternAdmin.getProperty(IdProperty.class);
-            if (idProperty.isPresent()) {
-                varIds.put(var, idProperty.get().id());
             }
         }
 

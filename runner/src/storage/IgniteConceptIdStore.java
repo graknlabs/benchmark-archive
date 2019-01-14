@@ -294,7 +294,9 @@ public class IgniteConceptIdStore implements IdStoreInterface {
             // TODO Doesn't seem like the right way to go
             // In the case of duplicate primary key, which we want to ignore since I want to keep a unique set of
             // attribute values in each table
-            e.printStackTrace();
+
+            // this was way too verbose
+//            e.printStackTrace();
         }
     }
 
@@ -411,11 +413,11 @@ public class IgniteConceptIdStore implements IdStoreInterface {
 
     public int getConceptCount(String typeLabel) {
         String tableName = getTableName(typeLabel);
-        return getCount(tableName);
+        return getCountInTable(tableName);
     }
 
 
-    private int getCount(String tableName) {
+    private int getCountInTable(String tableName) {
         String sql = "SELECT COUNT(1) FROM " + tableName;
 
         try (Statement stmt = conn.createStatement()) {
@@ -437,8 +439,17 @@ public class IgniteConceptIdStore implements IdStoreInterface {
     }
 
     @Override
+    public int totalRelationships() {
+        int total = 0;
+        for (String relationshipType : this.relationshipTypeLabels) {
+            total += getConceptCount(relationshipType);
+        }
+        return total;
+    }
+
+    @Override
     public int totalRolePlayers() {
-        return getCount("roleplayers");
+        return getCountInTable("roleplayers");
     }
 
     /**

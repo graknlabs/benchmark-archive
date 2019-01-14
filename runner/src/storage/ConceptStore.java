@@ -29,6 +29,7 @@ public interface ConceptStore {
     void addConcept(Concept concept);
     void addRolePlayer(String conceptId);
 
+    int totalRelationships();
     int totalRolePlayers();
     int totalOrphanEntities();
     int totalOrphanAttributes();
