@@ -26,7 +26,12 @@ import grakn.core.concept.Label;
 import grakn.core.concept.RelationshipType;
 import grakn.core.concept.Thing;
 import grakn.core.concept.Type;
+import org.apache.ignite.Ignite;
+import org.apache.ignite.IgniteException;
+import org.apache.ignite.Ignition;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.sql.Connection;
@@ -55,6 +60,16 @@ public class IgniteConceptIdStoreTest {
     private String typeLabel;
 
     HashSet<EntityType> entityTypes;
+
+    @BeforeClass
+    public static void initIgniteServer() throws IgniteException {
+        Ignition.start();
+    }
+
+    @AfterClass
+    public static void stopIgniteServer() {
+        Ignition.stop(false);
+    }
 
     @Before
     public void setUp() {
@@ -113,7 +128,7 @@ public class IgniteConceptIdStoreTest {
 
         // Add all of the elements
         for (Concept conceptMock : this.conceptMocks) {
-            this.store.add(conceptMock);
+            this.store.addConcept(conceptMock);
         }
 
         int counter = 0;
@@ -136,7 +151,7 @@ public class IgniteConceptIdStoreTest {
         this.store = new IgniteConceptIdStore(entityTypes, new HashSet<RelationshipType>(), new HashSet<AttributeType>());
 
         int index = 0;
-        this.store.add(this.conceptMocks.get(index));
+        this.store.addConcept(this.conceptMocks.get(index));
         ConceptId personConceptId = this.store.getConceptId(this.typeLabel, index);
         System.out.println("Found id: " + personConceptId.toString());
         assertEquals(personConceptId, this.conceptIds.get(index));
@@ -150,7 +165,7 @@ public class IgniteConceptIdStoreTest {
         // Add all of the elements
 
         for (Concept conceptMock : this.conceptMocks) {
-            this.store.add(conceptMock);
+            this.store.addConcept(conceptMock);
         }
 
         ConceptId personConceptId = this.store.getConceptId(this.typeLabel, index);
@@ -163,10 +178,23 @@ public class IgniteConceptIdStoreTest {
         this.store = new IgniteConceptIdStore(entityTypes, new HashSet<RelationshipType>(), new HashSet<AttributeType>());
 
         for (Concept conceptMock : this.conceptMocks) {
-            this.store.add(conceptMock);
+            this.store.addConcept(conceptMock);
         }
 
         int count = this.store.getConceptCount(this.typeLabel);
         assertEquals(7, count);
+    }
+
+    @Test
+    public void whenRoleplayerIsAdded_idCanBeRetrieved() throws SQLException {
+        this.store = new IgniteConceptIdStore(entityTypes, new HashSet<RelationshipType>(), new HashSet<AttributeType>());
+
+        Concept concept = conceptMocks.get(0);
+        for (Concept conceptMock : this.conceptMocks) {
+            this.store.addRolePlayer(conceptMock);
+        }
+
+        int roleplayerCount = this.store.totalRolePlayers();
+        assertEquals(7, roleplayerCount);
     }
 }

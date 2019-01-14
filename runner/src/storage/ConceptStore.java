@@ -25,11 +25,12 @@ import grakn.core.concept.Concept;
  */
 public interface ConceptStore {
 
-    void add(Concept concept);
+    void addConcept(Concept concept);
+    void addRolePlayer(Concept concept);
 
-    int total();
-
-    int totalEntities();
-    int totalRelationships();
-    int totalAttributes();
+    int totalConceptIds();
+    int totalRolePlayers();
+    int totalOrpanEntities();
+    int totalOrphanAttributeValues();
+    int totalRelationshipsRolePlayersOverlap();
 }

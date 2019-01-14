@@ -26,6 +26,7 @@ import grakn.core.concept.EntityType;
 import grakn.core.concept.Label;
 import grakn.core.concept.RelationshipType;
 import grakn.core.concept.SchemaConcept;
+import org.apache.ignite.internal.sql.SqlParseException;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -86,6 +87,7 @@ public class IgniteConceptIdStore implements IdStoreInterface {
 
         try {
             clean(this.allTypeLabels);
+            dropTable("roleplayers"); // one special table for tracking role players
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -106,21 +108,24 @@ public class IgniteConceptIdStore implements IdStoreInterface {
 
         // Create database tables.
         for (String typeLabel : this.entityTypeLabels) {
-            this.createConceptIdTable(typeLabel);
+            this.createTypeIdsTable(typeLabel);
         }
 
         for (String typeLabel : this.relationshipTypeLabels) {
-            this.createConceptIdTable(typeLabel);
+            this.createTypeIdsTable(typeLabel);
         }
 
-//        for (String typeLabel : this.relationshipTypeLabels) {
         for (Map.Entry<String, AttributeType.DataType<?>> entry : this.attributeTypeLabels.entrySet()) {
             String typeLabel = entry.getKey();
             AttributeType.DataType<?> datatype = entry.getValue();
 
             String dbDatatype = DATATYPE_MAPPING.get(datatype);
-            this.createTable(typeLabel, dbDatatype);
+            this.createAttributeValueTable(typeLabel, dbDatatype);
         }
+
+        // re-create special table
+        // role players that have been assigned into a relationship at some point
+        createTable("roleplayers", "VARCHAR");
     }
 
     private <T extends SchemaConcept> HashSet<String> getTypeLabels(Set<T> conceptTypes) {
@@ -150,13 +155,32 @@ public class IgniteConceptIdStore implements IdStoreInterface {
         return allLabels;
     }
 
-    private void createConceptIdTable(String typeLabel) {
-        createTable(typeLabel, "VARCHAR");
+    /**
+     * Create a table for storing concept IDs of the given type
+     * @param typeLabel
+     */
+    private void createTypeIdsTable(String typeLabel) {
+        String tableName = this.putTableName(typeLabel);
+        createTable(tableName, "VARCHAR");
     }
 
-    private void createTable(String typeLabel, String sqlDatatypeName) {
+    /**
+     * Create a table for storing attributeValues for the given type
+     * @param typeLabel
+     * @param sqlDatatypeName
+     */
+    private void createAttributeValueTable(String typeLabel, String sqlDatatypeName) {
 
         String tableName = this.putTableName(typeLabel);
+        createTable(tableName, sqlDatatypeName);
+    }
+
+    /**
+     * Create a single column table with the value stored being of the given sqlDatatype
+     * @param tableName
+     * @param sqlDatatypeName
+     */
+    private void createTable(String tableName, String sqlDatatypeName) {
 
         try (Statement stmt = conn.createStatement()) {
             stmt.executeUpdate("CREATE TABLE " + tableName + " (" +
@@ -191,7 +215,7 @@ public class IgniteConceptIdStore implements IdStoreInterface {
     }
 
     @Override
-    public void add(Concept concept) {
+    public void addConcept(Concept concept) {
 
         Label conceptTypeLabel = concept.asThing().type().label();
         String tableName = this.getTableName(conceptTypeLabel.toString());
@@ -245,12 +269,24 @@ public class IgniteConceptIdStore implements IdStoreInterface {
 
             } catch (SQLException e) {
                 if (!e.getSQLState().equals("23000")) {
-                    // TODO Doesn't seem like the right way to go
-                    // In the case of duplicate primary key, which we want to ignore since I want to keep a unique set of
-                    // attribute values in each table
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    public void addRolePlayer(Concept concept) {
+        String conceptId = concept.asThing().id().toString();
+        try (PreparedStatement stmt = this.conn.prepareStatement(
+                "INSERT INTO roleplayers (id, ) VALUES (?, )")) {
+
+            stmt.setString(ID_INDEX, conceptId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            // TODO Doesn't seem like the right way to go
+            // In the case of duplicate primary key, which we want to ignore since I want to keep a unique set of
+            // attribute values in each table
+            e.printStackTrace();
         }
     }
 
@@ -359,9 +395,13 @@ public class IgniteConceptIdStore implements IdStoreInterface {
     }
 
     public int getConceptCount(String typeLabel) {
+        String tableName = getTableName(typeLabel);
+        return getCount(tableName);
+    }
 
-        String sql = "SELECT COUNT(1) FROM " + getTableName(typeLabel);
-//        ResultSet rs = this.runQuery(sql);
+
+    private int getCount(String tableName) {
+        String sql = "SELECT COUNT(1) FROM " + tableName;
 
         try (Statement stmt = conn.createStatement()) {
             try (ResultSet rs = stmt.executeQuery(sql)) {
@@ -382,7 +422,7 @@ public class IgniteConceptIdStore implements IdStoreInterface {
     }
 
     @Override
-    public int total() {
+    public int totalConceptIds() {
         int total = 0;
         for (String typeLabel : this.allTypeLabels) {
             total += this.getConceptCount(typeLabel);
@@ -390,31 +430,25 @@ public class IgniteConceptIdStore implements IdStoreInterface {
         return total;
     }
 
+
     @Override
-    public int totalEntities() {
-        int total = 0;
-        for (String typeLabel : this.entityTypeLabels) {
-            total += this.getConceptCount(typeLabel);
-        }
-        return total;
+    public int totalRolePlayers() {
+        return getCount("roleplayers");
     }
 
     @Override
-    public int totalRelationships() {
-        int total = 0;
-        for (String typeLabel : this.relationshipTypeLabels) {
-            total += this.getConceptCount(typeLabel);
-        }
-        return total;
+    public int totalOrpanEntities() {
+        return 0;
     }
 
     @Override
-    public int totalAttributes() {
-        int total = 0;
-        for (String typeLabel : this.attributeTypeLabels.keySet()) {
-            total += this.getConceptCount(typeLabel);
-        }
-        return total;
+    public int totalOrphanAttributeValues() {
+        return 0;
+    }
+
+    @Override
+    public int totalRelationshipsRolePlayersOverlap() {
+        return 0;
     }
 
 
@@ -422,16 +456,18 @@ public class IgniteConceptIdStore implements IdStoreInterface {
      * Clean all elements in the storage
      */
     public void clean(Set<String> typeLabels) throws SQLException {
-
-
         // TODO figure out how to drop all tables
         for (String typeLabel : typeLabels) {
-            Connection conn = DriverManager.getConnection("jdbc:ignite:thin://127.0.0.1/");
-            try (PreparedStatement stmt = conn.prepareStatement("DROP TABLE IF EXISTS " + this.getTableName(typeLabel))) {
-                stmt.executeUpdate();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            dropTable(typeLabel);
+        }
+    }
+
+    private void dropTable(String tableName) throws SQLException {
+        Connection conn = DriverManager.getConnection("jdbc:ignite:thin://127.0.0.1/");
+        try (PreparedStatement stmt = conn.prepareStatement("DROP TABLE IF EXISTS " + this.getTableName(tableName))) {
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }

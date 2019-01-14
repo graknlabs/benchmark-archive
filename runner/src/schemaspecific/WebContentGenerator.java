@@ -468,19 +468,19 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
     }
 
     private ScalingUniform scalingUniform(double lowerBoundFraction, double upperBoundFraction) {
-        return new ScalingUniform(random, () -> storage.totalEntities(), lowerBoundFraction, upperBoundFraction);
+        return new ScalingUniform(random, () -> getGraphSize(), lowerBoundFraction, upperBoundFraction);
     }
 
     private ScalingDiscreteGaussian scalingGaussian(double meanScaleFraction, double stddevScaleFraction) {
-        return new ScalingDiscreteGaussian(random, () -> storage.totalEntities(), meanScaleFraction, stddevScaleFraction);
+        return new ScalingDiscreteGaussian(random, () -> getGraphSize(), meanScaleFraction, stddevScaleFraction);
     }
 
     private ScalingBoundedZipf scalingZipf(double rangeLimitFraction, double initialExponentForScale40) {
-        return new ScalingBoundedZipf(random, () -> storage.totalEntities(), rangeLimitFraction, initialExponentForScale40);
+        return new ScalingBoundedZipf(random, () -> getGraphSize(), rangeLimitFraction, initialExponentForScale40);
     }
 
     private ScalingConstant scalingConstant(double constantFraction) {
-        return new ScalingConstant(() -> storage.totalEntities(), constantFraction);
+        return new ScalingConstant(() -> getGraphSize(), constantFraction);
     }
 
     private FromIdStoragePicker<ConceptId> fromIdStorageConceptIdPicker(String typeLabel) {
@@ -524,6 +524,14 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
                         valueProvider
                         )
                 );
+    }
+
+
+    private int getGraphSize() {
+        int rolePlayers = storage.totalRolePlayers();
+        int orphanEntities = storage.totalOrpanEntities();
+        int orphanAttributes = storage.totalOrphanAttributeValues();
+        return rolePlayers + orphanAttributes + orphanEntities;
     }
 
 

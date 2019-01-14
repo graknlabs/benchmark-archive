@@ -97,9 +97,9 @@ public class DataGenerator {
         */
 
         GeneratorFactory gf = new GeneratorFactory();
-        int conceptTotal = this.storage.total();
+        int graphSize = getGraphSize();
 
-        while (conceptTotal < numConceptsLimit) {
+        while (graphSize < numConceptsLimit) {
             System.out.printf("\n---- Iteration %d ----\n", this.iteration);
             try (Grakn.Transaction tx = session.transaction(GraknTxType.WRITE)) {
 
@@ -117,11 +117,11 @@ public class DataGenerator {
                 this.processQueryStream(queryStream);
 
                 iteration++;
-                conceptTotal = this.storage.total();
-                System.out.printf(String.format("---- %d concepts (based on ignite data):----\n", conceptTotal), this.iteration);
-                System.out.println(String.format("   %d entities", this.storage.totalEntities()));
-                System.out.println(String.format("   %d relationships", this.storage.totalRelationships()));
-                System.out.println(String.format("   %d attributes", this.storage.totalAttributes()));
+                graphSize = getGraphSize();
+                System.out.printf(String.format("---- %d concepts (based on ignite data):----\n", graphSize), this.iteration);
+//                System.out.println(String.format("   %d entities", this.storage.totalEntities()));
+//                System.out.println(String.format("   %d relationships", this.storage.totalRelationships()));
+//                System.out.println(String.format("   %d attributes", this.storage.totalAttributes()));
 
                 tx.commit();
             }
@@ -140,8 +140,15 @@ public class DataGenerator {
                         if (insertedConcepts.isEmpty()) {
                             throw new RuntimeException("No concepts were inserted");
                         }
-                        insertedConcepts.forEach(concept -> this.storage.add(concept));
+                        insertedConcepts.forEach(concept -> this.storage.addConcept(concept));
                     });
                 });
+    }
+
+    private int getGraphSize() {
+        int rolePlayers = storage.totalRolePlayers();
+        int orphanEntities = storage.totalOrpanEntities();
+        int orphanAttributes = storage.totalOrphanAttributeValues();
+        return rolePlayers + orphanAttributes + orphanEntities;
     }
 }
