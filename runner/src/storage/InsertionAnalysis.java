@@ -79,11 +79,11 @@ public class InsertionAnalysis {
     }
 
     /**
-     * Given the query and answers, return the IDs of the concepts that filled ROLES in any relationships
+     * Given the query, return the IDs of the concepts that filled ROLES in any relationships
      * that were added in the given insert query. Returns empty set if none/no relationships added
      * @return
      */
-    public static HashSet<Concept> getRolePlayers(InsertQuery query, List<ConceptMap> answers) {
+    public static HashSet<Concept> getRolePlayers(InsertQuery query) {
         // TODO
         return null;
     }

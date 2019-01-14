@@ -235,7 +235,7 @@ public class IgniteConceptIdStoreTest {
         }
 
         int roleplayerCount = this.store.totalRolePlayers();
-        assertEquals(7, roleplayerCount);
+        assertEquals(9, roleplayerCount);
     }
 
     @Test
