@@ -438,16 +438,6 @@ public class IgniteConceptIdStore implements IdStoreInterface {
     }
 
     @Override
-    public int totalConceptIds() {
-        int total = 0;
-        for (String typeLabel : this.allTypeLabels) {
-            total += this.getConceptCount(typeLabel);
-        }
-        return total;
-    }
-
-
-    @Override
     public int totalRolePlayers() {
         return getCount("roleplayers");
     }
