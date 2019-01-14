@@ -284,8 +284,7 @@ public class IgniteConceptIdStore implements IdStoreInterface {
         }
     }
 
-    public void addRolePlayer(Concept concept) {
-        String conceptId = concept.asThing().id().toString();
+    public void addRolePlayer(String conceptId) {
         try (PreparedStatement stmt = this.conn.prepareStatement(
                 "INSERT INTO roleplayers (id, ) VALUES (?, )")) {
 

@@ -19,6 +19,7 @@
 package grakn.benchmark.runner.storage;
 
 import grakn.core.concept.Concept;
+import grakn.core.concept.ConceptId;
 
 /**
  *
@@ -26,7 +27,7 @@ import grakn.core.concept.Concept;
 public interface ConceptStore {
 
     void addConcept(Concept concept);
-    void addRolePlayer(Concept concept);
+    void addRolePlayer(String conceptId);
 
     int totalRolePlayers();
     int totalOrphanEntities();

@@ -18,18 +18,20 @@
 
 package grakn.benchmark.runner.storage;
 
+import com.sun.javafx.beans.IDProperty;
 import grakn.core.concept.Concept;
+import grakn.core.concept.ConceptId;
+import grakn.core.graql.Graql;
 import grakn.core.graql.InsertQuery;
 import grakn.core.graql.Match;
 import grakn.core.graql.Var;
 import grakn.core.graql.admin.VarPatternAdmin;
 import grakn.core.graql.answer.ConceptMap;
 import grakn.core.graql.internal.pattern.property.IdProperty;
+import grakn.core.graql.internal.pattern.property.RelationshipProperty;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -83,9 +85,30 @@ public class InsertionAnalysis {
      * that were added in the given insert query. Returns empty set if none/no relationships added
      * @return
      */
-    public static HashSet<Concept> getRolePlayers(InsertQuery query) {
-        // TODO
-        return null;
+    public static Set<ConceptId> getRolePlayers(InsertQuery query) {
+
+        // find variables and their associated IDs
+        HashMap<Var, ConceptId> varIds = new HashMap<>();
+        Set<Var> rolePlayerVars = new HashSet<>();
+        for (VarPatternAdmin patternAdmin : query.admin().varPatterns()) {
+            Var var = patternAdmin.var();
+
+            Optional<RelationshipProperty> relationshipProperty = patternAdmin.getProperty(RelationshipProperty.class);
+            if (relationshipProperty.isPresent()) {
+                rolePlayerVars.addAll(relationshipProperty.get().innerVarPatterns().map(vpa -> vpa.var()).collect(Collectors.toSet()));
+                continue;
+            }
+
+            Optional<IdProperty> idProperty = patternAdmin.getProperty(IdProperty.class);
+            if (idProperty.isPresent()) {
+                varIds.put(var, idProperty.get().id());
+            }
+        }
+
+        return varIds.entrySet().stream()
+                .filter(varStringEntry -> rolePlayerVars.contains(varStringEntry.getKey()))
+                .map(varStringEntry -> varStringEntry.getValue())
+                .collect(Collectors.toSet());
     }
 
     private static HashSet<Var> getVars(Iterator<VarPatternAdmin> varPatternAdminIterator) {
@@ -117,4 +140,5 @@ public class InsertionAnalysis {
         varsWithoutIds.removeAll(varsWithIds);
         return varsWithoutIds;
     }
+
 }
