@@ -30,7 +30,7 @@ public interface ConceptStore {
 
     int totalConceptIds();
     int totalRolePlayers();
-    int totalOrpanEntities();
-    int totalOrphanAttributeValues();
+    int totalOrphanEntities();
+    int totalOrphanAttributes();
     int totalRelationshipsRolePlayersOverlap();
 }

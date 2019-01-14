@@ -253,8 +253,8 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
 
     private int getGraphSize() {
         int rolePlayers = storage.totalRolePlayers();
-        int orphanEntities = storage.totalOrpanEntities();
-        int orphanAttributes = storage.totalOrphanAttributeValues();
+        int orphanEntities = storage.totalOrphanEntities();
+        int orphanAttributes = storage.totalOrphanAttributes();
         return rolePlayers + orphanAttributes + orphanEntities;
     }
 

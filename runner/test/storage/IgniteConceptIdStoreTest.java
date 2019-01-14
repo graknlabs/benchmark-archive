@@ -125,21 +125,21 @@ public class IgniteConceptIdStoreTest {
         typeLabelsSet.add(attrTypeLabel);
         attributeTypes = new HashSet<>();
         AttributeType ageAttributeType = mock(AttributeType.class);
-        when(ageAttributeType.label()).thenReturn(Label.of("age"));
+        when(ageAttributeType.label()).thenReturn(Label.of(attrTypeLabel));
+        when(ageAttributeType.dataType()).thenReturn(AttributeType.DataType.LONG); // Data Type
         attributeTypes.add(ageAttributeType);
 
         Concept conceptMock = mock(Concept.class);
+        conceptMocks.add(conceptMock);
         Thing thingMock = mock(Thing.class);
         when(conceptMock.asThing()).thenReturn(thingMock); // Thing
         when(thingMock.id()).thenReturn(ConceptId.of("V8")); // Concept Id
         conceptIds.add(thingMock.id());
         Type conceptTypeMock = mock(Type.class);
         when(thingMock.type()).thenReturn(conceptTypeMock); // Concept Type
-        when(conceptTypeMock.label()).thenReturn(Label.of("age")); // Type label
+        when(conceptTypeMock.label()).thenReturn(Label.of(attrTypeLabel)); // Type label
         Attribute<Long> attributeMock = mock(Attribute.class);
         when(conceptMock.<Long>asAttribute()).thenReturn(attributeMock); // Concept -> Attribute<Long>
-        AttributeType.DataType<Long> datatype = mock(AttributeType.DataType.class);
-        when(attributeMock.dataType()).thenReturn(datatype); // Attribute<Long> DataType
         when(attributeMock.value()).thenReturn(10l); // Attribute Value
 
 
@@ -152,6 +152,7 @@ public class IgniteConceptIdStoreTest {
         relationshipTypes.add(friendRelationshipType);
 
         Concept relConceptMock = mock(Concept.class);
+        conceptMocks.add(relConceptMock);
         Thing relThingMock = mock(Thing.class);
         when(relConceptMock.asThing()).thenReturn(relThingMock); // Thing
         when(relThingMock.id()).thenReturn(ConceptId.of("V9")); // Concept Id
@@ -164,7 +165,7 @@ public class IgniteConceptIdStoreTest {
 
     @Test
     public void whenConceptIdsAreAdded_conceptIdsAreInTheDB() throws SQLException {
-        this.store = new IgniteConceptIdStore(entityTypes, new HashSet<RelationshipType>(), new HashSet<AttributeType>());
+        this.store = new IgniteConceptIdStore(entityTypes, relationshipTypes, attributeTypes);
 
         // Add all of the elements
         for (Concept conceptMock : this.conceptMocks) {
@@ -188,7 +189,7 @@ public class IgniteConceptIdStoreTest {
 
     @Test
     public void whenConceptIsAdded_conceptIdCanBeRetrieved() throws SQLException {
-        this.store = new IgniteConceptIdStore(entityTypes, new HashSet<RelationshipType>(), new HashSet<AttributeType>());
+        this.store = new IgniteConceptIdStore(entityTypes, relationshipTypes, attributeTypes);
 
         int index = 0;
         this.store.addConcept(this.conceptMocks.get(index));
@@ -199,7 +200,7 @@ public class IgniteConceptIdStoreTest {
 
     @Test
     public void whenGettingIdWithOffset_correctIdIsReturned() throws SQLException {
-        this.store = new IgniteConceptIdStore(entityTypes, new HashSet<RelationshipType>(), new HashSet<AttributeType>());
+        this.store = new IgniteConceptIdStore(entityTypes, relationshipTypes, attributeTypes);
 
         int index = 4;
         // Add all of the elements
@@ -215,7 +216,7 @@ public class IgniteConceptIdStoreTest {
 
     @Test
     public void whenCountingTypeInstances_resultIsCorrect() throws SQLException, ClassNotFoundException {
-        this.store = new IgniteConceptIdStore(entityTypes, new HashSet<RelationshipType>(), new HashSet<AttributeType>());
+        this.store = new IgniteConceptIdStore(entityTypes, relationshipTypes, attributeTypes);
 
         for (Concept conceptMock : this.conceptMocks) {
             this.store.addConcept(conceptMock);
@@ -226,15 +227,90 @@ public class IgniteConceptIdStoreTest {
     }
 
     @Test
-    public void whenRoleplayerIsAdded_idCanBeRetrieved() throws SQLException {
-        this.store = new IgniteConceptIdStore(entityTypes, new HashSet<RelationshipType>(), new HashSet<AttributeType>());
+    public void whenRolePlayerIsAdded_countIsCorrect() {
+        this.store = new IgniteConceptIdStore(entityTypes, relationshipTypes, attributeTypes);
 
-        Concept concept = conceptMocks.get(0);
         for (Concept conceptMock : this.conceptMocks) {
             this.store.addRolePlayer(conceptMock);
         }
 
         int roleplayerCount = this.store.totalRolePlayers();
         assertEquals(7, roleplayerCount);
+    }
+
+    @Test
+    public void whenAllButOnePlayingRole_orphanEntitiesCorrect() {
+        this.store = new IgniteConceptIdStore(entityTypes, relationshipTypes, attributeTypes);
+
+        // add all concepts to store
+        for (Concept conceptMock : this.conceptMocks) {
+            this.store.addConcept(conceptMock);
+        }
+
+        // add 6 of 7 entities as role players too
+        for (int i = 0 ; i < 6; i++) {
+            Concept conceptMock = this.conceptMocks.get(i);
+            this.store.addRolePlayer(conceptMock);
+        }
+
+        int orphanEntities = this.store.totalOrphanEntities();
+        assertEquals(orphanEntities, 1);
+    }
+
+    @Test
+    public void whenAllButOnePlayingRole_orphanAttributesCorrect() {
+        this.store = new IgniteConceptIdStore(entityTypes, relationshipTypes, attributeTypes);
+
+        // add all concepts to store
+        for (Concept conceptMock : this.conceptMocks) {
+            this.store.addConcept(conceptMock);
+        }
+
+        // ad all but the attribute and relationship
+        for (int i = 0 ; i < conceptMocks.size()-2; i++) {
+            Concept conceptMock = this.conceptMocks.get(i);
+            this.store.addRolePlayer(conceptMock);
+        }
+
+        int orphanAttributes = this.store.totalOrphanAttributes();
+        assertEquals(orphanAttributes, 1);
+    }
+
+    @Test
+    public void whenRelationshipsDoNotOverlap_overlapEmpty() {
+        this.store = new IgniteConceptIdStore(entityTypes, relationshipTypes, attributeTypes);
+
+        // add all concepts to store
+        for (Concept conceptMock : this.conceptMocks) {
+            this.store.addConcept(conceptMock);
+        }
+
+        // add all but the relationship (last element)
+        for (int i = 0 ; i < conceptMocks.size()-1; i++) {
+            Concept conceptMock = this.conceptMocks.get(i);
+            this.store.addRolePlayer(conceptMock);
+        }
+
+        int relationshipDoubleCounts = this.store.totalRelationshipsRolePlayersOverlap();
+        assertEquals(relationshipDoubleCounts, 0);
+    }
+
+    @Test
+    public void whenRelationshipsDoNotOverlap_overlapOne() {
+        this.store = new IgniteConceptIdStore(entityTypes, relationshipTypes, attributeTypes);
+
+        // add all concepts to store
+        for (Concept conceptMock : this.conceptMocks) {
+            this.store.addConcept(conceptMock);
+        }
+
+        // add all as role players
+        for (int i = 0 ; i < conceptMocks.size(); i++) {
+            Concept conceptMock = this.conceptMocks.get(i);
+            this.store.addRolePlayer(conceptMock);
+        }
+
+        int relationshipDoubleCounts = this.store.totalRelationshipsRolePlayersOverlap();
+        assertEquals(relationshipDoubleCounts, 1);
     }
 }

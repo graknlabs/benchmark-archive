@@ -457,7 +457,7 @@ public class IgniteConceptIdStore implements IdStoreInterface {
      * @return
      */
     @Override
-    public int totalOrpanEntities() {
+    public int totalOrphanEntities() {
         Set<String> rolePlayerIds = getIds("roleplayers");
         Set<String> entityIds = new HashSet<>();
         for (String typeLabel: this.entityTypeLabels) {
@@ -473,7 +473,7 @@ public class IgniteConceptIdStore implements IdStoreInterface {
      * @return
      */
     @Override
-    public int totalOrphanAttributeValues() {
+    public int totalOrphanAttributes() {
         Set<String> rolePlayerIds = getIds("roleplayers");
         Set<String> attributeIds = new HashSet<>();
         for (String typeLabel: this.attributeTypeLabels.keySet()) {
@@ -503,10 +503,12 @@ public class IgniteConceptIdStore implements IdStoreInterface {
 
     private Set<String> getIds(String tableName) {
         String sql = "SELECT id FROM " + tableName;
+        Set<String> ids = new HashSet<>();
         try (Statement stmt = conn.createStatement()) {
             try (ResultSet resultSet = stmt.executeQuery(sql)) {
-                System.out.println(resultSet);
-
+                while (resultSet.next()) {
+                    ids.add(resultSet.getString(ID_INDEX));
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -514,7 +516,7 @@ public class IgniteConceptIdStore implements IdStoreInterface {
             e.printStackTrace();
         }
 
-        return new HashSet<>();
+        return ids;
     }
 
     /**
