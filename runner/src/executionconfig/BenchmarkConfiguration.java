@@ -94,11 +94,11 @@ public class BenchmarkConfiguration {
         return this.queries.getQueries();
     }
 
-    public List<Integer> getConceptsToBenchmark() {
+    public List<Integer> scalesToProfile() {
         if (this.noDataGeneration) {
             return null;
         } else {
-            return this.benchmarkConfigFile.getConceptsToBenchmark();
+            return this.benchmarkConfigFile.scalesToProfile();
         }
     }
 

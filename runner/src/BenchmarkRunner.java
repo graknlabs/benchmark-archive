@@ -94,7 +94,7 @@ public class BenchmarkRunner {
             // only 1 point to profile at
             this.queryExecutor.processStaticQueries(numQueryRepetitions, numConcepts, "Preconfigured DB - no data gen");
         } else {
-            this.runAtConcepts(this.configuration.getConceptsToBenchmark());
+            this.runAtConcepts(this.configuration.scalesToProfile());
         }
 
     }
@@ -102,13 +102,13 @@ public class BenchmarkRunner {
     /**
      * Given a list of database sizes to perform profiling at,
      * Populate the DB to a given size, then run the benchmark
-     * @param numConceptsInRun
+     * @param scalesToProfile
      */
-    private void runAtConcepts(List<Integer> numConceptsInRun) {
-        for (int numConcepts : numConceptsInRun) {
-            LOG.info("Running queries with " + Integer.toString(numConcepts) + " concepts");
-            this.dataGenerator.generate(numConcepts);
-            this.queryExecutor.processStaticQueries(numQueryRepetitions, numConcepts);
+    private void runAtConcepts(List<Integer> scalesToProfile) {
+        for (int scale : scalesToProfile) {
+            LOG.info("Running queries with " + Integer.toString(scale) + " vertices");
+            this.dataGenerator.generate(scale);
+            this.queryExecutor.processStaticQueries(numQueryRepetitions, scale);
         }
     }
 

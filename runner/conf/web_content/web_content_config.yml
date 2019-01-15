@@ -1,7 +1,7 @@
 name: "web content"
 schema: "web_content_schema.gql"
 queries: "queries.yml"
-concepts:
+scales:
   - 2000
 repeatsPerQuery: 0
 # TODO

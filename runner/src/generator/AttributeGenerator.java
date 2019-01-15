@@ -46,7 +46,6 @@ public class AttributeGenerator<OwnerDatatype, ValueDatatype> extends Generator<
      */
     public AttributeGenerator(AttributeStrategy<OwnerDatatype, ValueDatatype> strategy, Grakn.Transaction tx) {
         super(strategy, tx);
-
     }
 
     /**
@@ -55,7 +54,6 @@ public class AttributeGenerator<OwnerDatatype, ValueDatatype> extends Generator<
     @Override
     public Stream<Query> generate() {
 
-        // TODO 2 lines common to all 3 generators
         QueryBuilder qb = this.tx.graql();
         int numInstances = this.strategy.getNumInstancesPDF().sample();
 

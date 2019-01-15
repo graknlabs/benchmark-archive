@@ -1,7 +1,7 @@
 name: "societal model"
 schema: "societal_model.gql"
 queries: "queries.yml"
-concepts:
+scales:
   - 40000
 repeatsPerQuery: 0
 # TODO

@@ -29,7 +29,7 @@ public class BenchmarkConfigurationFile {
     private String name;
     private String schema;
     private String queries;
-    private List<Integer> concepts;
+    private List<Integer> scalesToProfile;
     private Integer repeatsPerQuery;
 
     public void setName(String name) {
@@ -53,11 +53,11 @@ public class BenchmarkConfigurationFile {
         return this.queries;
     }
 
-    public void setConcepts(List<Integer> concepts) {
-        this.concepts = concepts;
+    public void setScales(List<Integer> scales) {
+        this.scalesToProfile = scales;
     }
-    public List<Integer> getConceptsToBenchmark() {
-        return this.concepts;
+    public List<Integer> scalesToProfile() {
+        return this.scalesToProfile;
     }
 
     public void setRepeatsPerQuery(Integer repeatsPerQuery) {

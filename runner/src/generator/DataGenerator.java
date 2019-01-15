@@ -83,7 +83,7 @@ public class DataGenerator {
         this.initialized = true;
     }
 
-    public void generate(int numConceptsLimit) {
+    public void generate(int graphScaleLimit) {
         if (!this.initialized) {
             throw new GeneratorUninitializedException("generate() can only be called after initializing the generation strategies");
         }
@@ -97,7 +97,7 @@ public class DataGenerator {
         GeneratorFactory gf = new GeneratorFactory();
         int graphSize = getGraphSize();
 
-        while (graphSize < numConceptsLimit) {
+        while (graphSize < graphScaleLimit) {
             System.out.printf("\n---- Iteration %d ----\n", this.iteration);
             try (Grakn.Transaction tx = session.transaction(GraknTxType.WRITE)) {
 
