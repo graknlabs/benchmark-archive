@@ -26,6 +26,8 @@ import grakn.core.concept.EntityType;
 import grakn.core.concept.Label;
 import grakn.core.concept.RelationshipType;
 import grakn.core.concept.SchemaConcept;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -51,6 +53,7 @@ import static grakn.core.concept.AttributeType.DataType.STRING;
  * Stores identifiers for all concepts in a Grakn
  */
 public class IgniteConceptIdStore implements IdStoreInterface {
+    private static final Logger LOG = LoggerFactory.getLogger(IgniteConceptIdStore.class);
 
     private final HashSet<String> entityTypeLabels;
     private final HashSet<String> relationshipTypeLabels;
@@ -89,21 +92,21 @@ public class IgniteConceptIdStore implements IdStoreInterface {
             clean(this.allTypeLabels);
             dropTable("roleplayers"); // one special table for tracking role players
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.trace(e.toString());
         }
 
         // Register JDBC driver.
         try {
             Class.forName("org.apache.ignite.IgniteJdbcThinDriver");
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            LOG.trace(e.toString());
         }
 
         // Open JDBC connection.
         try {
             this.conn = DriverManager.getConnection("jdbc:ignite:thin://127.0.0.1/");
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.trace(e.toString());
         }
 
         // Create database tables.
@@ -179,7 +182,7 @@ public class IgniteConceptIdStore implements IdStoreInterface {
                     "nothing LONG) " +
                     " WITH \"template=" + cachingMethod + "\"");
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.trace(e.toString());
         }
     }
 
@@ -196,7 +199,7 @@ public class IgniteConceptIdStore implements IdStoreInterface {
                     "nothing LONG) " +
                     " WITH \"template=" + cachingMethod + "\"");
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.trace(e.toString());
         }
     }
 
@@ -263,7 +266,7 @@ public class IgniteConceptIdStore implements IdStoreInterface {
                     // TODO Doesn't seem like the right way to go
                     // In the case of duplicate primary key, which we want to ignore since I want to keep a unique set of
                     // attribute values in each table
-                    e.printStackTrace();
+                    LOG.trace(e.toString());
                 }
             }
 
@@ -278,7 +281,7 @@ public class IgniteConceptIdStore implements IdStoreInterface {
 
             } catch (SQLException e) {
                 if (!e.getSQLState().equals("23000")) {
-                    e.printStackTrace();
+                    LOG.trace(e.toString());
                 }
             }
         }
@@ -296,7 +299,7 @@ public class IgniteConceptIdStore implements IdStoreInterface {
             // attribute values in each table
 
             // this was way too verbose
-//            e.printStackTrace();
+            LOG.trace(e.toString());
         }
     }
 
@@ -327,10 +330,10 @@ public class IgniteConceptIdStore implements IdStoreInterface {
                     return ConceptId.of(rs.getString(ID_INDEX));
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOG.trace(e.toString());
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.trace(e.toString());
         }
         return null;
     }
@@ -342,10 +345,10 @@ public class IgniteConceptIdStore implements IdStoreInterface {
                     return rs.getString(ID_INDEX);
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOG.trace(e.toString());
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.trace(e.toString());
         }
         return null;
 
@@ -358,10 +361,10 @@ public class IgniteConceptIdStore implements IdStoreInterface {
                     return rs.getDouble(ID_INDEX);
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOG.trace(e.toString());
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.trace(e.toString());
         }
         return null;
     }
@@ -373,10 +376,10 @@ public class IgniteConceptIdStore implements IdStoreInterface {
                     return rs.getLong(ID_INDEX);
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOG.trace(e.toString());
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.trace(e.toString());
         }
         return null;
     }
@@ -388,10 +391,10 @@ public class IgniteConceptIdStore implements IdStoreInterface {
                     return rs.getBoolean(ID_INDEX);
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOG.trace(e.toString());
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.trace(e.toString());
         }
         return null;
     }
@@ -403,10 +406,10 @@ public class IgniteConceptIdStore implements IdStoreInterface {
                     return rs.getDate(ID_INDEX);
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOG.trace(e.toString());
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.trace(e.toString());
         }
         return null;
     }
@@ -430,10 +433,10 @@ public class IgniteConceptIdStore implements IdStoreInterface {
                 }
 
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOG.trace(e.toString());
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.trace(e.toString());
         }
         return 0;
     }
@@ -510,10 +513,10 @@ public class IgniteConceptIdStore implements IdStoreInterface {
                     ids.add(resultSet.getString(ID_INDEX));
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOG.trace(e.toString());
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.trace(e.toString());
         }
 
         return ids;
@@ -533,7 +536,7 @@ public class IgniteConceptIdStore implements IdStoreInterface {
         try (PreparedStatement stmt = conn.prepareStatement("DROP TABLE IF EXISTS " + this.getTableName(tableName))) {
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.trace(e.toString());
         }
     }
 }
