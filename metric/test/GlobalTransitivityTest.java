@@ -120,6 +120,8 @@ public class GlobalTransitivityTest {
         when(mockProperties.neighbors("9")).thenReturn(new HashSet<>(Arrays.asList("8", "10")));
         when(mockProperties.neighbors("10")).thenReturn(new HashSet<>(Arrays.asList("8", "9")));
 
+        when(mockProperties.copy()).thenReturn(mockProperties);
+
         double transitivity = GlobalTransitivity.computeTransitivity(mockProperties);
 
 //        ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);

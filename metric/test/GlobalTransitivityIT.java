@@ -50,6 +50,7 @@ public class GlobalTransitivityIT {
 
         // define basic schema
         String keyspaceName = "transitivity_it";
+        client.keyspaces().delete(Keyspace.of(keyspaceName));
         Grakn.Session session = client.session(Keyspace.of(keyspaceName));
         Grakn.Transaction tx = session.transaction(GraknTxType.WRITE);
         List<?> answer = tx.graql().parse("define vertex sub entity, plays endpt; edge sub relationship, relates endpt;").execute();
@@ -77,6 +78,7 @@ public class GlobalTransitivityIT {
         double computedTransitivity = GlobalTransitivity.computeTransitivity(graphProperties);
         double correctTransitivity = 0.25;
         double allowedDeviationFraction = 0.0000001;
+        session.close();
         client.keyspaces().delete(Keyspace.of(keyspaceName));
         assertEquals(correctTransitivity, computedTransitivity, allowedDeviationFraction * correctTransitivity);
     }
@@ -88,6 +90,7 @@ public class GlobalTransitivityIT {
 
         // define basic schema
         String keyspaceName = "transitivity_it";
+        client.keyspaces().delete(Keyspace.of(keyspaceName));
         Grakn.Session session = client.session(Keyspace.of(keyspaceName));
         Grakn.Transaction tx = session.transaction(GraknTxType.WRITE);
         List<?> answer = tx.graql().parse("define vertex sub entity, plays endpt; edge sub relationship, relates endpt;").execute();
@@ -117,6 +120,7 @@ public class GlobalTransitivityIT {
         double computedTransitivity = GlobalTransitivity.computeTransitivity(graphProperties);
         double correctTransitivity = 0.25;
         double allowedDeviationFraction = 0.0000001;
+        session.close();
         client.keyspaces().delete(Keyspace.of(keyspaceName));
         assertEquals(correctTransitivity, computedTransitivity, allowedDeviationFraction * correctTransitivity);
     }

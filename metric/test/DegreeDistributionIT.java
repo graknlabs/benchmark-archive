@@ -53,6 +53,7 @@ public class DegreeDistributionIT {
 
         // define basic schema
         String keyspaceName = "binary_graph_degree_dist_it";
+        client.keyspaces().delete(Keyspace.of(keyspaceName));
         Grakn.Session session = client.session(Keyspace.of(keyspaceName));
         Grakn.Transaction tx = session.transaction(GraknTxType.WRITE);
         List<?> answer = tx.graql().parse("define vertex sub entity, plays endpt; edge sub relationship, relates endpt;").execute();
@@ -81,9 +82,9 @@ public class DegreeDistributionIT {
         double[] percentiles = new double[]{0, 20, 50, 70, 100};
         long[] discreteDegreeDistribution = DegreeDistribution.discreteDistribution(graphProperties, percentiles);
         long[] correctDegreeDistribution = new long[]{1, 2, 2, 2, 3};
-        assertArrayEquals(correctDegreeDistribution, discreteDegreeDistribution);
-
+        session.close();
         client.keyspaces().delete(Keyspace.of(keyspaceName));
+        assertArrayEquals(correctDegreeDistribution, discreteDegreeDistribution);
     }
 
 
@@ -93,6 +94,7 @@ public class DegreeDistributionIT {
 
         // define basic schema
         String keyspaceName = "binary_graph_degree_dist_it";
+        client.keyspaces().delete(Keyspace.of(keyspaceName));
         Grakn.Session session = client.session(Keyspace.of(keyspaceName));
         Grakn.Transaction tx = session.transaction(GraknTxType.WRITE);
         List<?> answer = tx.graql().parse("define vertex sub entity, plays endpt; edge sub relationship, relates endpt;").execute();
@@ -123,8 +125,8 @@ public class DegreeDistributionIT {
         double[] percentiles = new double[]{0, 20, 50, 70, 100};
         long[] discreteDegreeDistribution = DegreeDistribution.discreteDistribution(graphProperties, percentiles);
         long[] correctDegreeDistribution = new long[]{1, 2, 2, 3, 4};
-        assertArrayEquals(correctDegreeDistribution, discreteDegreeDistribution);
-
+        session.close();
         client.keyspaces().delete(Keyspace.of(keyspaceName));
+        assertArrayEquals(correctDegreeDistribution, discreteDegreeDistribution);
     }
 }
