@@ -104,7 +104,7 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
                 0.3,
                 new RelationshipStrategy(
                         "employment",
-                        new ScalingDiscreteGaussian(random, ()->getGraphSize(), 0.5, 0.25),
+                        new ScalingDiscreteGaussian(random, ()->getGraphScale(), 0.5, 0.25),
                         employmentRoleStrategies)
         );
 
@@ -126,7 +126,7 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
                 1.0,
                 new AttributeStrategy<>(
                         "name",
-                        new ScalingUniform(random, ()->getGraphSize(), 0.75,1.25),
+                        new ScalingUniform(random, ()->getGraphScale(), 0.75,1.25),
                         new AttributeOwnerTypeStrategy<>(
                                 "company",
                                 new StreamProvider<>(
@@ -207,7 +207,7 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
                 5.0,
                 new AttributeStrategy<>(
                         "rating",
-                       new ScalingUniform(random, ()->getGraphSize(),0.1, 1.0),
+                       new ScalingUniform(random, ()->getGraphScale(),0.1, 1.0),
                         new AttributeOwnerTypeStrategy<>(
                                 "company",
                                 new StreamProvider<>(
@@ -251,11 +251,8 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
     }
 
 
-    private int getGraphSize() {
-        int rolePlayers = storage.totalRolePlayers();
-        int orphanEntities = storage.totalOrphanEntities();
-        int orphanAttributes = storage.totalOrphanAttributes();
-        return rolePlayers + orphanAttributes + orphanEntities;
+    public ConceptStore getConceptStore() {
+        return this.storage;
     }
 
 }

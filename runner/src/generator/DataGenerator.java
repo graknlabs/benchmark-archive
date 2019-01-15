@@ -95,7 +95,7 @@ public class DataGenerator {
         */
 
         GeneratorFactory gf = new GeneratorFactory();
-        int graphSize = getGraphSize();
+        int graphSize = dataStrategies.getGraphScale();
 
         while (graphSize < graphScaleLimit) {
             System.out.printf("\n---- Iteration %d ----\n", this.iteration);
@@ -115,7 +115,7 @@ public class DataGenerator {
                 this.processQueryStream(queryStream);
 
                 iteration++;
-                graphSize = getGraphSize();
+                graphSize = dataStrategies.getGraphScale();
                 System.out.printf(String.format("Size: %d (based on ignite data)\n", graphSize));
                 System.out.println(String.format("   %d role players", this.storage.totalRolePlayers()));
                 System.out.println(String.format("   %d entity orphans", this.storage.totalOrphanEntities()));
@@ -148,10 +148,4 @@ public class DataGenerator {
                 });
     }
 
-    private int getGraphSize() {
-        int rolePlayers = storage.totalRolePlayers();
-        int orphanEntities = storage.totalOrphanEntities();
-        int orphanAttributes = storage.totalOrphanAttributes();
-        return rolePlayers + orphanAttributes + orphanEntities;
-    }
 }

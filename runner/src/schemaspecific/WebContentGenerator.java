@@ -468,19 +468,19 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
     }
 
     private ScalingUniform scalingUniform(double lowerBoundFraction, double upperBoundFraction) {
-        return new ScalingUniform(random, () -> getGraphSize(), lowerBoundFraction, upperBoundFraction);
+        return new ScalingUniform(random, () -> getGraphScale(), lowerBoundFraction, upperBoundFraction);
     }
 
     private ScalingDiscreteGaussian scalingGaussian(double meanScaleFraction, double stddevScaleFraction) {
-        return new ScalingDiscreteGaussian(random, () -> getGraphSize(), meanScaleFraction, stddevScaleFraction);
+        return new ScalingDiscreteGaussian(random, () -> getGraphScale(), meanScaleFraction, stddevScaleFraction);
     }
 
     private ScalingBoundedZipf scalingZipf(double rangeLimitFraction, double initialExponentForScale40) {
-        return new ScalingBoundedZipf(random, () -> getGraphSize(), rangeLimitFraction, initialExponentForScale40);
+        return new ScalingBoundedZipf(random, () -> getGraphScale(), rangeLimitFraction, initialExponentForScale40);
     }
 
     private ScalingConstant scalingConstant(double constantFraction) {
-        return new ScalingConstant(() -> getGraphSize(), constantFraction);
+        return new ScalingConstant(() -> getGraphScale(), constantFraction);
     }
 
     private FromIdStoragePicker<ConceptId> fromIdStorageConceptIdPicker(String typeLabel) {
@@ -524,14 +524,6 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
                         valueProvider
                         )
                 );
-    }
-
-
-    private int getGraphSize() {
-        int rolePlayers = storage.totalRolePlayers();
-        int orphanEntities = storage.totalOrphanEntities();
-        int orphanAttributes = storage.totalOrphanAttributes();
-        return rolePlayers + orphanAttributes + orphanEntities;
     }
 
 
@@ -627,6 +619,11 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         ));
 
 
+    }
+
+
+    public ConceptStore getConceptStore() {
+        return this.storage;
     }
 
 }
