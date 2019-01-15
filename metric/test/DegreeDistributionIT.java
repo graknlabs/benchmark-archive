@@ -82,8 +82,8 @@ public class DegreeDistributionIT {
         double[] percentiles = new double[]{0, 20, 50, 70, 100};
         long[] discreteDegreeDistribution = DegreeDistribution.discreteDistribution(graphProperties, percentiles);
         long[] correctDegreeDistribution = new long[]{1, 2, 2, 2, 3};
-        session.close();
         client.keyspaces().delete(Keyspace.of(keyspaceName));
+        session.close();
         assertArrayEquals(correctDegreeDistribution, discreteDegreeDistribution);
     }
 
@@ -125,8 +125,8 @@ public class DegreeDistributionIT {
         double[] percentiles = new double[]{0, 20, 50, 70, 100};
         long[] discreteDegreeDistribution = DegreeDistribution.discreteDistribution(graphProperties, percentiles);
         long[] correctDegreeDistribution = new long[]{1, 2, 2, 3, 4};
-        session.close();
         client.keyspaces().delete(Keyspace.of(keyspaceName));
+        session.close();
         assertArrayEquals(correctDegreeDistribution, discreteDegreeDistribution);
     }
 }

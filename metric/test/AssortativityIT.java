@@ -72,8 +72,8 @@ public class AssortativityIT {
         double computedAssortativity = Assortativity.computeAssortativity(Assortativity.jointDegreeOccurrence(graphProperties));
         double correctAssortativity = -0.38888888888888995;
         double allowedDeviation = 0.000001;
-        session.close();
         client.keyspaces().delete(Keyspace.of(keyspaceName));
+        session.close();
         assertEquals(correctAssortativity, computedAssortativity, allowedDeviation);
     }
 
@@ -114,8 +114,8 @@ public class AssortativityIT {
         double computedAssortativity = Assortativity.computeAssortativity(Assortativity.jointDegreeOccurrence(graphProperties));
         double correctAssortativity = -0.2767857142857146;
         double allowedDeviation = 0.000001;
-        session.close();
         client.keyspaces().delete(Keyspace.of(keyspaceName));
+        session.close();
         assertEquals(correctAssortativity, computedAssortativity, allowedDeviation);
     }
 }

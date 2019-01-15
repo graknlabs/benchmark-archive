@@ -78,8 +78,8 @@ public class GlobalTransitivityIT {
         double computedTransitivity = GlobalTransitivity.computeTransitivity(graphProperties);
         double correctTransitivity = 0.25;
         double allowedDeviationFraction = 0.0000001;
-        session.close();
         client.keyspaces().delete(Keyspace.of(keyspaceName));
+        session.close();
         assertEquals(correctTransitivity, computedTransitivity, allowedDeviationFraction * correctTransitivity);
     }
 
@@ -120,8 +120,8 @@ public class GlobalTransitivityIT {
         double computedTransitivity = GlobalTransitivity.computeTransitivity(graphProperties);
         double correctTransitivity = 0.25;
         double allowedDeviationFraction = 0.0000001;
-        session.close();
         client.keyspaces().delete(Keyspace.of(keyspaceName));
+        session.close();
         assertEquals(correctTransitivity, computedTransitivity, allowedDeviationFraction * correctTransitivity);
     }
 
