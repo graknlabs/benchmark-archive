@@ -205,7 +205,6 @@ public class InsertionAnalysisTest {
 
     @Test
     public void whenInsertRelationship_IdentifyRolePlayers() {
-//        String query = "insert $x id V123; $y id V234; ($x, $y) isa friendship;";
         VarPattern x = var("x").asUserDefined().id(ConceptId.of("V123"));
         VarPattern y = var("y").asUserDefined().id(ConceptId.of("V234"));
         InsertQuery insertQuery = Graql.insert(x, y, var("r").rel(x).rel(y).isa("friendship"));
