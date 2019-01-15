@@ -95,9 +95,9 @@ public class DataGenerator {
         */
 
         GeneratorFactory gf = new GeneratorFactory();
-        int graphSize = dataStrategies.getGraphScale();
+        int graphScale= dataStrategies.getGraphScale();
 
-        while (graphSize < graphScaleLimit) {
+        while (graphScale < graphScaleLimit) {
             System.out.printf("\n---- Iteration %d ----\n", this.iteration);
             try (Grakn.Transaction tx = session.transaction(GraknTxType.WRITE)) {
 
@@ -115,8 +115,8 @@ public class DataGenerator {
                 this.processQueryStream(queryStream);
 
                 iteration++;
-                graphSize = dataStrategies.getGraphScale();
-                System.out.printf(String.format("Size: %d (based on ignite data)\n", graphSize));
+                graphScale = dataStrategies.getGraphScale();
+                System.out.printf(String.format("Size: %d (based on ignite data)\n", graphScale));
                 System.out.println(String.format("   %d role players", this.storage.totalRolePlayers()));
                 System.out.println(String.format("   %d entity orphans", this.storage.totalOrphanEntities()));
                 System.out.println(String.format("   %d attribute orphans", this.storage.totalOrphanAttributes()));
