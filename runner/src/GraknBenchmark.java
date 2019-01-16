@@ -20,6 +20,7 @@ package grakn.benchmark.runner;
 
 import grakn.benchmark.runner.executor.QueryProfiler;
 import grakn.benchmark.runner.generator.DataGenerator;
+import grakn.benchmark.runner.storage.SchemaManager;
 import grakn.benchmark.runner.util.BenchmarkArguments;
 import grakn.benchmark.runner.util.BenchmarkConfiguration;
 import grakn.benchmark.runner.util.ElasticSearchManager;
@@ -94,6 +95,7 @@ public class GraknBenchmark {
     public void start() {
         Grakn client = new Grakn(new SimpleURI(config.uri()));
         Grakn.Session session = client.session(config.getKeyspace());
+        SchemaManager.verifyEmptyKeyspace(session);
 
         QueryProfiler queryProfiler = new QueryProfiler(session, executionName, config.getQueries());
         int repetitionsPerQuery = config.numQueryRepetitions();
@@ -104,7 +106,6 @@ public class GraknBenchmark {
         if (config.generateData()) {
             int randomSeed = 0;
             DataGenerator dataGenerator = new DataGenerator(session, config, randomSeed);
-            dataGenerator.loadSchema();
 
             List<Integer> numConceptsInRun = config.scalesToProfile();
             for (int numConcepts : numConceptsInRun) {

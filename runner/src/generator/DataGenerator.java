@@ -33,6 +33,8 @@ import grakn.benchmark.runner.storage.InsertionAnalysis;
 import grakn.benchmark.runner.storage.SchemaManager;
 import grakn.benchmark.runner.strategy.RouletteWheel;
 import grakn.benchmark.runner.strategy.TypeStrategyInterface;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.List;
@@ -44,6 +46,7 @@ import java.util.stream.Stream;
  *
  */
 public class DataGenerator {
+    private static final Logger LOG = LoggerFactory.getLogger(DataGenerator.class);
 
     private final Grakn.Session session;
     private final String executionName;
@@ -64,20 +67,19 @@ public class DataGenerator {
         initializeGeneration();
     }
 
-    public void loadSchema() {
-        System.out.println("Initialising keyspace `" + this.session.keyspace() + "`...");
-        SchemaManager.initialiseKeyspace(this.session, this.schemaDefinition);
-        System.out.println("done");
-    }
-
     private void initializeGeneration() {
+        // load schema
+        LOG.debug("Initialising keyspace `" + this.session.keyspace() + "`...");
+        SchemaManager.initialiseKeyspace(this.session, this.schemaDefinition);
+        // Read schema concepts and create ignite tables
         try (Grakn.Transaction tx = session.transaction(GraknTxType.READ)) {
             HashSet<EntityType> entityTypes = SchemaManager.getTypesOfMetaType(tx, "entity");
             HashSet<RelationshipType> relationshipTypes = SchemaManager.getTypesOfMetaType(tx, "relationship");
             HashSet<AttributeType> attributeTypes = SchemaManager.getTypesOfMetaType(tx, "attribute");
+            LOG.debug("Initialising ignite...");
             this.storage = new IgniteConceptIdStore(entityTypes, relationshipTypes, attributeTypes);
         }
-
+        //  get the
         this.dataStrategies = SchemaSpecificDataGeneratorFactory.getSpecificStrategy(this.executionName, this.rand, this.storage);
     }
 

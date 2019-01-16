@@ -18,6 +18,7 @@
 
 package grakn.benchmark.runner.storage;
 
+import grakn.benchmark.runner.exception.BootupException;
 import grakn.core.GraknTxType;
 import grakn.core.client.Grakn;
 import grakn.core.concept.Label;
@@ -42,6 +43,22 @@ import static grakn.core.graql.internal.pattern.Patterns.var;
  */
 @SuppressWarnings("CheckReturnValue")
 public class SchemaManager {
+
+    public static void verifyEmptyKeyspace(Grakn.Session session) {
+        try (Grakn.Transaction tx = session.transaction(GraknTxType.READ)) {
+            // check for concept instances
+            List<ConceptMap> existingConcepts = tx.graql().match(var("x").isa("thing")).get().execute();
+            if (existingConcepts.size() != 0) {
+                throw new BootupException("Keyspace [" + session.keyspace() + "] not empty, contains concept instances");
+            }
+
+            // check for schema
+            List<ConceptMap> existingSchemaConcepts = tx.graql().match(var("x").sub("thing")).get().execute();
+            if (existingSchemaConcepts.size() != 4) {
+                throw new BootupException("Keyspace [" + session.keyspace() + "] not empty, contains a schema");
+            }
+        }
+    }
 
     public static void initialiseKeyspace(Grakn.Session session, List<String> graqlSchemaQueries) {
         clearKeyspace(session);
