@@ -83,20 +83,21 @@ public class InsertionAnalysis {
      * that were added in the given insert query. Returns empty set if none/no relationships added
      * @return
      */
-    public static Set<ConceptId> getRolePlayers(InsertQuery query) {
+    public static Set<Concept> getRolePlayers(InsertQuery query, List<ConceptMap> answers) {
 
         // find variables and their associated IDs
-        HashMap<Var, ConceptId> varIds = new HashMap<>();
+//        HashMap<Var, ConceptId> varIds = new HashMap<>();
         Set<Var> rolePlayerVars = new HashSet<>();
-        if (query.admin().match() != null) {
-            for (VarPatternAdmin patternAdmin : query.admin().match().admin().getPattern().varPatterns()) {
-                Var var = patternAdmin.var();
-                Optional<IdProperty> idProperty = patternAdmin.getProperty(IdProperty.class);
-                if (idProperty.isPresent()) {
-                    varIds.put(var, idProperty.get().id());
-                }
-            }
-        }
+//        if (query.admin().match() != null) {
+//            for (VarPatternAdmin patternAdmin : query.admin().match().admin().getPattern().varPatterns()) {
+//                Var var = patternAdmin.var();
+//                Optional<IdProperty> idProperty = patternAdmin.getProperty(IdProperty.class);
+//                if (idProperty.isPresent()) {
+//                    varIds.put(var, idProperty.get().id());
+//                }
+//            }
+//        }
+
         for (VarPatternAdmin patternAdmin : query.admin().varPatterns()) {
             Optional<RelationshipProperty> relationshipProperty = patternAdmin.getProperty(RelationshipProperty.class);
             if (relationshipProperty.isPresent()) {
@@ -104,10 +105,20 @@ public class InsertionAnalysis {
             }
         }
 
-        return varIds.entrySet().stream()
-                .filter(varStringEntry -> rolePlayerVars.contains(varStringEntry.getKey()))
-                .map(varStringEntry -> varStringEntry.getValue())
+        return answers.stream()
+                .map(conceptMap ->
+                        rolePlayerVars.stream().map(
+                                var -> conceptMap.get(var)
+                        )
+                )
+                .flatMap(e->e)
                 .collect(Collectors.toSet());
+
+
+//        return varIds.entrySet().stream()
+//                .filter(varStringEntry -> rolePlayerVars.contains(varStringEntry.getKey()))
+//                .map(varStringEntry -> varStringEntry.getValue())
+//                .collect(Collectors.toSet());
     }
 
     private static HashSet<Var> getVars(Iterator<VarPatternAdmin> varPatternAdminIterator) {

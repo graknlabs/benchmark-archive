@@ -209,17 +209,36 @@ public class InsertionAnalysisTest {
         VarPattern y = var("y").asUserDefined().id(ConceptId.of("V234"));
         InsertQuery insertQuery = Graql.match(x, y).insert(var("r").rel(x).rel(y).isa("friendship"));
 
-        Set<ConceptId> rolePlayerIds = InsertionAnalysis.getRolePlayers(insertQuery);
-        assertTrue(rolePlayerIds.contains(ConceptId.of("V123")));
-        assertTrue(rolePlayerIds.contains(ConceptId.of("V234")));
+        ConceptMap map = mock(ConceptMap.class);
+        Concept xConcept = mock(Concept.class);
+        when(xConcept.id()).thenReturn(ConceptId.of("V123"));
+        Concept yConcept = mock(Concept.class);
+        when(yConcept.id()).thenReturn(ConceptId.of("V234"));
+        when(map.get(var("x"))).thenReturn(xConcept);
+        when(map.get(var("y"))).thenReturn(yConcept);
+
+
+        Set<Concept> rolePlayers = InsertionAnalysis.getRolePlayers(insertQuery, Arrays.asList(map));
+        assertTrue(rolePlayers.contains(xConcept));
+        assertTrue(rolePlayers.contains(yConcept));
+        assertEquals(2, rolePlayers.size());
     }
 
     @Test
     public void whenInsertNonRelationship_ReturnEmptySet() {
         VarPattern x = var("x").asUserDefined();
         VarPattern y = var("y").asUserDefined();
-        InsertQuery insert = Graql.insert(x.isa("company").has("name", y).id(ConceptId.of("V123")), y.val("john"));
-        Set<ConceptId> rolePlayerIds = InsertionAnalysis.getRolePlayers(insert);
-        assertEquals(0, rolePlayerIds.size());
+        InsertQuery insertQuery = Graql.insert(x.isa("company").has("name", y).id(ConceptId.of("V123")), y.val("john"));
+
+        ConceptMap map = mock(ConceptMap.class);
+        Concept xConcept = mock(Concept.class);
+        when(xConcept.id()).thenReturn(ConceptId.of("V123"));
+        Concept yConcept = mock(Concept.class);
+        when(yConcept.id()).thenReturn(ConceptId.of("V234"));
+        when(map.get(var("x"))).thenReturn(xConcept);
+        when(map.get(var("y"))).thenReturn(yConcept);
+
+        Set<Concept> rolePlayers = InsertionAnalysis.getRolePlayers(insertQuery, Arrays.asList(map));
+        assertEquals(0, rolePlayers.size());
     }
 }

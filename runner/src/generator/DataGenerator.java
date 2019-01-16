@@ -131,16 +131,14 @@ public class DataGenerator {
         queryStream.map(q -> (InsertQuery) q)
                 .forEach(q -> {
                     List<ConceptMap> insertions = q.execute();
-                    insertions.forEach(insert -> {
-                        HashSet<Concept> insertedConcepts = InsertionAnalysis.getInsertedConcepts(q, insertions);
-                        if (insertedConcepts.isEmpty()) {
-                            throw new RuntimeException("No concepts were inserted");
-                        }
-                        insertedConcepts.forEach(concept -> this.storage.addConcept(concept));
+                    HashSet<Concept> insertedConcepts = InsertionAnalysis.getInsertedConcepts(q, insertions);
+                    if (insertedConcepts.isEmpty()) {
+                        throw new RuntimeException("No concepts were inserted");
+                    }
+                    insertedConcepts.forEach(concept -> this.storage.addConcept(concept));
 
-                        Set<ConceptId> rolePlayers = InsertionAnalysis.getRolePlayers(q);
-                        rolePlayers.forEach(conceptId -> this.storage.addRolePlayer(conceptId.toString()));
-                    });
+                    Set<Concept> rolePlayers = InsertionAnalysis.getRolePlayers(q, insertions);
+                    rolePlayers.forEach(concept -> this.storage.addRolePlayer(concept.id().toString()));
                 });
     }
 
