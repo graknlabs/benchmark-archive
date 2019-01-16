@@ -31,9 +31,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -144,11 +142,11 @@ public class IgniteConceptIdStoreTest {
 
 
         // --- relationships ---
-        relTypeLabel = "friend";
+        relTypeLabel = "friendship";
         typeLabelsSet.add(relTypeLabel);
         relationshipTypes = new HashSet<>();
         RelationshipType friendRelationshipType = mock(RelationshipType.class);
-        when(friendRelationshipType.label()).thenReturn(Label.of("friend"));
+        when(friendRelationshipType.label()).thenReturn(Label.of("friendship"));
         relationshipTypes.add(friendRelationshipType);
 
         Concept relConceptMock = mock(Concept.class);
@@ -159,8 +157,7 @@ public class IgniteConceptIdStoreTest {
         conceptIds.add(relThingMock.id());
         Type relConceptTypeMock = mock(Type.class);
         when(relThingMock.type()).thenReturn(relConceptTypeMock); // Concept Type
-        when(relConceptTypeMock.label()).thenReturn(Label.of("friend")); // Type label
-
+        when(relConceptTypeMock.label()).thenReturn(Label.of("friendship")); // Type label
 
         // create new ignite store
         this.store = new IgniteConceptIdStore(entityTypes, relationshipTypes, attributeTypes);
@@ -297,5 +294,29 @@ public class IgniteConceptIdStoreTest {
 
         int relationshipDoubleCounts = this.store.totalRelationshipsRolePlayersOverlap();
         assertEquals(1, relationshipDoubleCounts);
+    }
+
+    @Test
+    public void whenEntitiesDoNotPlayRoles_allEntitiesReturned() {
+        for (Concept conceptMock : this.conceptMocks) {
+            this.store.addConcept(conceptMock);
+        }
+        String typeLabel = "person"; // we have 7 mocked people
+        List<String> peopleNotPlayingRoles = this.store.getIdsNotPlayingRole(typeLabel, "friendship", "aRole");
+        assertEquals(7, peopleNotPlayingRoles.size());
+
+    }
+
+    @Test
+    public void whenEntityPlaysSpecificRole_notReturnedWhenAskingForEntitiesNotPlayingRole() {
+        Concept aPerson = this.conceptMocks.get(0);
+        String personTypeLabel = aPerson.asThing().type().label().toString(); // follow what's implemented in mocks
+        String relationshipType = relationshipTypes.stream().findFirst().get().label().toString();
+        String role = "some-role"; // test the string safety conversion too
+
+        this.store.addRolePlayer(aPerson.asThing().id().toString(), personTypeLabel, relationshipType, role);
+
+        List<String> entitiesNotPlayingRole = store.getIdsNotPlayingRole(personTypeLabel, relationshipType, role);
+        assertEquals(6, entitiesNotPlayingRole.size());
     }
 }

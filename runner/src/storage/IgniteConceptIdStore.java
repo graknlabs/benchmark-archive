@@ -18,14 +18,9 @@
 
 package grakn.benchmark.runner.storage;
 
-import grakn.core.concept.Attribute;
-import grakn.core.concept.AttributeType;
-import grakn.core.concept.Concept;
-import grakn.core.concept.ConceptId;
-import grakn.core.concept.EntityType;
-import grakn.core.concept.Label;
-import grakn.core.concept.RelationshipType;
-import grakn.core.concept.SchemaConcept;
+import grakn.core.concept.*;
+import org.apache.ignite.internal.sql.SqlParseException;
+import org.apache.ignite.internal.util.typedef.CO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,11 +31,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static grakn.core.concept.AttributeType.DataType.BOOLEAN;
 import static grakn.core.concept.AttributeType.DataType.DATE;
@@ -111,23 +103,23 @@ public class IgniteConceptIdStore implements IdStoreInterface {
 
         // Create database tables.
         for (String typeLabel : this.entityTypeLabels) {
-            this.createTypeIdsTable(typeLabel);
+            this.createTypeIdsTable(typeLabel, relationshipTypes);
         }
 
         for (String typeLabel : this.relationshipTypeLabels) {
-            this.createTypeIdsTable(typeLabel);
+            this.createTypeIdsTable(typeLabel, relationshipTypes);
         }
 
         for (Map.Entry<String, AttributeType.DataType<?>> entry : this.attributeTypeLabels.entrySet()) {
             String typeLabel = entry.getKey();
             AttributeType.DataType<?> datatype = entry.getValue();
             String dbDatatype = DATATYPE_MAPPING.get(datatype);
-            this.createAttributeValueTable(typeLabel, dbDatatype);
+            this.createAttributeValueTable(typeLabel, dbDatatype, relationshipTypes);
         }
 
         // re-create special table
         // role players that have been assigned into a relationship at some point
-        createTable("roleplayers", "VARCHAR");
+        createTable("roleplayers", "VARCHAR", new LinkedList<>());
     }
 
     private <T extends SchemaConcept> HashSet<String> getTypeLabels(Set<T> conceptTypes) {
@@ -161,9 +153,12 @@ public class IgniteConceptIdStore implements IdStoreInterface {
      * Create a table for storing concept IDs of the given type
      * @param typeLabel
      */
-    private void createTypeIdsTable(String typeLabel) {
+    private void createTypeIdsTable(String typeLabel, Set<RelationshipType> relationshipTypes) {
         String tableName = this.putTableName(typeLabel);
-        createTable(tableName, "VARCHAR");
+        List<String> relationshipColumnNames = relationshipTypes.stream()
+                .map(relType -> convertTypeLabelToSqlName(relType.label().toString()))
+                .collect(Collectors.toList());
+        createTable(tableName, "VARCHAR", relationshipColumnNames);
     }
 
     /**
@@ -172,14 +167,18 @@ public class IgniteConceptIdStore implements IdStoreInterface {
      * @param typeLabel
      * @param sqlDatatypeName
      */
-    private void createAttributeValueTable(String typeLabel, String sqlDatatypeName) {
+    private void createAttributeValueTable(String typeLabel, String sqlDatatypeName, Set<RelationshipType> relationshipTypes) {
 
-        String tableName = this.putTableName(typeLabel);
+        List<String> furtherColumns = relationshipTypes.stream()
+                .map(relType -> convertTypeLabelToSqlName(relType.label().toString()))
+                .collect(Collectors.toList());
+        String tableName = convertTypeLabelToSqlName(typeLabel);
         try (Statement stmt = conn.createStatement()) {
             stmt.executeUpdate("CREATE TABLE " + tableName + " (" +
                     " id VARCHAR PRIMARY KEY, " +
                     " value " + sqlDatatypeName + ", " +
-                    "nothing LONG) " +
+                    joinColumnLabels(furtherColumns) +
+                    " nothing LONG) " +
                     " WITH \"template=" + cachingMethod + "\"");
         } catch (SQLException e) {
             LOG.trace(e.getMessage(), e);
@@ -191,25 +190,35 @@ public class IgniteConceptIdStore implements IdStoreInterface {
      * @param tableName
      * @param sqlDatatypeName
      */
-    private void createTable(String tableName, String sqlDatatypeName) {
+    private void createTable(String tableName, String sqlDatatypeName, List<String> furtherColumns) {
 
         try (Statement stmt = conn.createStatement()) {
-            stmt.executeUpdate("CREATE TABLE " + tableName + " (" +
+
+            String sqlStatement = "CREATE TABLE " + tableName + " (" +
                     " id " + sqlDatatypeName + " PRIMARY KEY, " +
-                    "nothing LONG) " +
-                    " WITH \"template=" + cachingMethod + "\"");
+                    joinColumnLabels(furtherColumns) +
+                    " nothing LONG) " +
+                    " WITH \"template=" + cachingMethod + "\"";
+
+            stmt.executeUpdate(sqlStatement);
         } catch (SQLException e) {
             LOG.trace(e.getMessage(), e);
         }
     }
 
-    private String convertTypeLabelToTableName(String typeLabel) {
+    private String joinColumnLabels(List<String> columnLabels) {
+        String joinedColumns = String.join(" VARCHAR, ", columnLabels);
+        joinedColumns = joinedColumns.length() > 0 ? joinedColumns + " VARCHAR, " : joinedColumns;
+        return joinedColumns;
+    }
+
+    private String convertTypeLabelToSqlName(String typeLabel) {
         return typeLabel.replace('-', '_')
                 .replaceAll("[0-9]", "");
     }
 
     private String putTableName(String typeLabel) {
-        String tableName = this.convertTypeLabelToTableName(typeLabel);
+        String tableName = this.convertTypeLabelToSqlName(typeLabel);
         this.typeLabelsTotableNames.put(typeLabel, tableName);
         return tableName;
     }
@@ -221,7 +230,7 @@ public class IgniteConceptIdStore implements IdStoreInterface {
             return tableName;
         } else {
             // TODO Don't need this else clause if I can figure out how to drop all tables in clean()
-            return convertTypeLabelToTableName(typeLabel);
+            return convertTypeLabelToSqlName(typeLabel);
         }
     }
 
@@ -287,20 +296,93 @@ public class IgniteConceptIdStore implements IdStoreInterface {
         }
     }
 
+    /**
+     * Add a role player without specifying the specific relationship & role it fills
+     * @param conceptId
+     */
     public void addRolePlayer(String conceptId) {
+        // add the conceptID to the overall role players table
         try (PreparedStatement stmt = this.conn.prepareStatement(
                 "INSERT INTO roleplayers (id, ) VALUES (?, )")) {
 
             stmt.setString(ID_INDEX, conceptId);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            // TODO Doesn't seem like the right way to go
-            // In the case of duplicate primary key, which we want to ignore since I want to keep a unique set of
-            // attribute values in each table
-
-            // this was way too verbose
             LOG.trace(e.getMessage(), e);
         }
+    }
+
+    /**
+     * Add a role player, and specify its type, the relationship, and role it fills
+     * This will track
+     * @param conceptId
+     * @param conceptType
+     * @param relationshipType
+     * @param role
+     */
+    public void addRolePlayer(String conceptId, String conceptType, String relationshipType, String role) {
+        addRolePlayer(conceptId);
+        addRolePlayerForConcept(conceptId, conceptType, relationshipType, role);
+    }
+
+    private void addRolePlayerForConcept(String conceptId, String type, String relationshipType, String role) {
+        // add the role to this concept ID's row/column for this relationship
+        String sqlTypeTable = convertTypeLabelToSqlName(type);
+        String sqlRelationship = convertTypeLabelToSqlName(relationshipType);
+        String sqlRole = convertTypeLabelToSqlName(role);
+
+        try (Statement stmt = conn.createStatement()) {
+            // do a select to retrieve currently filled roles by this conceptID in this relationship
+            String retrieveCurrentRolesSql = "SELECT " + sqlRelationship + " from " + sqlTypeTable +
+                    " where id = '" + conceptId + "'";
+            String currentRoles;
+            try (ResultSet rs = stmt.executeQuery(retrieveCurrentRolesSql)) {
+                currentRoles = rs.getString(sqlRelationship);
+            } catch (SQLException e) {
+                LOG.trace(e.getMessage(), e);
+                throw new RuntimeException(e.getMessage());
+            }
+
+            if (!currentRoles.contains(sqlRole)) {
+                currentRoles = currentRoles + ", " + sqlRole;
+            }
+            String setCurrentRolesSql = "UPDATE " + sqlTypeTable +
+                    " SET " + sqlRelationship + " = '" + currentRoles + "'" +
+                    " WHERE id = " + conceptId;
+            try (ResultSet rs = stmt.executeQuery(setCurrentRolesSql)) {
+                // ok
+            } catch (SQLException e) {
+                LOG.trace(e.getMessage(), e);
+            }
+        } catch (SQLException e) {
+            LOG.trace(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * String hacks to stuff all the roles played by a concept of a given type in a specific relationship into one string
+     */
+    public List<String> getIdsNotPlayingRole(String typeLabel, String relationshipType, String role) {
+        String tableName = convertTypeLabelToSqlName(typeLabel);
+        String columnName = convertTypeLabelToSqlName(relationshipType);
+
+        String sql = "SELECT ID, " + columnName + " FROM " + tableName +
+                " WHERE (" + columnName + " IS NULL OR " + columnName + "  NOT LIKE '%" + role + "%')";
+
+        LinkedList<String> ids = new LinkedList<>();
+
+        try (Statement stmt = conn.createStatement()) {
+            try (ResultSet rs = stmt.executeQuery(sql)) {
+                while (rs.next()) {
+                    ids.addLast(rs.getString(columnName));
+                }
+            } catch (SQLException e) {
+                LOG.trace(e.getMessage(), e);
+            }
+        } catch (SQLException e) {
+            LOG.trace(e.getMessage(), e);
+        }
+        return ids;
     }
 
     /*

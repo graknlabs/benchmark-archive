@@ -21,19 +21,13 @@ package grakn.benchmark.runner.storage;
 import grakn.benchmark.runner.exception.BootupException;
 import grakn.core.GraknTxType;
 import grakn.core.client.Grakn;
-import grakn.core.concept.Label;
-import grakn.core.concept.Role;
-import grakn.core.concept.SchemaConcept;
-import grakn.core.concept.Type;
-import grakn.core.graql.Graql;
-import grakn.core.graql.Match;
-import grakn.core.graql.Query;
-import grakn.core.graql.QueryBuilder;
-import grakn.core.graql.Var;
+import grakn.core.concept.*;
+import grakn.core.graql.*;
 import grakn.core.graql.answer.ConceptMap;
 import grakn.core.graql.internal.Schema;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static grakn.core.graql.internal.pattern.Patterns.var;
@@ -110,16 +104,12 @@ public class SchemaManager {
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
-    public static HashSet<Role> getRoles(Grakn.Transaction tx, String metaTypeName) {
+    public static Set<Role> getRoles(Grakn.Transaction tx, String typeLabel) {
         QueryBuilder qb = tx.graql();
-        Match match = qb.match(var("x").sub(metaTypeName));
-        List<ConceptMap> result = match.get().execute();
+        GetQuery match = qb.match(var("x").label(typeLabel)).get("x");
+        Concept typeConcept = match.stream().findFirst().get().get("x");
 
-        return result.stream()
-                .map(answer -> answer.get(var("x")).asRole())
-                .filter(type -> !type.isImplicit())
-                .filter(type -> !Schema.MetaSchema.isMetaLabel(type.label()))
-                .collect(Collectors.toCollection(HashSet::new));
+        return typeConcept.asType().playing().collect(Collectors.toSet());
     }
 
 
