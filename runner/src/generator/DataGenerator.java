@@ -134,8 +134,21 @@ public class DataGenerator {
                         throw new RuntimeException("No concepts were inserted");
                     }
                     insertedConcepts.forEach(concept -> this.storage.addConcept(concept));
-                    Map<Concept, String> rolePlayersAdded = InsertionAnalysis.getRolePlayersAndRoles(q, insertions);
-                    rolePlayersAdded.keySet().forEach(concept -> this.storage.addRolePlayer(concept.id().toString()));
+
+                    // check if we have to update any roles by first checking if any relationships added
+                    String relationshipAdded = InsertionAnalysis.getRelationshipTypeLabel(q);
+                    if (relationshipAdded != null) {
+                        Map<Concept, String> rolePlayersAdded = InsertionAnalysis.getRolePlayersAndRoles(q, insertions);
+
+                        rolePlayersAdded.entrySet().stream()
+                                .forEach(entry ->
+                                        this.storage.addRolePlayer(
+                                                entry.getKey().id().toString(),
+                                                entry.getKey().asThing().type().label().toString(),
+                                                relationshipAdded,
+                                                entry.getValue()
+                                        ));
+                    }
                 });
     }
 

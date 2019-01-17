@@ -43,7 +43,7 @@ public class SchemaManagerE2E {
     }
 
     @Test
-    public void whenSchemaExistsInKeyspace_ThrowException() {
+    public void whenSchemaExistsInKeyspace_throwException() {
 
         try (Grakn.Transaction tx = session.transaction(GraknTxType.WRITE)) {
             List<ConceptMap> answer = tx.graql().define(var("x").sub("entity").label("person")).execute();
@@ -57,7 +57,7 @@ public class SchemaManagerE2E {
     }
 
     @Test
-    public void whenDataExistsInKeyspace_ThrowException() {
+    public void whenDataExistsInKeyspace_throwException() {
 
         try (Grakn.Transaction tx = session.transaction(GraknTxType.WRITE)) {
             List<ConceptMap> answer = tx.graql().define(var("x").sub("entity").label("person")).execute();
