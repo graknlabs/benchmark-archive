@@ -61,7 +61,7 @@ public class InsertionAnalysisTest {
     }
 
     @Test
-    public void whenEntityInserted_IdentifyEntityWasInserted() {
+    public void whenEntityInserted_identifyEntityWasInserted() {
 
         Var x = var("x");
         InsertQuery query = Graql.insert(x.isa("company"));
@@ -77,7 +77,7 @@ public class InsertionAnalysisTest {
     }
 
     @Test
-    public void whenRelationshipInserted_IdentifyRelationshipWasInserted() {
+    public void whenRelationshipInserted_identifyRelationshipWasInserted() {
 
         String rId = "Vr";
         String xId = "Vx";
@@ -114,7 +114,7 @@ public class InsertionAnalysisTest {
     }
 
     @Test
-    public void whenRelationshipInsertedWithIdsInInsert_IdentifyRelationshipWasInserted() {
+    public void whenRelationshipInsertedWithIdsInInsert_identifyRelationshipWasInserted() {
 
         String rId = "Vr";
         String xId = "Vx";
@@ -150,7 +150,7 @@ public class InsertionAnalysisTest {
     }
 
     @Test
-    public void whenAttributeInserted_IdentifyAttributeWasInserted() {
+    public void whenAttributeInserted_identifyAttributeWasInserted() {
 //        varPatternAdmin.commonVars()
 
         String xId = "Vx";
@@ -177,7 +177,7 @@ public class InsertionAnalysisTest {
     }
 
     @Test
-    public void whenAttributeInsertedWithIdInClause_IdentifyAttributeWasInserted() {
+    public void whenAttributeInsertedWithIdInClause_identifyAttributeWasInserted() {
 //        varPatternAdmin.commonVars()
 
         String xId = "Vx";
@@ -204,10 +204,10 @@ public class InsertionAnalysisTest {
     }
 
     @Test
-    public void whenInsertRelationship_IdentifyRolePlayers() {
+    public void whenInsertRelationship_identifyRolePlayers() {
         VarPattern x = var("x").asUserDefined().id(ConceptId.of("V123"));
         VarPattern y = var("y").asUserDefined().id(ConceptId.of("V234"));
-        InsertQuery insertQuery = Graql.match(x, y).insert(var("r").rel(x).rel(y).isa("friendship"));
+        InsertQuery insertQuery = Graql.match(x, y).insert(var("r").rel("friend", x).rel("friend", y).isa("friendship"));
 
         ConceptMap map = mock(ConceptMap.class);
         Concept xConcept = mock(Concept.class);
@@ -217,15 +217,16 @@ public class InsertionAnalysisTest {
         when(map.get(var("x"))).thenReturn(xConcept);
         when(map.get(var("y"))).thenReturn(yConcept);
 
-
-        Set<Concept> rolePlayers = InsertionAnalysis.getRolePlayers(insertQuery, Arrays.asList(map));
-        assertTrue(rolePlayers.contains(xConcept));
-        assertTrue(rolePlayers.contains(yConcept));
+        Map<Concept, String> rolePlayers = InsertionAnalysis.getRolePlayersAndRoles(insertQuery, Arrays.asList(map));
+        assertTrue(rolePlayers.containsKey(xConcept));
+        assertEquals("friend", rolePlayers.get(xConcept));
+        assertTrue(rolePlayers.containsKey(yConcept));
+        assertEquals("friend", rolePlayers.get(yConcept));
         assertEquals(2, rolePlayers.size());
     }
 
     @Test
-    public void whenInsertNonRelationship_ReturnEmptySet() {
+    public void whenInsertNonRelationship_returnEmptySet() {
         VarPattern x = var("x").asUserDefined();
         VarPattern y = var("y").asUserDefined();
         InsertQuery insertQuery = Graql.insert(x.isa("company").has("name", y).id(ConceptId.of("V123")), y.val("john"));
@@ -238,7 +239,26 @@ public class InsertionAnalysisTest {
         when(map.get(var("x"))).thenReturn(xConcept);
         when(map.get(var("y"))).thenReturn(yConcept);
 
-        Set<Concept> rolePlayers = InsertionAnalysis.getRolePlayers(insertQuery, Arrays.asList(map));
+        Map<Concept, String> rolePlayers = InsertionAnalysis.getRolePlayersAndRoles(insertQuery, Arrays.asList(map));
         assertEquals(0, rolePlayers.size());
     }
+
+    @Test
+    public void whenRelationshipInserted_relationshipLabelFound() {
+        VarPattern x = var("x").asUserDefined().id(ConceptId.of("V123"));
+        VarPattern y = var("y").asUserDefined().id(ConceptId.of("V234"));
+        InsertQuery insertQuery = Graql.match(x, y).insert(var("r").rel("friend", x).rel("friend", y).isa("friendship"));
+        String relationshipLabel = InsertionAnalysis.getRelationshipTypeLabel(insertQuery);
+        assertEquals("friendship", relationshipLabel);
+    }
+
+    @Test
+    public void whenNoRelationshipInserted_nullReturned() {
+        VarPattern x = var("x").asUserDefined();
+        VarPattern y = var("y").asUserDefined();
+        InsertQuery insertQuery = Graql.insert(x.isa("company").has("name", y).id(ConceptId.of("V123")), y.val("john"));
+        String relationshipLabel = InsertionAnalysis.getRelationshipTypeLabel(insertQuery);
+        assertEquals(null, relationshipLabel);
+    }
+
 }

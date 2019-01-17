@@ -37,7 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -135,9 +134,8 @@ public class DataGenerator {
                         throw new RuntimeException("No concepts were inserted");
                     }
                     insertedConcepts.forEach(concept -> this.storage.addConcept(concept));
-
-                    Set<Concept> rolePlayers = InsertionAnalysis.getRolePlayers(q, insertions);
-                    rolePlayers.forEach(concept -> this.storage.addRolePlayer(concept.id().toString()));
+                    Map<Concept, String> rolePlayersAdded = InsertionAnalysis.getRolePlayersAndRoles(q, insertions);
+                    rolePlayersAdded.keySet().forEach(concept -> this.storage.addRolePlayer(concept.id().toString()));
                 });
     }
 

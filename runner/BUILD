@@ -52,6 +52,8 @@ java_library(
 
         "//dependencies/maven/artifacts/commons-cli",
         "//dependencies/maven/artifacts/org/apache/commons:commons-math3",
+
+        "//dependencies/maven/artifacts/com/google/guava:guava"
     ],
     runtime_deps = [
         "//dependencies/maven/artifacts/io/grpc:grpc-netty-shaded"

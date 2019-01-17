@@ -136,6 +136,12 @@ dependencies:
       lang: java
 
 
+  # -- Google Guava (needed for interfacing with Graql Admin classes) --
+  com.google.guava:
+    guava:
+      version: "23.0"
+      lang: java
+
   # -- Testing --
   # NOTE: junit version 4 is from 2014!
   junit:

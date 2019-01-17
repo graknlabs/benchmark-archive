@@ -10,7 +10,7 @@ java_library(
         "//dependencies/maven/artifacts/org/codehaus/mojo:animal-sniffer-annotations"
     ],
     visibility = [
-        "//dependencies/maven/artifacts:__subpackages__"
+        "//visibility:public"
     ]
 )
 
