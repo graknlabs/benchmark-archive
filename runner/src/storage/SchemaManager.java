@@ -104,15 +104,6 @@ public class SchemaManager {
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
-    public static Set<Role> getRoles(Grakn.Transaction tx, String typeLabel) {
-        QueryBuilder qb = tx.graql();
-        GetQuery match = qb.match(var("x").label(typeLabel)).get("x");
-        Concept typeConcept = match.stream().findFirst().get().get("x");
-
-        return typeConcept.asType().playing().collect(Collectors.toSet());
-    }
-
-
     public static boolean isTypeLabelAttribute(Grakn.Transaction tx, String label) {
         SchemaConcept concept= tx.getSchemaConcept(Label.of(label));
         return concept.isAttributeType();
