@@ -243,6 +243,21 @@ public class IgniteConceptIdStore implements IdStoreInterface {
             Attribute<?> attribute = concept.asAttribute();
             AttributeType.DataType<?> datatype = attribute.dataType();
 
+            // check if this ID is already in the table suffices
+            try (Statement stmt = this.conn.createStatement()) {
+                String checkExists = "SELECT id FROM " + tableName + " WHERE id = '" + conceptId + "'";
+                try (ResultSet rs = stmt.executeQuery(checkExists)) {
+                    // skip insertion if this query has any results
+                    if (rs.next()) {
+                        return;
+                    }
+                } catch (SQLException e) {
+                    LOG.trace(e.getMessage(), e);
+                }
+            } catch (SQLException e) {
+                LOG.trace(e.getMessage(), e);
+            }
+
             Object value = attribute.value();
             try (PreparedStatement stmt = this.conn.prepareStatement(
                     "INSERT INTO " + tableName + " (id, value, ) VALUES (?, ?, )")) {
@@ -270,9 +285,6 @@ public class IgniteConceptIdStore implements IdStoreInterface {
 
             } catch (SQLException e) {
                 if (!e.getSQLState().equals("23000")) {
-                    // TODO Doesn't seem like the right way to go
-                    // In the case of duplicate primary key, which we want to ignore since I want to keep a unique set of
-                    // attribute values in each table
                     LOG.trace(e.getMessage(), e);
                 }
             }
@@ -282,10 +294,8 @@ public class IgniteConceptIdStore implements IdStoreInterface {
 
             try (PreparedStatement stmt = this.conn.prepareStatement(
                     "INSERT INTO " + tableName + " (id, ) VALUES (?, )")) {
-
                 stmt.setString(ID_INDEX, conceptId);
                 stmt.executeUpdate();
-
             } catch (SQLException e) {
                 if (!e.getSQLState().equals("23000")) {
                     LOG.trace(e.getMessage(), e);
@@ -300,11 +310,18 @@ public class IgniteConceptIdStore implements IdStoreInterface {
      */
     public void addRolePlayer(String conceptId) {
         // add the conceptID to the overall role players table
-        try (PreparedStatement stmt = this.conn.prepareStatement(
-                "INSERT INTO roleplayers (id, ) VALUES (?, )")) {
-
-            stmt.setString(ID_INDEX, conceptId);
-            stmt.executeUpdate();
+        try (Statement stmt = conn.createStatement()) {
+            String checkExists = "SELECT id FROM roleplayers WHERE id = '" + conceptId + "'";
+            try (ResultSet rs = stmt.executeQuery(checkExists)) {
+                if (rs.next()) {
+                    // if we have any rows matching this ID, skip
+                    return;
+                }
+            } catch (SQLException e) {
+                LOG.trace(e.getMessage(), e);
+            }
+            String addRolePlayer = "INSERT INTO roleplayers (id, ) VALUES ('"+conceptId+"')";
+            stmt.executeUpdate(addRolePlayer);
         } catch (SQLException e) {
             LOG.trace(e.getMessage(), e);
         }
