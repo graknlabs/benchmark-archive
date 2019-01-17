@@ -32,10 +32,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import static org.hamcrest.Matchers.containsInAnyOrder;
 
 /**
  *
@@ -309,14 +313,43 @@ public class IgniteConceptIdStoreTest {
 
     @Test
     public void whenEntityPlaysSpecificRole_notReturnedWhenAskingForEntitiesNotPlayingRole() {
+        for (Concept conceptMock : this.conceptMocks) {
+            this.store.addConcept(conceptMock);
+        }
         Concept aPerson = this.conceptMocks.get(0);
         String personTypeLabel = aPerson.asThing().type().label().toString(); // follow what's implemented in mocks
         String relationshipType = relationshipTypes.stream().findFirst().get().label().toString();
-        String role = "some-role"; // test the string safety conversion too
+        String role = "some-role"; // test the string safety conversion too by including -
 
         this.store.addRolePlayer(aPerson.asThing().id().toString(), personTypeLabel, relationshipType, role);
 
         List<String> entitiesNotPlayingRole = store.getIdsNotPlayingRole(personTypeLabel, relationshipType, role);
         assertEquals(6, entitiesNotPlayingRole.size());
+    }
+
+    @Test
+    public void whenEntityPlaysSpecificTwoRoles_notReturnedWhenAskingForEntitiesNotPlayingEitherRole() {
+        for (Concept conceptMock : this.conceptMocks) {
+            this.store.addConcept(conceptMock);
+        }
+        Concept aPerson = this.conceptMocks.get(0);
+        String personTypeLabel = aPerson.asThing().type().label().toString(); // follow what's implemented in mocks
+        String relationshipType = relationshipTypes.stream().findFirst().get().label().toString();
+        String role1 = "some-role-1"; // test the string safety conversion too by including -
+        String role2 = "some-role-2"; // test the string safety conversion too by including -
+
+        this.store.addRolePlayer(aPerson.asThing().id().toString(), personTypeLabel, relationshipType, role1);
+        this.store.addRolePlayer(aPerson.asThing().id().toString(), personTypeLabel, relationshipType, role2);
+
+        List<String> entitiesNotPlayingRole1 = store.getIdsNotPlayingRole(personTypeLabel, relationshipType, role1);
+        List<String> entitiesNotPlayingRole2 = store.getIdsNotPlayingRole(personTypeLabel, relationshipType, role2);
+
+        String[] correctEntities = this.conceptMocks.subList(1, 7).stream()
+                .map(concept->concept.asThing().id().toString())
+                .collect(Collectors.toList()).toArray(new String[]{});
+
+        // assert matches in any order, casting to force hamcrest to use the right
+        assertThat(entitiesNotPlayingRole1, containsInAnyOrder(correctEntities));
+        assertThat(entitiesNotPlayingRole2, containsInAnyOrder(correctEntities));
     }
 }

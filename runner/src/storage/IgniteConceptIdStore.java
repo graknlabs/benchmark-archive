@@ -19,8 +19,6 @@
 package grakn.benchmark.runner.storage;
 
 import grakn.core.concept.*;
-import org.apache.ignite.internal.sql.SqlParseException;
-import org.apache.ignite.internal.util.typedef.CO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -213,8 +211,8 @@ public class IgniteConceptIdStore implements IdStoreInterface {
     }
 
     private String convertTypeLabelToSqlName(String typeLabel) {
-        return typeLabel.replace('-', '_')
-                .replaceAll("[0-9]", "");
+        return typeLabel.replace('-', '_');
+//                .replaceAll("[0-9]", "");
     }
 
     private String putTableName(String typeLabel) {
@@ -335,24 +333,21 @@ public class IgniteConceptIdStore implements IdStoreInterface {
             // do a select to retrieve currently filled roles by this conceptID in this relationship
             String retrieveCurrentRolesSql = "SELECT " + sqlRelationship + " from " + sqlTypeTable +
                     " where id = '" + conceptId + "'";
-            String currentRoles;
+            String currentRoles = "";
             try (ResultSet rs = stmt.executeQuery(retrieveCurrentRolesSql)) {
+                rs.next(); // move to cursor first result
                 currentRoles = rs.getString(sqlRelationship);
+                currentRoles = currentRoles == null ? "" : currentRoles;
             } catch (SQLException e) {
                 LOG.trace(e.getMessage(), e);
-                throw new RuntimeException(e.getMessage());
             }
 
             if (!currentRoles.contains(sqlRole)) {
-                currentRoles = currentRoles + ", " + sqlRole;
-            }
-            String setCurrentRolesSql = "UPDATE " + sqlTypeTable +
-                    " SET " + sqlRelationship + " = '" + currentRoles + "'" +
-                    " WHERE id = " + conceptId;
-            try (ResultSet rs = stmt.executeQuery(setCurrentRolesSql)) {
-                // ok
-            } catch (SQLException e) {
-                LOG.trace(e.getMessage(), e);
+                currentRoles = currentRoles + "," + sqlRole;
+                String setCurrentRolesSql = "UPDATE " + sqlTypeTable +
+                        " SET " + sqlRelationship + " = '" + currentRoles + "'" +
+                        " WHERE id = '" + conceptId + "'";
+                stmt.executeUpdate(setCurrentRolesSql);
             }
         } catch (SQLException e) {
             LOG.trace(e.getMessage(), e);
@@ -365,16 +360,17 @@ public class IgniteConceptIdStore implements IdStoreInterface {
     public List<String> getIdsNotPlayingRole(String typeLabel, String relationshipType, String role) {
         String tableName = convertTypeLabelToSqlName(typeLabel);
         String columnName = convertTypeLabelToSqlName(relationshipType);
+        String roleName = convertTypeLabelToSqlName(role);
 
         String sql = "SELECT ID, " + columnName + " FROM " + tableName +
-                " WHERE (" + columnName + " IS NULL OR " + columnName + "  NOT LIKE '%" + role + "%')";
+                " WHERE (" + columnName + " IS NULL OR " + columnName + "  NOT LIKE '%" + roleName + "%')";
 
         LinkedList<String> ids = new LinkedList<>();
 
         try (Statement stmt = conn.createStatement()) {
             try (ResultSet rs = stmt.executeQuery(sql)) {
                 while (rs.next()) {
-                    ids.addLast(rs.getString(columnName));
+                    ids.addLast(rs.getString("id"));
                 }
             } catch (SQLException e) {
                 LOG.trace(e.getMessage(), e);

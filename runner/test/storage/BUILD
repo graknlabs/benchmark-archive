@@ -9,7 +9,8 @@ java_test(
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
         "//dependencies/maven/artifacts/grakn/core:grakn-graql",
         "//dependencies/maven/artifacts/org/apache/ignite:ignite-core",
-        "//dependencies/maven/artifacts/org/apache/ignite:ignite-indexing"
+        "//dependencies/maven/artifacts/org/apache/ignite:ignite-indexing",
+        "//dependencies/maven/artifacts/org/hamcrest:hamcrest-all"
     ]
 )
 
