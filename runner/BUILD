@@ -22,7 +22,8 @@ java_binary(
     name = "benchmark-runner-binary",
     main_class = "grakn.benchmark.runner.GraknBenchmark",
     runtime_deps = ["//runner:benchmark-runner"],
-    visibility = ["//visibility:public"]
+    visibility = ["//visibility:public"],
+    classpath_resources = ["logback"]
  )
 
 java_library(

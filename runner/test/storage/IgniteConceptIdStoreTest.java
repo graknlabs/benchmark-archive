@@ -352,4 +352,21 @@ public class IgniteConceptIdStoreTest {
         assertThat(entitiesNotPlayingRole1, containsInAnyOrder(correctEntities));
         assertThat(entitiesNotPlayingRole2, containsInAnyOrder(correctEntities));
     }
+
+
+    @Test
+    public void whenEntityPlaysRole_countIsCorrect() {
+        for (Concept conceptMock : this.conceptMocks) {
+            this.store.addConcept(conceptMock);
+        }
+        Concept aPerson = this.conceptMocks.get(0);
+        String personTypeLabel = aPerson.asThing().type().label().toString(); // follow what's implemented in mocks
+        String relationshipType = relationshipTypes.stream().findFirst().get().label().toString();
+        String role = "some-role"; // test the string safety conversion too by including -
+
+        this.store.addRolePlayer(aPerson.asThing().id().toString(), personTypeLabel, relationshipType, role);
+
+        int entitiesNotPlayingRole = this.store.numIdsNotPlayingRole(personTypeLabel, relationshipType, role);
+        assertEquals(6, entitiesNotPlayingRole);
+    }
 }

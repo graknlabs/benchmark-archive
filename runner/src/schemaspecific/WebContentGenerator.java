@@ -1,18 +1,14 @@
 package grakn.benchmark.runner.schemaspecific;
 
 import grakn.benchmark.runner.probdensity.*;
+import grakn.benchmark.runner.storage.*;
 import grakn.core.concept.ConceptId;
 import grakn.benchmark.runner.pick.CentralStreamProvider;
-import grakn.benchmark.runner.storage.FromIdStorageConceptIdPicker;
-import grakn.benchmark.runner.storage.FromIdStoragePicker;
 import grakn.benchmark.runner.pick.NotInRelationshipConceptIdStream;
 import grakn.benchmark.runner.pick.PickableCollectionValuePicker;
 import grakn.benchmark.runner.pick.StreamProvider;
 import grakn.benchmark.runner.pick.StreamProviderInterface;
 import grakn.benchmark.runner.pick.StringStreamGenerator;
-import grakn.benchmark.runner.storage.ConceptStore;
-import grakn.benchmark.runner.storage.FromIdStorageStringAttrPicker;
-import grakn.benchmark.runner.storage.IdStoreInterface;
 import grakn.benchmark.runner.strategy.AttributeOwnerTypeStrategy;
 import grakn.benchmark.runner.strategy.AttributeStrategy;
 import grakn.benchmark.runner.strategy.EntityStrategy;
@@ -149,11 +145,10 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
                         "company",
                         fixedConstant(1),
                         new CentralStreamProvider<>(
-                                new NotInRelationshipConceptIdStream(
+                                notInRelationshipConceptIdStoragePicker(
+                                        "company",
                                         "employment",
-                                        "employer",
-                                        100,
-                                        fromIdStorageConceptIdPicker("company")
+                                        "employer"
                                 )
                         )
                 )
@@ -175,11 +170,11 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
                         "university",
                         fixedConstant(1),
                         new CentralStreamProvider<>(
-                                new NotInRelationshipConceptIdStream(
+                                notInRelationshipConceptIdStoragePicker(
+                                        "university",
                                         "employment",
-                                        "employer",
-                                        100,
-                                        fromIdStorageConceptIdPicker("university"))
+                                        "employer"
+                                )
                         )
                 )
          ));
@@ -240,11 +235,10 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
                         "department",
                         fixedConstant(1),
                         new StreamProvider<>(
-                                new NotInRelationshipConceptIdStream(
+                                notInRelationshipConceptIdStoragePicker(
+                                        "department",
                                         "ownership",
-                                        "property",
-                                        100,
-                                        fromIdStorageConceptIdPicker("department")
+                                        "property"
                                 )
                         )
                 )
@@ -267,11 +261,10 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
                         "department",
                         fixedConstant(1),
                         new StreamProvider<>(
-                                new NotInRelationshipConceptIdStream(
+                                notInRelationshipConceptIdStoragePicker(
+                                        "department",
                                         "ownership",
-                                        "property",
-                                        100,
-                                        fromIdStorageConceptIdPicker("department")
+                                        "property"
                                 )
                         )
                 )
@@ -294,12 +287,12 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
                         "team",
                         fixedConstant(1),
                         new StreamProvider<>(
-                                new NotInRelationshipConceptIdStream(
+                                notInRelationshipConceptIdStoragePicker(
+                                        "team",
                                         "ownership",
-                                        "property",
-                                        100,
-                                        fromIdStorageConceptIdPicker("team")
-                                ))
+                                        "property"
+                                )
+                        )
                 )
         ));
 
@@ -488,6 +481,10 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
     }
     private FromIdStoragePicker<String> fromIdStorageStringAttrPicker(String typeLabel) {
         return new FromIdStorageStringAttrPicker(random, (IdStoreInterface) this.storage, typeLabel);
+    }
+
+    private NotInRelationshipConceptIdPicker notInRelationshipConceptIdStoragePicker(String typeLabel, String relationshiplabel, String roleLabel) {
+        return new NotInRelationshipConceptIdPicker(random, (IdStoreInterface) this.storage, typeLabel, relationshiplabel, roleLabel);
     }
 
     private RolePlayerTypeStrategy rolePlayerTypeStrategy(

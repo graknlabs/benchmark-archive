@@ -29,6 +29,7 @@ import java.util.stream.Stream;
  *
  */
 // TODO I think I change this to be specific "CheckNotInRelationship" since being abstract gives complexity
+@Deprecated
 public class NotInRelationshipConceptIdStream implements StreamInterface<ConceptId> {
 
     private String relationshipLabel;

@@ -21,6 +21,7 @@ package grakn.benchmark.runner.storage;
 import grakn.core.concept.ConceptId;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -30,6 +31,8 @@ public interface IdStoreInterface extends ConceptStore {
     int getConceptCount(String typeLabel);
 
     ConceptId getConceptId(String typeLabel, int offset);
+    List<String> getIdsNotPlayingRole(String typeLabel, String relationshipType, String role);
+    Integer numIdsNotPlayingRole(String typeLabel, String relationshipType, String role);
     String getString(String typeLabel, int offset);
     Double getDouble(String typeLabel, int offset);
     Long getLong(String typeLabel, int offset);

@@ -381,6 +381,27 @@ public class IgniteConceptIdStore implements IdStoreInterface {
         return ids;
     }
 
+    public Integer numIdsNotPlayingRole(String typeLabel, String relationshipType, String role) {
+        String tableName = convertTypeLabelToSqlName(typeLabel);
+        String columnName = convertTypeLabelToSqlName(relationshipType);
+        String roleName = convertTypeLabelToSqlName(role);
+
+        String sql = "SELECT COUNT(ID) FROM " + tableName +
+                " WHERE (" + columnName + " IS NULL OR " + columnName + "  NOT LIKE '%" + roleName + "%')";
+
+        try (Statement stmt = conn.createStatement()) {
+            try (ResultSet rs = stmt.executeQuery(sql)) {
+                rs.next(); // move to first result
+                return rs.getInt(1); // apparently column indices start at 1
+            } catch (SQLException e) {
+                LOG.trace(e.getMessage(), e);
+            }
+        } catch (SQLException e) {
+            LOG.trace(e.getMessage(), e);
+        }
+        return 0;
+    }
+
     /*
     [{ LIMIT expression [OFFSET expression]
     [SAMPLE_SIZE rowCountInt]} | {[OFFSET expression {ROW | ROWS}]
