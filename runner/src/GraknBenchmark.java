@@ -95,7 +95,7 @@ public class GraknBenchmark {
      * - don't generate new data and only profile an existing keyspace
      */
     public void start() {
-        Grakn client = new Grakn(new SimpleURI(config.uri()), trueh t);
+        Grakn client = new Grakn(new SimpleURI(config.uri()), true);
         Grakn.Session session = client.session(config.getKeyspace());
         SchemaManager.verifyEmptyKeyspace(session);
         QueryProfiler queryProfiler = new QueryProfiler(session, executionName, config.getQueries());

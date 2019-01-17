@@ -4,7 +4,6 @@ import grakn.benchmark.runner.probdensity.*;
 import grakn.benchmark.runner.storage.*;
 import grakn.core.concept.ConceptId;
 import grakn.benchmark.runner.pick.CentralStreamProvider;
-import grakn.benchmark.runner.pick.NotInRelationshipConceptIdStream;
 import grakn.benchmark.runner.pick.PickableCollectionValuePicker;
 import grakn.benchmark.runner.pick.StreamProvider;
 import grakn.benchmark.runner.pick.StreamProviderInterface;
