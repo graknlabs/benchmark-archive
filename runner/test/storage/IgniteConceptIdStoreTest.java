@@ -190,7 +190,7 @@ public class IgniteConceptIdStoreTest {
     }
 
     @Test
-    public void whenConceptIsAdded_conceptIdCanBeRetrieved() throws SQLException {
+    public void whenConceptIsAdded_conceptIdCanBeRetrieved()  {
         int index = 0;
         this.store.addConcept(this.conceptMocks.get(index));
         ConceptId personConceptId = this.store.getConceptId(this.entityTypeLabel, index);
@@ -199,7 +199,7 @@ public class IgniteConceptIdStoreTest {
     }
 
     @Test
-    public void whenGettingIdWithOffset_correctIdIsReturned() throws SQLException {
+    public void whenGettingIdWithOffset_correctIdIsReturned() {
         int index = 4;
         // Add all of the elements
 
@@ -213,7 +213,7 @@ public class IgniteConceptIdStoreTest {
     }
 
     @Test
-    public void whenCountingTypeInstances_resultIsCorrect() throws SQLException, ClassNotFoundException {
+    public void whenCountingTypeInstances_resultIsCorrect() {
         for (Concept conceptMock : this.conceptMocks) {
             this.store.addConcept(conceptMock);
         }

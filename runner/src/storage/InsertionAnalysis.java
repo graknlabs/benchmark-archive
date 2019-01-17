@@ -18,6 +18,7 @@
 
 package grakn.benchmark.runner.storage;
 
+import grakn.benchmark.runner.exception.DataGeneratorException;
 import grakn.core.concept.Concept;
 import grakn.core.concept.Label;
 import grakn.core.concept.Role;
@@ -98,8 +99,12 @@ public class InsertionAnalysis {
                 ImmutableMultiset<RelationPlayer> relationPlayers = relationshipProperty.get().relationPlayers();
                 // extract each role player and concept into the rolePlayers map
                 for (RelationPlayer relationPlayer : relationPlayers) {
-                    String role = relationPlayer.getRole().get().getProperty(LabelProperty.class).get().label().toString();
+                    // get the role, if there's no role present, throw an exception
+                    VarPatternAdmin roleAdmin = relationPlayer.getRole().
+                            orElseThrow(() -> new DataGeneratorException("Require explicit roles in data generator"));
+                    String role = roleAdmin.getProperty(LabelProperty.class).get().label().toString();
                     Var var = relationPlayer.getRolePlayer().var();
+                    // add the (concept, role) to the map
                     answers.stream()
                             .map(conceptMap -> conceptMap.get(var))
                             .forEach(concept -> rolePlayers.put(concept, role));

@@ -18,6 +18,7 @@
 
 package grakn.benchmark.runner.storage;
 
+import grakn.benchmark.runner.exception.DataGeneratorException;
 import grakn.core.concept.Concept;
 import grakn.core.concept.ConceptId;
 import grakn.core.concept.Thing;
@@ -26,7 +27,9 @@ import grakn.core.graql.InsertQuery;
 import grakn.core.graql.Var;
 import grakn.core.graql.VarPattern;
 import grakn.core.graql.answer.ConceptMap;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.util.*;
 
@@ -41,6 +44,9 @@ import static org.mockito.Mockito.when;
  *
  */
 public class InsertionAnalysisTest {
+
+    @Rule
+    public final ExpectedException expectedException = ExpectedException.none();
 
     private ArrayList<ConceptMap> mockConceptMaps(Map<Var, String> variables) {
 
@@ -241,6 +247,17 @@ public class InsertionAnalysisTest {
 
         Map<Concept, String> rolePlayers = InsertionAnalysis.getRolePlayersAndRoles(insertQuery, Arrays.asList(map));
         assertEquals(0, rolePlayers.size());
+    }
+
+    @Test
+    public void whenInsertWithoutRole_throwException() {
+        VarPattern x = var("x").asUserDefined().id(ConceptId.of("V123"));
+        VarPattern y = var("y").asUserDefined().id(ConceptId.of("V234"));
+        InsertQuery insertQuery = Graql.match(x, y).insert(var("r").rel( x).rel(y).isa("friendship"));
+
+        expectedException.expect(DataGeneratorException.class);
+        expectedException.expectMessage("Require explicit roles in data generator");
+        InsertionAnalysis.getRolePlayersAndRoles(insertQuery, null);
     }
 
     @Test
