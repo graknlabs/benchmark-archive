@@ -1,5 +1,6 @@
 package grakn.benchmark.runner.util;
 
+import org.apache.commons.cli.CommandLine;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -15,9 +16,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+import static grakn.benchmark.runner.util.BenchmarkArguments.ELASTIC_URI;
+
 public class ElasticSearchManager {
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchManager.class);
     private static final String ES_SERVER_PROTOCOL = "http";
+    private static final String ES_SERVER_HOST = "localhost";
+    private static final int ES_SERVER_PORT = 9200;
     private static final String ES_INDEX_TEMPLATE_NAME = "grakn-benchmark-index-template";
     private static final String INDEX_TEMPLATE =
             "{"+
@@ -88,11 +93,19 @@ public class ElasticSearchManager {
         }
     }
 
-    public static void init(String elasticUri) throws IOException {
-        int splitIndex = elasticUri.lastIndexOf(":");
-        String esServerHost = elasticUri.substring(0, splitIndex);
-        Integer esServerPort = Integer.parseInt(elasticUri.substring(splitIndex+1));
-        RestClientBuilder esRestClientBuilder = RestClient.builder(new HttpHost(esServerHost, esServerPort, ES_SERVER_PROTOCOL));
+    public static void init(CommandLine arguments) throws IOException {
+        RestClientBuilder esRestClientBuilder;
+
+        if (arguments.hasOption(ELASTIC_URI)) {
+            String elasticUri = arguments.getOptionValue(ELASTIC_URI);
+            int splitIndex = elasticUri.lastIndexOf(":");
+            String esServerHost = elasticUri.substring(0, splitIndex);
+            Integer esServerPort = Integer.parseInt(elasticUri.substring(splitIndex+1));
+            esRestClientBuilder = RestClient.builder(new HttpHost(esServerHost, esServerPort, ES_SERVER_PROTOCOL));
+        } else {
+            esRestClientBuilder = RestClient.builder(new HttpHost(ES_SERVER_HOST, ES_SERVER_PORT, ES_SERVER_PROTOCOL));
+        }
+
         esRestClientBuilder.setDefaultHeaders(new Header[]{new BasicHeader("header", "value")});
         RestClient restClient = esRestClientBuilder.build();
 

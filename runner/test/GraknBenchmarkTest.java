@@ -1,9 +1,11 @@
 package grakn.benchmark.runner;
 
 import grakn.benchmark.runner.exception.BootupException;
+import grakn.benchmark.runner.util.BenchmarkArguments;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.apache.commons.cli.CommandLine;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,26 +23,32 @@ public class GraknBenchmarkTest {
 
     @Test
     public void whenProvidingAbsolutePathToExistingConfig_benchmarkShouldStart() {
-        GraknBenchmark graknBenchmark = new GraknBenchmark(new String[]{"--config", WEB_CONTENT_CONFIG_PATH.toAbsolutePath().toString()});
+        String[] args = new String[]{"--config", WEB_CONTENT_CONFIG_PATH.toAbsolutePath().toString()};
+        CommandLine commandLine = BenchmarkArguments.parse(args);
+        GraknBenchmark graknBenchmark = new GraknBenchmark(commandLine);
     }
 
     @Test
     public void whenProvidingRelativePathToExistingConfig_benchmarkShouldStart() {
+        String[] args = new String[]{"--config", "web_content_config_test.yml"};
         System.setProperty("working.dir", WEB_CONTENT_CONFIG_PATH.getParent().toString());
-        GraknBenchmark graknBenchmark = new GraknBenchmark(new String[]{"--config", "web_content_config_test.yml"});
+        CommandLine commandLine = BenchmarkArguments.parse(args);
+        GraknBenchmark graknBenchmark = new GraknBenchmark(commandLine);
     }
 
     @Test
     public void whenProvidingAbsolutePathToNonExistingConfig_throwException() {
+        String[] args = new String[]{"--config", "nonexistingpath"};
+        CommandLine commandLine = BenchmarkArguments.parse(args);
         expectedException.expect(BootupException.class);
         expectedException.expectMessage("The provided config file [nonexistingpath] does not exist");
-        GraknBenchmark graknBenchmark = new GraknBenchmark(new String[]{"--config", "nonexistingpath"});
+        GraknBenchmark graknBenchmark = new GraknBenchmark(commandLine);
     }
 
     @Test
     public void whenConfigurationArgumentNotProvided_throwException() {
         expectedException.expect(BootupException.class);
         expectedException.expectMessage("Missing required option: c");
-        GraknBenchmark graknBenchmark = new GraknBenchmark(new String[]{});
+        GraknBenchmark graknBenchmark = new GraknBenchmark(BenchmarkArguments.parse(new String[] {}));
     }
 }

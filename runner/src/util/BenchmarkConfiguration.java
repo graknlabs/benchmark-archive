@@ -43,7 +43,6 @@ import static grakn.benchmark.runner.util.BenchmarkArguments.*;
 public class BenchmarkConfiguration {
 
     private static final String DEFAULT_GRAKN_URI = "localhost:48555";
-    private static final String DEFAULT_ELASTIC_URI = "localhost:9200";
 
     private final boolean generateData;
     private List<String> queries;
@@ -51,7 +50,6 @@ public class BenchmarkConfiguration {
     private BenchmarkConfigurationFile benchmarkConfigFile;
     private String keyspace;
     private String graknUri;
-    private String elasticUri;
     private String executionName;
 
     public BenchmarkConfiguration(CommandLine arguments) {
@@ -71,8 +69,6 @@ public class BenchmarkConfiguration {
 
         this.graknUri = (arguments.hasOption(GRAKN_URI)) ? arguments.getOptionValue(GRAKN_URI) : DEFAULT_GRAKN_URI;
 
-        this.elasticUri = (arguments.hasOption(ELASTIC_URI)) ? arguments.getOptionValue(ELASTIC_URI) : DEFAULT_ELASTIC_URI;
-
         this.executionName = (arguments.hasOption(EXECUTION_NAME_ARGUMENT)) ? arguments.getOptionValue(EXECUTION_NAME_ARGUMENT) : "";
 
         // If --no-data-generation is specified, don't generate any data (work with existing keyspace)
@@ -85,10 +81,6 @@ public class BenchmarkConfiguration {
 
     public String graknUri() {
         return graknUri;
-    }
-
-    public String elasticUri() {
-        return elasticUri;
     }
 
     public String executionName() {

@@ -63,10 +63,9 @@ public class GraknBenchmark {
         try {
             // Parse the configuration for the benchmark
             CommandLine arguments = BenchmarkArguments.parse(args);
-            BenchmarkConfiguration benchmarkConfig = new BenchmarkConfiguration(arguments);
-            ElasticSearchManager.init(benchmarkConfig.elasticUri());
 
-            GraknBenchmark benchmark = new GraknBenchmark(args);
+            ElasticSearchManager.init(arguments);
+            GraknBenchmark benchmark = new GraknBenchmark(arguments);
             benchmark.start();
         } catch (Exception e) {
             exitCode = 1;
@@ -77,8 +76,7 @@ public class GraknBenchmark {
         }
     }
 
-    public GraknBenchmark(String[] args) {
-        CommandLine arguments = BenchmarkArguments.parse(args);
+    public GraknBenchmark(CommandLine arguments) {
         BenchmarkConfiguration benchmarkConfig = new BenchmarkConfiguration(arguments);
         this.config = benchmarkConfig;
 
