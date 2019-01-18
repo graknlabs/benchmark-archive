@@ -17,9 +17,6 @@ import java.io.IOException;
 
 public class ElasticSearchManager {
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchManager.class);
-
-    private static final String ES_SERVER_HOST = "localhost";
-    private static final int ES_SERVER_PORT = 9200;
     private static final String ES_SERVER_PROTOCOL = "http";
     private static final String ES_INDEX_TEMPLATE_NAME = "grakn-benchmark-index-template";
     private static final String INDEX_TEMPLATE =
@@ -91,8 +88,11 @@ public class ElasticSearchManager {
         }
     }
 
-    public static void init() throws IOException {
-        RestClientBuilder esRestClientBuilder = RestClient.builder(new HttpHost(ES_SERVER_HOST, ES_SERVER_PORT, ES_SERVER_PROTOCOL));
+    public static void init(String elasticUri) throws IOException {
+        int splitIndex = elasticUri.lastIndexOf(":");
+        String esServerHost = elasticUri.substring(0, splitIndex);
+        Integer esServerPort = Integer.parseInt(elasticUri.substring(splitIndex+1));
+        RestClientBuilder esRestClientBuilder = RestClient.builder(new HttpHost(esServerHost, esServerPort, ES_SERVER_PROTOCOL));
         esRestClientBuilder.setDefaultHeaders(new Header[]{new BasicHeader("header", "value")});
         RestClient restClient = esRestClientBuilder.build();
 

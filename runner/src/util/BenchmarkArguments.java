@@ -14,10 +14,11 @@ import org.apache.commons.cli.ParseException;
 public class BenchmarkArguments {
 
     public final static String CONFIG_ARGUMENT = "config";
-    public final static String URI_ARGUMENT = "uri";
+    public final static String GRAKN_URI = "grakn-uri";
     public final static String KEYSPACE_ARGUMENT = "keyspace";
     public final static String NO_DATA_GENERATION_ARGUMENT = "no-data-generation";
     public final static String EXECUTION_NAME_ARGUMENT = "execution-name";
+    public final static String ELASTIC_URI = "elastic-uri";
 
     public static CommandLine parse(String[] args) {
         Options options = buildOptions();
@@ -40,7 +41,7 @@ public class BenchmarkArguments {
                 .build();
 
         Option graknAddressOption = Option.builder("u")
-                .longOpt(URI_ARGUMENT)
+                .longOpt(GRAKN_URI)
                 .hasArg(true)
                 .desc("Address of the grakn cluster (default: localhost:48555)")
                 .required(false)
@@ -67,12 +68,20 @@ public class BenchmarkArguments {
                 .desc("Name for specific execution of the config file")
                 .type(String.class)
                 .build();
+        Option elasticsearchAddressOption = Option.builder("e")
+                .longOpt(ELASTIC_URI)
+                .hasArg(true)
+                .desc("Address of the elastic search server (default: localhost:9200")
+                .required(false)
+                .type(String.class)
+                .build();
         Options options = new Options();
         options.addOption(configFileOption);
         options.addOption(graknAddressOption);
         options.addOption(keyspaceOption);
         options.addOption(noDataGenerationOption);
         options.addOption(executionNameOption);
+        options.addOption(elasticsearchAddressOption);
         return options;
     }
 }

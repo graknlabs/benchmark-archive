@@ -32,10 +32,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static grakn.benchmark.runner.util.BenchmarkArguments.CONFIG_ARGUMENT;
-import static grakn.benchmark.runner.util.BenchmarkArguments.KEYSPACE_ARGUMENT;
-import static grakn.benchmark.runner.util.BenchmarkArguments.NO_DATA_GENERATION_ARGUMENT;
-import static grakn.benchmark.runner.util.BenchmarkArguments.URI_ARGUMENT;
+import static grakn.benchmark.runner.util.BenchmarkArguments.*;
 
 /**
  * This class parses multiple yaml files into object and wraps them
@@ -46,13 +43,16 @@ import static grakn.benchmark.runner.util.BenchmarkArguments.URI_ARGUMENT;
 public class BenchmarkConfiguration {
 
     private static final String DEFAULT_GRAKN_URI = "localhost:48555";
+    private static final String DEFAULT_ELASTIC_URI = "localhost:9200";
 
     private final boolean generateData;
     private List<String> queries;
     private List<String> graqlSchema;
     private BenchmarkConfigurationFile benchmarkConfigFile;
     private String keyspace;
-    private String uri;
+    private String graknUri;
+    private String elasticUri;
+    private String executionName;
 
     public BenchmarkConfiguration(CommandLine arguments) {
         Path configFilePath = getConfigFilePath(arguments);
@@ -69,7 +69,11 @@ public class BenchmarkConfiguration {
         // use given keyspace string if exists, otherwise use yaml file `name` tag
         this.keyspace = arguments.hasOption(KEYSPACE_ARGUMENT) ? arguments.getOptionValue(KEYSPACE_ARGUMENT) : this.getConfigName();
 
-        this.uri = (arguments.hasOption(URI_ARGUMENT)) ? arguments.getOptionValue(URI_ARGUMENT) : DEFAULT_GRAKN_URI;
+        this.graknUri = (arguments.hasOption(GRAKN_URI)) ? arguments.getOptionValue(GRAKN_URI) : DEFAULT_GRAKN_URI;
+
+        this.elasticUri = (arguments.hasOption(ELASTIC_URI)) ? arguments.getOptionValue(ELASTIC_URI) : DEFAULT_ELASTIC_URI;
+
+        this.executionName = (arguments.hasOption(EXECUTION_NAME_ARGUMENT)) ? arguments.getOptionValue(EXECUTION_NAME_ARGUMENT) : "";
 
         // If --no-data-generation is specified, don't generate any data (work with existing keyspace)
         this.generateData = !(arguments.hasOption(NO_DATA_GENERATION_ARGUMENT));
@@ -79,8 +83,16 @@ public class BenchmarkConfiguration {
         return this.benchmarkConfigFile.getName();
     }
 
-    public String uri() {
-        return uri;
+    public String graknUri() {
+        return graknUri;
+    }
+
+    public String elasticUri() {
+        return elasticUri;
+    }
+
+    public String executionName() {
+        return executionName;
     }
 
     public Keyspace getKeyspace() {
