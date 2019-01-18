@@ -2,7 +2,7 @@ name: "societal_model"
 schema: "societal_model.gql"
 queries: "queries.yml"
 scales:
-  - 40000
+  - 500
 repeatsPerQuery: 0
 # TODO
 # concurrency:
