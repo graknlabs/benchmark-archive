@@ -72,12 +72,12 @@ public class RelationshipGenerator extends Generator<RelationshipStrategy> {
             Find roleplayer types according to the RelationshipRoleStrategy objects
             Get a stream of conceptIds that can play that role, according to the picking strategy. This stream may be
             empty for one role, in which case, a decision has to be made whether to make the relationship anyway or abort
+
+            currently abort if cannot find a role player for a role
              */
 
             Pattern matchVarPattern = null;  //TODO It will be faster to use a pure insert, supplying the ids for the roleplayers' variables
             VarPattern insertVarPattern = var("r").isa(relationshipTypeLabel);
-
-            boolean foundAnyRoleplayers = false;
 
             // For each role type strategy
             for (RolePlayerTypeStrategy rolePlayerTypeStrategy : rolePlayerTypeStrategies) {
@@ -89,9 +89,13 @@ public class RelationshipGenerator extends Generator<RelationshipStrategy> {
 
                 Iterator<ConceptId> iter = conceptIdStream.iterator();
 
+                if (!iter.hasNext()) {
+                    System.out.println("No role player for role " + roleLabel + ", skipping relationship " + relationshipTypeLabel);
+                    return null;
+                }
+
                 // Build the match insert query
                 while (iter.hasNext()) {
-                    foundAnyRoleplayers = true;
                     ConceptId conceptId = iter.next();
                     // Add the concept to the query
                     Var v = Graql.var().asUserDefined();
@@ -105,13 +109,13 @@ public class RelationshipGenerator extends Generator<RelationshipStrategy> {
                 }
             }
 
-            if (foundAnyRoleplayers) {
-                // Assemble the query
+//            if (foundAnyRoleplayers) {
+//                // Assemble the query
                 return (Query) qb.match(matchVarPattern).insert(insertVarPattern);
-            } else {
-                System.out.println("Couldn't find any existing roleplayers for any roles in \"" + relationshipTypeLabel + "\" relationship.");
-                return null;
-            }
+//            } else {
+//                System.out.println("Couldn't find any existing roleplayers for any roles in \"" + relationshipTypeLabel + "\" relationship.");
+//                return null;
+//            }
 
         }).limit(numInstances).filter(Objects::nonNull);
     }

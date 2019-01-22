@@ -4,14 +4,11 @@ import grakn.benchmark.runner.probdensity.*;
 import grakn.benchmark.runner.storage.*;
 import grakn.core.concept.ConceptId;
 import grakn.benchmark.runner.pick.CentralStreamProvider;
-import grakn.benchmark.runner.pick.PickableCollectionValuePicker;
 import grakn.benchmark.runner.pick.StreamProvider;
 import grakn.benchmark.runner.pick.StreamProviderInterface;
 import grakn.benchmark.runner.pick.StringStreamGenerator;
-import grakn.benchmark.runner.strategy.AttributeOwnerTypeStrategy;
 import grakn.benchmark.runner.strategy.AttributeStrategy;
 import grakn.benchmark.runner.strategy.EntityStrategy;
-import grakn.benchmark.runner.strategy.GrowableGeneratedRouletteWheel;
 import grakn.benchmark.runner.strategy.RelationshipStrategy;
 import grakn.benchmark.runner.strategy.RolePlayerTypeStrategy;
 import grakn.benchmark.runner.strategy.RouletteWheel;
@@ -52,7 +49,6 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
     private void setup() {
         primarySetup();
 
-        //TODO needs tweaks to make nice outputs
         this.operationStrategies.add(1.0, entityStrategies);
         this.operationStrategies.add(1.2, relationshipStrategies);
         this.operationStrategies.add(0.4, attributeStrategies);
@@ -114,7 +110,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
                 1,
                 new EntityStrategy(
                         "project",
-                        fixedUniform( 5, 19) // 12 projects
+                        fixedUniform( 5, 20) // 12.5 projects
                 ));
 
         /*
@@ -329,116 +325,249 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         // above can all be generated from same set of names
 
         StringStreamGenerator sixCharStringGenerator = new StringStreamGenerator(random, 6);
-        // Populate 200 random names for use as forename/middle/surname, company name etc.
-        // all with equal weights (ProbabilityDensityFunction = fixedConstant(1))
-        GrowableGeneratedRouletteWheel<String> names = new GrowableGeneratedRouletteWheel<>(random, sixCharStringGenerator, fixedConstant(1));
-        names.growTo(200);
+        StringStreamGenerator fourCharStringGenerator = new StringStreamGenerator(random, 4);
+        StringStreamGenerator twoCharStringGenerator = new StringStreamGenerator(random, 2);
 
         addAttributes(
                 1.0,
                 "forename",
-                scalingUniform(5/40.0, 20/40.0),
-                "person",
-                fromIdStorageConceptIdPicker("person"),
-                new StreamProvider<>(new PickableCollectionValuePicker<String>(names))
+                fixedUniform(5, 20),
+                new StreamProvider<>(sixCharStringGenerator)
+        );
+        // attach attribute "forename" to "people", choosing people without names yet to give them names. Names may be reused
+        // NOT scaling -- want approximately 1 per person entity
+        add(1, relationshipStrategy(
+                "@has-forename",
+                fixedUniform(10, 70) ,
+                rolePlayerTypeStrategy(
+                        "@has-forename-owner",
+                        "person",
+                        fixedConstant(1),
+                        new StreamProvider<>(notInRelationshipConceptIdStoragePicker("person", "@has-forename", "@has-forename-owner"))
+                ),
+                rolePlayerTypeStrategy(
+                        "@has-forename-value",
+                        "forename",
+                        fixedConstant(1),
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("forename"))
+                ))
         );
 
         addAttributes(
                 1.0,
                 "surname",
-                scalingUniform( 5/40.0, 20/40.0),
-                "person",
-                fromIdStorageConceptIdPicker("person"),
-                new StreamProvider<>(new PickableCollectionValuePicker<String>(names))
+                fixedUniform( 5, 20),
+                new StreamProvider<>(sixCharStringGenerator)
+        );
+        add(1, relationshipStrategy(
+                "@has-surname",
+                fixedUniform(10, 70),
+                rolePlayerTypeStrategy(
+                        "@has-surname-owner",
+                        "person",
+                        fixedConstant(1),
+                        new StreamProvider<>(notInRelationshipConceptIdStoragePicker("person", "@has-surname", "@has-surname-owner"))
+                ),
+                rolePlayerTypeStrategy(
+                        "@has-surname-value",
+                        "surname",
+                        fixedConstant(1),
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("surname"))
+                ))
         );
 
         addAttributes(
                 1.0,
                 "middle-name",
-                scalingUniform(5/40.0, 20/40.0),
-                "person",
-                fromIdStorageConceptIdPicker("person"),
-                new StreamProvider<>(new PickableCollectionValuePicker<String>(names))
+                fixedUniform(5, 20),
+                new StreamProvider<>(fourCharStringGenerator)
+        );
+        add(1, relationshipStrategy(
+                "@has-middle-name",
+                fixedUniform(10, 70),
+                rolePlayerTypeStrategy(
+                        "@has-middle-name-owner",
+                        "person",
+                        fixedConstant(1),
+                        new StreamProvider<>(notInRelationshipConceptIdStoragePicker("person", "@has-middle-name", "@has-middle-name-owner"))
+                ),
+                rolePlayerTypeStrategy(
+                        "@has-middle-name-value",
+                        "middle-name",
+                        fixedConstant(1),
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("middle-name"))
+                ))
         );
 
-        // employment.job-title
-        GrowableGeneratedRouletteWheel<String> jobtitles = new GrowableGeneratedRouletteWheel<>(random, sixCharStringGenerator, fixedConstant(1));
-        jobtitles.growTo(50);
         addAttributes(
                 1.0,
                 "job-title",
-                scalingGaussian(20/40.0, 5/40.0),
-                "employment",
-                fromIdStorageConceptIdPicker("employment"),
-                new StreamProvider<>(new PickableCollectionValuePicker<String>(jobtitles))
+                fixedGaussian(20, 5),
+                new StreamProvider<>(sixCharStringGenerator)
+        );
+        // attach attribute "surname" to "people", choosing people without names yet to give them names. Names may be reused
+        add(1, relationshipStrategy(
+                "@has-job-title",
+                scalingZipf(0.8,1.47),
+                rolePlayerTypeStrategy(
+                        "@has-job-title-owner",
+                        "employment",
+                        fixedConstant(1),
+                        new StreamProvider<>(notInRelationshipConceptIdStoragePicker("employment", "@has-job-title", "@has-job-title-owner"))
+                ),
+                rolePlayerTypeStrategy(
+                        "@has-job-title-value",
+                        "job-title",
+                        fixedConstant(1),
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("job-title"))
+                ))
         );
 
-        // job-title.abbreviation (job-title is a type of name, which `has abbreviation`
-        StringStreamGenerator twoCharStringGenerator = new StringStreamGenerator(random, 2);
-        GrowableGeneratedRouletteWheel<String> jobtitleAbbrs = new GrowableGeneratedRouletteWheel<>(random, twoCharStringGenerator, fixedConstant(1));
-        jobtitleAbbrs.growTo(50);
+        // job-title.abbreviation (job-title is a type of name, which `has abbreviation`)
         addAttributes(
                 1.0,
                 "abbreviation",
-                scalingGaussian(20/40.0, 5/40.0),
-                "job-title",
-                fromIdStorageStringAttrPicker("job-title"), // NOTE we need to retrieve StringAttrs from storage!
-                new StreamProvider<>(new PickableCollectionValuePicker<String>(jobtitleAbbrs))
+                fixedGaussian(10, 3),
+                new StreamProvider<>(twoCharStringGenerator)
+        );
+        // attach attribute "surname" to "people", choosing people without names yet to give them names. Names may be reused
+        add(1, relationshipStrategy(
+                "@has-abbreviation",
+                fixedGaussian(20, 5),
+                rolePlayerTypeStrategy(
+                        "@has-abbreviation-owner",
+                        "job-title",
+                        fixedConstant(1),
+                        new StreamProvider<>(notInRelationshipConceptIdStoragePicker("job-title", "@has-abbreviation", "@has-abbreviation-owner"))
+                ),
+                rolePlayerTypeStrategy(
+                        "@has-abbreviation-value",
+                        "abbreviation",
+                        fixedConstant(1),
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("abbreviation"))
+                ))
         );
 
         // company.name
         addAttributes(
                 1.0,
                 "name",
-                scalingUniform(1/40.0, 5/40.0),
-                "company",
-                fromIdStorageConceptIdPicker("company"),
-                new StreamProvider<>(new PickableCollectionValuePicker<String>(names))
+                fixedUniform(1, 5),
+                new StreamProvider<>(sixCharStringGenerator)
+        );
+        // attach attribute "surname" to "people", choosing people without names yet to give them names. Names may be reused
+        add(1, relationshipStrategy(
+                "@has-name",
+                fixedUniform( 1, 5),
+                rolePlayerTypeStrategy(
+                        "@has-name-owner",
+                        "company",
+                        fixedConstant(1),
+                        new StreamProvider<>(notInRelationshipConceptIdStoragePicker("company", "@has-name", "@has-name-owner"))
+                ),
+                rolePlayerTypeStrategy(
+                        "@has-name-value",
+                        "name",
+                        fixedConstant(1),
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("name"))
+                ))
         );
 
         // university.name
         addAttributes(
                 1.0,
                 "name",
-                scalingUniform(1/40.0, 3/40.0),
-                "university",
-                fromIdStorageConceptIdPicker("university"),
-                new StreamProvider<>(new PickableCollectionValuePicker<String>(names))
+                fixedUniform(1, 3),
+                new StreamProvider<>(sixCharStringGenerator)
+        );
+        add(1, relationshipStrategy(
+                "@has-name",
+                fixedUniform(1, 3),
+                rolePlayerTypeStrategy(
+                        "@has-name-owner",
+                        "university",
+                        fixedConstant(1),
+                        new StreamProvider<>(notInRelationshipConceptIdStoragePicker("university", "@has-name", "@has-name-owner"))
+                ),
+                rolePlayerTypeStrategy(
+                        "@has-name-value",
+                        "name",
+                        fixedConstant(1),
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("name"))
+                ))
         );
 
          // team.name
-         StringStreamGenerator fourCharStringGenerator = new StringStreamGenerator(random, 4);
-         GrowableGeneratedRouletteWheel<String> shortNames = new GrowableGeneratedRouletteWheel<>(random, fourCharStringGenerator, fixedConstant(1));
-         shortNames.growTo(100);
          addAttributes(
                 1.0,
                 "name",
-                scalingUniform(2/40.0, 5/40.0),
-                "team",
-                fromIdStorageConceptIdPicker("team"),
-                new StreamProvider<>(new PickableCollectionValuePicker<String>(shortNames))
+                fixedUniform(2, 5),
+                new StreamProvider<>(fourCharStringGenerator)
+        );
+        add(1, relationshipStrategy(
+                "@has-name",
+                fixedUniform(2, 5),
+                rolePlayerTypeStrategy(
+                        "@has-name-owner",
+                        "team",
+                        fixedConstant(1),
+                        new StreamProvider<>(notInRelationshipConceptIdStoragePicker("team", "@has-name", "@has-name-owner"))
+                ),
+                rolePlayerTypeStrategy(
+                        "@has-name-value",
+                        "name",
+                        fixedConstant(1),
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("name"))
+                ))
         );
 
         // department.name
         addAttributes(
                 1.0,
                 "name",
-                scalingUniform(3/40.0, 9/40.0),
-                "department",
-                fromIdStorageConceptIdPicker("department"),
-                new StreamProvider<>(new PickableCollectionValuePicker<String>(shortNames))
+                fixedUniform(3, 7),
+                new StreamProvider<>(fourCharStringGenerator)
+        );
+        add(1, relationshipStrategy(
+                "@has-name",
+                fixedUniform(3, 7),
+                rolePlayerTypeStrategy(
+                        "@has-name-owner",
+                        "department",
+                        fixedConstant(1),
+                        new StreamProvider<>(notInRelationshipConceptIdStoragePicker("department", "@has-name", "@has-name-owner"))
+                ),
+                rolePlayerTypeStrategy(
+                        "@has-name-value",
+                        "name",
+                        fixedConstant(1),
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("name"))
+                ))
         );
 
         // project.name
         addAttributes(
                 1.0,
                 "name",
-                scalingUniform(5/40.0, 20/40.0),
-                "project",
-                fromIdStorageConceptIdPicker("project"),
-                new StreamProvider<>(new PickableCollectionValuePicker<String>(shortNames))
+                fixedUniform(5, 20),
+                new StreamProvider<>(fourCharStringGenerator)
         );
-
+        add(1, relationshipStrategy(
+                "@has-name",
+                fixedUniform(5, 20),
+                rolePlayerTypeStrategy(
+                        "@has-name-owner",
+                        "project",
+                        fixedConstant(1),
+                        new StreamProvider<>(notInRelationshipConceptIdStoragePicker("project", "@has-name", "@has-name-owner"))
+                ),
+                rolePlayerTypeStrategy(
+                        "@has-name-value",
+                        "name",
+                        fixedConstant(1),
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("name"))
+                ))
+        );
     }
 
 
@@ -505,21 +634,14 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
     }
 
 
-    private <C, T> void addAttributes(double weight, String attributeLabel, ProbabilityDensityFunction quantityPDF, String ownerLabel, FromIdStoragePicker<C> ownerPicker, StreamProviderInterface<T> valueProvider) {
+    private <C, T> void addAttributes(double weight, String attributeLabel, ProbabilityDensityFunction quantityPDF, StreamProviderInterface<T> valueProvider) {
         this.attributeStrategies.add(
             weight,
             new AttributeStrategy<>(
                  attributeLabel,
                  quantityPDF,
-                 new AttributeOwnerTypeStrategy<>(
-                                ownerLabel,
-                                new StreamProvider<> (
-                                       ownerPicker
-                                )
-                        ),
-                        valueProvider
-                        )
-                );
+                 valueProvider
+            ));
     }
 
 

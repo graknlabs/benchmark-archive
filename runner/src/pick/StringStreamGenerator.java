@@ -12,7 +12,6 @@ import java.util.stream.Stream;
  * adapted from https://stackoverflow.com/questions/41107/how-to-generate-a-random-alpha-numeric-string
  *
  * TODO this has substantial overlap in responsibility with IntegerStreamGenerator ie. StreamInterface<T>
- * TODO also has overlap with
  */
 public class StringStreamGenerator implements StreamInterface<String> {
 

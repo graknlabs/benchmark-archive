@@ -119,28 +119,45 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
                 .add(0.5, "IBM")
                 .add(0.5, "Starbucks");
 
-//            TODO How to get the datatype without having to declare it? Does it make sense to do this?
-//            schemaManager.getDatatype("company", this.entityTypes),
 
+        // TODO insert attribute relationships, so no only orphaned
         this.attributeStrategies.add(
                 1.0,
                 new AttributeStrategy<>(
                         "name",
-                        new ScalingUniform(random, ()->getGraphScale(), 0.75,1.25),
-                        new AttributeOwnerTypeStrategy<>(
-                                "company",
-                                new StreamProvider<>(
-                                        new FromIdStorageConceptIdPicker(
-                                                random,
-                                                (IdStoreInterface) this.storage,
-                                                "company")
-                                )
-                        ),
-                        new StreamProvider<>(
-                                new PickableCollectionValuePicker<String>(nameValueOptions)
-                        )
+                        new FixedUniform(random,30, 50),
+                        new StreamProvider<>(new PickableCollectionValuePicker<String>(nameValueOptions))
                 )
         );
+
+//        this.relationshipStrategies.add(
+//                1.0,
+//                new RelationshipStrategy(
+//                        "@has-name",
+//                        new FixedUniform(random, 30, 50),
+//
+//                )
+//        )
+
+//        this.attributeStrategies.add(
+//                1.0,
+//                new AttributeStrategy<>(
+//                        "name",
+//                        new ScalingUniform(random, ()->getGraphScale(), 0.75,1.25),
+//                        new AttributeOwnerTypeStrategy<>(
+//                                "company",
+//                                new StreamProvider<>(
+//                                        new FromIdStorageConceptIdPicker(
+//                                                random,
+//                                                (IdStoreInterface) this.storage,
+//                                                "company")
+//                                )
+//                        ),
+//                        new StreamProvider<>(
+//                                new PickableCollectionValuePicker<String>(nameValueOptions)
+//                        )
+//                )
+//        );
 
 
 //            RouletteWheel<String> genderValueOptions = new RouletteWheel<String>(this.rand)
@@ -203,25 +220,25 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
 //        );
 
 
-        this.attributeStrategies.add(
-                5.0,
-                new AttributeStrategy<>(
-                        "rating",
-                       new ScalingUniform(random, ()->getGraphScale(),0.1, 1.0),
-                        new AttributeOwnerTypeStrategy<>(
-                                "company",
-                                new StreamProvider<>(
-                                        new FromIdStorageConceptIdPicker(
-                                                random,
-                                                (IdStoreInterface) this.storage,
-                                                "company")
-                                )
-                        ),
-                        new StreamProvider<>(
-                                new IntegerStreamGenerator(random, 0, 1000000)
-                        )
-                )
-        );
+//        this.attributeStrategies.add(
+//                5.0,
+//                new AttributeStrategy<>(
+//                        "rating",
+//                       new ScalingUniform(random, ()->getGraphScale(),0.1, 1.0),
+//                        new AttributeOwnerTypeStrategy<>(
+//                                "company",
+//                                new StreamProvider<>(
+//                                        new FromIdStorageConceptIdPicker(
+//                                                random,
+//                                                (IdStoreInterface) this.storage,
+//                                                "company")
+//                                )
+//                        ),
+//                        new StreamProvider<>(
+//                                new IntegerStreamGenerator(random, 0, 1000000)
+//                        )
+//                )
+//        );
 
 
 //        this.attributeStrategies.add(

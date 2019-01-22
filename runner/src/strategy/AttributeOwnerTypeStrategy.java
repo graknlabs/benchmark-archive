@@ -23,7 +23,7 @@ import grakn.benchmark.runner.pick.StreamProviderInterface;
 /**
  * @param <T>
  */
-// TODO implement a base interface of TypeStrategyInterface?
+@Deprecated
 public class AttributeOwnerTypeStrategy<T> implements HasPicker {
     private final String typeLabel;
     private StreamProviderInterface<T> picker;

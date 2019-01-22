@@ -2,8 +2,8 @@ name: "web_content"
 schema: "web_content_schema.gql"
 queries: "queries.yml"
 scales:
-  - 500
-repeatsPerQuery: 5
+  - 5000
+repeatsPerQuery: 0
 # TODO
 # concurrency:
 #   clients: 1

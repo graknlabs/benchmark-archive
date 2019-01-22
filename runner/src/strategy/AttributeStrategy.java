@@ -31,33 +31,12 @@ public class AttributeStrategy<OwnerDatatype, ValueDatatype> extends TypeStrateg
 
     private PickableCollection<AttributeOwnerTypeStrategy<OwnerDatatype>> attributeOwnerStrategies = null;
     private final StreamProviderInterface<ValueDatatype> valuePicker;
-    private AttributeOwnerTypeStrategy<OwnerDatatype> attributeOwnerStrategy = null;
 
     public AttributeStrategy(String attributeTypeLabel,
                              ProbabilityDensityFunction numInstancesPDF,
-                             PickableCollection<AttributeOwnerTypeStrategy<OwnerDatatype>> attributeOwnerStrategies,
                              StreamProviderInterface<ValueDatatype> valuePicker) {
         super(attributeTypeLabel, numInstancesPDF);
-        this.attributeOwnerStrategies = attributeOwnerStrategies;
         this.valuePicker = valuePicker;
-    }
-
-    public AttributeStrategy(String attributeTypeLabel,
-                             ProbabilityDensityFunction numInstancesPDF,
-                             AttributeOwnerTypeStrategy<OwnerDatatype> attributeOwnerStrategy,
-                             StreamProviderInterface<ValueDatatype> valuePicker) {
-        super(attributeTypeLabel, numInstancesPDF);
-        this.attributeOwnerStrategy = attributeOwnerStrategy;
-        this.valuePicker = valuePicker;
-    }
-
-    public AttributeOwnerTypeStrategy<OwnerDatatype> getAttributeOwnerStrategy() {
-        if (this.attributeOwnerStrategy != null) {
-            return this.attributeOwnerStrategy;
-        } else if (this.attributeOwnerStrategies != null) {
-            return this.attributeOwnerStrategies.next();
-        }
-        throw new UnsupportedOperationException("AttributeStrategy must have either one owner or multiple possible owners");
     }
 
     @Override

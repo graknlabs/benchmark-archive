@@ -53,46 +53,20 @@ public class AttributeGenerator<OwnerDatatype, ValueDatatype> extends Generator<
      */
     @Override
     public Stream<Query> generate() {
-
         QueryBuilder qb = this.tx.graql();
         int numInstances = this.strategy.getNumInstancesPDF().sample();
 
-        AttributeOwnerTypeStrategy<OwnerDatatype> attributeOwnerStrategy = this.strategy.getAttributeOwnerStrategy();
-        StreamProviderInterface<OwnerDatatype> ownerPicker = attributeOwnerStrategy.getPicker();
-
         StreamProviderInterface<ValueDatatype> valuePicker = this.strategy.getPicker();
-        String attributeTypeLabel = this.strategy.getTypeLabel();
-
         valuePicker.reset();
-        ownerPicker.reset();
-
         FixedConstant unityPDF = new FixedConstant(1);
 
+        String attributeTypeLabel = this.strategy.getTypeLabel();
+
         return Stream.generate(() -> {
-
-            // Owner stream may not be a conceptId stream if the owner is an attribute
-            Stream<OwnerDatatype> ownerConceptIdStream = ownerPicker.getStream(unityPDF, tx);
-
-            Optional<OwnerDatatype> ownerConceptIdOptional = ownerConceptIdStream.findFirst();
-
-            if (ownerConceptIdOptional.isPresent()) {
-                Stream<ValueDatatype> valueStream = valuePicker.getStream(unityPDF, tx);
-
-                OwnerDatatype ownerId = ownerConceptIdOptional.get();
-                ValueDatatype value = valueStream.findFirst().get();
-
-                Var o = Graql.var().asUserDefined();  // Owner
-                Var a = Graql.var().asUserDefined();  // Attribute
-
-                if (ownerId.getClass() == ConceptId.class) {
-                    return (Query) qb.insert(o.has(attributeTypeLabel, a), a.val(value), o.id((ConceptId) ownerId));
-                } else {
-                    // Both the type and value are required to identify the owner uniquely
-                    return (Query) qb.match(o.isa(attributeOwnerStrategy.getTypeLabel()).val(ownerId)).insert(o.has(attributeTypeLabel, a), a.val(value));
-                }
-            } else {
-                return null;
-            }
+            Var attr = Graql.var().asUserDefined();
+            Stream<ValueDatatype> valueStream = valuePicker.getStream(unityPDF, tx);
+            ValueDatatype value = valueStream.findFirst().get();
+            return (Query) qb.insert(attr.isa(attributeTypeLabel), attr.val(value));
         }).limit(numInstances).filter(Objects::nonNull);
     }
 }
