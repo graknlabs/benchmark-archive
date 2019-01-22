@@ -1,11 +1,13 @@
 package grakn.benchmark.runner;
 
 import grakn.benchmark.runner.exception.BootupException;
+import grakn.benchmark.runner.util.BenchmarkArguments;
 import grakn.core.GraknTxType;
 import grakn.core.Keyspace;
 import grakn.core.client.Grakn;
 import grakn.core.graql.answer.ConceptMap;
 import grakn.core.util.SimpleURI;
+import org.apache.commons.cli.CommandLine;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -52,7 +54,9 @@ public class SchemaManagerE2E {
 
         expectedException.expect(BootupException.class);
         expectedException.expectMessage("not empty, contains a schema");
-        GraknBenchmark graknBenchmark = new GraknBenchmark(new String[]{"--config", WEB_CONTENT_CONFIG_PATH.toAbsolutePath().toString(), "--keyspace", keyspace.toString()});
+        String[] args = new String[]{"--config", WEB_CONTENT_CONFIG_PATH.toAbsolutePath().toString(), "--keyspace", keyspace.toString()};
+        CommandLine commandLine = BenchmarkArguments.parse(args);
+        GraknBenchmark graknBenchmark = new GraknBenchmark(commandLine);
         graknBenchmark.start();
     }
 
@@ -67,7 +71,9 @@ public class SchemaManagerE2E {
 
         expectedException.expect(BootupException.class);
         expectedException.expectMessage("not empty, contains concept instances");
-        GraknBenchmark graknBenchmark = new GraknBenchmark(new String[]{"--config", WEB_CONTENT_CONFIG_PATH.toAbsolutePath().toString(), "--keyspace", keyspace.toString()});
+        String[] args = new String[] {"--config", WEB_CONTENT_CONFIG_PATH.toAbsolutePath().toString(), "--keyspace", keyspace.toString()};
+        CommandLine commandLine = BenchmarkArguments.parse(args);
+        GraknBenchmark graknBenchmark = new GraknBenchmark(commandLine);
         graknBenchmark.start();
     }
 }
