@@ -62,7 +62,7 @@ public class DataGenerator {
         this.iteration = 0;
         this.schemaDefinition = config.getGraqlSchema();
         initializeGeneration();
-    }
+   }
 
     private void initializeGeneration() {
         // load schema
@@ -88,38 +88,29 @@ public class DataGenerator {
         effectively paused while benchmarking takes place
         */
 
+        System.out.println("\n");
         GeneratorFactory gf = new GeneratorFactory();
-        int graphScale= dataStrategies.getGraphScale();
+        int graphScale = dataStrategies.getGraphScale();
 
         while (graphScale < graphScaleLimit) {
-            System.out.printf("\n---- Iteration %d ----\n", this.iteration);
+            graphScale = dataStrategies.getGraphScale();
             try (Grakn.Transaction tx = session.transaction(GraknTxType.WRITE)) {
-
-                //TODO Deal with this being an Object. TypeStrategy should be/have an interface for this purpose?
                 TypeStrategyInterface typeStrategy = operationStrategies.next().next();
-                System.out.print("Generating instances of concept type \"" + typeStrategy.getTypeLabel() + "\"\n");
-
                 GeneratorInterface generator = gf.create(typeStrategy, tx); // TODO Can we do without creating a new generator each iteration
 
-                System.out.println("Using generator " + generator.getClass().toString());
                 // create the stream of insert/match-insert queries
                 Stream<Query> queryStream = generator.generate();
 
                 // execute & parse the results
                 this.processQueryStream(queryStream);
-
                 iteration++;
-                graphScale = dataStrategies.getGraphScale();
-                System.out.printf(String.format("Size: %d (based on ignite data)\n", graphScale));
-                System.out.println(String.format("   %d role players", this.storage.totalRolePlayers()));
-                System.out.println(String.format("   %d entity orphans", this.storage.totalOrphanEntities()));
-                System.out.println(String.format("   %d attribute orphans", this.storage.totalOrphanAttributes()));
-                System.out.println(String.format("   %d Rel double counts", this.storage.totalRelationshipsRolePlayersOverlap()));
-                System.out.println(String.format("   %d Relationships", this.storage.totalRelationships()));
+
+                printProgress(graphScale, typeStrategy.getTypeLabel());
 
                 tx.commit();
             }
         }
+        System.out.println("\n");
     }
 
     private void processQueryStream(Stream<Query> queryStream) {
@@ -150,6 +141,33 @@ public class DataGenerator {
                                         ));
                     }
                 });
+    }
+
+
+    private void printProgress(int graphScale, String generatedTypeLabel) {
+        int rolePlayers = this.storage.totalRolePlayers();
+        int orphanEntities = this.storage.totalOrphanEntities();
+        int orphanAttrs = this.storage.totalOrphanAttributes();
+        int relDoubleCounts = this.storage.totalRelationshipsRolePlayersOverlap();
+        int relationships = this.storage.totalRelationships();
+
+        double density = relationships/((double)graphScale * graphScale);
+
+        // print info to console on one self-erasing line
+        System.out.print("\r");
+        System.out.print(String.format("[%d]  Scale: %d\t(%d RP, %d EO, %d AO, %d DC)\t\tRelationships: %d\t\t Density: %f", this.iteration, graphScale, rolePlayers, orphanEntities, orphanAttrs, relDoubleCounts, relationships, density));
+        System.out.flush();
+
+        // write to log verbosely in DEBUG that it doesn't overwrite
+        LOG.debug(String.format("--- Iteration %d --- ", this.iteration));
+        LOG.debug(String.format("## Generating instances of concept type \"%s\"", generatedTypeLabel));
+        LOG.debug(String.format("## Scale: %d", graphScale));
+        LOG.debug(String.format("## %d role players", rolePlayers));
+        LOG.debug(String.format("## %d entity orphans", orphanEntities));
+        LOG.debug(String.format("## %d attribute orphans", orphanAttrs));
+        LOG.debug(String.format("## %d Rel double counts", relDoubleCounts));
+        LOG.debug(String.format("## %d Relationships", relationships));
+        LOG.debug(String.format("## %f Density", density));
     }
 
 }
