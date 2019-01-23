@@ -372,6 +372,26 @@ public class IgniteConceptIdStoreTest {
 
     @Test
     public void whenAttributePlaysNoRole_orphanCountIsCorrect() {
-
+        for (Concept conceptMock : this.conceptMocks) {
+            this.store.addConcept(conceptMock);
+        }
+        int orphanAttributes = this.store.totalOrphanAttributes();
+        assertEquals(1, orphanAttributes);
     }
+
+    @Test
+    public void whenAttributePlaysRole_orphanCountIsCorrect() {
+        for (Concept conceptMock : this.conceptMocks) {
+            this.store.addConcept(conceptMock);
+        }
+
+        Concept anAge = this.conceptMocks.get(7);
+        String ageId = anAge.asThing().id().toString();
+        String ageLabel = anAge.asThing().type().label().toString();
+        this.store.addRolePlayer(ageId, ageLabel, "@has-" + ageLabel, "@has-"+ageLabel+"-value");
+
+        int orphanAttributes = this.store.totalOrphanAttributes();
+        assertEquals(0, orphanAttributes);
+    }
+
 }
