@@ -93,7 +93,7 @@ public class RelationshipGenerator extends Generator<RelationshipStrategy> {
                 Iterator<ConceptId> iter = conceptIdStream.iterator();
 
                 if (!iter.hasNext()) {
-                    LOG.debug("No role player for role " + roleLabel + ", skipping relationship " + relationshipTypeLabel);
+                    LOG.trace("No role player for role " + roleLabel + ", skipping relationship " + relationshipTypeLabel);
                     return null;
                 }
 

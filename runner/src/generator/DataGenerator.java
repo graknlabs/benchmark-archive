@@ -62,11 +62,12 @@ public class DataGenerator {
         this.iteration = 0;
         this.schemaDefinition = config.getGraqlSchema();
         initializeGeneration();
+        System.out.println(System.getProperty("user.dir"));
    }
 
     private void initializeGeneration() {
         // load schema
-        LOG.debug("Initialising keyspace `" + this.session.keyspace() + "`...");
+        LOG.info("Initialising keyspace `" + this.session.keyspace() + "`...");
         SchemaManager.initialiseKeyspace(this.session, this.schemaDefinition);
         // Read schema concepts and create ignite tables
         try (Grakn.Transaction tx = session.transaction(GraknTxType.READ)) {
@@ -74,7 +75,7 @@ public class DataGenerator {
             HashSet<RelationshipType> relationshipTypes = SchemaManager.getTypesOfMetaType(tx, "relationship");
             HashSet<AttributeType> attributeTypes = SchemaManager.getTypesOfMetaType(tx, "attribute");
 
-            LOG.debug("Initialising ignite...");
+            LOG.info("Initialising ignite...");
             this.storage = new IgniteConceptIdStore(entityTypes, relationshipTypes, attributeTypes);
         }
         this.dataStrategies = SchemaSpecificDataGeneratorFactory.getSpecificStrategy(this.executionName, this.rand, this.storage);
