@@ -338,12 +338,12 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         // NOT scaling -- want approximately 1 per person entity
         add(1, relationshipStrategy(
                 "@has-forename",
-                fixedUniform(10, 70) ,
+                scalingUniform(5/40.0, 40/40.0),
                 rolePlayerTypeStrategy(
                         "@has-forename-owner",
                         "person",
                         fixedConstant(1),
-                        new StreamProvider<>(notInRelationshipConceptIdStoragePicker("person", "@has-forename", "@has-forename-owner"))
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("person"))
                 ),
                 rolePlayerTypeStrategy(
                         "@has-forename-value",
@@ -361,12 +361,12 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         );
         add(1, relationshipStrategy(
                 "@has-surname",
-                fixedUniform(10, 70),
+                scalingUniform(5/40.0, 40/40.0),
                 rolePlayerTypeStrategy(
                         "@has-surname-owner",
                         "person",
                         fixedConstant(1),
-                        new StreamProvider<>(notInRelationshipConceptIdStoragePicker("person", "@has-surname", "@has-surname-owner"))
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("person"))
                 ),
                 rolePlayerTypeStrategy(
                         "@has-surname-value",
@@ -384,12 +384,12 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         );
         add(1, relationshipStrategy(
                 "@has-middle-name",
-                fixedUniform(10, 70),
+                scalingUniform(5/40.0, 40/40.0),
                 rolePlayerTypeStrategy(
                         "@has-middle-name-owner",
                         "person",
                         fixedConstant(1),
-                        new StreamProvider<>(notInRelationshipConceptIdStoragePicker("person", "@has-middle-name", "@has-middle-name-owner"))
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("person"))
                 ),
                 rolePlayerTypeStrategy(
                         "@has-middle-name-value",
@@ -430,15 +430,14 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
                 fixedGaussian(10, 3),
                 new StreamProvider<>(twoCharStringGenerator)
         );
-        // attach attribute "surname" to "people", choosing people without names yet to give them names. Names may be reused
         add(1, relationshipStrategy(
                 "@has-abbreviation",
-                fixedGaussian(20, 5),
+                scalingGaussian(10/40.0, 3/40.0),
                 rolePlayerTypeStrategy(
                         "@has-abbreviation-owner",
                         "job-title",
                         fixedConstant(1),
-                        new StreamProvider<>(notInRelationshipConceptIdStoragePicker("job-title", "@has-abbreviation", "@has-abbreviation-owner"))
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("job-title"))
                 ),
                 rolePlayerTypeStrategy(
                         "@has-abbreviation-value",
@@ -455,15 +454,14 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
                 fixedUniform(1, 5),
                 new StreamProvider<>(sixCharStringGenerator)
         );
-        // attach attribute "surname" to "people", choosing people without names yet to give them names. Names may be reused
         add(1, relationshipStrategy(
                 "@has-name",
-                fixedUniform( 1, 5),
+                scalingUniform( 1/40.0, 5/40.0),
                 rolePlayerTypeStrategy(
                         "@has-name-owner",
                         "company",
                         fixedConstant(1),
-                        new StreamProvider<>(notInRelationshipConceptIdStoragePicker("company", "@has-name", "@has-name-owner"))
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("company"))
                 ),
                 rolePlayerTypeStrategy(
                         "@has-name-value",
@@ -482,12 +480,12 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         );
         add(1, relationshipStrategy(
                 "@has-name",
-                fixedUniform(1, 3),
+                scalingUniform(1/40.0, 3/40.0),
                 rolePlayerTypeStrategy(
                         "@has-name-owner",
                         "university",
                         fixedConstant(1),
-                        new StreamProvider<>(notInRelationshipConceptIdStoragePicker("university", "@has-name", "@has-name-owner"))
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("university"))
                 ),
                 rolePlayerTypeStrategy(
                         "@has-name-value",
@@ -506,12 +504,12 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         );
         add(1, relationshipStrategy(
                 "@has-name",
-                fixedUniform(2, 5),
+                scalingUniform(2/40.0, 5/40.0),
                 rolePlayerTypeStrategy(
                         "@has-name-owner",
                         "team",
                         fixedConstant(1),
-                        new StreamProvider<>(notInRelationshipConceptIdStoragePicker("team", "@has-name", "@has-name-owner"))
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("team"))
                 ),
                 rolePlayerTypeStrategy(
                         "@has-name-value",
@@ -530,12 +528,12 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         );
         add(1, relationshipStrategy(
                 "@has-name",
-                fixedUniform(3, 7),
+                scalingUniform(3/40.0, 7/40.0),
                 rolePlayerTypeStrategy(
                         "@has-name-owner",
                         "department",
                         fixedConstant(1),
-                        new StreamProvider<>(notInRelationshipConceptIdStoragePicker("department", "@has-name", "@has-name-owner"))
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("department"))
                 ),
                 rolePlayerTypeStrategy(
                         "@has-name-value",
@@ -554,12 +552,12 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
         );
         add(1, relationshipStrategy(
                 "@has-name",
-                fixedUniform(5, 20),
+                scalingUniform(5/40.0, 20/40.0),
                 rolePlayerTypeStrategy(
                         "@has-name-owner",
                         "project",
                         fixedConstant(1),
-                        new StreamProvider<>(notInRelationshipConceptIdStoragePicker("project", "@has-name", "@has-name-owner"))
+                        new StreamProvider<>(fromIdStorageConceptIdPicker("project"))
                 ),
                 rolePlayerTypeStrategy(
                         "@has-name-value",

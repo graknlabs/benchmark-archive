@@ -369,4 +369,9 @@ public class IgniteConceptIdStoreTest {
         int entitiesNotPlayingRole = this.store.numIdsNotPlayingRole(personTypeLabel, relationshipType, role);
         assertEquals(6, entitiesNotPlayingRole);
     }
+
+    @Test
+    public void whenAttributePlaysNoRole_orphanCountIsCorrect() {
+
+    }
 }

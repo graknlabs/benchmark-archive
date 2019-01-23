@@ -76,6 +76,13 @@ public class IgniteConceptIdStore implements IdStoreInterface {
         this.relationshipTypeLabels = this.getTypeLabels(relationshipTypes);
         this.attributeTypeLabels = this.getAttributeTypeLabels(attributeTypes);
 
+
+        // add @has-[attribute] relationships as possible relationships
+        // sanitize the @has-[attribute] to valid SQL strings
+        for (String s : this.attributeTypeLabels.keySet()) {
+            this.relationshipTypeLabels.add(convertTypeLabelToSqlName("@has-" + s));
+        }
+
         this.allTypeLabels = this.getAllTypeLabels();
 
         try {
