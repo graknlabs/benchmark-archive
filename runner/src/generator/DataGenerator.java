@@ -62,6 +62,7 @@ public class DataGenerator {
         this.iteration = 0;
         this.schemaDefinition = config.getGraqlSchema();
         initializeGeneration();
+        System.out.println(System.getProperty("user.dir"));
    }
 
     private void initializeGeneration() {
