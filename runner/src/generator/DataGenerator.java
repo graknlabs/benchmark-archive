@@ -88,7 +88,7 @@ public class DataGenerator {
         effectively paused while benchmarking takes place
         */
 
-        System.out.println("\n");
+        System.out.println("\nGenerating data...");
         GeneratorFactory gf = new GeneratorFactory();
         int graphScale = dataStrategies.getGraphScale();
 
