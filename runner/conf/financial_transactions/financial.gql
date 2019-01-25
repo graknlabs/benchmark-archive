@@ -1,0 +1,31 @@
+define
+
+    # fixed increments
+    quantity sub attribute datatype long;
+    #name sub attribute datatype string;
+
+    # don't instantiate this
+    trader sub entity,
+        plays transactor,
+        has name;
+
+    # scaling increments => graph dominated by entities
+    company sub trader;
+    # scaling increments => graph dominated by entities
+    person sub trader;
+
+    #government sub entity,
+    #    plays taxor,
+    #    has name;
+
+
+    # fixed increments
+    transaction sub relationship,
+        relates transactor; # scaling increments => most connections are via role players to few relationships
+    #    plays taxed;
+
+
+    #taxation sub relationship,
+    #    relates taxor,
+    #    relatex taxed;
+

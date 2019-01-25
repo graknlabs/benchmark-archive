@@ -1,0 +1,23 @@
+define
+
+    # fixed increments
+    name sub attribute datatype string;
+
+    # fixed increments
+    person sub entity,
+        plays friend
+        plays liker,
+        has name; # increasing number of names
+
+    # fixed increments
+    page sub entity,
+        plays liked;
+
+    # scaling increments
+    friendship sub relationship,
+        relates friend; # 2 friends in a friendship only
+
+    # scaling increments
+    like sub relationship,
+        relates liked, # only 1 liked per like
+        relates liker; # only 1 liker per like

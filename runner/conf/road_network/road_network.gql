@@ -1,0 +1,14 @@
+define
+
+    # fixed increments
+    name sub attribute datatype string;
+    # region-code sub attribute datatype long;
+
+    # fixed increments
+    road sub entity,
+        plays endpoint,
+        has name; # fixed number of names per road
+
+    # fixed increments
+    intersection sub relationship,
+        relates endpoint; # fixed upper bound on RPs
