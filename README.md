@@ -48,7 +48,7 @@ Check if Elasticsearch is running by accessing http://localhost:9200 from the br
 In the Zipkin installation directory, do:
 
 ```
-$ STORAGE_TYPE=elasticsearch ES_HOSTS=http://localhost:9200 ES_INDEX="benchmarking" java -jar zipkin.jar
+$ STORAGE_TYPE=elasticsearch ES_HOSTS=http://localhost:9200 ES_INDEX="benchmark" java -jar zipkin.jar
 ```
 Check if Zipkin is running by accessing http://localhost:9411/zipkin/ from the browser.
 
@@ -68,7 +68,7 @@ The entry point to rebuild, generate, and name executions of config files is `ru
 
 Basic usage:
 
-`benchmark --config grakn-benchmark/src/main/resources/societal_config_1.yml --execution-name query-plan-mod-1 --keyspace benchmark --ignite-dir /Users/user/Documents/benchmarking-reqs/apache-ignite-fabric-2.6.0-bin/`
+`benchmark --config grakn-benchmark/src/main/resources/societal_config_1.yml --execution-name query-plan-mod-1 --keyspace benchmark` 
 
 Notes:
 

@@ -45,13 +45,15 @@ public class QueryProfiler {
     private static final Logger LOG = LoggerFactory.getLogger(QueryProfiler.class);
 
     private final String executionName;
+    private final String graphName;
     private final List<Query> queries;
     private final Grakn.Session session;
 
-    public QueryProfiler(Grakn.Session session, String executionName, List<String> queryStrings) {
+    public QueryProfiler(Grakn.Session session, String executionName, String graphName, List<String> queryStrings) {
         this.session = session;
 
         this.executionName = executionName;
+        this.graphName = graphName;
 
         // convert Graql strings into Query types
         this.queries = queryStrings.stream()
@@ -99,10 +101,11 @@ public class QueryProfiler {
                 LOG.info("Running query: " + query.toString());
 
                 Span batchSpan = tracer.newTrace().name("batch-query");
-                batchSpan.tag("concepts", Integer.toString(numConcepts));
+                batchSpan.tag("scale", Integer.toString(numConcepts));
                 batchSpan.tag("query", query.toString());
                 batchSpan.tag("executionName", this.executionName);
                 batchSpan.tag("repetitions", Integer.toString(numRepeats));
+                batchSpan.tag("graphName", this.graphName);
                 if (msg != null) {
                     batchSpan.tag("extraTag", msg);
                 }

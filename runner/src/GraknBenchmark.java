@@ -83,7 +83,7 @@ public class GraknBenchmark {
         // generate a name for this specific execution of the benchmarking
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         String dateString = dateFormat.format(new Date());
-        this.executionName = String.join(" ", Arrays.asList(dateString, config.getConfigName(), config.executionName())).trim();
+        this.executionName = String.join(" ", Arrays.asList(dateString, config.graphName(), config.executionName())).trim();
     }
 
 
@@ -96,7 +96,7 @@ public class GraknBenchmark {
         Grakn client = new Grakn(new SimpleURI(config.graknUri()), true);
         Grakn.Session session = client.session(config.getKeyspace());
         SchemaManager.verifyEmptyKeyspace(session);
-        QueryProfiler queryProfiler = new QueryProfiler(session, executionName, config.getQueries());
+        QueryProfiler queryProfiler = new QueryProfiler(session, executionName, config.graphName(), config.getQueries());
         int repetitionsPerQuery = config.numQueryRepetitions();
 
         //TODO add check to make sure currentKeyspace does not exist, if it does throw exception

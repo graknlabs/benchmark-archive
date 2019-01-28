@@ -46,7 +46,7 @@ public class DataGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(DataGenerator.class);
 
     private final Grakn.Session session;
-    private final String executionName;
+    private final String graphName ;
     private final List<String> schemaDefinition;
     private int iteration;
     private Random rand;
@@ -57,7 +57,7 @@ public class DataGenerator {
 
     public DataGenerator(Grakn.Session session, BenchmarkConfiguration config, int randomSeed) {
         this.session = session;
-        this.executionName = config.getConfigName();
+        this.graphName = config.graphName();
         this.rand = new Random(randomSeed);
         this.iteration = 0;
         this.schemaDefinition = config.getGraqlSchema();
@@ -78,7 +78,7 @@ public class DataGenerator {
             LOG.info("Initialising ignite...");
             this.storage = new IgniteConceptIdStore(entityTypes, relationshipTypes, attributeTypes);
         }
-        this.dataStrategies = SchemaSpecificDataGeneratorFactory.getSpecificStrategy(this.executionName, this.rand, this.storage);
+        this.dataStrategies = SchemaSpecificDataGeneratorFactory.getSpecificStrategy(this.graphName, this.rand, this.storage);
     }
 
     public void generate(int graphScaleLimit) {

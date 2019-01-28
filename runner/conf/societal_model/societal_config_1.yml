@@ -1,4 +1,4 @@
-name: "societal_model"
+graphName: "societal_model"
 schema: "societal_model.gql"
 queries: "queries.yml"
 scales:
@@ -8,5 +8,5 @@ repeatsPerQuery: 0
 # concurrency:
 #   clients: 1
   # mixed:
-# replication: 1
+# replication:
 
