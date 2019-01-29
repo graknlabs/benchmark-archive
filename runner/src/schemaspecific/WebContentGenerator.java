@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+@Deprecated
 public class WebContentGenerator implements SchemaSpecificDataGenerator {
 
     private Random random;

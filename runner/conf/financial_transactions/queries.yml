@@ -1,6 +1,6 @@
 queries:
-  - match $x isa trader; get;             # expect to see this scale in the square of the number of relationships
+  - "match $x isa trader; get;"             # expect to see this scale in the square of the number of relationships
   # expect to see scale in out degree of name * number of name assuming QP starts at `name` label
-  - match $x has $n; $n isa name; get;
-  - match $r (agent: $agent); $r isa transaction; get $agent; # expect to see scale in role players * number of relationships
+  - "match $x has $n; $n isa name; get;"
+  - "match $r (agent: $agent); $r isa transaction; get $agent;" # expect to see scale in role players * number of relationships
 

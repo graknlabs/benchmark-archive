@@ -74,7 +74,6 @@ public class DataGenerator {
             HashSet<EntityType> entityTypes = SchemaManager.getTypesOfMetaType(tx, "entity");
             HashSet<RelationshipType> relationshipTypes = SchemaManager.getTypesOfMetaType(tx, "relationship");
             HashSet<AttributeType> attributeTypes = SchemaManager.getTypesOfMetaType(tx, "attribute");
-
             LOG.info("Initialising ignite...");
             this.storage = new IgniteConceptIdStore(entityTypes, relationshipTypes, attributeTypes);
         }
