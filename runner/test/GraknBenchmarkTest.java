@@ -23,14 +23,14 @@ public class GraknBenchmarkTest {
 
     @Test
     public void whenProvidingAbsolutePathToExistingConfig_benchmarkShouldStart() {
-        String[] args = new String[]{"--config", WEB_CONTENT_CONFIG_PATH.toAbsolutePath().toString()};
+        String[] args = new String[]{"--config", WEB_CONTENT_CONFIG_PATH.toAbsolutePath().toString(), "--execution-name", "grakn-benchmark-test"};
         CommandLine commandLine = BenchmarkArguments.parse(args);
         GraknBenchmark graknBenchmark = new GraknBenchmark(commandLine);
     }
 
     @Test
     public void whenProvidingRelativePathToExistingConfig_benchmarkShouldStart() {
-        String[] args = new String[]{"--config", "web_content_config_test.yml"};
+        String[] args = new String[]{"--config", "web_content_config_test.yml", "--execution-name", "grakn-benchmark-test"};
         System.setProperty("working.dir", WEB_CONTENT_CONFIG_PATH.getParent().toString());
         CommandLine commandLine = BenchmarkArguments.parse(args);
         GraknBenchmark graknBenchmark = new GraknBenchmark(commandLine);
@@ -38,7 +38,7 @@ public class GraknBenchmarkTest {
 
     @Test
     public void whenProvidingAbsolutePathToNonExistingConfig_throwException() {
-        String[] args = new String[]{"--config", "nonexistingpath"};
+        String[] args = new String[]{"--config", "nonexistingpath", "--execution-name", "grakn-benchmark-test"};
         CommandLine commandLine = BenchmarkArguments.parse(args);
         expectedException.expect(BootupException.class);
         expectedException.expectMessage("The provided config file [nonexistingpath] does not exist");
@@ -49,6 +49,13 @@ public class GraknBenchmarkTest {
     public void whenConfigurationArgumentNotProvided_throwException() {
         expectedException.expect(BootupException.class);
         expectedException.expectMessage("Missing required option: c");
-        GraknBenchmark graknBenchmark = new GraknBenchmark(BenchmarkArguments.parse(new String[] {}));
+        GraknBenchmark graknBenchmark = new GraknBenchmark(BenchmarkArguments.parse(new String[] {"--execution-name", "grakn-benchmark-test"}));
+    }
+
+    @Test
+    public void whenExecutionNameArgumentNotProvided_throwException() {
+        expectedException.expect(BootupException.class);
+        expectedException.expectMessage("Missing required option: n");
+        GraknBenchmark graknBenchmark = new GraknBenchmark(BenchmarkArguments.parse(new String[] {"--config", "web_content_config_test.yml"}));
     }
 }

@@ -6,6 +6,15 @@ from ZipkinESStorage import ZipkinESStorage
 from ExecutionSelector import ExecutionSelector
 from ExecutionVisualiser.ExecutionVisualiser import ExecutionVisualiser
 
+"""
+
+This dashboard is the first version produced to visualize our tracing results from Zipkin.
+The last expected compatible version of `benchmark` is ec2272bb2f614a424de4498e968e5b1a7497c32a
+After this, the structure of spans has changed (eg. no more `batchSpan`, change order query repetitions)
+
+
+"""
+
 
 class Dashboard(object):
     def __init__(self, max_interactive_graphs_per_execution=100):
@@ -93,7 +102,7 @@ class Dashboard(object):
         )
 
         layout = html.Div(children=[
-            html.H1("Grakn Benchmarking Dashboard"),
+            html.H1("Grakn Benchmark Dashboard"),
             html.Div(
                 className="container-fluid",
                 children=[

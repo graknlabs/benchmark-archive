@@ -48,7 +48,7 @@ Check if Elasticsearch is running by accessing http://localhost:9200 from the br
 In the Zipkin installation directory, do:
 
 ```
-$ STORAGE_TYPE=elasticsearch ES_HOSTS=http://localhost:9200 ES_INDEX="benchmarking" java -jar zipkin.jar
+$ STORAGE_TYPE=elasticsearch ES_HOSTS=http://localhost:9200 ES_INDEX="benchmark" java -jar zipkin.jar
 ```
 Check if Zipkin is running by accessing http://localhost:9411/zipkin/ from the browser.
 
@@ -68,7 +68,7 @@ The entry point to rebuild, generate, and name executions of config files is `ru
 
 Basic usage:
 
-`benchmark --config grakn-benchmark/src/main/resources/societal_config_1.yml --execution-name query-plan-mod-1 --keyspace benchmark --ignite-dir /Users/user/Documents/benchmarking-reqs/apache-ignite-fabric-2.6.0-bin/`
+`benchmark --config grakn-benchmark/src/main/resources/societal_config_1.yml --execution-name query-plan-mod-1 --keyspace benchmark` 
 
 Notes:
 
@@ -111,6 +111,10 @@ is present, and in the BUILD file this dependency is referenced.
 
 
 ### 3. Visualise Results In Benchmark-Dashboard
+
+NOTE: This dashboard is the first version produced to visualize our tracing results from Zipkin.
+The last expected compatible version of `benchmark` is ec2272bb2f614a424de4498e968e5b1a7497c32a
+After this, the structure of spans has changed (eg. no more `batchSpan`, change order query repetitions)
 
 The visualisation dashboard reads ElasticSearch and creates graphs via Dash and Plotly.
 

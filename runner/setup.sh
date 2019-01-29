@@ -70,7 +70,7 @@ done
 echo
 
 echo -n "Starting Zipkin"
-ES_HOSTS=http://localhost:9200 env ES_INDEX="benchmarking" java -jar $BENCHMARK_RUNNER_EXTERNAL_DEPS_DIR/zipkin.jar &
+ES_HOSTS=http://localhost:9200 env ES_INDEX="benchmark" java -jar $BENCHMARK_RUNNER_EXTERNAL_DEPS_DIR/zipkin.jar &
 zipkin_pid=$!
 until $(curl --output /dev/null --silent --head --fail localhost:9411); do
   echo -n "."

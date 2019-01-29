@@ -26,17 +26,17 @@ import java.util.List;
  */
 
 public class BenchmarkConfigurationFile {
-    private String name;
+    private String graphName;
     private String schema;
     private String queries;
     private List<Integer> scalesToProfile;
     private Integer repeatsPerQuery;
 
-    public void setName(String name) {
-        this.name = name;
+    public void setGraphName(String graphName) {
+        this.graphName = graphName;
     }
-    public String getName() {
-        return this.name;
+    public String getGraphName() {
+        return this.graphName;
     }
 
     public void setSchema(String schemaFile) {

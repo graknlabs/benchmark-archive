@@ -51,9 +51,12 @@ public class BenchmarkConfiguration {
     private String keyspace;
     private String graknUri;
     private String executionName;
+    private String graphName;
 
     public BenchmarkConfiguration(CommandLine arguments) {
         Path configFilePath = getConfigFilePath(arguments);
+
+        this.executionName = arguments.getOptionValue(EXECUTION_NAME_ARGUMENT);
 
         // Parse yaml file with generic configurations
         this.benchmarkConfigFile = parseConfigurationFile(configFilePath);
@@ -65,18 +68,16 @@ public class BenchmarkConfiguration {
         this.graqlSchema = parseGraqlSchema(configFilePath);
 
         // use given keyspace string if exists, otherwise use yaml file `name` tag
-        this.keyspace = arguments.hasOption(KEYSPACE_ARGUMENT) ? arguments.getOptionValue(KEYSPACE_ARGUMENT) : this.getConfigName();
+        this.keyspace = arguments.hasOption(KEYSPACE_ARGUMENT) ? arguments.getOptionValue(KEYSPACE_ARGUMENT) : this.graphName();
 
         this.graknUri = (arguments.hasOption(GRAKN_URI)) ? arguments.getOptionValue(GRAKN_URI) : DEFAULT_GRAKN_URI;
-
-        this.executionName = (arguments.hasOption(EXECUTION_NAME_ARGUMENT)) ? arguments.getOptionValue(EXECUTION_NAME_ARGUMENT) : "";
 
         // If --no-data-generation is specified, don't generate any data (work with existing keyspace)
         this.generateData = !(arguments.hasOption(NO_DATA_GENERATION_ARGUMENT));
     }
 
     public String getConfigName() {
-        return this.benchmarkConfigFile.getName();
+        return this.benchmarkConfigFile.getGraphName();
     }
 
     public String graknUri() {
@@ -86,6 +87,8 @@ public class BenchmarkConfiguration {
     public String executionName() {
         return executionName;
     }
+
+    public String graphName() { return this.benchmarkConfigFile.getGraphName(); }
 
     public Keyspace getKeyspace() {
         return Keyspace.of(this.keyspace);

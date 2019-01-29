@@ -3,7 +3,7 @@ import elasticsearch.helpers as helpers
 
 class ZipkinESStorage(object):
 
-    def __init__(self, indices="benchmarking:*"):
+    def __init__(self, indices="benchmark:*"):
         """ Create a connection to ES _and_ check that the required templates are in it """
         self.es = elasticsearch.Elasticsearch()
         self.indices = indices
