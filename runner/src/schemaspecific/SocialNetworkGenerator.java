@@ -149,7 +149,7 @@ public class SocialNetworkGenerator implements SchemaSpecificDataGenerator {
                 1.0,
                 new RelationshipStrategy(
                         "@has-name",
-                        new ScalingDiscreteGaussian(random, () -> this.getGraphScale(), 0.05, 0.001),
+                        new ScalingDiscreteGaussian(random, () -> this.getGraphScale(), 0.1, 0.03),
                         new HashSet<>(Arrays.asList(nameOwner, nameValue))
                 )
         );
