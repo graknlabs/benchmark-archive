@@ -93,7 +93,7 @@ class Dashboard(object):
         )
 
         layout = html.Div(children=[
-            html.H1("Grakn Benchmarking Dashboard"),
+            html.H1("Grakn Benchmark Dashboard"),
             html.Div(
                 className="container-fluid",
                 children=[
