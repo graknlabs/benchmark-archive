@@ -54,39 +54,8 @@ public class SchemaManager {
     }
 
     public static void initialiseKeyspace(Grakn.Session session, List<String> graqlSchemaQueries) {
-        clearKeyspace(session);
         try (Grakn.Transaction tx = session.transaction(GraknTxType.WRITE)) {
             tx.graql().parser().parseList(graqlSchemaQueries.stream().collect(Collectors.joining("\n"))).forEach(Query::execute);
-            tx.commit();
-        }
-    }
-
-    private static void clearKeyspace(Grakn.Session session) {
-        try (Grakn.Transaction tx = session.transaction(GraknTxType.WRITE)) {
-            // delete all attributes, relationships, entities from keyspace
-
-            QueryBuilder qb = tx.graql();
-            Var x = Graql.var().asUserDefined();  //TODO This needed to be asUserDefined or else getting error: ai.grakn.exception.GraqlQueryException: the variable $1528883020589004 is not in the query
-            Var y = Graql.var().asUserDefined();
-
-            // TODO Sporadically has errors, logged in bug #20200
-
-            // cannot use delete "thing", complains
-            qb.match(x.isa("attribute")).delete(x).execute();
-            qb.match(x.isa("relationship")).delete(x).execute();
-            qb.match(x.isa("entity")).delete(x).execute();
-
-            //
-//            qb.undefine(y.sub("thing")).execute(); // TODO undefine $y sub thing; doesn't work/isn't supported
-            // TODO undefine $y sub entity; also doesn't work, you need to be specific with undefine
-
-            List<ConceptMap> schema = qb.match(y.sub("thing")).get().execute();
-
-            for (ConceptMap element : schema) {
-                Var z = Graql.var().asUserDefined();
-                qb.undefine(z.id(element.get(y).id())).execute();
-            }
-
             tx.commit();
         }
     }

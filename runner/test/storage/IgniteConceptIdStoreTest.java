@@ -178,7 +178,7 @@ public class IgniteConceptIdStoreTest {
         // Check objects were added to the db
         Connection conn = DriverManager.getConnection("jdbc:ignite:thin://127.0.0.1/");
         try (Statement stmt = conn.createStatement()) {
-            try (ResultSet rs = stmt.executeQuery("SELECT * FROM " + this.entityTypeLabel)) {
+            try (ResultSet rs = stmt.executeQuery("SELECT * FROM " + this.entityTypeLabel + "_entity")) {
                 while (rs.next()) {
                     counter++;
                 }
