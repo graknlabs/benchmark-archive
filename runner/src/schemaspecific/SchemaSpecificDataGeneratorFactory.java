@@ -14,6 +14,8 @@ public class SchemaSpecificDataGeneratorFactory {
                 return new SocietalModelGenerator(random, storage);
             case "social_network":
                 return new SocialNetworkGenerator(random, storage);
+            case "road_network":
+                return new RoadNetworkGenerator(random, storage);
 //            case "societal_model":
 //                return new SocietalModelGenerator(random, storage);
 //            case "societal_model":
