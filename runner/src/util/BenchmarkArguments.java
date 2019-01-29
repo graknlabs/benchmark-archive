@@ -39,7 +39,13 @@ public class BenchmarkArguments {
                 .required(true)
                 .type(String.class)
                 .build();
-
+        Option executionNameOption = Option.builder("n")
+                .longOpt(EXECUTION_NAME_ARGUMENT)
+                .hasArg(true)
+                .required(true)
+                .desc("Name for specific execution, this label is passed through to the storage backend")
+                .type(String.class)
+                .build();
         Option graknAddressOption = Option.builder("u")
                 .longOpt(GRAKN_URI)
                 .hasArg(true)
@@ -60,13 +66,6 @@ public class BenchmarkArguments {
                 .required(false)
                 .desc("Disable data generation")
                 .type(Boolean.class)
-                .build();
-        Option executionNameOption = Option.builder("n")
-                .longOpt(EXECUTION_NAME_ARGUMENT)
-                .hasArg(true)
-                .required(false)
-                .desc("Name for specific execution of the config file")
-                .type(String.class)
                 .build();
         Option elasticsearchAddressOption = Option.builder("e")
                 .longOpt(ELASTIC_URI)

@@ -56,6 +56,8 @@ public class BenchmarkConfiguration {
     public BenchmarkConfiguration(CommandLine arguments) {
         Path configFilePath = getConfigFilePath(arguments);
 
+        this.executionName = arguments.getOptionValue(EXECUTION_NAME_ARGUMENT);
+
         // Parse yaml file with generic configurations
         this.benchmarkConfigFile = parseConfigurationFile(configFilePath);
 
@@ -69,8 +71,6 @@ public class BenchmarkConfiguration {
         this.keyspace = arguments.hasOption(KEYSPACE_ARGUMENT) ? arguments.getOptionValue(KEYSPACE_ARGUMENT) : this.graphName();
 
         this.graknUri = (arguments.hasOption(GRAKN_URI)) ? arguments.getOptionValue(GRAKN_URI) : DEFAULT_GRAKN_URI;
-
-        this.executionName = (arguments.hasOption(EXECUTION_NAME_ARGUMENT)) ? arguments.getOptionValue(EXECUTION_NAME_ARGUMENT) : "";
 
         // If --no-data-generation is specified, don't generate any data (work with existing keyspace)
         this.generateData = !(arguments.hasOption(NO_DATA_GENERATION_ARGUMENT));
