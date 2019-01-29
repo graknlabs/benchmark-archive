@@ -108,7 +108,7 @@ public class GraknBenchmark {
             }
         } else {
             int numConcepts = queryProfiler.aggregateCount();
-            queryProfiler.processStaticQueries(repetitionsPerQuery, numConcepts, "Preconfigured DB - no data gen");
+            queryProfiler.processStaticQueries(repetitionsPerQuery, numConcepts);
         }
 
         session.close();

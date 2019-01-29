@@ -112,6 +112,10 @@ is present, and in the BUILD file this dependency is referenced.
 
 ### 3. Visualise Results In Benchmark-Dashboard
 
+NOTE: This dashboard is the first version produced to visualize our tracing results from Zipkin.
+The last expected compatible version of `benchmark` is ec2272bb2f614a424de4498e968e5b1a7497c32a
+After this, the structure of spans has changed (eg. no more `batchSpan`, change order query repetitions)
+
 The visualisation dashboard reads ElasticSearch and creates graphs via Dash and Plotly.
 
 Getting it up and running requires `pipenv` and Python >=3.6.0
