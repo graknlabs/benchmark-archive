@@ -1,4 +1,4 @@
-name: "web_content"
+graphName: "web_content"
 schema: "web_content_schema.gql"
 queries: "queries.yml"
 scales:
