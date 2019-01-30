@@ -147,13 +147,13 @@ public class DataGenerator {
         int orphanEntities = this.storage.totalOrphanEntities();
         int orphanAttrs = this.storage.totalOrphanAttributes();
         int relDoubleCounts = this.storage.totalRelationshipsRolePlayersOverlap();
-        int relationships = this.storage.totalRelationships();
+//        int relationships = this.storage.totalRelationships();
 
-        double density = relationships/((double)graphScale * graphScale);
+//        double density = relationships/((double)graphScale * graphScale);
 
         // print info to console on one self-erasing line
         System.out.print("\r");
-        System.out.print(String.format("[%d]  Scale: %d\t(%d RP, %d EO, %d AO, %d DC)\t\tRelationships: %d\t\t Density: %f", this.iteration, graphScale, rolePlayers, orphanEntities, orphanAttrs, relDoubleCounts, relationships, density));
+//        System.out.print(String.format("[%d]  Scale: %d\t(%d RP, %d EO, %d AO, %d DC)\t\tRelationships: %d\t\t Density: %f", this.iteration, graphScale, rolePlayers, orphanEntities, orphanAttrs, relDoubleCounts, relationships, density));
         System.out.flush();
 
         // write to log verbosely in DEBUG that it doesn't overwrite
@@ -164,8 +164,8 @@ public class DataGenerator {
         LOG.debug(String.format("## %d entity orphans", orphanEntities));
         LOG.debug(String.format("## %d attribute orphans", orphanAttrs));
         LOG.debug(String.format("## %d Rel double counts", relDoubleCounts));
-        LOG.debug(String.format("## %d Relationships", relationships));
-        LOG.debug(String.format("## %f Density", density));
+//        LOG.debug(String.format("## %d Relationships", relationships));
+//        LOG.debug(String.format("## %f Density", density));
     }
 
 }

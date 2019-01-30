@@ -48,7 +48,6 @@ public class IgniteConceptIdStoreTest {
 
     private IgniteConceptIdStore store;
     private HashSet<String> typeLabelsSet;
-    private ArrayList<String> typeLabels;
     private ArrayList<ConceptId> conceptIds;
     private ArrayList<Concept> conceptMocks;
     private String entityTypeLabel;
@@ -223,16 +222,6 @@ public class IgniteConceptIdStoreTest {
     }
 
     @Test
-    public void whenRolePlayerIsAdded_countIsCorrect() {
-        for (Concept conceptMock : this.conceptMocks) {
-            this.store.addRolePlayer(conceptMock.asThing().id().toString());
-        }
-
-        int roleplayerCount = this.store.totalRolePlayers();
-        assertEquals(9, roleplayerCount);
-    }
-
-    @Test
     public void whenAllButOnePlayingRole_orphanEntitiesCorrect() {
         // add all concepts to store
         for (Concept conceptMock : this.conceptMocks) {
@@ -242,7 +231,8 @@ public class IgniteConceptIdStoreTest {
         // add 6 of 7 entities as role players too
         for (int i = 0 ; i < 6; i++) {
             Concept conceptMock = this.conceptMocks.get(i);
-            this.store.addRolePlayer(conceptMock.asThing().id().toString());
+            Thing thing = conceptMock.asThing();
+            this.store.addRolePlayer(thing.id().toString(), thing.type().label().toString(), relTypeLabel, "somerole");
         }
 
         int orphanEntities = this.store.totalOrphanEntities();
@@ -259,7 +249,8 @@ public class IgniteConceptIdStoreTest {
         // ad all but the attribute and relationship
         for (int i = 0 ; i < conceptMocks.size()-2; i++) {
             Concept conceptMock = this.conceptMocks.get(i);
-            this.store.addRolePlayer(conceptMock.asThing().id().toString());
+            Thing thing = conceptMock.asThing();
+            this.store.addRolePlayer(thing.id().toString(), thing.type().label().toString(), relTypeLabel,"somerole");
         }
 
         int orphanAttributes = this.store.totalOrphanAttributes();
@@ -276,7 +267,8 @@ public class IgniteConceptIdStoreTest {
         // add all but the relationship (last element)
         for (int i = 0 ; i < conceptMocks.size()-1; i++) {
             Concept conceptMock = this.conceptMocks.get(i);
-            this.store.addRolePlayer(conceptMock.asThing().id().toString());
+            Thing thing = conceptMock.asThing();
+            this.store.addRolePlayer(thing.id().toString(), thing.type().label().toString(), relTypeLabel, "somerole");
         }
 
         int relationshipDoubleCounts = this.store.totalRelationshipsRolePlayersOverlap();
@@ -293,7 +285,8 @@ public class IgniteConceptIdStoreTest {
         // add all as role players
         for (int i = 0 ; i < conceptMocks.size(); i++) {
             Concept conceptMock = this.conceptMocks.get(i);
-            this.store.addRolePlayer(conceptMock.asThing().id().toString());
+            Thing thing = conceptMock.asThing();
+            this.store.addRolePlayer(thing.id().toString(), thing.type().label().toString(), relTypeLabel, "somerole");
         }
 
         int relationshipDoubleCounts = this.store.totalRelationshipsRolePlayersOverlap();
@@ -306,7 +299,7 @@ public class IgniteConceptIdStoreTest {
             this.store.addConcept(conceptMock);
         }
         String typeLabel = "person"; // we have 7 mocked people
-        List<String> peopleNotPlayingRoles = this.store.getIdsNotPlayingRole(typeLabel, "friendship", "aRole");
+        List<String> peopleNotPlayingRoles = this.store.getIdsNotPlayingRole(typeLabel, relTypeLabel, "aRole");
         assertEquals(7, peopleNotPlayingRoles.size());
 
     }
