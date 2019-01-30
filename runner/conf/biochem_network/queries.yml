@@ -1,5 +1,5 @@
 queries:
   - "match $x isa enzyme; get;"
-  - "match $x has $n; $n isa name; get;"    # expect to see scale in out degree of name and number of names
-  - "match $r (agent: $agent); get $agent;" # expect to see scale in role players * number of relationships
+  - "match $x has $n; $n isa name; get;"
+  - "match $r (agent: $agent); get $agent;"
 

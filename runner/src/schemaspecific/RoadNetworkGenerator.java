@@ -41,7 +41,7 @@ public class RoadNetworkGenerator implements SchemaSpecificDataGenerator {
         buildStrategies();
         this.operationStrategies.add(1.0, entityStrategies);
         this.operationStrategies.add(1.2, relationshipStrategies);
-        this.operationStrategies.add(0.4, attributeStrategies);
+        this.operationStrategies.add(1.0, attributeStrategies);
     }
 
     private void buildStrategies() {
@@ -67,7 +67,7 @@ public class RoadNetworkGenerator implements SchemaSpecificDataGenerator {
                 1.0,
                 new AttributeStrategy<>(
                         "name",
-                        new FixedUniform(this.random,3, 7),
+                        new FixedUniform(this.random,10, 30),
                         new StreamProvider<>(nameStream)
                 )
         );
@@ -86,80 +86,76 @@ public class RoadNetworkGenerator implements SchemaSpecificDataGenerator {
 
         // TODO
 
-//        RolePlayerTypeStrategy unusedEndpointRoads = new RolePlayerTypeStrategy(
-//                "endpoint",
-//                "road",
-//                new FixedConstant(1),
-//                new CentralStreamProvider<>(
-//                    new NotInRelationshipConceptIdPicker(
-//                            random,
-//                            (IdStoreInterface) storage,
-//                           "road",
-//                           "intersection",
-//                           "endpoint"
-//                    )
-//                )
-//        );
-//        RolePlayerTypeStrategy anyEndpointRoads = new RolePlayerTypeStrategy(
-//                "endpoint",
-//                "road",
-//                new FixedUniform(random, 1, 5),
-//                new StreamProvider<>(
-//                        new FromIdStorageConceptIdPicker(random, (IdStoreInterface) storage, "road")
-//                )
-//        );
-//
-//        this.relationshipStrategies.add(
-//                1.0,
-//                new RelationshipStrategy(
-//                        "intersection",
-//                        new Fixed
-//                        new HashSet<>(Arrays.asList(friendRoleFiller))
-//                )
-//        );
-
-
-        // like
-        RolePlayerTypeStrategy likedPageRole = new RolePlayerTypeStrategy(
-                "liked",
-                "page",
+        RolePlayerTypeStrategy unusedEndpointRoads = new RolePlayerTypeStrategy(
+                "endpoint",
+                "road",
                 new FixedConstant(1),
-                new StreamProvider<>(new FromIdStorageConceptIdPicker(random, (IdStoreInterface) storage, "page"))
+                new CentralStreamProvider<>(
+                    new FixedUniform(random, 10, 40), // choose 10-40 roads not in relationships
+                    new NotInRelationshipConceptIdPicker(
+                            random,
+                            (IdStoreInterface) storage,
+                           "road",
+                           "intersection",
+                           "endpoint"
+                    )
+                )
         );
-        RolePlayerTypeStrategy likerPersonRole = new RolePlayerTypeStrategy(
-                "liker",
-                "person",
-                new FixedConstant(1),
-                new StreamProvider<>(new FromIdStorageConceptIdPicker(random, (IdStoreInterface) storage, "person"))
-        );
-        this.relationshipStrategies.add(
-                1.0,
-                new RelationshipStrategy(
-                        "like",
-                        new ScalingDiscreteGaussian(random, () -> this.getGraphScale(), 0.05, 0.001),
-                        new HashSet<>(Arrays.asList(likedPageRole, likerPersonRole))
+        RolePlayerTypeStrategy anyEndpointRoads = new RolePlayerTypeStrategy(
+                "endpoint",
+                "road",
+                new FixedUniform(random, 1, 5), // choose 1-5 other role players for an intersection
+                new StreamProvider<>(
+                        new FromIdStorageConceptIdPicker(random, (IdStoreInterface) storage, "road")
                 )
         );
 
+        this.relationshipStrategies.add(
+                1.0,
+                new RelationshipStrategy(
+                        "intersection",
+                        new FixedUniform(random, 20, 100),
+                        new HashSet<>(Arrays.asList(unusedEndpointRoads, anyEndpointRoads))
+                )
+        );
 
         // @has-name
+        // find some roads that do not have a name
         RolePlayerTypeStrategy nameOwner = new RolePlayerTypeStrategy(
                 "@has-name-owner",
-                "person",
+                "road",
                 new FixedConstant(1),
-                new StreamProvider<>(new FromIdStorageConceptIdPicker(random, (IdStoreInterface) storage, "person"))
+                new StreamProvider<> (
+                        new NotInRelationshipConceptIdPicker(
+                            random,
+                            (IdStoreInterface) storage,
+                            "road",
+                            "@has-name",
+                            "@has-name-owner"
+                    )
+                )
         );
+        // find some names not used and repeatedly connect a small set/one of them to the roads without names
         RolePlayerTypeStrategy nameValue = new RolePlayerTypeStrategy(
                 "@has-name-value",
                 "name",
                 new FixedConstant(1),
-                new StreamProvider<>(new FromIdStorageConceptIdPicker(random, (IdStoreInterface) storage, "name"))
+                new CentralStreamProvider<>(
+                        new FixedConstant(20), // take unused names
+                        new NotInRelationshipConceptIdPicker(
+                               random,
+                               (IdStoreInterface) storage,
+                               "name",
+                               "@has-name",
+                                "@has-name-owner"
+                        )
+                )
         );
         this.relationshipStrategies.add(
                 1.0,
                 new RelationshipStrategy(
                         "@has-name",
-                        new ScalingDiscreteGaussian(random, () -> this.getGraphScale(), 0.1, 0.03),
+                        new FixedUniform(random, 10, 40),
                         new HashSet<>(Arrays.asList(nameOwner, nameValue))
                 )
         );

@@ -141,6 +141,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
                         "company",
                         fixedConstant(1),
                         new CentralStreamProvider<>(
+                                fixedConstant(1),
                                 notInRelationshipConceptIdStoragePicker(
                                         "company",
                                         "employment",
@@ -166,6 +167,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
                         "university",
                         fixedConstant(1),
                         new CentralStreamProvider<>(
+                                fixedConstant(1),
                                 notInRelationshipConceptIdStoragePicker(
                                         "university",
                                         "employment",
@@ -190,7 +192,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
                         "group_",
                         "project",
                         fixedConstant(1),
-                        new CentralStreamProvider<>(fromIdStorageConceptIdPicker("project"))
+                        new CentralStreamProvider<>(fixedConstant(1), fromIdStorageConceptIdPicker("project"))
                 )
         ));
 
@@ -209,7 +211,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
                         "group_",
                         "team",
                         fixedConstant(1),
-                        new CentralStreamProvider<>(fromIdStorageConceptIdPicker("team"))
+                        new CentralStreamProvider<>(fixedConstant(1), fromIdStorageConceptIdPicker("team"))
                 )
         ));
 
@@ -276,7 +278,7 @@ public class WebContentGenerator implements SchemaSpecificDataGenerator {
                         "owner",
                         "department",
                         fixedConstant(1),  // pick 1 department for this n from fixedUniform(2,10)
-                        new CentralStreamProvider<>(fromIdStorageConceptIdPicker("department"))
+                        new CentralStreamProvider<>(fixedConstant(1),fromIdStorageConceptIdPicker("department"))
                 ),
                 rolePlayerTypeStrategy(
                         "property",

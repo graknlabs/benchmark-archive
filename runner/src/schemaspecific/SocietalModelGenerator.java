@@ -88,6 +88,7 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
                         "company",
                         new FixedConstant(1),
                         new CentralStreamProvider<>(
+                                new FixedConstant(1),
                                 new NotInRelationshipConceptIdStream(
                                         "employment",
                                         "employer",

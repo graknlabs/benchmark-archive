@@ -1,7 +1,7 @@
-queries.yml
+queries:
   # expect to see this scale linearly with scale
   - "match $x isa road; get;"
   # expect to see scale in out degree of name (increasing increments) and number of names (fixed increments)
-  - "match $x has $n; $n isa name; get;"
+  - "match $x has name $n; get;"
   # expect to see scale in role player (upper bounded) * number of relationships (fixed increments)
-  - "match $r (agent: $endpoint); get $endpoint;"
+  - "match $r (endpoint: $endpoint); get $endpoint;"
