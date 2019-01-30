@@ -29,13 +29,13 @@ distribution(
         "//runner:benchmark": "benchmark",
         "//runner:conf/road_network/queries.yml": "conf/road_network/queries.yml",
         "//runner:conf/road_network/road_config.yml": "conf/road_network/road_config.yml",
-        "//runner:conf/road_network/road_network.gql": "conf/road_network/road_network_schema.gql",
+        "//runner:conf/road_network/road_network.gql": "conf/road_network/road_network.gql",
 
-        "//runner:conf/road_network/queries.yml": "conf/road_network/queries.yml",
-        "//runner:conf/road_network/road_config.yml": "conf/road_network/road_config.yml",
-        "//runner:conf/road_network/road_network.gql": "conf/road_network/road_network_schema.gql",
+        "//runner:conf/social_network/queries.yml": "conf/social_network/queries.yml",
+        "//runner:conf/social_network/social_network_config.yml": "conf/social_network/social_network_config.yml",
+        "//runner:conf/social_network/social_network.gql": "conf/social_network/social_network.gql",
         "//runner:logback": "conf/logback.xml",
-        
+
         # External dependencies: Elasticsearch and Zipkin
         "//runner:setup.sh": "external-dependencies/setup.sh",
         "@external-dependencies-zipkin//file": "external-dependencies/zipkin.jar",
