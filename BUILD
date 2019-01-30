@@ -27,12 +27,13 @@ distribution(
     },
     additional_files = {
         "//runner:benchmark": "benchmark",
-        "//runner:conf/societal_model/queries.yml": "conf/societal_model/queries.yml",
-        "//runner:conf/societal_model/societal_config_1.yml": "conf/societal_model/societal_config_1.yml",
-        "//runner:conf/societal_model/societal_model.gql": "conf/societal_model/societal_model.gql",
-        "//runner:conf/web_content/queries.yml": "conf/web_content/queries.yml",
-        "//runner:conf/web_content/web_content_config.yml": "conf/web_content/web_content_config.yml",
-        "//runner:conf/web_content/web_content_schema.gql": "conf/web_content/web_content_schema.gql",
+        "//runner:conf/road_network/queries.yml": "conf/road_network/queries.yml",
+        "//runner:conf/road_network/road_config.yml": "conf/road_network/road_config.yml",
+        "//runner:conf/road_network/road_network.gql": "conf/road_network/road_network_schema.gql",
+
+        "//runner:conf/road_network/queries.yml": "conf/road_network/queries.yml",
+        "//runner:conf/road_network/road_config.yml": "conf/road_network/road_config.yml",
+        "//runner:conf/road_network/road_network.gql": "conf/road_network/road_network_schema.gql",
         "//runner:logback": "conf/logback.xml",
         
         # External dependencies: Elasticsearch and Zipkin
