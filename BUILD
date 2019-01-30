@@ -40,9 +40,5 @@ distribution(
         "@external-dependencies-zipkin//file": "external-dependencies/zipkin.jar",
         "@external-dependencies-elasticsearch//file": "external-dependencies/elasticsearch.zip"
     },
-    empty_directories = [
-        "data/logs",
-        "data/data"
-    ],
     output_filename = "benchmark",
 )

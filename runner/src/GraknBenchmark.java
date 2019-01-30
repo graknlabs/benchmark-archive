@@ -59,7 +59,7 @@ public class GraknBenchmark {
             // Parse the configuration for the benchmark
             CommandLine arguments = BenchmarkArguments.parse(args);
 
-            ElasticSearchManager.init(arguments);
+            ElasticSearchManager.putIndexTemplate(arguments);
             GraknBenchmark benchmark = new GraknBenchmark(arguments);
             benchmark.start();
         } catch (Exception e) {
