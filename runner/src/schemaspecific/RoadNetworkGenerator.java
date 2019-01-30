@@ -77,15 +77,6 @@ public class RoadNetworkGenerator implements SchemaSpecificDataGenerator {
         Relationships
          */
 
-
-        // intersection
-        // TODO what we want here is to repeat 5-10 roads not initially in a relationship
-        // and use these to connect to to some number of other roads via intersections
-        // ie. repeat those 5-10 roads that were initially not in a relationship until number of
-        // relationships created is exhausted
-
-        // TODO
-
         RolePlayerTypeStrategy unusedEndpointRoads = new RolePlayerTypeStrategy(
                 "endpoint",
                 "road",
