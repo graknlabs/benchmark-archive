@@ -77,7 +77,6 @@ public class QueryProfiler {
     }
 
     void processQueries(Stream<Query> queryStream, int repetitions, int numConcepts) throws Exception {
-
         try (Grakn.Transaction tx = session.transaction(GraknTxType.WRITE)) {
             Tracer tracer = Tracing.currentTracer();
 
@@ -88,7 +87,8 @@ public class QueryProfiler {
                 for (Query rawQuery : queries) {
                     Query query = rawQuery.withTx(tx);
 
-                    LOG.info("Running query iteration " + rep + ": " + query.toString());
+                    this.eraselinePrint(String.format("Profiling... (repetition %d/%d):\t%s", rep+1, repetitions, query.toString()));
+                    LOG.info("Profiling... repetition " + rep + ": " + query.toString());
                     Span querySpan = tracer.newTrace().name("query");
                     querySpan.tag("scale", Integer.toString(numConcepts));
                     querySpan.tag("query", query.toString());
@@ -114,5 +114,11 @@ public class QueryProfiler {
             // wait for out-of-band reporting to complete
             Thread.sleep(1500);
         }
+        System.out.print("\n\n");
+    }
+
+    private void eraselinePrint(String msg) {
+        System.out.print("\r");
+        System.out.print(msg);
     }
 }

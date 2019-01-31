@@ -668,7 +668,7 @@ public class IgniteConceptIdStore implements IdStoreInterface {
     }
 
     /**
-     * Double counting between relationships and relationships also playing roles
+     * Double counting between relationships and relationships also playing roles (including implicit and explicit rels)
      * = Set(All relationship ids) intersect Set(role players)
      * @return
      */

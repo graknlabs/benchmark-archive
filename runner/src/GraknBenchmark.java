@@ -98,7 +98,7 @@ public class GraknBenchmark {
 
             List<Integer> numConceptsInRun = config.scalesToProfile();
             for (int numConcepts : numConceptsInRun) {
-                LOG.info("Running queries with " + numConcepts + " concepts");
+                LOG.info("Generating graph to scale... " + numConcepts);
                 dataGenerator.generate(numConcepts);
                 queryProfiler.processStaticQueries(repetitionsPerQuery, numConcepts);
             }
