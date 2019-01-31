@@ -173,13 +173,13 @@ public class DataGenerator {
 
         // print info to console on one self-erasing line
         System.out.print("\r");
-        System.out.print(String.format("[%d]  Scale: %d\t(%f Deg_Cin, %f Deg_Rout, %f Deg_Aout)\t(%d, %d, %d) Entity/Rel/Attr \t (%d EO, %d AO) \t %f density",
-                this.iteration, graphScale, meanInDegree, meanRolePlayersPerRelationship, meanAttributeOwners,
+        System.out.print(String.format("[%d] %s Scale: %d\t(%f Deg_Cin, %f Deg_Rout, %f Deg_Aout)\t(%d, %d, %d) Entity/Rel/Attr \t (%d EO, %d AO) \t %f density",
+                this.iteration, this.graphName, graphScale, meanInDegree, meanRolePlayersPerRelationship, meanAttributeOwners,
                 entities, explicitRelationships, attributes,
                 orphanEntities, orphanAttrs, density));
 
         // write to log verbosely in DEBUG that it doesn't overwrite
-        LOG.debug(String.format("----- Iteration %d ----- ", this.iteration));
+        LOG.debug(String.format("----- Iteration %d [%s] ----- ", this.iteration, this.graphName));
         LOG.debug(String.format(">> Generating instances of concept type \"%s\"", generatedTypeLabel));
         LOG.debug(String.format(">> %d - Scale", graphScale));
         LOG.debug(String.format(">> %d, %d, %d - entity, explicit relationships, attributes", entities, explicitRelationships, attributes));
