@@ -387,15 +387,13 @@ public class IgniteConceptIdStore implements IdStoreInterface {
         try (Statement stmt = conn.createStatement()) {
             String checkExists = "SELECT id FROM roleplayers WHERE id = '" + conceptId + "'";
             try (ResultSet rs = stmt.executeQuery(checkExists)) {
-                if (rs.next()) {
-                    // if we have any rows matching this ID, skip
-                    return;
+                if (!rs.next()) {
+                    String addRolePlayer = "INSERT INTO roleplayers (id, ) VALUES ('"+conceptId+"')";
+                    stmt.executeUpdate(addRolePlayer);
                 }
             } catch (SQLException e) {
                 LOG.trace(e.getMessage(), e);
             }
-            String addRolePlayer = "INSERT INTO roleplayers (id, ) VALUES ('"+conceptId+"')";
-            stmt.executeUpdate(addRolePlayer);
         } catch (SQLException e) {
             LOG.trace(e.getMessage(), e);
         }
