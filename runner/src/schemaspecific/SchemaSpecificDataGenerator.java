@@ -11,9 +11,9 @@ public interface SchemaSpecificDataGenerator {
     ConceptStore getConceptStore();
     default int getGraphScale() {
         ConceptStore storage = getConceptStore();
-        int rolePlayers = storage.totalRolePlayers();
-        int orphanEntities = storage.totalOrphanEntities();
-        int orphanAttributes = storage.totalOrphanAttributes();
-        return rolePlayers + orphanAttributes + orphanEntities;
+        int entities = storage.totalEntities();
+        int attributes = storage.totalAttributes();
+        int relationships = storage.totalExplicitRelationships();
+        return entities + attributes + relationships;
     }
 }

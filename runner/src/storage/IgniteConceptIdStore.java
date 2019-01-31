@@ -47,6 +47,7 @@ public class IgniteConceptIdStore implements IdStoreInterface {
 
     private HashSet<String> entityTypeLabels;
     private HashSet<String> relationshipTypeLabels;
+    private HashSet<String> explicitRelationshipTypeLabels;
     private HashMap<java.lang.String, AttributeType.DataType<?>> attributeTypeLabels; // typeLabel, datatype
     private HashMap<String, String> labelToSqlName;
 
@@ -54,6 +55,12 @@ public class IgniteConceptIdStore implements IdStoreInterface {
     private final String cachingMethod = "REPLICATED";
     private final int ID_INDEX = 1;
     private final int VALUE_INDEX = 2;
+
+    // store a counter for number of role players because the ignite tables de-duplicate IDs that play multiple roles
+    // total is implicit + explicit role players
+    private int totalRolePlayers = 0;
+    // separately count only roles that are in explicit relationships
+    private int totalExplicitRolePlayers = 0;
 
     public static final Map<AttributeType.DataType<?>, String> DATATYPE_MAPPING;
     static {
@@ -82,13 +89,16 @@ public class IgniteConceptIdStore implements IdStoreInterface {
                                    Set<RelationshipType> relationshipTypes,
                                    Set<AttributeType> attributeTypes) {
         this.entityTypeLabels = this.getTypeLabels(entityTypes);
-        this.relationshipTypeLabels = this.getTypeLabels(relationshipTypes);
+        this.explicitRelationshipTypeLabels = this.getTypeLabels(relationshipTypes);
         this.attributeTypeLabels = this.getAttributeTypeLabels(attributeTypes);
+
+        this.relationshipTypeLabels = this.getTypeLabels(relationshipTypes);
         // add @has-[attribute] relationships as possible relationships
         // sanitize the @has-[attribute] to valid SQL strings
         for (String s : this.attributeTypeLabels.keySet()) {
             this.relationshipTypeLabels.add("@has-" + s);
         }
+
     }
 
     /**
@@ -329,29 +339,6 @@ public class IgniteConceptIdStore implements IdStoreInterface {
     }
 
     /**
-     * Add a role player without specifying the specific relationship & role it fills
-     * @param conceptId
-     */
-    public void addRolePlayer(String conceptId) {
-        // add the conceptID to the overall role players table
-        try (Statement stmt = conn.createStatement()) {
-            String checkExists = "SELECT id FROM roleplayers WHERE id = '" + conceptId + "'";
-            try (ResultSet rs = stmt.executeQuery(checkExists)) {
-                if (rs.next()) {
-                    // if we have any rows matching this ID, skip
-                    return;
-                }
-            } catch (SQLException e) {
-                LOG.trace(e.getMessage(), e);
-            }
-            String addRolePlayer = "INSERT INTO roleplayers (id, ) VALUES ('"+conceptId+"')";
-            stmt.executeUpdate(addRolePlayer);
-        } catch (SQLException e) {
-            LOG.trace(e.getMessage(), e);
-        }
-    }
-
-    /**
      * Add a role player, and specify its type, the relationship, and role it fills
      * This will track
      * @param conceptId
@@ -360,13 +347,15 @@ public class IgniteConceptIdStore implements IdStoreInterface {
      * @param role
      */
     public void addRolePlayer(String conceptId, String conceptType, String relationshipType, String role) {
-        addRolePlayer(conceptId);
-        addRolePlayerForConcept(conceptId, conceptType, relationshipType, role);
-    }
 
-    private void addRolePlayerForConcept(String conceptId, String type, String relationshipType, String role) {
+        // update in-memory accounting
+        totalRolePlayers += 1;
+        if (!relationshipType.startsWith("@")) {
+            totalExplicitRolePlayers += 1;
+        }
+
         // add the role to this concept ID's row/column for this relationship
-        String sqlTypeTable = this.labelToSqlName.get(type);
+        String sqlTypeTable = this.labelToSqlName.get(conceptType);
         String sqlRelationship = this.labelToSqlName.get(relationshipType);
         String sqlRole = sanitizeString(role);
 
@@ -389,6 +378,21 @@ public class IgniteConceptIdStore implements IdStoreInterface {
                         " SET " + sqlRelationship + " = '" + currentRoles + "'" +
                         " WHERE id = '" + conceptId + "'";
                 stmt.executeUpdate(setCurrentRolesSql);
+            }
+        } catch (SQLException e) {
+            LOG.trace(e.getMessage(), e);
+        }
+
+        // add the conceptID to the overall role players table
+        try (Statement stmt = conn.createStatement()) {
+            String checkExists = "SELECT id FROM roleplayers WHERE id = '" + conceptId + "'";
+            try (ResultSet rs = stmt.executeQuery(checkExists)) {
+                if (!rs.next()) {
+                    String addRolePlayer = "INSERT INTO roleplayers (id, ) VALUES ('"+conceptId+"')";
+                    stmt.executeUpdate(addRolePlayer);
+                }
+            } catch (SQLException e) {
+                LOG.trace(e.getMessage(), e);
             }
         } catch (SQLException e) {
             LOG.trace(e.getMessage(), e);
@@ -582,17 +586,51 @@ public class IgniteConceptIdStore implements IdStoreInterface {
     }
 
     @Override
-    public int totalRelationships() {
+    public int totalExplicitRelationships() {
         int total = 0;
-        for (String relationshipType : this.relationshipTypeLabels) {
+        for (String relationshipType : this.explicitRelationshipTypeLabels) {
             total += getConceptCount(relationshipType);
         }
         return total;
     }
 
     @Override
+    public int totalEntities() {
+        int total = 0;
+        for (String entityType : this.entityTypeLabels) {
+            total += getConceptCount(entityType);
+        }
+        return total;
+    }
+
+    @Override
+    public int totalAttributes() {
+        int total = 0;
+        for (String attributeType : this.attributeTypeLabels.keySet()) {
+            total += getConceptCount(attributeType);
+        }
+        return total;
+    }
+
+
+    /**
+     * Return total count of number of role players (repeat counts of the same concept playing multiples roles is
+     * counted repeatedly, not once)
+     * @return
+     */
+    @Override
     public int totalRolePlayers() {
-        return getCountInTable("roleplayers");
+        return totalRolePlayers;
+    }
+
+    /**
+     * Return total count of number of role players (repeat counts of the same concept playing multiples roles is
+     * counted repeatedly, not once)
+     * @return
+     */
+    @Override
+    public int totalExplicitRolePlayers() {
+        return totalExplicitRolePlayers;
     }
 
     /**
@@ -628,7 +666,7 @@ public class IgniteConceptIdStore implements IdStoreInterface {
     }
 
     /**
-     * Double counting between relationships and relationships also playing roles
+     * Double counting between relationships and relationships also playing roles (including implicit and explicit rels)
      * = Set(All relationship ids) intersect Set(role players)
      * @return
      */
