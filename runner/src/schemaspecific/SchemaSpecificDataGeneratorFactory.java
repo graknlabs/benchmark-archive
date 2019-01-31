@@ -16,6 +16,10 @@ public class SchemaSpecificDataGeneratorFactory {
                 return new SocialNetworkGenerator(random, storage);
             case "road_network":
                 return new RoadNetworkGenerator(random, storage);
+            case "biochem_network":
+                return new BiochemNetworkGenerator(random, storage);
+            case "financial":
+                return new FinancialTransactionsGenerator(random, storage);
             default:
                 throw new RuntimeException("Unknown specific schema generation strategy name: " + name);
         }

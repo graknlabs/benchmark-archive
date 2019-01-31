@@ -26,21 +26,21 @@ import java.util.stream.Stream;
 /**
  *
  */
-public class IntegerStreamGenerator implements StreamInterface<Integer>{
-    private Random rand;
+public class CountingStreamGenerator implements StreamInterface<Integer>{
+    private int n;
 
-    public IntegerStreamGenerator(Random rand, int lowerBound, int upperBound) {
-        this.rand = rand;
-        this.lowerBound = lowerBound;
-        this.upperBound = upperBound;
+    public CountingStreamGenerator(int start) {
+        this.n = start - 1;
     }
 
-    private int lowerBound;
-    private int upperBound;
+    private int next() {
+        this.n++;
+        return this.n;
+    }
 
     @Override
     public Stream<Integer> getStream(Grakn.Transaction tx) {
-        return rand.ints(lowerBound, upperBound + 1).boxed();
+        return Stream.generate( () -> next());
     }
 
     @Override

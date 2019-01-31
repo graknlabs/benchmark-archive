@@ -2,17 +2,12 @@ define
 
     # fixed increments
     quantity sub attribute datatype long;
-    #name sub attribute datatype string;
+    # name sub attribute datatype string;
 
     # don't instantiate this
     trader sub entity,
-        plays transactor,
-        has name;
-
-    # scaling increments => graph dominated by entities
-    company sub trader;
-    # scaling increments => graph dominated by entities
-    person sub trader;
+        plays transactor;
+#        has name;
 
     #government sub entity,
     #    plays taxor,
@@ -21,7 +16,8 @@ define
 
     # fixed increments
     transaction sub relationship,
-        relates transactor; # scaling increments => most connections are via role players to few relationships
+        relates transactor,  # scaling increments => most connections are via role players to few relationships
+        has quantity;
     #    plays taxed;
 
 

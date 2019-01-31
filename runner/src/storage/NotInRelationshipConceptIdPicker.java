@@ -14,12 +14,12 @@ public class NotInRelationshipConceptIdPicker extends FromIdStoragePicker<Concep
 
     public NotInRelationshipConceptIdPicker(Random rand,
                                             IdStoreInterface conceptStore,
-                                            String typeLabel,
+                                            String rolePlayerTypeLabel,
                                             String relationshipLabel,
                                             String roleLabel
                                             ) {
-        super(rand, conceptStore, typeLabel);
-        this.typeLabel = typeLabel;
+        super(rand, conceptStore, rolePlayerTypeLabel);
+        this.typeLabel = rolePlayerTypeLabel;
         this.relationshipLabel = relationshipLabel;
         this.roleLabel = roleLabel;
 

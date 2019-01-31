@@ -3,6 +3,8 @@ schema: "financial.gql"
 queries: "queries.yml"
 scales:
 - 500
+- 750
+- 1000
 repeatsPerQuery: 1
   # TODO
   # concurrency:

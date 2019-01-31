@@ -3,13 +3,11 @@ package grakn.benchmark.runner.schemaspecific;
 import grakn.benchmark.runner.probdensity.*;
 import grakn.benchmark.runner.pick.CentralStreamProvider;
 import grakn.benchmark.runner.storage.FromIdStorageConceptIdPicker;
-import grakn.benchmark.runner.pick.IntegerStreamGenerator;
 import grakn.benchmark.runner.pick.NotInRelationshipConceptIdStream;
 import grakn.benchmark.runner.pick.PickableCollectionValuePicker;
 import grakn.benchmark.runner.pick.StreamProvider;
 import grakn.benchmark.runner.storage.ConceptStore;
 import grakn.benchmark.runner.storage.IdStoreInterface;
-import grakn.benchmark.runner.strategy.AttributeOwnerTypeStrategy;
 import grakn.benchmark.runner.strategy.AttributeStrategy;
 import grakn.benchmark.runner.strategy.EntityStrategy;
 import grakn.benchmark.runner.strategy.RelationshipStrategy;
@@ -216,7 +214,7 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
 //                                )
 //                        ),
 //                        new StreamProvider<>(
-//                                new IntegerStreamGenerator(random, 0, 100)
+//                                new CountingStreamGenerator(random, 0, 100)
 //                        )
 //                )
 //        );
@@ -237,7 +235,7 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
 //                                )
 //                        ),
 //                        new StreamProvider<>(
-//                                new IntegerStreamGenerator(random, 0, 1000000)
+//                                new CountingStreamGenerator(random, 0, 1000000)
 //                        )
 //                )
 //        );
@@ -258,7 +256,7 @@ public class SocietalModelGenerator implements SchemaSpecificDataGenerator {
 //                                )
 //                        ),
 //                        new StreamProvider<>(
-//                                new IntegerStreamGenerator(random, 1, 10)
+//                                new CountingStreamGenerator(random, 1, 10)
 //                        )
 //                )
 //        );

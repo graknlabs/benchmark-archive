@@ -30,8 +30,8 @@ public class RolePlayerTypeStrategy extends TypeStrategy implements HasPicker {
     private final String roleLabel;
     private StreamProviderInterface<ConceptId> conceptPicker;
 
-    public RolePlayerTypeStrategy(String roleLabel, String typeLabel, ProbabilityDensityFunction numInstancesPDF, StreamProviderInterface<ConceptId> conceptPicker) {
-        super(typeLabel, numInstancesPDF);
+    public RolePlayerTypeStrategy(String roleLabel, String relationshipLabel, ProbabilityDensityFunction numInstancesPDF, StreamProviderInterface<ConceptId> conceptPicker) {
+        super(relationshipLabel, numInstancesPDF);
         this.roleLabel = roleLabel;
         this.conceptPicker = conceptPicker;
     }

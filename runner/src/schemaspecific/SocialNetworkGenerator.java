@@ -10,7 +10,6 @@ import grakn.benchmark.runner.storage.ConceptStore;
 import grakn.benchmark.runner.storage.FromIdStorageConceptIdPicker;
 import grakn.benchmark.runner.storage.IdStoreInterface;
 import grakn.benchmark.runner.strategy.*;
-import org.apache.ignite.IgniteDataStreamer;
 
 import java.util.Arrays;
 import java.util.HashSet;
