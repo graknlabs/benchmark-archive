@@ -40,7 +40,7 @@ public class RoadNetworkGenerator implements SchemaSpecificDataGenerator {
     private void buildGenerator() {
         buildStrategies();
         this.operationStrategies.add(1.0, entityStrategies);
-        this.operationStrategies.add(1.2, relationshipStrategies);
+        this.operationStrategies.add(1.25, relationshipStrategies);
         this.operationStrategies.add(1.0, attributeStrategies);
     }
 
@@ -54,7 +54,8 @@ public class RoadNetworkGenerator implements SchemaSpecificDataGenerator {
                 1.0,
                 new EntityStrategy(
                         "road",
-                        new FixedUniform(this.random, 10, 40))
+                        new FixedUniform(this.random, 10, 40)
+                )
         );
 
         /*
@@ -79,7 +80,7 @@ public class RoadNetworkGenerator implements SchemaSpecificDataGenerator {
 
         RolePlayerTypeStrategy unusedEndpointRoads = new RolePlayerTypeStrategy(
                 "endpoint",
-                "road",
+                "intersection",
                 new FixedConstant(1),
                 new CentralStreamProvider<>(
                     new FixedUniform(random, 10, 40), // choose 10-40 roads not in relationships
@@ -94,7 +95,7 @@ public class RoadNetworkGenerator implements SchemaSpecificDataGenerator {
         );
         RolePlayerTypeStrategy anyEndpointRoads = new RolePlayerTypeStrategy(
                 "endpoint",
-                "road",
+                "intersection",
                 new FixedUniform(random, 1, 5), // choose 1-5 other role players for an intersection
                 new StreamProvider<>(
                         new FromIdStorageConceptIdPicker(random, (IdStoreInterface) storage, "road")
@@ -111,10 +112,10 @@ public class RoadNetworkGenerator implements SchemaSpecificDataGenerator {
         );
 
         // @has-name
-        // find some roads that do not have a name
+        // find some roads that do not have a name and connect them
         RolePlayerTypeStrategy nameOwner = new RolePlayerTypeStrategy(
                 "@has-name-owner",
-                "road",
+                "@has-name",
                 new FixedConstant(1),
                 new StreamProvider<> (
                         new NotInRelationshipConceptIdPicker(
@@ -129,16 +130,16 @@ public class RoadNetworkGenerator implements SchemaSpecificDataGenerator {
         // find some names not used and repeatedly connect a small set/one of them to the roads without names
         RolePlayerTypeStrategy nameValue = new RolePlayerTypeStrategy(
                 "@has-name-value",
-                "name",
+                "@has-name",
                 new FixedConstant(1),
                 new CentralStreamProvider<>(
-                        new FixedConstant(20), // take unused names
+                        new FixedConstant(60), // take unused names
                         new NotInRelationshipConceptIdPicker(
                                random,
                                (IdStoreInterface) storage,
                                "name",
                                "@has-name",
-                                "@has-name-owner"
+                                "@has-name-value"
                         )
                 )
         );
@@ -146,7 +147,7 @@ public class RoadNetworkGenerator implements SchemaSpecificDataGenerator {
                 1.0,
                 new RelationshipStrategy(
                         "@has-name",
-                        new FixedUniform(random, 10, 40),
+                        new FixedConstant(60),
                         new HashSet<>(Arrays.asList(nameOwner, nameValue))
                 )
         );

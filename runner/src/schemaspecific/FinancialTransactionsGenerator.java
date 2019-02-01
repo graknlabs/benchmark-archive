@@ -57,7 +57,7 @@ public class FinancialTransactionsGenerator implements SchemaSpecificDataGenerat
                 1.0,
                 new EntityStrategy(
                         "trader",
-                        new ScalingDiscreteGaussian(this.random, () -> this.getGraphScale(), 0.05, 0.02))
+                        new ScalingDiscreteGaussian(this.random, () -> this.getGraphScale(), 0.02, 0.01))
         );
 
 
@@ -84,9 +84,9 @@ public class FinancialTransactionsGenerator implements SchemaSpecificDataGenerat
         // increasingly large interactions (increasing number of role players)
         RolePlayerTypeStrategy transactorRolePlayer = new RolePlayerTypeStrategy(
                 "transactor",
-                "trader",
+                "transaction",
                 // high variance in the number of role players
-                new ScalingDiscreteGaussian(random, () -> this.getGraphScale(), 0.01, 0.005),
+                new ScalingDiscreteGaussian(random, () -> this.getGraphScale(), 0.01, 0.01),
                 new StreamProvider<>(
                         new FromIdStorageConceptIdPicker(
                                 random,
@@ -98,7 +98,7 @@ public class FinancialTransactionsGenerator implements SchemaSpecificDataGenerat
                 1.0,
                 new RelationshipStrategy(
                         "transaction",
-                        new FixedDiscreteGaussian(this.random, 30, 10), // but fixed number of rels added per iter
+                        new FixedDiscreteGaussian(this.random, 50, 10), // but fixed number of rels added per iter
                         new HashSet<>(Arrays.asList(transactorRolePlayer))
                 )
         );

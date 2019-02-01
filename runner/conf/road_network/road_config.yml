@@ -3,10 +3,9 @@ schema: "road_network.gql"
 queries: "queries.yml"
 scales:
  - 2000
- - 4000
  - 6000
- - 8000
  - 10000
+ - 14000
 
 repeatsPerQuery: 1
   # TODO

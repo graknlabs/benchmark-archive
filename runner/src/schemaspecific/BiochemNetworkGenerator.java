@@ -89,7 +89,7 @@ public class BiochemNetworkGenerator implements SchemaSpecificDataGenerator {
         // increasingly large interactions (increasing number of role players)
         RolePlayerTypeStrategy agentRolePlayer = new RolePlayerTypeStrategy(
                 "agent",
-                "chemical",
+                "interaction",
                 // high variance in the number of role players
                 new ScalingDiscreteGaussian(random, () -> this.getGraphScale(), 0.01, 0.005),
                 new StreamProvider<>(
@@ -101,7 +101,7 @@ public class BiochemNetworkGenerator implements SchemaSpecificDataGenerator {
         );
         RolePlayerTypeStrategy catalystRolePlayer = new RolePlayerTypeStrategy(
                 "catalyst",
-                "enzyme",
+                "interaction",
                 // high variance in the number of role players
                 new ScalingDiscreteGaussian(random, () -> this.getGraphScale(), 0.001, 0.001),
                 new StreamProvider<>(

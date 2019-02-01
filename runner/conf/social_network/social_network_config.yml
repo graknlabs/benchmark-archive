@@ -2,11 +2,9 @@ graphName: "social_network"
 schema: "social_network.gql"
 queries: "queries.yml"
 scales:
- - 2000
  - 4000
- - 6000
- - 8000
  - 10000
+ - 20000
 repeatsPerQuery: 1
   # TODO
   # concurrency:

@@ -18,6 +18,8 @@
 
 package grakn.benchmark.runner.storage;
 
+import grakn.benchmark.runner.exception.DataGeneratorException;
+import grakn.benchmark.runner.generator.DataGenerator;
 import grakn.core.concept.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -347,6 +349,11 @@ public class IgniteConceptIdStore implements IdStoreInterface {
      * @param role
      */
     public void addRolePlayer(String conceptId, String conceptType, String relationshipType, String role) {
+
+        // sanity check for the user in case they entered something wrong in the data generator
+        if (!this.relationshipTypeLabels.contains(relationshipType)) {
+            throw new DataGeneratorException(relationshipType + " is not a valid relationship type. This is likely an error in the data generator definition");
+        }
 
         // update in-memory accounting
         totalRolePlayers += 1;

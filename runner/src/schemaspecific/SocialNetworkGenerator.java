@@ -41,7 +41,7 @@ public class SocialNetworkGenerator implements SchemaSpecificDataGenerator {
         buildStrategies();
         this.operationStrategies.add(1.0, entityStrategies);
         this.operationStrategies.add(1.2, relationshipStrategies);
-        this.operationStrategies.add(0.4, attributeStrategies);
+        this.operationStrategies.add(1.0, attributeStrategies);
     }
 
     private void buildStrategies() {
@@ -54,7 +54,7 @@ public class SocialNetworkGenerator implements SchemaSpecificDataGenerator {
                 1.0,
                 new EntityStrategy(
                         "person",
-                        new FixedDiscreteGaussian(this.random, 30, 10))
+                        new FixedDiscreteGaussian(this.random, 25, 10))
         );
 
         this.entityStrategies.add(
@@ -75,7 +75,7 @@ public class SocialNetworkGenerator implements SchemaSpecificDataGenerator {
                 1.0,
                 new AttributeStrategy<>(
                         "name",
-                        new FixedDiscreteGaussian(this.random,20, 7),
+                        new FixedDiscreteGaussian(this.random,18, 3),
                         new StreamProvider<>(nameStream)
                 )
         );
@@ -89,7 +89,7 @@ public class SocialNetworkGenerator implements SchemaSpecificDataGenerator {
         // friendship
         RolePlayerTypeStrategy friendRoleFiller = new RolePlayerTypeStrategy(
                 "friend",
-                "person",
+                "friendship",
                 new FixedConstant(2),
                 new StreamProvider<>(
                     new FromIdStorageConceptIdPicker(
@@ -102,7 +102,7 @@ public class SocialNetworkGenerator implements SchemaSpecificDataGenerator {
                 1.0,
                 new RelationshipStrategy(
                         "friendship",
-                        new ScalingBoundedZipf(this.random, ()->this.getGraphScale(), 0.5, 2.5),
+                        new ScalingBoundedZipf(this.random, ()->this.getGraphScale(), 0.5, 2.3),
                         new HashSet<>(Arrays.asList(friendRoleFiller))
                 )
         );
@@ -111,13 +111,13 @@ public class SocialNetworkGenerator implements SchemaSpecificDataGenerator {
         // like
         RolePlayerTypeStrategy likedPageRole = new RolePlayerTypeStrategy(
                 "liked",
-                "page",
+                "like",
                 new FixedConstant(1),
                 new StreamProvider<>(new FromIdStorageConceptIdPicker(random, (IdStoreInterface) storage, "page"))
         );
         RolePlayerTypeStrategy likerPersonRole = new RolePlayerTypeStrategy(
                 "liker",
-                "person",
+                "like",
                 new FixedConstant(1),
                 new StreamProvider<>(new FromIdStorageConceptIdPicker(random, (IdStoreInterface) storage, "person"))
         );
@@ -134,13 +134,13 @@ public class SocialNetworkGenerator implements SchemaSpecificDataGenerator {
         // @has-name
         RolePlayerTypeStrategy nameOwner = new RolePlayerTypeStrategy(
                 "@has-name-owner",
-                "person",
+                "@has-name",
                 new FixedConstant(1),
                 new StreamProvider<>(new FromIdStorageConceptIdPicker(random, (IdStoreInterface) storage, "person"))
         );
         RolePlayerTypeStrategy nameValue = new RolePlayerTypeStrategy(
                 "@has-name-value",
-                "name",
+                "@has-name",
                 new FixedConstant(1),
                 new StreamProvider<>(new FromIdStorageConceptIdPicker(random, (IdStoreInterface) storage, "name"))
         );
