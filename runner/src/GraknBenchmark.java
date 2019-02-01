@@ -18,11 +18,10 @@
 
 package grakn.benchmark.runner;
 
-import grakn.benchmark.runner.exception.BootupException;
 import grakn.benchmark.runner.exception.DataGeneratorException;
 import grakn.benchmark.runner.executor.QueryProfiler;
 import grakn.benchmark.runner.generator.DataGenerator;
-import grakn.benchmark.runner.storage.SchemaManager;
+import grakn.benchmark.runner.util.SchemaManager;
 import grakn.benchmark.runner.util.BenchmarkArguments;
 import grakn.benchmark.runner.util.BenchmarkConfiguration;
 import grakn.benchmark.runner.util.ElasticSearchManager;

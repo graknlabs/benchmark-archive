@@ -30,7 +30,7 @@ import grakn.core.graql.answer.ConceptMap;
 import grakn.benchmark.runner.storage.ConceptStore;
 import grakn.benchmark.runner.storage.IgniteConceptIdStore;
 import grakn.benchmark.runner.storage.InsertionAnalysis;
-import grakn.benchmark.runner.storage.SchemaManager;
+import grakn.benchmark.runner.util.SchemaManager;
 import grakn.benchmark.runner.strategy.RouletteWheel;
 import grakn.benchmark.runner.strategy.TypeStrategyInterface;
 import org.slf4j.Logger;

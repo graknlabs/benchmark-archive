@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.runner.storage;
+package grakn.benchmark.runner.util;
 
 import grakn.benchmark.runner.exception.BootupException;
 import grakn.core.GraknTxType;
@@ -70,16 +70,5 @@ public class SchemaManager {
                 .filter(type -> !type.isImplicit())
                 .filter(type -> !Schema.MetaSchema.isMetaLabel(type.label()))
                 .collect(Collectors.toCollection(HashSet::new));
-    }
-
-    public static boolean isTypeLabelAttribute(Grakn.Transaction tx, String label) {
-        SchemaConcept concept= tx.getSchemaConcept(Label.of(label));
-        return concept.isAttributeType();
-    }
-
-    public static Class getAttributeDatatype(Grakn.Transaction tx, String label) throws ClassNotFoundException {
-        SchemaConcept concept = tx.getSchemaConcept(Label.of(label));
-        String name = concept.asAttributeType().dataType().getName();
-        return Class.forName(name);
     }
 }
