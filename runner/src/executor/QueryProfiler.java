@@ -63,9 +63,12 @@ public class QueryProfiler {
 
     public void processStaticQueries(int numRepeats, int numConcepts) {
         try {
+            LOG.info("Starting processStaticQueries");
             this.processQueries(queries.stream(), numRepeats, numConcepts);
+            LOG.info("Finished processStaticQueries");
         } catch (Exception e) {
             e.printStackTrace();
+            LOG.info("LOL", e);
         }
     }
 
@@ -90,22 +93,33 @@ public class QueryProfiler {
                     this.eraselinePrint(String.format("Profiling... (repetition %d/%d):\t%s", rep+1, repetitions, query.toString()));
                     LOG.info("Profiling... repetition " + rep + ": " + query.toString());
                     Span querySpan = tracer.newTrace().name("query");
+                    LOG.info("New trace with `query` name created");
                     querySpan.tag("scale", Integer.toString(numConcepts));
+                    LOG.info("Tag `scale`");
                     querySpan.tag("query", query.toString());
+                    LOG.info("Tag `query`");
                     querySpan.tag("executionName", this.executionName);
+                    LOG.info("Tag `executionName`");
                     querySpan.tag("repetitions", Integer.toString(repetitions));
+                    LOG.info("Tag `repetitions`");
                     querySpan.tag("graphName", this.graphName);
+                    LOG.info("Tag `graphName`");
                     querySpan.tag("repetition", Integer.toString(rep));
+                    LOG.info("Tag `repetition`");
                     querySpan.start();
+                    LOG.info("Started query span");
 
                     // perform trace in thread-local storage on the client
                     try (Tracer.SpanInScope ws = tracer.withSpanInScope(querySpan)) {
                         List<Answer> answer = query.execute();
+                        LOG.info("executed query successfully");
                     } catch (RuntimeException | Error e) {
                         querySpan.error(e);
+                        LOG.info("same error should be logged again after LOL", e);
                         throw e;
                     } finally {
                         querySpan.finish();
+                        LOG.info("query span finished");
                     }
                 }
                 // wait for out-of-band reporting to complete
