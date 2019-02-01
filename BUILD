@@ -34,6 +34,15 @@ distribution(
         "//runner:conf/social_network/queries.yml": "conf/social_network/queries.yml",
         "//runner:conf/social_network/social_network_config.yml": "conf/social_network/social_network_config.yml",
         "//runner:conf/social_network/social_network.gql": "conf/social_network/social_network.gql",
+
+        "//runner:conf/financial_transactions/queries.yml": "conf/financial_transactions/queries.yml",
+        "//runner:conf/financial_transactions/financial_config.yml": "conf/financial_transactions/financial_config.yml",
+        "//runner:conf/financial_transactions/financial.gql": "conf/financial_transactions/financial.gql",
+
+        "//runner:conf/biochem_network/queries.yml": "conf/biochem_network/queries.yml",
+        "//runner:conf/biochem_network/biochem_config.yml": "conf/biochem_network/biochem_config.yml",
+        "//runner:conf/biochem_network/biochem_network.gql": "conf/biochem_network/biochem_network.gql",
+
         "//runner:logback": "conf/logback.xml",
 
         # External dependencies: Elasticsearch and Zipkin

@@ -2,12 +2,10 @@ graphName: "biochem_network"
 schema: "biochem_network.gql"
 queries: "queries.yml"
 scales:
- - 2000
- - 4000
- - 6000
- - 8000
- - 10000
-repeatsPerQuery: 1
+  - 4000
+  - 10000
+  - 20000
+repeatsPerQuery: 5
   # TODO
   # concurrency:
   #   clients: 1
