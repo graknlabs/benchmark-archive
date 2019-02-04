@@ -8,10 +8,6 @@ public class SchemaSpecificDataGeneratorFactory {
 
     public static SchemaSpecificDataGenerator getSpecificStrategy(String name, Random random, ConceptStore storage) {
         switch (name) {
-            case "web_content":
-                return new WebContentGenerator(random, storage);
-            case "societal_model":
-                return new SocietalModelGenerator(random, storage);
             case "social_network":
                 return new SocialNetworkGenerator(random, storage);
             case "road_network":
