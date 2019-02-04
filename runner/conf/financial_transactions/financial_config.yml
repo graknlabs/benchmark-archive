@@ -2,9 +2,9 @@ graphName: "financial"
 schema: "financial.gql"
 queries: "queries.yml"
 scales:
-  - 4000
-  - 10000
-  - 20000
+  - 400
+  - 1000
+  - 2000
 repeatsPerQuery: 5
   # TODO
   # concurrency:

@@ -2,10 +2,10 @@ graphName: "road_network"
 schema: "road_network.gql"
 queries: "queries.yml"
 scales:
+  - 400
+  - 1000
   - 2000
-  - 6000
-  - 10000
-  - 14000
+#  - 14000
 
 repeatsPerQuery: 5
   # TODO
