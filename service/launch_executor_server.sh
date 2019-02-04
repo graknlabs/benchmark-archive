@@ -49,7 +49,7 @@ THIS_IP=`curl -H "Metadata-Flavor: Google" http://169.254.169.254/computeMetadat
 
 # install tmux so we can detach and set script execution permissions
 echo "Initialising new instance..." | tee -a $STDOUT_LOG
-gcloud compute ssh ubuntu@$INSTANCE_NAME --zone=$ZONE --command='sudo apt-get install -y tmux && chmod +x ~/executor/execute.sh && mkdir -p ~/logs' > >(tee -a $STDOUT_LOG) 2> >(tee -a $STDERR_LOG >&2) 
+gcloud compute ssh ubuntu@$INSTANCE_NAME --zone=$ZONE --command='chmod +x ~/executor/execute.sh && mkdir -p ~/logs' > >(tee -a $STDOUT_LOG) 2> >(tee -a $STDERR_LOG >&2)
 
 # execute benchmark
 echo "Starting benchmark..." | tee -a $STDOUT_LOG
