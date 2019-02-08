@@ -25,7 +25,7 @@ import grakn.benchmark.profiler.generator.definition.DataGeneratorDefinition;
 import grakn.benchmark.profiler.generator.definition.DefinitionFactory;
 import grakn.benchmark.profiler.generator.storage.ConceptStorage;
 import grakn.benchmark.profiler.generator.storage.IgniteConceptStorage;
-import grakn.benchmark.profiler.generator.IgniteManager;
+import grakn.benchmark.profiler.generator.util.IgniteManager;
 import grakn.benchmark.profiler.util.SchemaManager;
 import grakn.benchmark.profiler.util.BenchmarkArguments;
 import grakn.benchmark.profiler.util.BenchmarkConfiguration;

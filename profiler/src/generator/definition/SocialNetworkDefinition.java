@@ -1,6 +1,6 @@
 package grakn.benchmark.profiler.generator.definition;
 
-import grakn.benchmark.profiler.generator.pick.RandomStringIterator;
+import grakn.benchmark.profiler.generator.provider.RandomStringProvider;
 import grakn.benchmark.profiler.generator.probdensity.FixedConstant;
 import grakn.benchmark.profiler.generator.probdensity.FixedDiscreteGaussian;
 import grakn.benchmark.profiler.generator.probdensity.ScalingBoundedZipf;
@@ -11,7 +11,7 @@ import grakn.benchmark.profiler.generator.strategy.AttributeStrategy;
 import grakn.benchmark.profiler.generator.strategy.EntityStrategy;
 import grakn.benchmark.profiler.generator.strategy.RelationshipStrategy;
 import grakn.benchmark.profiler.generator.strategy.RolePlayerTypeStrategy;
-import grakn.benchmark.profiler.generator.pick.WeightedPicker;
+import grakn.benchmark.profiler.generator.util.WeightedPicker;
 import grakn.benchmark.profiler.generator.strategy.TypeStrategy;
 
 import java.util.Arrays;
@@ -31,27 +31,26 @@ public class SocialNetworkDefinition extends DataGeneratorDefinition {
     public SocialNetworkDefinition(Random random, ConceptStorage storage) {
         this.random = random;
         this.storage = storage;
-
-        this.entityStrategies = new WeightedPicker<>(random);
-        this.relationshipStrategies = new WeightedPicker<>(random);
-        this.attributeStrategies = new WeightedPicker<>(random);
-        this.metaTypeStrategies = new WeightedPicker<>(random);
-
         buildGenerator();
     }
 
     private void buildGenerator() {
-        buildStrategies();
+        this.entityStrategies = new WeightedPicker<>(random);
+        this.relationshipStrategies = new WeightedPicker<>(random);
+        this.attributeStrategies = new WeightedPicker<>(random);
+
+        buildEntityStrategies();
+        buildAttributeStrategies();
+        buildExplicitRelationshipStrategies();
+        buildImplicitRelationshipStrategies();
+
+        this.metaTypeStrategies = new WeightedPicker<>(random);
         this.metaTypeStrategies.add(1.0, entityStrategies);
         this.metaTypeStrategies.add(1.2, relationshipStrategies);
         this.metaTypeStrategies.add(1.0, attributeStrategies);
     }
 
-    private void buildStrategies() {
-
-        /*
-        Entities
-         */
+    private void buildEntityStrategies() {
 
         this.entityStrategies.add(
                 1.0,
@@ -68,33 +67,28 @@ public class SocialNetworkDefinition extends DataGeneratorDefinition {
                 )
         );
 
-        /*
-        Attributes
-         */
+    }
 
-        RandomStringIterator nameStream = new RandomStringIterator(random, 6);
+    private void buildAttributeStrategies() {
+        RandomStringProvider nameStream = new RandomStringProvider(random, 6);
 
         this.attributeStrategies.add(
                 1.0,
                 new AttributeStrategy<>(
                         "name",
-                        new FixedDiscreteGaussian(this.random,18, 3),
+                        new FixedDiscreteGaussian(this.random, 18, 3),
                         nameStream
                 )
         );
+    }
 
-
-        /*
-        Relationships
-         */
-
+    private void  buildExplicitRelationshipStrategies() {
 
         // friendship
         RolePlayerTypeStrategy friendRoleFiller = new RolePlayerTypeStrategy(
                 "friend",
-                "friendship",
                 new FixedConstant(2),
-                    new ConceptIdStoragePicker(
+                new ConceptIdStoragePicker(
                         random,
                         this.storage,
                         "person")
@@ -103,22 +97,20 @@ public class SocialNetworkDefinition extends DataGeneratorDefinition {
                 1.0,
                 new RelationshipStrategy(
                         "friendship",
-                        new ScalingBoundedZipf(this.random, ()-> storage.getGraphScale(), 0.5, 2.3),
+                        new ScalingBoundedZipf(this.random, () -> storage.getGraphScale(), 0.5, 2.3),
                         new HashSet<>(Arrays.asList(friendRoleFiller))
                 )
         );
 
 
-        // like
+        // `like` relationship
         RolePlayerTypeStrategy likedPageRole = new RolePlayerTypeStrategy(
                 "liked",
-                "like",
                 new FixedConstant(1),
                 new ConceptIdStoragePicker(random, storage, "page")
         );
         RolePlayerTypeStrategy likerPersonRole = new RolePlayerTypeStrategy(
                 "liker",
-                "like",
                 new FixedConstant(1),
                 new ConceptIdStoragePicker(random, storage, "person")
         );
@@ -131,17 +123,17 @@ public class SocialNetworkDefinition extends DataGeneratorDefinition {
                 )
         );
 
+    }
 
+    private void buildImplicitRelationshipStrategies() {
         // @has-name
         RolePlayerTypeStrategy nameOwner = new RolePlayerTypeStrategy(
                 "@has-name-owner",
-                "@has-name",
                 new FixedConstant(1),
                 new ConceptIdStoragePicker(random, storage, "person")
         );
         RolePlayerTypeStrategy nameValue = new RolePlayerTypeStrategy(
                 "@has-name-value",
-                "@has-name",
                 new FixedConstant(1),
                 new ConceptIdStoragePicker(random, storage, "name")
         );

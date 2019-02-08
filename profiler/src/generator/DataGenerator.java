@@ -20,7 +20,7 @@ package grakn.benchmark.profiler.generator;
 
 import grakn.benchmark.profiler.generator.query.QueryProvider;
 import grakn.benchmark.profiler.generator.storage.ConceptStorage;
-import grakn.benchmark.profiler.generator.storage.InsertionAnalysis;
+import grakn.benchmark.profiler.generator.util.InsertQueryAnalyser;
 import grakn.core.GraknTxType;
 import grakn.core.client.Grakn;
 import grakn.core.concept.Concept;
@@ -33,7 +33,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 /**
  * Entry point for Generator.
@@ -93,14 +92,14 @@ public class DataGenerator {
         queryIterator.forEachRemaining(q -> {
 
             List<ConceptMap> insertions = q.withTx(tx).execute();
-            HashSet<Concept> insertedConcepts = InsertionAnalysis.getInsertedConcepts(q, insertions);
+            HashSet<Concept> insertedConcepts = InsertQueryAnalyser.getInsertedConcepts(q, insertions);
 
             insertedConcepts.forEach(storage::addConcept);
 
             // check if we have to update any roles by first checking if any relationships added
-            String relationshipAdded = InsertionAnalysis.getRelationshipTypeLabel(q);
+            String relationshipAdded = InsertQueryAnalyser.getRelationshipTypeLabel(q);
             if (relationshipAdded != null) {
-                Map<Concept, String> rolePlayersAdded = InsertionAnalysis.getRolePlayersAndRoles(q, insertions);
+                Map<Concept, String> rolePlayersAdded = InsertQueryAnalyser.getRolePlayersAndRoles(q, insertions);
 
                 rolePlayersAdded.forEach((concept, roleName) -> {
                     String rolePlayerId = concept.id().toString();

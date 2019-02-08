@@ -32,23 +32,31 @@ public interface ConceptStorage {
     int getConceptCount(String typeLabel);
 
     ConceptId getConceptId(String typeLabel, int offset);
+
     List<String> getIdsNotPlayingRole(String typeLabel, String relationshipType, String role);
+
     Integer numIdsNotPlayingRole(String typeLabel, String relationshipType, String role);
 
     Date getDate(String typeLabel, int offset);
 
     void addConcept(Concept concept);
+
     void addRolePlayer(String conceptId, String conceptType, String relationshipType, String role);
 
     int totalExplicitRelationships();
+
     int totalEntities();
+
     int totalAttributes();
 
     int totalRolePlayers();
+
     int totalExplicitRolePlayers();
 
     int totalOrphanEntities();
+
     int totalOrphanAttributes();
+
     int totalRelationshipsRolePlayersOverlap();
 
     int getGraphScale();

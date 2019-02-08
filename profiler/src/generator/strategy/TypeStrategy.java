@@ -21,18 +21,17 @@ package grakn.benchmark.profiler.generator.strategy;
 import grakn.benchmark.profiler.generator.probdensity.ProbabilityDensityFunction;
 
 /**
- * A Type strategy is composed of:
- *
- *  - a type label defining what type to generate
- *  - a PDF defining how many type instances to generate
- *
- *  and it is consumed by a generator.
+ * A Type strategy is a container composed of:
+ * - a type label defining what type to generate
+ * - a PDF defining how many type instances to generate
+ * <p>
+ * and it is consumed by a generator.
  */
 public abstract class TypeStrategy {
     private final String typeLabel;
     private final ProbabilityDensityFunction numInstancesPDF;
 
-    public TypeStrategy(String typeLabel, ProbabilityDensityFunction numInstancesPDF){
+    public TypeStrategy(String typeLabel, ProbabilityDensityFunction numInstancesPDF) {
         this.numInstancesPDF = numInstancesPDF;
         this.typeLabel = typeLabel;
     }

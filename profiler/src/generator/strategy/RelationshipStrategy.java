@@ -19,12 +19,14 @@
 package grakn.benchmark.profiler.generator.strategy;
 
 import grakn.benchmark.profiler.generator.probdensity.ProbabilityDensityFunction;
-import grakn.core.concept.RelationshipType;
 
 import java.util.Set;
 
 /**
- *
+ * A container for the three things required for how to generate a new batch of relationships:
+ * - The relationship type label
+ * - A PDF that can be sampled to indicate how big the new batch of relationships is going to be
+ * - A _set_ of RolePlayerTypeStrategy, which in turn contain a type label, quantity PDF and provider for IDs to play that role
  */
 public class RelationshipStrategy extends TypeStrategy {
 

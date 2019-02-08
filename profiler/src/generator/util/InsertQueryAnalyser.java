@@ -16,8 +16,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.profiler.generator.storage;
+package grakn.benchmark.profiler.generator.util;
 
+import com.google.common.collect.ImmutableMultiset;
 import grakn.benchmark.profiler.generator.DataGeneratorException;
 import grakn.core.concept.Concept;
 import grakn.core.graql.InsertQuery;
@@ -31,14 +32,17 @@ import grakn.core.graql.internal.pattern.property.IsaProperty;
 import grakn.core.graql.internal.pattern.property.LabelProperty;
 import grakn.core.graql.internal.pattern.property.RelationshipProperty;
 
-import com.google.common.collect.ImmutableMultiset;
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  *
  */
-public class InsertionAnalysis {
+public class InsertQueryAnalyser {
 
     public static HashSet<Concept> getInsertedConcepts(InsertQuery query, List<ConceptMap> answers) {
         /*
@@ -73,7 +77,7 @@ public class InsertionAnalysis {
 
         HashSet<Concept> resultConcepts = new HashSet<>();
 
-        for (ConceptMap answer: answers){
+        for (ConceptMap answer : answers) {
             for (Var insertVarWithoutId : insertVarsWithoutIds) {
                 resultConcepts.add(answer.get(insertVarWithoutId));
             }
@@ -85,6 +89,7 @@ public class InsertionAnalysis {
      * Given the insert query, return the IDs of the concepts that filled ROLES in a relationship
      * that was added in the given insert query. Returns empty if no relationships added
      * Can only handle 1 relationship type inserted per query!
+     *
      * @return
      */
     public static Map<Concept, String> getRolePlayersAndRoles(InsertQuery query, List<ConceptMap> answers) {
@@ -143,7 +148,7 @@ public class InsertionAnalysis {
             VarPatternAdmin varPatternAdmin = varPatternAdminIterator.next();
             varsWithoutIds.addAll(varPatternAdmin.commonVars());
             Optional<IdProperty> idProperty = varPatternAdmin.getProperty(IdProperty.class);
-            if(idProperty.isPresent()) {
+            if (idProperty.isPresent()) {
                 varsWithIds.add(varPatternAdmin.var());
             } else {
                 // If no id is present, then add to the set

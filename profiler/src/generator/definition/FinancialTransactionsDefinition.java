@@ -1,14 +1,18 @@
 package grakn.benchmark.profiler.generator.definition;
 
-import grakn.benchmark.profiler.generator.pick.CountingIterator;
-import grakn.benchmark.profiler.generator.pick.WeightedPicker;
 import grakn.benchmark.profiler.generator.probdensity.FixedConstant;
 import grakn.benchmark.profiler.generator.probdensity.FixedDiscreteGaussian;
 import grakn.benchmark.profiler.generator.probdensity.ScalingDiscreteGaussian;
-import grakn.benchmark.profiler.generator.storage.ConceptStorage;
+import grakn.benchmark.profiler.generator.provider.UniqueIntegerProvider;
 import grakn.benchmark.profiler.generator.storage.ConceptIdStoragePicker;
+import grakn.benchmark.profiler.generator.storage.ConceptStorage;
 import grakn.benchmark.profiler.generator.storage.NotInRelationshipConceptIdProvider;
-import grakn.benchmark.profiler.generator.strategy.*;
+import grakn.benchmark.profiler.generator.strategy.AttributeStrategy;
+import grakn.benchmark.profiler.generator.strategy.EntityStrategy;
+import grakn.benchmark.profiler.generator.strategy.RelationshipStrategy;
+import grakn.benchmark.profiler.generator.strategy.RolePlayerTypeStrategy;
+import grakn.benchmark.profiler.generator.strategy.TypeStrategy;
+import grakn.benchmark.profiler.generator.util.WeightedPicker;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -28,29 +32,29 @@ public class FinancialTransactionsDefinition extends DataGeneratorDefinition {
         this.random = random;
         this.storage = storage;
 
-
-        this.entityStrategies = new WeightedPicker<>(random);
-        this.relationshipStrategies = new WeightedPicker<>(random);
-        this.attributeStrategies = new WeightedPicker<>(random);
-        this.metaTypeStrategies = new WeightedPicker<>(random);
-
         buildGenerator();
     }
 
     private void buildGenerator() {
-        buildStrategies();
+
+        this.entityStrategies = new WeightedPicker<>(random);
+        this.relationshipStrategies = new WeightedPicker<>(random);
+        this.attributeStrategies = new WeightedPicker<>(random);
+
+
+        buildEntityStrategies();
+        buildAttributeStrategies();
+        buildExplicitRelationshipStrategies();
+        buildImplicitRelationshipStrategies();
+
+        this.metaTypeStrategies = new WeightedPicker<>(random);
         this.metaTypeStrategies.add(1.0, entityStrategies);
         this.metaTypeStrategies.add(1.0, relationshipStrategies);
         this.metaTypeStrategies.add(1.0, attributeStrategies);
     }
 
-    private void buildStrategies() {
-
-        /*
-        Entities
-         */
-
-        // SCALING number of entities added!
+    private void buildEntityStrategies() {
+        // we use a scaling PDF rather than a fixed one for these entities
         this.entityStrategies.add(
                 1.0,
                 new EntityStrategy(
@@ -58,13 +62,11 @@ public class FinancialTransactionsDefinition extends DataGeneratorDefinition {
                         new ScalingDiscreteGaussian(this.random, () -> storage.getGraphScale(), 0.02, 0.01))
         );
 
+    }
 
-        /*
-        Attributes
-         */
-
-        // FIXED number of attributes added
-        CountingIterator idGenerator = new CountingIterator(0);
+    private void buildAttributeStrategies() {
+        // fixed PDF for number of attributes added
+        UniqueIntegerProvider idGenerator = new UniqueIntegerProvider(0);
         this.attributeStrategies.add(
                 1.0,
                 new AttributeStrategy<>(
@@ -74,15 +76,13 @@ public class FinancialTransactionsDefinition extends DataGeneratorDefinition {
                 )
         );
 
+    }
 
-        /*
-        Relationships
-         */
+    private void buildExplicitRelationshipStrategies() {
 
         // increasingly large interactions (increasing number of role players)
         RolePlayerTypeStrategy transactorRolePlayer = new RolePlayerTypeStrategy(
                 "transactor",
-                "transaction",
                 // high variance in the number of role players
                 new ScalingDiscreteGaussian(random, () -> storage.getGraphScale(), 0.01, 0.01),
                 new ConceptIdStoragePicker(
@@ -98,12 +98,14 @@ public class FinancialTransactionsDefinition extends DataGeneratorDefinition {
                         new HashSet<>(Arrays.asList(transactorRolePlayer))
                 )
         );
+    }
+
+    private void buildImplicitRelationshipStrategies() {
 
 
         // @has-quantity on the transaction relationship (1 quantity per transaction)
         RolePlayerTypeStrategy quantityOwner = new RolePlayerTypeStrategy(
                 "@has-quantity-owner",
-                "@has-quantity",
                 new FixedConstant(1),
                 new NotInRelationshipConceptIdProvider(
                         random,
@@ -113,7 +115,6 @@ public class FinancialTransactionsDefinition extends DataGeneratorDefinition {
         );
         RolePlayerTypeStrategy quantityValue = new RolePlayerTypeStrategy(
                 "@has-quantity-value",
-                "@has-quantity",
                 new FixedConstant(1),
                 new ConceptIdStoragePicker(
                         random,

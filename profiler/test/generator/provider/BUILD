@@ -1,7 +1,7 @@
 
 java_test(
     name = "central-stream-provider-test",
-    test_class = "grakn.benchmark.runner.pick.CentralConceptProviderTest",
+    test_class = "grakn.benchmark.runner.provider.CentralConceptProviderTest",
     srcs = ["CentralConceptProviderTest.java"],
     deps = [
         "//profiler:benchmark-profiler",

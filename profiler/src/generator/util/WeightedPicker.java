@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.profiler.generator.pick;
+package grakn.benchmark.profiler.generator.util;
 
 import java.util.NavigableMap;
 import java.util.Random;

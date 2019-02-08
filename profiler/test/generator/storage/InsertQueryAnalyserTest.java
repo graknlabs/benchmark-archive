@@ -19,6 +19,7 @@
 package grakn.benchmark.profiler.generator.storage;
 
 import grakn.benchmark.profiler.generator.DataGeneratorException;
+import grakn.benchmark.profiler.generator.util.InsertQueryAnalyser;
 import grakn.core.concept.Concept;
 import grakn.core.concept.ConceptId;
 import grakn.core.concept.Thing;
@@ -43,7 +44,7 @@ import static org.mockito.Mockito.when;
 /**
  *
  */
-public class InsertionAnalysisTest {
+public class InsertQueryAnalyserTest {
 
     @Rule
     public final ExpectedException expectedException = ExpectedException.none();
@@ -76,7 +77,7 @@ public class InsertionAnalysisTest {
         vars.put(x, "V123456");
         ArrayList<ConceptMap> answerList = this.mockConceptMaps(vars);
 
-        HashSet<Concept> insertedConcepts = InsertionAnalysis.getInsertedConcepts(query, answerList);
+        HashSet<Concept> insertedConcepts = InsertQueryAnalyser.getInsertedConcepts(query, answerList);
 
         assertEquals(1, insertedConcepts.size());
         assertEquals("V123456", insertedConcepts.iterator().next().asThing().id().toString());
@@ -113,7 +114,7 @@ public class InsertionAnalysisTest {
 
         ArrayList<ConceptMap> answerList = this.mockConceptMaps(vars);
 
-        HashSet<Concept> insertedConcepts = InsertionAnalysis.getInsertedConcepts(query, answerList);
+        HashSet<Concept> insertedConcepts = InsertQueryAnalyser.getInsertedConcepts(query, answerList);
 
         assertEquals(1, insertedConcepts.size());
         assertEquals(rId, insertedConcepts.iterator().next().asThing().id().toString());
@@ -149,7 +150,7 @@ public class InsertionAnalysisTest {
 
         ArrayList<ConceptMap> answerList = this.mockConceptMaps(vars);
 
-        HashSet<Concept> insertedConcepts = InsertionAnalysis.getInsertedConcepts(query, answerList);
+        HashSet<Concept> insertedConcepts = InsertQueryAnalyser.getInsertedConcepts(query, answerList);
 
         assertEquals(1, insertedConcepts.size());
         assertEquals(rId, insertedConcepts.iterator().next().asThing().id().toString());
@@ -176,7 +177,7 @@ public class InsertionAnalysisTest {
 
         ArrayList<ConceptMap> answerList = this.mockConceptMaps(vars);
 
-        HashSet<Concept> insertedConcepts = InsertionAnalysis.getInsertedConcepts(query, answerList);
+        HashSet<Concept> insertedConcepts = InsertQueryAnalyser.getInsertedConcepts(query, answerList);
 
         assertEquals(1, insertedConcepts.size());
         assertEquals(yId, insertedConcepts.iterator().next().asThing().id().toString());
@@ -203,7 +204,7 @@ public class InsertionAnalysisTest {
 
         ArrayList<ConceptMap> answerList = this.mockConceptMaps(vars);
 
-        HashSet<Concept> insertedConcepts = InsertionAnalysis.getInsertedConcepts(query, answerList);
+        HashSet<Concept> insertedConcepts = InsertQueryAnalyser.getInsertedConcepts(query, answerList);
 
         assertEquals(1, insertedConcepts.size());
         assertEquals(yId, insertedConcepts.iterator().next().asThing().id().toString());
@@ -223,7 +224,7 @@ public class InsertionAnalysisTest {
         when(map.get(var("x"))).thenReturn(xConcept);
         when(map.get(var("y"))).thenReturn(yConcept);
 
-        Map<Concept, String> rolePlayers = InsertionAnalysis.getRolePlayersAndRoles(insertQuery, Arrays.asList(map));
+        Map<Concept, String> rolePlayers = InsertQueryAnalyser.getRolePlayersAndRoles(insertQuery, Arrays.asList(map));
         assertTrue(rolePlayers.containsKey(xConcept));
         assertEquals("friend", rolePlayers.get(xConcept));
         assertTrue(rolePlayers.containsKey(yConcept));
@@ -245,7 +246,7 @@ public class InsertionAnalysisTest {
         when(map.get(var("x"))).thenReturn(xConcept);
         when(map.get(var("y"))).thenReturn(yConcept);
 
-        Map<Concept, String> rolePlayers = InsertionAnalysis.getRolePlayersAndRoles(insertQuery, Arrays.asList(map));
+        Map<Concept, String> rolePlayers = InsertQueryAnalyser.getRolePlayersAndRoles(insertQuery, Arrays.asList(map));
         assertEquals(0, rolePlayers.size());
     }
 
@@ -257,7 +258,7 @@ public class InsertionAnalysisTest {
 
         expectedException.expect(DataGeneratorException.class);
         expectedException.expectMessage("Require explicit roles in data generator");
-        InsertionAnalysis.getRolePlayersAndRoles(insertQuery, null);
+        InsertQueryAnalyser.getRolePlayersAndRoles(insertQuery, null);
     }
 
     @Test
@@ -265,7 +266,7 @@ public class InsertionAnalysisTest {
         VarPattern x = var("x").asUserDefined().id(ConceptId.of("V123"));
         VarPattern y = var("y").asUserDefined().id(ConceptId.of("V234"));
         InsertQuery insertQuery = Graql.match(x, y).insert(var("r").rel("friend", x).rel("friend", y).isa("friendship"));
-        String relationshipLabel = InsertionAnalysis.getRelationshipTypeLabel(insertQuery);
+        String relationshipLabel = InsertQueryAnalyser.getRelationshipTypeLabel(insertQuery);
         assertEquals("friendship", relationshipLabel);
     }
 
@@ -274,7 +275,7 @@ public class InsertionAnalysisTest {
         VarPattern x = var("x").asUserDefined();
         VarPattern y = var("y").asUserDefined();
         InsertQuery insertQuery = Graql.insert(x.isa("company").has("name", y).id(ConceptId.of("V123")), y.val("john"));
-        String relationshipLabel = InsertionAnalysis.getRelationshipTypeLabel(insertQuery);
+        String relationshipLabel = InsertQueryAnalyser.getRelationshipTypeLabel(insertQuery);
         assertEquals(null, relationshipLabel);
     }
 

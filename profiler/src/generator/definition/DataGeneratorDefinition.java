@@ -1,7 +1,7 @@
 package grakn.benchmark.profiler.generator.definition;
 
 
-import grakn.benchmark.profiler.generator.pick.WeightedPicker;
+import grakn.benchmark.profiler.generator.util.WeightedPicker;
 import grakn.benchmark.profiler.generator.strategy.TypeStrategy;
 
 

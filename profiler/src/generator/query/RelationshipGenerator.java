@@ -18,7 +18,7 @@
 
 package grakn.benchmark.profiler.generator.query;
 
-import grakn.benchmark.profiler.generator.pick.CentralConceptProvider;
+import grakn.benchmark.profiler.generator.provider.CentralConceptProvider;
 import grakn.benchmark.profiler.generator.strategy.RelationshipStrategy;
 import grakn.benchmark.profiler.generator.strategy.RolePlayerTypeStrategy;
 import grakn.core.concept.ConceptId;
@@ -27,34 +27,25 @@ import grakn.core.graql.InsertQuery;
 import grakn.core.graql.Pattern;
 import grakn.core.graql.Var;
 import grakn.core.graql.VarPattern;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
-import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import static grakn.core.graql.internal.pattern.Patterns.var;
 
 /**
- *
+ * Generate insert queries for the relationship type indicated by the RelationshipStrategy.
+ * Individual roles are filled by concepts provided by RolePlayerStategy objects.
+ * <p>
+ * If a role cannot be filled no relationship will be generated.
  */
 public class RelationshipGenerator implements QueryGenerator {
-    private static final Logger LOG = LoggerFactory.getLogger(RelationshipGenerator.class);
     private final RelationshipStrategy strategy;
 
-    /**
-     * @param strategy
-     */
     public RelationshipGenerator(RelationshipStrategy strategy) {
-
         this.strategy = strategy;
     }
 
-    /**
-     * @return
-     */
     @Override
     public Iterator<InsertQuery> generate() {
 
@@ -65,6 +56,10 @@ public class RelationshipGenerator implements QueryGenerator {
             }
         }
 
+        return buildInsertRelationshipQueryIterator();
+    }
+
+    private Iterator<InsertQuery> buildInsertRelationshipQueryIterator() {
         return new Iterator<InsertQuery>() {
 
             String relationshipTypeLabel = strategy.getTypeLabel();
@@ -72,7 +67,7 @@ public class RelationshipGenerator implements QueryGenerator {
             int queriesGenerated = 0;
 
             private boolean allRolePlayerHaveNext() {
-                return rolePlayerTypeStrategies.stream()
+                return strategy.getRolePlayerTypeStrategies().stream()
                         .map(s -> s.getConceptProvider())
                         .allMatch(b -> b.hasNext());
             }
@@ -84,21 +79,13 @@ public class RelationshipGenerator implements QueryGenerator {
 
             @Override
             public InsertQuery next() {
-                /*
-                Process:
-                Find roleplayer types according to the RelationshipRoleStrategy objects
-                Get a stream of conceptIds that can play that role, according to the picking strategy. This stream may be
-                empty for one role, in which case, a decision has to be made whether to make the relationship anyway or abort
-
-                Currently abort if cannot find a role player for a role
-                */
 
                 Pattern matchVarPattern = null;  //TODO It will be faster to use a pure insert, supplying the ids for the roleplayers' variables
                 VarPattern insertVarPattern = var("r").isa(relationshipTypeLabel);
 
                 // For each role type strategy
-                for (RolePlayerTypeStrategy rolePlayerTypeStrategy : rolePlayerTypeStrategies) {
-                    String roleLabel = rolePlayerTypeStrategy.getRoleLabel();
+                for (RolePlayerTypeStrategy rolePlayerTypeStrategy : strategy.getRolePlayerTypeStrategies()) {
+                    String roleLabel = rolePlayerTypeStrategy.getTypeLabel();
 
                     // Find random role-players matching this type
                     // Pick ids from the list of concept ids

@@ -21,14 +21,13 @@ package grakn.benchmark.profiler.generator.query;
 import grakn.core.graql.InsertQuery;
 
 import java.util.Iterator;
-import java.util.stream.Stream;
 
 /**
+ * Creates a batch of insert queries as an iterator
  */
 public interface QueryGenerator {
     /**
-     * @return
+     * Generate insert query iterator
      */
     Iterator<InsertQuery> generate();
-
 }

@@ -16,29 +16,21 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.profiler.generator.pick;
+package grakn.benchmark.profiler.generator.provider;
 
 import grakn.benchmark.profiler.generator.probdensity.ProbabilityDensityFunction;
 import grakn.core.concept.ConceptId;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
- * This is a highly flexible StreamProvider. The idea of a _central_ stream is that one or several concepts
+ * The idea of a _central_ concept is that one or several concepts
  * will be the center of many relationships added (ie. imagine this as a _repeated concept provider_)
  * <p>
- * It can be specified with two PDFs:
- * The one used to construct specifies how many _central_ concepts will be provided. For example,
+ * It can be specified with a PDF that is used to construct how many _central_ concepts will be used. For example,
  * when adding multiple relationships, if the centralConceptsPdf specifies `1`, all relationships
- * will connect to that same Concept.
- * <p>
- * The second PDF specifies how many of these central items to withdraw in a stream this iteration.
- * The specific values are chosen from the list of central concepts as a circular buffer from the last
- * index that hasn't been used.
- *
+ * will connect to that same Concept in this iteration.
  */
 public class CentralConceptProvider implements Iterator<ConceptId> {
 

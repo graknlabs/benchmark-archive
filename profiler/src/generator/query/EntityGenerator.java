@@ -23,12 +23,11 @@ import grakn.core.graql.Graql;
 import grakn.core.graql.InsertQuery;
 
 import java.util.Iterator;
-import java.util.stream.Stream;
 
 import static grakn.core.graql.internal.pattern.Patterns.var;
 
 /**
- *
+ * Generates queries for inserting entity instances
  */
 public class EntityGenerator implements QueryGenerator {
     private final EntityStrategy strategy;
@@ -37,9 +36,6 @@ public class EntityGenerator implements QueryGenerator {
         this.strategy = strategy;
     }
 
-    /**
-     * @return
-     */
     @Override
     public Iterator<InsertQuery> generate() {
 

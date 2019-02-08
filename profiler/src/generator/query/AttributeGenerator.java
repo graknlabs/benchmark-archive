@@ -18,34 +18,25 @@
 
 package grakn.benchmark.profiler.generator.query;
 
-import grakn.benchmark.profiler.generator.pick.CentralConceptProvider;
+import grakn.benchmark.profiler.generator.provider.CentralConceptProvider;
 import grakn.benchmark.profiler.generator.strategy.AttributeStrategy;
 import grakn.core.graql.Graql;
 import grakn.core.graql.InsertQuery;
 import grakn.core.graql.Var;
 
 import java.util.Iterator;
-import java.util.Objects;
-import java.util.stream.Stream;
 
 
 /**
- * @param <ValueDatatype>
+ * Generates queries for inserting attribute values
  */
 public class AttributeGenerator<ValueDatatype> implements QueryGenerator {
     private final AttributeStrategy<ValueDatatype> strategy;
 
-    /**
-     * @param strategy
-     */
     public AttributeGenerator(AttributeStrategy<ValueDatatype> strategy) {
         this.strategy = strategy;
     }
 
-
-    /**
-     * @return
-     */
     @Override
     public Iterator<InsertQuery> generate() {
         Iterator<ValueDatatype> valueProvider = this.strategy.getValueProvider();

@@ -21,7 +21,9 @@ package grakn.benchmark.profiler.generator.strategy;
 import grakn.benchmark.profiler.generator.probdensity.ProbabilityDensityFunction;
 
 /**
- *
+ * A container for the two things required for how to generate a new batch of entities:
+ * - The entity type label
+ * - A PDF that can be sampled to indicate how big the new batch of entities is going to be
  */
 public class EntityStrategy extends TypeStrategy {
     public EntityStrategy(String typeLabel, ProbabilityDensityFunction numInstancesPDF) {

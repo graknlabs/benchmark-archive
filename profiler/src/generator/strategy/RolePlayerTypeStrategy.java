@@ -24,26 +24,22 @@ import grakn.core.concept.ConceptId;
 import java.util.Iterator;
 
 /**
- *
+ * A container for the three things required for how to generate a batch of role players:
+ * - The role label
+ * - A PDF that can be sampled to indicate how big the new batch of roles players is going to be
+ * - A provider of Concepts that is going to fill the role in the relationship
  */
 public class RolePlayerTypeStrategy extends TypeStrategy {
 
-    private final String roleLabel;
     private Iterator<ConceptId> conceptIdProvider;
 
-    public RolePlayerTypeStrategy(String roleLabel, String relationshipLabel, ProbabilityDensityFunction numInstancesPDF, Iterator<ConceptId> conceptIdProvider) {
-        super(relationshipLabel, numInstancesPDF);
-        this.roleLabel = roleLabel;
+    public RolePlayerTypeStrategy(String roleLabel, ProbabilityDensityFunction numInstancesPDF, Iterator<ConceptId> conceptIdProvider) {
+        super(roleLabel, numInstancesPDF);
         this.conceptIdProvider = conceptIdProvider;
     }
 
     public Iterator<ConceptId> getConceptProvider() {
-         return conceptIdProvider;
+        return conceptIdProvider;
     }
-
-    public String getRoleLabel() {
-        return this.roleLabel;
-    }
-
 }
 

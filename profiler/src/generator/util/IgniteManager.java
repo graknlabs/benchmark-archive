@@ -1,4 +1,4 @@
-package grakn.benchmark.profiler.generator;
+package grakn.benchmark.profiler.generator.util;
 
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteLogger;

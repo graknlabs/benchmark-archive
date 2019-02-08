@@ -16,8 +16,8 @@ java_test(
 
 java_test(
     name = "insertion-analysis-test",
-    test_class = "grakn.benchmark.runner.storage.InsertionAnalysisTest",
-    srcs = ["InsertionAnalysisTest.java"],
+    test_class = "grakn.benchmark.runner.storage.InsertQueryAnalyserTest",
+    srcs = ["InsertQueryAnalyserTest.java"],
     deps = [
         "//profiler:benchmark-profiler",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",

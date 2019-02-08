@@ -24,7 +24,10 @@ import java.util.Iterator;
 
 
 /**
- * @param <ValueDatatype>
+ * A container for the three things required to define how to generate a new set of attributes:
+ * - A attribute type label
+ * - A PDF that can be sampled to indicate how big the new batch of attributes is going to be
+ * - A value provider for the actual values of the attribute of this type
  */
 public class AttributeStrategy<ValueDatatype> extends TypeStrategy {
 

@@ -1,4 +1,4 @@
-package grakn.benchmark.profiler.generator.pick;
+package grakn.benchmark.profiler.generator.provider;
 
 import grakn.benchmark.profiler.generator.probdensity.FixedConstant;
 import org.junit.Assert;

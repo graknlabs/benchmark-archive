@@ -1,6 +1,6 @@
 package grakn.benchmark.profiler.generator.definition;
 
-import grakn.benchmark.profiler.generator.pick.CountingIterator;
+import grakn.benchmark.profiler.generator.provider.UniqueIntegerProvider;
 import grakn.benchmark.profiler.generator.probdensity.FixedConstant;
 import grakn.benchmark.profiler.generator.probdensity.FixedDiscreteGaussian;
 import grakn.benchmark.profiler.generator.probdensity.ScalingDiscreteGaussian;
@@ -11,7 +11,7 @@ import grakn.benchmark.profiler.generator.strategy.AttributeStrategy;
 import grakn.benchmark.profiler.generator.strategy.EntityStrategy;
 import grakn.benchmark.profiler.generator.strategy.RelationshipStrategy;
 import grakn.benchmark.profiler.generator.strategy.RolePlayerTypeStrategy;
-import grakn.benchmark.profiler.generator.pick.WeightedPicker;
+import grakn.benchmark.profiler.generator.util.WeightedPicker;
 import grakn.benchmark.profiler.generator.strategy.TypeStrategy;
 
 import java.util.Arrays;
@@ -31,28 +31,27 @@ public class BiochemicalNetworkDefinition extends DataGeneratorDefinition {
     public BiochemicalNetworkDefinition(Random random, ConceptStorage storage) {
         this.random = random;
         this.storage = storage;
+        buildDefinition();
+    }
 
+    private void buildDefinition() {
 
         this.entityStrategies = new WeightedPicker<>(random);
         this.relationshipStrategies = new WeightedPicker<>(random);
         this.attributeStrategies = new WeightedPicker<>(random);
+
+        buildEntityStrategies();
+        buildAttributeStrategies();
+        buildExplicitRelationshipStrategies();
+        buildImplicitRelationshipStrategies();
+
         this.metaTypeStrategies = new WeightedPicker<>(random);
-
-        buildGenerator();
-    }
-
-    private void buildGenerator() {
-        buildStrategies();
         this.metaTypeStrategies.add(1.0, entityStrategies);
         this.metaTypeStrategies.add(1.0, relationshipStrategies);
         this.metaTypeStrategies.add(1.0, attributeStrategies);
     }
 
-    private void buildStrategies() {
-
-        /*
-        Entities
-         */
+    private void buildEntityStrategies() {
 
         this.entityStrategies.add(
                 1.0,
@@ -69,11 +68,11 @@ public class BiochemicalNetworkDefinition extends DataGeneratorDefinition {
                 )
         );
 
-        /*
-        Attributes
-         */
+    }
 
-        CountingIterator idGenerator = new CountingIterator(0);
+    private void buildAttributeStrategies() {
+
+        UniqueIntegerProvider idGenerator = new UniqueIntegerProvider(0);
         this.attributeStrategies.add(
                 1.0,
                 new AttributeStrategy<>(
@@ -84,15 +83,13 @@ public class BiochemicalNetworkDefinition extends DataGeneratorDefinition {
         );
 
 
-        /*
-        Relationships
-         */
+    }
 
+    private void buildExplicitRelationshipStrategies() {
 
         // increasingly large interactions (increasing number of role players)
         RolePlayerTypeStrategy agentRolePlayer = new RolePlayerTypeStrategy(
                 "agent",
-                "interaction",
                 // high variance in the number of role players
                 new ScalingDiscreteGaussian(random, () -> storage.getGraphScale(), 0.01, 0.005),
                 new ConceptIdStoragePicker(
@@ -102,7 +99,6 @@ public class BiochemicalNetworkDefinition extends DataGeneratorDefinition {
         );
         RolePlayerTypeStrategy catalystRolePlayer = new RolePlayerTypeStrategy(
                 "catalyst",
-                "interaction",
                 // high variance in the number of role players
                 new ScalingDiscreteGaussian(random, () -> storage.getGraphScale(), 0.001, 0.001),
                 new ConceptIdStoragePicker(
@@ -118,12 +114,14 @@ public class BiochemicalNetworkDefinition extends DataGeneratorDefinition {
                         new HashSet<>(Arrays.asList(agentRolePlayer, catalystRolePlayer))
                 )
         );
+    }
+
+    private void buildImplicitRelationshipStrategies() {
 
 
         // @has-biochem-id for chemicals
         RolePlayerTypeStrategy chemicalIdOwner = new RolePlayerTypeStrategy(
                 "@has-biochem-id-owner",
-                "@has-biochem-id",
                 new FixedConstant(1),
                 new NotInRelationshipConceptIdProvider(
                         random,
@@ -133,7 +131,6 @@ public class BiochemicalNetworkDefinition extends DataGeneratorDefinition {
         );
         RolePlayerTypeStrategy chemicalIdValue = new RolePlayerTypeStrategy(
                 "@has-biochem-id-value",
-                "@has-biochem-id",
                 new FixedConstant(1),
                 new NotInRelationshipConceptIdProvider(
                         random,
@@ -154,7 +151,6 @@ public class BiochemicalNetworkDefinition extends DataGeneratorDefinition {
         // @has-biochem-id for enzymes
         RolePlayerTypeStrategy enzymeIdOwner = new RolePlayerTypeStrategy(
                 "@has-biochem-id-owner",
-                "@has-biochem-id",
                 new FixedConstant(1),
                 new NotInRelationshipConceptIdProvider(
                         random,
@@ -164,7 +160,6 @@ public class BiochemicalNetworkDefinition extends DataGeneratorDefinition {
         );
         RolePlayerTypeStrategy enzymeIdValue = new RolePlayerTypeStrategy(
                 "@has-biochem-id-value",
-                "@has-biochem-id",
                 new FixedConstant(1),
                 new NotInRelationshipConceptIdProvider(
                         random,
