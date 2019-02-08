@@ -1,4 +1,3 @@
-
 java_test(
     name = "central-stream-provider-test",
     test_class = "grakn.benchmark.profiler.generator.provider.CentralConceptProviderTest",
@@ -10,3 +9,19 @@ java_test(
         "//dependencies/maven/artifacts/org/hamcrest:hamcrest-all"
     ]
 )
+
+java_test(
+    name = "conceptid-storage-provider-test",
+    test_class = "grakn.benchmark.profiler.generator.provider.ConceptIdStorageProviderTest",
+    srcs = ["ConceptIdStorageProviderTest.java"],
+    deps = [
+    ]
+)
+
+java_test(
+     name = "not-in-relationship-conceptid-storage-provider-test",
+     test_class = "grakn.benchmark.profiler.generator.provider.NotInRelationshipConceptIdProviderTest",
+     srcs = ["NotInRelationshipConceptIdProviderTest.java"],
+     deps = [
+     ]
+ )
