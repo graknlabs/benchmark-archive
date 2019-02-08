@@ -1,11 +1,11 @@
 
 java_test(
     name = "ignite-conceptid-store-test",
-    test_class = "grakn.benchmark.runner.storage.IgniteConceptIdStoreTest",
+    test_class = "grakn.benchmark.profiler.generator.util.IgniteConceptStorageTest",
     srcs = ["IgniteConceptStorageTest.java"],
 
     deps = [
-        "//profiler:benchmark-profiler",
+        "//profiler/src/generator:data-generator",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
         "//dependencies/maven/artifacts/grakn/core:grakn-graql",
         "//dependencies/maven/artifacts/org/apache/ignite:ignite-core",
@@ -16,10 +16,10 @@ java_test(
 
 java_test(
     name = "insertion-analysis-test",
-    test_class = "grakn.benchmark.runner.storage.InsertQueryAnalyserTest",
+    test_class = "grakn.benchmark.profiler.generator.util.InsertQueryAnalyserTest",
     srcs = ["InsertQueryAnalyserTest.java"],
     deps = [
-        "//profiler:benchmark-profiler",
+        "//profiler/src/generator:data-generator",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
         "//dependencies/maven/artifacts/grakn/core:grakn-graql",
         "//dependencies/maven/artifacts/org/hamcrest:hamcrest-all"

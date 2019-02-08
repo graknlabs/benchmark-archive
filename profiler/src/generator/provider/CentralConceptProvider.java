@@ -79,7 +79,7 @@ public class CentralConceptProvider implements Iterator<ConceptId> {
 
         // construct the circular buffer-reading stream
         ConceptId value = uniqueConceptIdsList.get(consumeFrom);
-        consumeFrom++;
+        consumeFrom = (consumeFrom + 1) % uniqueConceptIdsList.size();
         return value;
     }
 }

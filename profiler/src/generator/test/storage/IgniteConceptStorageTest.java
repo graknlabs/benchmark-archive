@@ -16,8 +16,9 @@
  * along with Grakn. If not, see <http://www.gnu.org/licenses/agpl.txt>.
  */
 
-package grakn.benchmark.profiler.generator.storage;
+package grakn.benchmark.profiler.generator.util;
 
+import grakn.benchmark.profiler.generator.storage.IgniteConceptStorage;
 import grakn.core.concept.*;
 import org.apache.ignite.IgniteException;
 import org.apache.ignite.Ignition;
