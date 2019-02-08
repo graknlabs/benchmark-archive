@@ -1,6 +1,6 @@
 java_test(
     name = "benchmark-test",
-    test_class = "grakn.benchmark.runner.GraknBenchmarkTest",
+    test_class = "grakn.benchmark.profiler.GraknBenchmarkTest",
     srcs = ["GraknBenchmarkTest.java"],
     deps = [
         "//profiler:benchmark-profiler",

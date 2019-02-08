@@ -1,6 +1,6 @@
 java_test(
     name = "test-end-to-end",
-    test_class = "grakn.benchmark.runner.GraknBenchmarkE2E",
+    test_class = "grakn.benchmark.profiler.GraknBenchmarkE2E",
     srcs = ["GraknBenchmarkE2E.java"],
     deps = [
         "//profiler:benchmark-profiler",
@@ -9,8 +9,8 @@ java_test(
         "//dependencies/maven/artifacts/grakn/core:util",
         "//dependencies/maven/artifacts/commons-cli"
     ],
-    classpath_resources = ["//runner/test/resources:logback-test"],
+    classpath_resources = ["//profiler/test/resources:logback-test"],
     data = [
-        "//runner/test/resources:web-content-config"
+        "//profiler/test/resources:web-content-config"
     ]
 )

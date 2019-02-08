@@ -53,7 +53,7 @@ public class GraknBenchmarkE2E {
 
         expectedException.expect(BootupException.class);
         expectedException.expectMessage("not empty, contains a schema");
-        String[] args = new String[]{"--config", WEB_CONTENT_CONFIG_PATH.toAbsolutePath().toString(), "--keyspace", keyspace.toString()};
+        String[] args = new String[]{"--config", WEB_CONTENT_CONFIG_PATH.toAbsolutePath().toString(), "--keyspace", keyspace.toString(), "--execution-name", "testing"};
         CommandLine commandLine = BenchmarkArguments.parse(args);
         GraknBenchmark graknBenchmark = new GraknBenchmark(commandLine);
         graknBenchmark.start();
@@ -70,7 +70,7 @@ public class GraknBenchmarkE2E {
 
         expectedException.expect(BootupException.class);
         expectedException.expectMessage("not empty, contains concept instances");
-        String[] args = new String[] {"--config", WEB_CONTENT_CONFIG_PATH.toAbsolutePath().toString(), "--keyspace", keyspace.toString()};
+        String[] args = new String[] {"--config", WEB_CONTENT_CONFIG_PATH.toAbsolutePath().toString(), "--keyspace", keyspace.toString(), "--execution-name", "testing"};
         CommandLine commandLine = BenchmarkArguments.parse(args);
         GraknBenchmark graknBenchmark = new GraknBenchmark(commandLine);
         graknBenchmark.start();
