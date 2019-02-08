@@ -1,24 +1,24 @@
 package grakn.benchmark.profiler.generator.definition;
 
-import grakn.benchmark.profiler.generator.provider.CentralConceptProvider;
-import grakn.benchmark.profiler.generator.provider.RandomStringProvider;
 import grakn.benchmark.profiler.generator.probdensity.FixedConstant;
 import grakn.benchmark.profiler.generator.probdensity.FixedUniform;
+import grakn.benchmark.profiler.generator.provider.CentralConceptProvider;
+import grakn.benchmark.profiler.generator.provider.ConceptIdStorageProvider;
+import grakn.benchmark.profiler.generator.provider.NotInRelationshipConceptIdProvider;
+import grakn.benchmark.profiler.generator.provider.RandomStringProvider;
 import grakn.benchmark.profiler.generator.storage.ConceptStorage;
-import grakn.benchmark.profiler.generator.storage.ConceptIdStoragePicker;
-import grakn.benchmark.profiler.generator.storage.NotInRelationshipConceptIdProvider;
 import grakn.benchmark.profiler.generator.strategy.AttributeStrategy;
 import grakn.benchmark.profiler.generator.strategy.EntityStrategy;
 import grakn.benchmark.profiler.generator.strategy.RelationshipStrategy;
 import grakn.benchmark.profiler.generator.strategy.RolePlayerTypeStrategy;
-import grakn.benchmark.profiler.generator.util.WeightedPicker;
 import grakn.benchmark.profiler.generator.strategy.TypeStrategy;
+import grakn.benchmark.profiler.generator.util.WeightedPicker;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 
-public class RoadNetworkDefinition extends DataGeneratorDefinition {
+public class RoadNetworkDefinition implements DataGeneratorDefinition {
 
     private Random random;
     private ConceptStorage storage;
@@ -93,7 +93,7 @@ public class RoadNetworkDefinition extends DataGeneratorDefinition {
         RolePlayerTypeStrategy anyEndpointRoads = new RolePlayerTypeStrategy(
                 "endpoint",
                 new FixedUniform(random, 1, 5), // choose 1-5 other role players for an intersection
-                new ConceptIdStoragePicker(random, storage, "road")
+                new ConceptIdStorageProvider(random, storage, "road")
         );
 
         this.relationshipStrategies.add(
@@ -147,8 +147,8 @@ public class RoadNetworkDefinition extends DataGeneratorDefinition {
     }
 
     @Override
-    protected WeightedPicker<WeightedPicker<TypeStrategy>> getDefinition() {
-        return this.metaTypeStrategies;
+    public TypeStrategy sampleNextStrategy() {
+        return this.metaTypeStrategies.sample().sample();
     }
 
 }

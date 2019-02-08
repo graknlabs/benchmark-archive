@@ -1,20 +1,13 @@
 package grakn.benchmark.profiler.generator.definition;
 
 
-import grakn.benchmark.profiler.generator.util.WeightedPicker;
 import grakn.benchmark.profiler.generator.strategy.TypeStrategy;
 
 
 /**
- * This describes the way Benchmark will generate data for a specific schema
+ * Provides a set of strategies for the generator, describing how to populate the graph
  */
 
-public abstract class DataGeneratorDefinition {
-
-    protected abstract WeightedPicker<WeightedPicker<TypeStrategy>> getDefinition();
-
-    public TypeStrategy sampleNextStrategy(){
-        return getDefinition().sample().sample();
-    }
-
+public interface DataGeneratorDefinition {
+    TypeStrategy sampleNextStrategy();
 }

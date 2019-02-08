@@ -1,17 +1,18 @@
-package grakn.benchmark.profiler.generator.storage;
+package grakn.benchmark.profiler.generator.provider;
 
+import grakn.benchmark.profiler.generator.storage.ConceptStorage;
 import grakn.core.concept.ConceptId;
 
 import java.util.Iterator;
 import java.util.Random;
 
-public class ConceptIdStoragePicker implements Iterator<ConceptId> {
+public class ConceptIdStorageProvider implements Iterator<ConceptId> {
 
     private final Random rand;
     ConceptStorage conceptStorage;
     protected String typeLabel;
 
-    public ConceptIdStoragePicker(Random rand, ConceptStorage conceptStorage, String typeLabel) {
+    public ConceptIdStorageProvider(Random rand, ConceptStorage conceptStorage, String typeLabel) {
         this.rand = rand;
         this.conceptStorage = conceptStorage;
         this.typeLabel = typeLabel;

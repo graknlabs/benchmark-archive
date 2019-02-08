@@ -6,7 +6,7 @@ import grakn.benchmark.profiler.generator.probdensity.FixedDiscreteGaussian;
 import grakn.benchmark.profiler.generator.probdensity.ScalingBoundedZipf;
 import grakn.benchmark.profiler.generator.probdensity.ScalingDiscreteGaussian;
 import grakn.benchmark.profiler.generator.storage.ConceptStorage;
-import grakn.benchmark.profiler.generator.storage.ConceptIdStoragePicker;
+import grakn.benchmark.profiler.generator.provider.ConceptIdStorageProvider;
 import grakn.benchmark.profiler.generator.strategy.AttributeStrategy;
 import grakn.benchmark.profiler.generator.strategy.EntityStrategy;
 import grakn.benchmark.profiler.generator.strategy.RelationshipStrategy;
@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 
-public class SocialNetworkDefinition extends DataGeneratorDefinition {
+public class SocialNetworkDefinition implements DataGeneratorDefinition {
 
     private Random random;
     private ConceptStorage storage;
@@ -88,7 +88,7 @@ public class SocialNetworkDefinition extends DataGeneratorDefinition {
         RolePlayerTypeStrategy friendRoleFiller = new RolePlayerTypeStrategy(
                 "friend",
                 new FixedConstant(2),
-                new ConceptIdStoragePicker(
+                new ConceptIdStorageProvider(
                         random,
                         this.storage,
                         "person")
@@ -107,12 +107,12 @@ public class SocialNetworkDefinition extends DataGeneratorDefinition {
         RolePlayerTypeStrategy likedPageRole = new RolePlayerTypeStrategy(
                 "liked",
                 new FixedConstant(1),
-                new ConceptIdStoragePicker(random, storage, "page")
+                new ConceptIdStorageProvider(random, storage, "page")
         );
         RolePlayerTypeStrategy likerPersonRole = new RolePlayerTypeStrategy(
                 "liker",
                 new FixedConstant(1),
-                new ConceptIdStoragePicker(random, storage, "person")
+                new ConceptIdStorageProvider(random, storage, "person")
         );
         this.relationshipStrategies.add(
                 1.0,
@@ -130,12 +130,12 @@ public class SocialNetworkDefinition extends DataGeneratorDefinition {
         RolePlayerTypeStrategy nameOwner = new RolePlayerTypeStrategy(
                 "@has-name-owner",
                 new FixedConstant(1),
-                new ConceptIdStoragePicker(random, storage, "person")
+                new ConceptIdStorageProvider(random, storage, "person")
         );
         RolePlayerTypeStrategy nameValue = new RolePlayerTypeStrategy(
                 "@has-name-value",
                 new FixedConstant(1),
-                new ConceptIdStoragePicker(random, storage, "name")
+                new ConceptIdStorageProvider(random, storage, "name")
         );
         this.relationshipStrategies.add(
                 1.0,
@@ -148,7 +148,7 @@ public class SocialNetworkDefinition extends DataGeneratorDefinition {
     }
 
     @Override
-    protected WeightedPicker<WeightedPicker<TypeStrategy>> getDefinition() {
-        return this.metaTypeStrategies;
+    public TypeStrategy sampleNextStrategy() {
+        return this.metaTypeStrategies.sample().sample();
     }
 }

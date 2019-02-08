@@ -1,5 +1,6 @@
-package grakn.benchmark.profiler.generator.storage;
+package grakn.benchmark.profiler.generator.provider;
 
+import grakn.benchmark.profiler.generator.storage.ConceptStorage;
 import grakn.core.concept.ConceptId;
 
 import java.util.Iterator;
