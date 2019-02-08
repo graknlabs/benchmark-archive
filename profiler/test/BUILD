@@ -3,7 +3,7 @@ java_test(
     test_class = "grakn.benchmark.runner.GraknBenchmarkTest",
     srcs = ["GraknBenchmarkTest.java"],
     deps = [
-        "//profiler:benchmark-runner",
+        "//profiler:benchmark-profiler",
         "//dependencies/maven/artifacts/commons-cli",
     ],
     classpath_resources = ["//profiler/test/resources:logback-test"],

@@ -18,13 +18,13 @@
 
 package grakn.benchmark.profiler.generator.query;
 
-import grakn.benchmark.profiler.generator.pick.LimitedStreamProvider;
-import grakn.benchmark.profiler.generator.probdensity.FixedConstant;
+import grakn.benchmark.profiler.generator.pick.CentralConceptProvider;
 import grakn.benchmark.profiler.generator.strategy.AttributeStrategy;
 import grakn.core.graql.Graql;
 import grakn.core.graql.InsertQuery;
 import grakn.core.graql.Var;
 
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -39,28 +39,42 @@ public class AttributeGenerator<ValueDatatype> implements QueryGenerator {
      * @param strategy
      */
     public AttributeGenerator(AttributeStrategy<ValueDatatype> strategy) {
-
         this.strategy = strategy;
     }
+
 
     /**
      * @return
      */
     @Override
-    public Stream<InsertQuery> generate() {
-        int numInstances = this.strategy.getNumInstancesPDF().sample();
+    public Iterator<InsertQuery> generate() {
+        Iterator<ValueDatatype> valueProvider = this.strategy.getValueProvider();
+        if (valueProvider instanceof CentralConceptProvider) {
+            ((CentralConceptProvider) valueProvider).resetUniqueness();
+        }
 
-        LimitedStreamProvider<ValueDatatype> valuePicker = this.strategy.getPicker();
-        valuePicker.resetUniqueness();
-        FixedConstant unityPDF = new FixedConstant(1);
+        return buildLimitedInsertQueryIterator();
+    }
 
-        String attributeTypeLabel = this.strategy.getTypeLabel();
+    private Iterator<InsertQuery> buildLimitedInsertQueryIterator() {
+        return new Iterator<InsertQuery>() {
+            String attributeTypeLabel = strategy.getTypeLabel();
+            Iterator<ValueDatatype> valueProvider = strategy.getValueProvider();
+            int queriesToGenerate = strategy.getNumInstancesPDF().sample();
+            int queriesGenerated = 0;
 
-        return Stream.generate(() -> {
-            Var attr = Graql.var().asUserDefined();
-            Stream<ValueDatatype> valueStream = valuePicker.getStream(unityPDF.sample());
-            ValueDatatype value = valueStream.findFirst().get();
-            return Graql.insert(attr.isa(attributeTypeLabel), attr.val(value));
-        }).limit(numInstances).filter(Objects::nonNull);
+            @Override
+            public boolean hasNext() {
+                return (queriesGenerated < queriesToGenerate) && valueProvider.hasNext();
+            }
+
+            @Override
+            public InsertQuery next() {
+                queriesGenerated++;
+                Var attr = Graql.var().asUserDefined();
+                ValueDatatype value = valueProvider.next(); // get one attribute value
+                return Graql.insert(attr.isa(attributeTypeLabel), attr.val(value));
+            }
+        };
     }
 }

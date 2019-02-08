@@ -1,13 +1,12 @@
 package grakn.benchmark.profiler.generator.definition;
 
-import grakn.benchmark.profiler.generator.pick.CentralStreamProvider;
-import grakn.benchmark.profiler.generator.pick.StandardStreamProvider;
+import grakn.benchmark.profiler.generator.pick.CentralConceptProvider;
 import grakn.benchmark.profiler.generator.pick.RandomStringIterator;
 import grakn.benchmark.profiler.generator.probdensity.FixedConstant;
 import grakn.benchmark.profiler.generator.probdensity.FixedUniform;
 import grakn.benchmark.profiler.generator.storage.ConceptStorage;
 import grakn.benchmark.profiler.generator.storage.ConceptIdStoragePicker;
-import grakn.benchmark.profiler.generator.storage.NotInRelationshipConceptIdPicker;
+import grakn.benchmark.profiler.generator.storage.NotInRelationshipConceptIdProvider;
 import grakn.benchmark.profiler.generator.strategy.AttributeStrategy;
 import grakn.benchmark.profiler.generator.strategy.EntityStrategy;
 import grakn.benchmark.profiler.generator.strategy.RelationshipStrategy;
@@ -73,7 +72,7 @@ public class RoadNetworkDefinition extends DataGeneratorDefinition {
                 new AttributeStrategy<>(
                         "name",
                         new FixedUniform(this.random, 10, 30),
-                        new StandardStreamProvider<>(nameIterator)
+                        nameIterator
                 )
         );
 
@@ -86,9 +85,9 @@ public class RoadNetworkDefinition extends DataGeneratorDefinition {
                 "endpoint",
                 "intersection",
                 new FixedConstant(1),
-                new CentralStreamProvider<>(
+                new CentralConceptProvider(
                         new FixedUniform(random, 10, 40), // choose 10-40 roads not in relationships
-                        new NotInRelationshipConceptIdPicker(
+                        new NotInRelationshipConceptIdProvider(
                                 random,
                                 storage,
                                 "road",
@@ -101,9 +100,7 @@ public class RoadNetworkDefinition extends DataGeneratorDefinition {
                 "endpoint",
                 "intersection",
                 new FixedUniform(random, 1, 5), // choose 1-5 other role players for an intersection
-                new StandardStreamProvider<>(
-                        new ConceptIdStoragePicker(random, storage, "road")
-                )
+                new ConceptIdStoragePicker(random, storage, "road")
         );
 
         this.relationshipStrategies.add(
@@ -121,14 +118,12 @@ public class RoadNetworkDefinition extends DataGeneratorDefinition {
                 "@has-name-owner",
                 "@has-name",
                 new FixedConstant(1),
-                new StandardStreamProvider<>(
-                        new NotInRelationshipConceptIdPicker(
-                                random,
-                                storage,
-                                "road",
-                                "@has-name",
-                                "@has-name-owner"
-                        )
+                new NotInRelationshipConceptIdProvider(
+                        random,
+                        storage,
+                        "road",
+                        "@has-name",
+                        "@has-name-owner"
                 )
         );
         // find some names not used and repeatedly connect a small set/one of them to the roads without names
@@ -136,9 +131,9 @@ public class RoadNetworkDefinition extends DataGeneratorDefinition {
                 "@has-name-value",
                 "@has-name",
                 new FixedConstant(1),
-                new CentralStreamProvider<>(
+                new CentralConceptProvider(
                         new FixedConstant(60), // take unused names
-                        new NotInRelationshipConceptIdPicker(
+                        new NotInRelationshipConceptIdProvider(
                                 random,
                                 storage,
                                 "name",

@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -72,7 +73,7 @@ public class DataGenerator {
             try (Grakn.Transaction tx = session.transaction(GraknTxType.WRITE)) {
 
                 // create the stream of insert/match-insert queries
-                Stream<InsertQuery> queryStream = queryProvider.nextQueryBatch();
+                Iterator<InsertQuery> queryStream = queryProvider.nextQueryBatch();
 
                 // execute & parse the results
                 processQueryStream(queryStream, tx);
@@ -85,11 +86,11 @@ public class DataGenerator {
         System.out.print("\n");
     }
 
-    private void processQueryStream(Stream<InsertQuery> queryStream, Grakn.Transaction tx) {
+    private void processQueryStream(Iterator<InsertQuery> queryIterator, Grakn.Transaction tx) {
         /*
         Make the data insertions from the stream of queries generated
          */
-        queryStream.forEach(q -> {
+        queryIterator.forEachRemaining(q -> {
 
             List<ConceptMap> insertions = q.withTx(tx).execute();
             HashSet<Concept> insertedConcepts = InsertionAnalysis.getInsertedConcepts(q, insertions);

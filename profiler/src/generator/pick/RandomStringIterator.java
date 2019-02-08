@@ -36,32 +36,14 @@ public class RandomStringIterator implements Iterator<String> {
         return new String(buf);
     }
 
-    @Override
-    public void remove() {
-
-    }
-
-    @Override
-    public void forEachRemaining(Consumer action) {
-        while (hasNext()) {
-            action.accept(next());
-        }
-    }
-
-
-    private RandomStringIterator(Random random, int stringLength, String symbols) {
-        if (stringLength < 1) throw new IllegalArgumentException();
-        if (symbols.length() < 2) throw new IllegalArgumentException();
-        this.random = Objects.requireNonNull(random);
-        this.symbols = symbols.toCharArray();
-        this.buf = new char[stringLength];
-    }
-
     /**
      * Create an alphanumeric string generator.
      */
     public RandomStringIterator(Random random, int stringLength) {
-        this(random, stringLength, ALPHANUM);
+        if (stringLength < 1) throw new IllegalArgumentException("Require randomly generated strings to have length > 1");
+        this.random = Objects.requireNonNull(random);
+        this.symbols = ALPHANUM.toCharArray();
+        this.buf = new char[stringLength];
     }
 
 }

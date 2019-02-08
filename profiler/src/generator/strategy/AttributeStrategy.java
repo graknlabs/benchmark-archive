@@ -18,8 +18,9 @@
 
 package grakn.benchmark.profiler.generator.strategy;
 
-import grakn.benchmark.profiler.generator.pick.LimitedStreamProvider;
 import grakn.benchmark.profiler.generator.probdensity.ProbabilityDensityFunction;
+
+import java.util.Iterator;
 
 
 /**
@@ -27,16 +28,16 @@ import grakn.benchmark.profiler.generator.probdensity.ProbabilityDensityFunction
  */
 public class AttributeStrategy<ValueDatatype> extends TypeStrategy {
 
-    private final LimitedStreamProvider<ValueDatatype> valuePicker;
+    private final Iterator<ValueDatatype> valueProvider;
 
     public AttributeStrategy(String attributeTypeLabel,
                              ProbabilityDensityFunction numInstancesPDF,
-                             LimitedStreamProvider<ValueDatatype> valuePicker) {
+                             Iterator<ValueDatatype> valueProvider) {
         super(attributeTypeLabel, numInstancesPDF);
-        this.valuePicker = valuePicker;
+        this.valueProvider = valueProvider;
     }
 
-    public LimitedStreamProvider<ValueDatatype> getPicker() {
-        return this.valuePicker;
+    public Iterator<ValueDatatype> getValueProvider() {
+        return this.valueProvider;
     }
 }

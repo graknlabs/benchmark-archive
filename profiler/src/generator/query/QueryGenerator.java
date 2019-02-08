@@ -20,6 +20,7 @@ package grakn.benchmark.profiler.generator.query;
 
 import grakn.core.graql.InsertQuery;
 
+import java.util.Iterator;
 import java.util.stream.Stream;
 
 /**
@@ -28,6 +29,6 @@ public interface QueryGenerator {
     /**
      * @return
      */
-    Stream<InsertQuery> generate();
+    Iterator<InsertQuery> generate();
 
 }

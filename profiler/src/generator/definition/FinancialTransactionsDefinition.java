@@ -1,14 +1,13 @@
 package grakn.benchmark.profiler.generator.definition;
 
 import grakn.benchmark.profiler.generator.pick.CountingIterator;
-import grakn.benchmark.profiler.generator.pick.StandardStreamProvider;
 import grakn.benchmark.profiler.generator.pick.WeightedPicker;
 import grakn.benchmark.profiler.generator.probdensity.FixedConstant;
 import grakn.benchmark.profiler.generator.probdensity.FixedDiscreteGaussian;
 import grakn.benchmark.profiler.generator.probdensity.ScalingDiscreteGaussian;
 import grakn.benchmark.profiler.generator.storage.ConceptStorage;
 import grakn.benchmark.profiler.generator.storage.ConceptIdStoragePicker;
-import grakn.benchmark.profiler.generator.storage.NotInRelationshipConceptIdPicker;
+import grakn.benchmark.profiler.generator.storage.NotInRelationshipConceptIdProvider;
 import grakn.benchmark.profiler.generator.strategy.*;
 
 import java.util.Arrays;
@@ -70,8 +69,8 @@ public class FinancialTransactionsDefinition extends DataGeneratorDefinition {
                 1.0,
                 new AttributeStrategy<>(
                         "quantity",
-                        new FixedDiscreteGaussian(this.random,5,3),
-                        new StandardStreamProvider<>(idGenerator)
+                        new FixedDiscreteGaussian(this.random, 5, 3),
+                        idGenerator
                 )
         );
 
@@ -86,12 +85,10 @@ public class FinancialTransactionsDefinition extends DataGeneratorDefinition {
                 "transaction",
                 // high variance in the number of role players
                 new ScalingDiscreteGaussian(random, () -> storage.getGraphScale(), 0.01, 0.01),
-                new StandardStreamProvider<>(
-                        new ConceptIdStoragePicker(
-                                random,
-                                 this.storage,
-                                "trader")
-                )
+                new ConceptIdStoragePicker(
+                        random,
+                        this.storage,
+                        "trader")
         );
         this.relationshipStrategies.add(
                 1.0,
@@ -108,24 +105,20 @@ public class FinancialTransactionsDefinition extends DataGeneratorDefinition {
                 "@has-quantity-owner",
                 "@has-quantity",
                 new FixedConstant(1),
-                new StandardStreamProvider<>(
-                        new NotInRelationshipConceptIdPicker(
-                                random,
-                                storage,
-                                "transaction", "@has-quantity", "@has-quantity-owner"
-                        )
+                new NotInRelationshipConceptIdProvider(
+                        random,
+                        storage,
+                        "transaction", "@has-quantity", "@has-quantity-owner"
                 )
         );
         RolePlayerTypeStrategy quantityValue = new RolePlayerTypeStrategy(
                 "@has-quantity-value",
                 "@has-quantity",
                 new FixedConstant(1),
-                new StandardStreamProvider<>(
-                        new ConceptIdStoragePicker(
-                                random,
-                                this.storage,
-                                "quantity"
-                        )
+                new ConceptIdStoragePicker(
+                        random,
+                        this.storage,
+                        "quantity"
                 )
         );
         this.relationshipStrategies.add(

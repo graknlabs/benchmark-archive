@@ -15,7 +15,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class CentralStreamProviderTest {
+public class CentralConceptProviderTest {
 
     @Test
     public void whenSingleCentralObject_objectIsRepeated() {
@@ -28,8 +28,8 @@ public class CentralStreamProviderTest {
 
         FixedConstant five = new FixedConstant(5);
 
-        CentralStreamProvider<Integer> centralStreamProvider = new CentralStreamProvider<>(one, streamer);
-        Stream<Integer> centralStream = centralStreamProvider.getStream(five);
+        CentralConceptProvider centralConceptProvider = new CentralConceptProvider<>(one, streamer);
+        Stream<Integer> centralStream = centralConceptProvider.next();
 
         List<Integer> centralIntegers = centralStream.collect(Collectors.toList());
 
@@ -49,8 +49,8 @@ public class CentralStreamProviderTest {
 
         FixedConstant five = new FixedConstant(5);
 
-        CentralStreamProvider<Integer> centralStreamProvider = new CentralStreamProvider<>(three, streamer);
-        Stream<Integer> centralStream = centralStreamProvider.getStream(five);
+        CentralConceptProvider centralConceptProvider = new CentralConceptProvider<>(three, streamer);
+        Stream<Integer> centralStream = centralConceptProvider.next();
 
         List<Integer> centralIntegers = centralStream.collect(Collectors.toList());
 
@@ -70,14 +70,14 @@ public class CentralStreamProviderTest {
 
         FixedConstant five = new FixedConstant(5);
 
-        CentralStreamProvider<Integer> centralStreamProvider = new CentralStreamProvider<>(three, streamer);
-        Stream<Integer> centralStream = centralStreamProvider.getStream(five);
+        CentralConceptProvider centralConceptProvider = new CentralConceptProvider<>(three, streamer);
+        Stream<Integer> centralStream = centralConceptProvider.next();
 
         List<Integer> centralIntegers = centralStream.collect(Collectors.toList());
         List<Integer> expectedIntegers = Arrays.asList(0, 1, 2, 0, 1);
         Assert.assertThat(centralIntegers, is(expectedIntegers));
 
-        Stream<Integer> centralStreamTwo = centralStreamProvider.getStream(five);
+        Stream<Integer> centralStreamTwo = centralConceptProvider.next();
         List<Integer> centralIntegersTwo = centralStreamTwo.collect(Collectors.toList());
         List<Integer> expectedIntegersTwo = Arrays.asList(2, 0, 1, 2, 0);
         Assert.assertThat(centralIntegersTwo, is(expectedIntegersTwo));
@@ -95,16 +95,16 @@ public class CentralStreamProviderTest {
 
         FixedConstant five = new FixedConstant(5);
 
-        CentralStreamProvider<Integer> centralStreamProvider = new CentralStreamProvider<>(three, streamer);
-        Stream<Integer> centralStream = centralStreamProvider.getStream(five);
+        CentralConceptProvider centralConceptProvider = new CentralConceptProvider<>(three, streamer);
+        Stream<Integer> centralStream = centralConceptProvider.next();
 
         List<Integer> centralIntegers = centralStream.collect(Collectors.toList());
         List<Integer> expectedIntegers = Arrays.asList(0, 1, 2, 0, 1);
         Assert.assertThat(centralIntegers, is(expectedIntegers));
 
-        centralStreamProvider.resetUniqueness();
+        centralConceptProvider.resetUniqueness();
 
-        Stream<Integer> centralStreamTwo = centralStreamProvider.getStream(five);
+        Stream<Integer> centralStreamTwo = centralConceptProvider.next();
         List<Integer> centralIntegersTwo = centralStreamTwo.collect(Collectors.toList());
         List<Integer> expectedIntegersTwo = Arrays.asList(0, 1, 2, 0, 1);
         Assert.assertThat(centralIntegersTwo, is(expectedIntegersTwo));

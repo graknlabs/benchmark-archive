@@ -1,6 +1,5 @@
 package grakn.benchmark.profiler.generator.definition;
 
-import grakn.benchmark.profiler.generator.pick.StandardStreamProvider;
 import grakn.benchmark.profiler.generator.pick.RandomStringIterator;
 import grakn.benchmark.profiler.generator.probdensity.FixedConstant;
 import grakn.benchmark.profiler.generator.probdensity.FixedDiscreteGaussian;
@@ -80,7 +79,7 @@ public class SocialNetworkDefinition extends DataGeneratorDefinition {
                 new AttributeStrategy<>(
                         "name",
                         new FixedDiscreteGaussian(this.random,18, 3),
-                        new StandardStreamProvider<>(nameStream)
+                        nameStream
                 )
         );
 
@@ -95,12 +94,10 @@ public class SocialNetworkDefinition extends DataGeneratorDefinition {
                 "friend",
                 "friendship",
                 new FixedConstant(2),
-                new StandardStreamProvider<>(
                     new ConceptIdStoragePicker(
                         random,
                         this.storage,
                         "person")
-                )
         );
         this.relationshipStrategies.add(
                 1.0,
@@ -117,13 +114,13 @@ public class SocialNetworkDefinition extends DataGeneratorDefinition {
                 "liked",
                 "like",
                 new FixedConstant(1),
-                new StandardStreamProvider<>(new ConceptIdStoragePicker(random, storage, "page"))
+                new ConceptIdStoragePicker(random, storage, "page")
         );
         RolePlayerTypeStrategy likerPersonRole = new RolePlayerTypeStrategy(
                 "liker",
                 "like",
                 new FixedConstant(1),
-                new StandardStreamProvider<>(new ConceptIdStoragePicker(random, storage, "person"))
+                new ConceptIdStoragePicker(random, storage, "person")
         );
         this.relationshipStrategies.add(
                 1.0,
@@ -140,13 +137,13 @@ public class SocialNetworkDefinition extends DataGeneratorDefinition {
                 "@has-name-owner",
                 "@has-name",
                 new FixedConstant(1),
-                new StandardStreamProvider<>(new ConceptIdStoragePicker(random, storage, "person"))
+                new ConceptIdStoragePicker(random, storage, "person")
         );
         RolePlayerTypeStrategy nameValue = new RolePlayerTypeStrategy(
                 "@has-name-value",
                 "@has-name",
                 new FixedConstant(1),
-                new StandardStreamProvider<>(new ConceptIdStoragePicker(random, storage, "name"))
+                new ConceptIdStoragePicker(random, storage, "name")
         );
         this.relationshipStrategies.add(
                 1.0,

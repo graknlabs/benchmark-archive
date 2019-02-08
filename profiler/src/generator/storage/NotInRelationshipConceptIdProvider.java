@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-public class NotInRelationshipConceptIdPicker implements Iterator<ConceptId> {
+public class NotInRelationshipConceptIdProvider implements Iterator<ConceptId> {
 
     private String relationshipLabel;
     private String roleLabel;
@@ -14,11 +14,11 @@ public class NotInRelationshipConceptIdPicker implements Iterator<ConceptId> {
     private String typeLabel;
     ConceptStorage conceptStorage;
 
-    public NotInRelationshipConceptIdPicker(Random rand,
-                                            ConceptStorage conceptStorage,
-                                            String rolePlayerTypeLabel,
-                                            String relationshipLabel,
-                                            String roleLabel
+    public NotInRelationshipConceptIdProvider(Random rand,
+                                              ConceptStorage conceptStorage,
+                                              String rolePlayerTypeLabel,
+                                              String relationshipLabel,
+                                              String roleLabel
     ) {
         this.rand = rand;
         this.typeLabel = rolePlayerTypeLabel;

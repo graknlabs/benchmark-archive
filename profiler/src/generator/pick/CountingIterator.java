@@ -42,16 +42,4 @@ public class CountingIterator implements Iterator<Integer> {
         return this.n;
     }
 
-
-    @Override
-    public void remove() {
-
-    }
-
-    @Override
-    public void forEachRemaining(Consumer action) {
-        while (hasNext()) {
-            action.accept(next());
-        }
-    }
 }

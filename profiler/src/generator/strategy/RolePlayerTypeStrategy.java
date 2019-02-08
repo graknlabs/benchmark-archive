@@ -18,11 +18,10 @@
 
 package grakn.benchmark.profiler.generator.strategy;
 
-import grakn.benchmark.profiler.generator.pick.LimitedStreamProvider;
 import grakn.benchmark.profiler.generator.probdensity.ProbabilityDensityFunction;
 import grakn.core.concept.ConceptId;
 
-import java.util.stream.Stream;
+import java.util.Iterator;
 
 /**
  *
@@ -30,24 +29,20 @@ import java.util.stream.Stream;
 public class RolePlayerTypeStrategy extends TypeStrategy {
 
     private final String roleLabel;
-    private LimitedStreamProvider<ConceptId> streamProvider;
+    private Iterator<ConceptId> conceptIdProvider;
 
-    public RolePlayerTypeStrategy(String roleLabel, String relationshipLabel, ProbabilityDensityFunction numInstancesPDF, LimitedStreamProvider<ConceptId> streamProvider) {
+    public RolePlayerTypeStrategy(String roleLabel, String relationshipLabel, ProbabilityDensityFunction numInstancesPDF, Iterator<ConceptId> conceptIdProvider) {
         super(relationshipLabel, numInstancesPDF);
         this.roleLabel = roleLabel;
-        this.streamProvider = streamProvider;
+        this.conceptIdProvider = conceptIdProvider;
     }
 
-    public LimitedStreamProvider<ConceptId> getStreamProvider() {
-         return streamProvider;
+    public Iterator<ConceptId> getConceptProvider() {
+         return conceptIdProvider;
     }
 
     public String getRoleLabel() {
         return this.roleLabel;
-    }
-
-    public Stream<ConceptId> getConceptIds(){
-        return getStreamProvider().getStream(getNumInstancesPDF().sample());
     }
 
 }

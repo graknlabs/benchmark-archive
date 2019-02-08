@@ -19,6 +19,7 @@
 package grakn.benchmark.profiler.generator.pick;
 
 import grakn.benchmark.profiler.generator.probdensity.ProbabilityDensityFunction;
+import grakn.core.concept.ConceptId;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -38,29 +39,33 @@ import java.util.stream.Stream;
  * The specific values are chosen from the list of central concepts as a circular buffer from the last
  * index that hasn't been used.
  *
- * @param <T>
  */
-public class CentralStreamProvider<T> implements LimitedStreamProvider<T> {
-    private Iterator<T> iterator;
+public class CentralConceptProvider implements Iterator<ConceptId> {
+
+    private Iterator<ConceptId> iterator;
     private Boolean isReset;
-    private ArrayList<T> uniqueConceptIdsList;
+    private ArrayList<ConceptId> uniqueConceptIdsList;
     private int consumeFrom = 0;
     private ProbabilityDensityFunction centralConceptsPdf;
 
-    public CentralStreamProvider(ProbabilityDensityFunction centralConceptsPdf, Iterator<T> iterator) {
+    public CentralConceptProvider(ProbabilityDensityFunction centralConceptsPdf, Iterator<ConceptId> iterator) {
         this.iterator = iterator;
         this.isReset = true;
         this.uniqueConceptIdsList = new ArrayList<>();
         this.centralConceptsPdf = centralConceptsPdf;
     }
 
-    @Override
     public void resetUniqueness() {
         this.isReset = true;
     }
 
     @Override
-    public Stream<T> getStream(int streamLength) {
+    public boolean hasNext() {
+        return !uniqueConceptIdsList.isEmpty();
+    }
+
+    @Override
+    public ConceptId next() {
         // Get the same list as used previously, or generate one if not seen before
         // Only create a new stream if resetUniqueness() has been called prior
 
@@ -80,21 +85,10 @@ public class CentralStreamProvider<T> implements LimitedStreamProvider<T> {
             this.isReset = false;
         }
 
-        if (this.uniqueConceptIdsList.size() == 0) {
-            return Stream.empty();
-        } else {
-
-            // construct the circular buffer-reading stream
-
-            // number of items to read, which if longer than the length of the IDs list will wrap
-            int startIndex = consumeFrom;
-            int endIndex = startIndex + streamLength;
-            this.consumeFrom = (endIndex) % this.uniqueConceptIdsList.size();
-
-            // feed the uniqueConceptIdsList as a circular buffer
-            return IntStream.range(startIndex, endIndex)
-                    .mapToObj(index -> uniqueConceptIdsList.get(index % uniqueConceptIdsList.size()));
-        }
+        // construct the circular buffer-reading stream
+        ConceptId value = uniqueConceptIdsList.get(consumeFrom);
+        consumeFrom++;
+        return value;
     }
 }
 

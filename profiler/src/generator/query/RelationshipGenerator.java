@@ -18,6 +18,7 @@
 
 package grakn.benchmark.profiler.generator.query;
 
+import grakn.benchmark.profiler.generator.pick.CentralConceptProvider;
 import grakn.benchmark.profiler.generator.strategy.RelationshipStrategy;
 import grakn.benchmark.profiler.generator.strategy.RolePlayerTypeStrategy;
 import grakn.core.concept.ConceptId;
@@ -55,62 +56,74 @@ public class RelationshipGenerator implements QueryGenerator {
      * @return
      */
     @Override
-    public Stream<InsertQuery> generate() {
-
-        int numInstances = this.strategy.getNumInstancesPDF().sample();
+    public Iterator<InsertQuery> generate() {
 
         Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies = this.strategy.getRolePlayerTypeStrategies();
         for (RolePlayerTypeStrategy rolePlayerTypeStrategy : rolePlayerTypeStrategies) {
-            // Reset the roleplayer pickers to cater for the case where they are central
-            rolePlayerTypeStrategy.getStreamProvider().resetUniqueness();
+            if (rolePlayerTypeStrategy.getConceptProvider() instanceof CentralConceptProvider) {
+                ((CentralConceptProvider) rolePlayerTypeStrategy.getConceptProvider()).resetUniqueness();
+            }
         }
 
-        String relationshipTypeLabel = strategy.getTypeLabel();
+        return new Iterator<InsertQuery>() {
 
-        return Stream.generate(() -> {
-            /*
-            Process:
-            Find roleplayer types according to the RelationshipRoleStrategy objects
-            Get a stream of conceptIds that can play that role, according to the picking strategy. This stream may be
-            empty for one role, in which case, a decision has to be made whether to make the relationship anyway or abort
+            String relationshipTypeLabel = strategy.getTypeLabel();
+            int queriesToGenerate = strategy.getNumInstancesPDF().sample();
+            int queriesGenerated = 0;
 
-            Currently abort if cannot find a role player for a role
-             */
-
-            Pattern matchVarPattern = null;  //TODO It will be faster to use a pure insert, supplying the ids for the roleplayers' variables
-            VarPattern insertVarPattern = var("r").isa(relationshipTypeLabel);
-
-            // For each role type strategy
-            for (RolePlayerTypeStrategy rolePlayerTypeStrategy : rolePlayerTypeStrategies) {
-                String roleLabel = rolePlayerTypeStrategy.getRoleLabel();
-
-                // Find random role-players matching this type
-                // Pick ids from the list of concept ids
-                Stream<ConceptId> conceptIdStream = rolePlayerTypeStrategy.getConceptIds();
-
-                Iterator<ConceptId> iter = conceptIdStream.iterator();
-
-                if (!iter.hasNext()) {
-                    LOG.trace("No role player for role " + roleLabel + ", skipping relationship " + relationshipTypeLabel);
-                    return null;
-                }
-
-                // Build the match insert query
-                while (iter.hasNext()) {
-                    ConceptId conceptId = iter.next();
-                    // Add the concept to the query
-                    Var v = Graql.var().asUserDefined();
-                    if (matchVarPattern == null) {
-                        matchVarPattern = v.id(conceptId);
-                    } else {
-                        Pattern varPattern = v.id(conceptId);
-                        matchVarPattern = matchVarPattern.and(varPattern);
-                    }
-                    insertVarPattern = insertVarPattern.rel(roleLabel, v);
-                }
+            private boolean allRolePlayerHaveNext() {
+                return rolePlayerTypeStrategies.stream()
+                        .map(s -> s.getConceptProvider())
+                        .allMatch(b -> b.hasNext());
             }
-            return Graql.match(matchVarPattern).insert(insertVarPattern);
 
-        }).limit(numInstances).filter(Objects::nonNull);
+            @Override
+            public boolean hasNext() {
+                return (queriesGenerated < queriesToGenerate) && allRolePlayerHaveNext();
+            }
+
+            @Override
+            public InsertQuery next() {
+                /*
+                Process:
+                Find roleplayer types according to the RelationshipRoleStrategy objects
+                Get a stream of conceptIds that can play that role, according to the picking strategy. This stream may be
+                empty for one role, in which case, a decision has to be made whether to make the relationship anyway or abort
+
+                Currently abort if cannot find a role player for a role
+                */
+
+                Pattern matchVarPattern = null;  //TODO It will be faster to use a pure insert, supplying the ids for the roleplayers' variables
+                VarPattern insertVarPattern = var("r").isa(relationshipTypeLabel);
+
+                // For each role type strategy
+                for (RolePlayerTypeStrategy rolePlayerTypeStrategy : rolePlayerTypeStrategies) {
+                    String roleLabel = rolePlayerTypeStrategy.getRoleLabel();
+
+                    // Find random role-players matching this type
+                    // Pick ids from the list of concept ids
+                    Iterator<ConceptId> conceptProvider = rolePlayerTypeStrategy.getConceptProvider();
+                    int rolePlayersRequired = rolePlayerTypeStrategy.getNumInstancesPDF().sample();
+
+                    // Build the match insert query
+                    int rolePlayersAssigned = 0;
+                    while (conceptProvider.hasNext() && rolePlayersAssigned < rolePlayersRequired) {
+                        ConceptId conceptId = conceptProvider.next();
+                        // Add the concept to the query
+                        Var v = Graql.var().asUserDefined();
+                        if (matchVarPattern == null) {
+                            matchVarPattern = v.id(conceptId);
+                        } else {
+                            Pattern varPattern = v.id(conceptId);
+                            matchVarPattern = matchVarPattern.and(varPattern);
+                        }
+                        insertVarPattern = insertVarPattern.rel(roleLabel, v);
+                        rolePlayersAssigned++;
+                    }
+                }
+                queriesGenerated++;
+                return Graql.match(matchVarPattern).insert(insertVarPattern);
+            }
+        };
     }
 }
