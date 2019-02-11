@@ -1,7 +1,6 @@
-package grakn.benchmark.profiler.generator.provider;
+package grakn.benchmark.profiler.generator.provider.concept;
 
 import grakn.benchmark.profiler.generator.probdensity.FixedConstant;
-import grakn.benchmark.profiler.generator.provider.concept.CentralConceptProvider;
 import grakn.core.concept.ConceptId;
 import org.junit.Test;
 
