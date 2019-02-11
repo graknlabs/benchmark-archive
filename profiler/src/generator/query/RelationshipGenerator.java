@@ -18,7 +18,7 @@
 
 package grakn.benchmark.profiler.generator.query;
 
-import grakn.benchmark.profiler.generator.provider.CentralConceptProvider;
+import grakn.benchmark.profiler.generator.provider.concept.CentralConceptProvider;
 import grakn.benchmark.profiler.generator.strategy.RelationshipStrategy;
 import grakn.benchmark.profiler.generator.strategy.RolePlayerTypeStrategy;
 import grakn.core.concept.ConceptId;

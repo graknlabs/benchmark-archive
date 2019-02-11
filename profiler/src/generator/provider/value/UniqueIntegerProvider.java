@@ -16,14 +16,12 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.profiler.generator.provider;
-
-import java.util.Iterator;
+package grakn.benchmark.profiler.generator.provider.value;
 
 /**
  * Implements a unique integer provider via simple incrementing
  */
-public class UniqueIntegerProvider implements Iterator<Integer> {
+public class UniqueIntegerProvider implements ValueProvider<Integer> {
     private int n;
 
     public UniqueIntegerProvider(int start) {

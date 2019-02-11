@@ -19,6 +19,7 @@
 package grakn.benchmark.profiler.generator.strategy;
 
 import grakn.benchmark.profiler.generator.probdensity.ProbabilityDensityFunction;
+import grakn.benchmark.profiler.generator.provider.concept.ConceptIdProvider;
 import grakn.core.concept.ConceptId;
 
 import java.util.Iterator;
@@ -33,7 +34,7 @@ public class RolePlayerTypeStrategy extends TypeStrategy {
 
     private Iterator<ConceptId> conceptIdProvider;
 
-    public RolePlayerTypeStrategy(String roleLabel, ProbabilityDensityFunction numInstancesPDF, Iterator<ConceptId> conceptIdProvider) {
+    public RolePlayerTypeStrategy(String roleLabel, ProbabilityDensityFunction numInstancesPDF, ConceptIdProvider conceptIdProvider) {
         super(roleLabel, numInstancesPDF);
         this.conceptIdProvider = conceptIdProvider;
     }

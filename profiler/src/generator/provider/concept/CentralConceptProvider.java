@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.profiler.generator.provider;
+package grakn.benchmark.profiler.generator.provider.concept;
 
 import grakn.benchmark.profiler.generator.probdensity.ProbabilityDensityFunction;
 import grakn.core.concept.ConceptId;
@@ -32,7 +32,7 @@ import java.util.Iterator;
  * when adding multiple relationships, if the centralConceptsPdf specifies `1`, all relationships
  * will connect to that same Concept in this iteration.
  */
-public class CentralConceptProvider implements Iterator<ConceptId> {
+public class CentralConceptProvider implements ConceptIdProvider {
 
     private Iterator<ConceptId> iterator;
     private Boolean isReset;

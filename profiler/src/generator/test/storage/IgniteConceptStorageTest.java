@@ -300,7 +300,7 @@ public class IgniteConceptStorageTest {
             this.store.addConcept(conceptMock);
         }
         String typeLabel = "person"; // we have 7 mocked people
-        List<String> peopleNotPlayingRoles = this.store.getIdsNotPlayingRole(typeLabel, relTypeLabel, "aRole");
+        List<ConceptId> peopleNotPlayingRoles = this.store.getIdsNotPlayingRole(typeLabel, relTypeLabel, "aRole");
         assertEquals(7, peopleNotPlayingRoles.size());
 
     }
@@ -317,7 +317,7 @@ public class IgniteConceptStorageTest {
 
         this.store.addRolePlayer(aPerson.asThing().id().toString(), personTypeLabel, relationshipType, role);
 
-        List<String> entitiesNotPlayingRole = store.getIdsNotPlayingRole(personTypeLabel, relationshipType, role);
+        List<ConceptId> entitiesNotPlayingRole = store.getIdsNotPlayingRole(personTypeLabel, relationshipType, role);
         assertEquals(6, entitiesNotPlayingRole.size());
     }
 
@@ -335,8 +335,8 @@ public class IgniteConceptStorageTest {
         this.store.addRolePlayer(aPerson.asThing().id().toString(), personTypeLabel, relationshipType, role1);
         this.store.addRolePlayer(aPerson.asThing().id().toString(), personTypeLabel, relationshipType, role2);
 
-        List<String> entitiesNotPlayingRole1 = store.getIdsNotPlayingRole(personTypeLabel, relationshipType, role1);
-        List<String> entitiesNotPlayingRole2 = store.getIdsNotPlayingRole(personTypeLabel, relationshipType, role2);
+        List<ConceptId> entitiesNotPlayingRole1 = store.getIdsNotPlayingRole(personTypeLabel, relationshipType, role1);
+        List<ConceptId> entitiesNotPlayingRole2 = store.getIdsNotPlayingRole(personTypeLabel, relationshipType, role2);
 
         String[] correctEntities = this.conceptMocks.subList(1, 7).stream()
                 .map(concept->concept.asThing().id().toString())

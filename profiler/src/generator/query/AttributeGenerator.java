@@ -18,7 +18,6 @@
 
 package grakn.benchmark.profiler.generator.query;
 
-import grakn.benchmark.profiler.generator.provider.CentralConceptProvider;
 import grakn.benchmark.profiler.generator.strategy.AttributeStrategy;
 import grakn.core.graql.Graql;
 import grakn.core.graql.InsertQuery;
@@ -30,27 +29,18 @@ import java.util.Iterator;
 /**
  * Generates queries for inserting attribute values
  */
-public class AttributeGenerator<ValueDatatype> implements QueryGenerator {
-    private final AttributeStrategy<ValueDatatype> strategy;
+public class AttributeGenerator<Datatype> implements QueryGenerator {
+    private final AttributeStrategy<Datatype> strategy;
 
-    public AttributeGenerator(AttributeStrategy<ValueDatatype> strategy) {
+    public AttributeGenerator(AttributeStrategy<Datatype> strategy) {
         this.strategy = strategy;
     }
 
     @Override
     public Iterator<InsertQuery> generate() {
-        Iterator<ValueDatatype> valueProvider = this.strategy.getValueProvider();
-        if (valueProvider instanceof CentralConceptProvider) {
-            ((CentralConceptProvider) valueProvider).resetUniqueness();
-        }
-
-        return buildLimitedInsertQueryIterator();
-    }
-
-    private Iterator<InsertQuery> buildLimitedInsertQueryIterator() {
         return new Iterator<InsertQuery>() {
             String attributeTypeLabel = strategy.getTypeLabel();
-            Iterator<ValueDatatype> valueProvider = strategy.getValueProvider();
+            Iterator<Datatype> valueProvider = strategy.getValueProvider();
             int queriesToGenerate = strategy.getNumInstancesPDF().sample();
             int queriesGenerated = 0;
 
@@ -63,7 +53,7 @@ public class AttributeGenerator<ValueDatatype> implements QueryGenerator {
             public InsertQuery next() {
                 queriesGenerated++;
                 Var attr = Graql.var().asUserDefined();
-                ValueDatatype value = valueProvider.next(); // get one attribute value
+                Datatype value = valueProvider.next(); // get one attribute value
                 return Graql.insert(attr.isa(attributeTypeLabel), attr.val(value));
             }
         };

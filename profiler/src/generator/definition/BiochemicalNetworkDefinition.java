@@ -1,12 +1,12 @@
 package grakn.benchmark.profiler.generator.definition;
 
-import grakn.benchmark.profiler.generator.provider.UniqueIntegerProvider;
+import grakn.benchmark.profiler.generator.provider.value.UniqueIntegerProvider;
 import grakn.benchmark.profiler.generator.probdensity.FixedConstant;
 import grakn.benchmark.profiler.generator.probdensity.FixedDiscreteGaussian;
 import grakn.benchmark.profiler.generator.probdensity.ScalingDiscreteGaussian;
 import grakn.benchmark.profiler.generator.storage.ConceptStorage;
-import grakn.benchmark.profiler.generator.provider.ConceptIdStorageProvider;
-import grakn.benchmark.profiler.generator.provider.NotInRelationshipConceptIdProvider;
+import grakn.benchmark.profiler.generator.provider.concept.ConceptIdStorageProvider;
+import grakn.benchmark.profiler.generator.provider.concept.NotInRelationshipConceptIdProvider;
 import grakn.benchmark.profiler.generator.strategy.AttributeStrategy;
 import grakn.benchmark.profiler.generator.strategy.EntityStrategy;
 import grakn.benchmark.profiler.generator.strategy.RelationshipStrategy;
