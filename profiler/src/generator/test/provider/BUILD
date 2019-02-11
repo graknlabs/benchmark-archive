@@ -6,7 +6,6 @@ java_test(
         "//profiler/src/generator:data-generator",
         "//dependencies/maven/artifacts/grakn/core:grakn-graql",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
-        "//dependencies/maven/artifacts/org/hamcrest:hamcrest-all"
     ]
 )
 
@@ -15,6 +14,9 @@ java_test(
     test_class = "grakn.benchmark.profiler.generator.provider.ConceptIdStorageProviderTest",
     srcs = ["ConceptIdStorageProviderTest.java"],
     deps = [
+        "//profiler/src/generator:data-generator",
+        "//dependencies/maven/artifacts/grakn/core:grakn-graql",
+        "//dependencies/maven/artifacts/org/mockito:mockito-core",
     ]
 )
 
