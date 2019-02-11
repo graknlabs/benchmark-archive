@@ -36,9 +36,9 @@ public class NotInRelationshipConceptIdProvider implements Iterator<ConceptId> {
 
     @Override
     public ConceptId next() {
-        List<String> notInRelationshipConceptIds = conceptStorage.getIdsNotPlayingRole(typeLabel, relationshipLabel, roleLabel);
+        List<ConceptId> notInRelationshipConceptIds = conceptStorage.getIdsNotPlayingRole(typeLabel, relationshipLabel, roleLabel);
         int randomOffset = rand.nextInt(notInRelationshipConceptIds.size());
-        return ConceptId.of(notInRelationshipConceptIds.get(randomOffset));
+        return notInRelationshipConceptIds.get(randomOffset);
     }
 
 }
