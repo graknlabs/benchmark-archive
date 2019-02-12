@@ -24,6 +24,11 @@ public class ConceptIdStorageProvider implements ConceptIdProvider {
     }
 
     @Override
+    public boolean hasNextN(int n) {
+        return this.conceptStorage.getConceptCount(this.typeLabel) >= n;
+    }
+
+    @Override
     public ConceptId next() {
         int conceptCount = this.conceptStorage.getConceptCount(this.typeLabel);
         int randomOffset = rand.nextInt(conceptCount);

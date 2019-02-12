@@ -35,6 +35,11 @@ public class NotInRelationshipConceptIdProvider implements ConceptIdProvider {
     }
 
     @Override
+    public boolean hasNextN(int n) {
+        return conceptStorage.getIdsNotPlayingRole(typeLabel, relationshipLabel, roleLabel).size() >= n;
+    }
+
+    @Override
     public ConceptId next() {
         List<ConceptId> notInRelationshipConceptIds = conceptStorage.getIdsNotPlayingRole(typeLabel, relationshipLabel, roleLabel);
         int randomOffset = rand.nextInt(notInRelationshipConceptIds.size());

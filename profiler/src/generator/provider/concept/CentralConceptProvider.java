@@ -57,6 +57,11 @@ public class CentralConceptProvider implements ConceptIdProvider {
     }
 
     @Override
+    public boolean hasNextN(int n) {
+        return uniqueConceptIdsList.size() >= n;
+    }
+
+    @Override
     public ConceptId next() {
         // Get the same list as used previously, or generate one if not seen before
         // Only create a new stream if resetUniqueness() has been called prior
