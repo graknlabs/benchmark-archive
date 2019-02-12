@@ -74,7 +74,8 @@ public class RelationshipGenerator implements QueryGenerator {
 
             @Override
             public boolean hasNext() {
-                return (queriesGenerated < queriesToGenerate) && allRolePlayerHaveNext();
+                boolean tmp = allRolePlayerHaveNext();
+                return (queriesGenerated < queriesToGenerate) && tmp;
             }
 
             @Override

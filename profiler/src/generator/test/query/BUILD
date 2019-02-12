@@ -24,5 +24,9 @@ java_test(
     name = "relationship-generator-test",
     test_class = "grakn.benchmark.profiler.generator.query.RelationshipGeneratorTest",
     srcs = ["RelationshipGeneratorTest.java"],
-    deps = []
+    deps = [
+        "//profiler/src/generator:data-generator",
+        "//dependencies/maven/artifacts/grakn/core:grakn-graql",
+        "//dependencies/maven/artifacts/org/mockito:mockito-core",
+    ]
 )
