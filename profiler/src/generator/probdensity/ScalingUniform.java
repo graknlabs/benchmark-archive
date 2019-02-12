@@ -2,7 +2,6 @@ package grakn.benchmark.profiler.generator.probdensity;
 
 import java.util.Random;
 import java.util.function.Supplier;
-import java.util.stream.IntStream;
 
 /**
  *
@@ -23,7 +22,6 @@ public class ScalingUniform implements ProbabilityDensityFunction {
         this.lowerBoundFactor = lowerBoundFactor;
         this.upperBoundFactor = upperBoundFactor;
     }
-
 
     @Override
     public int sample() {

@@ -1,16 +1,22 @@
 package grakn.benchmark.profiler.generator.provider.concept;
 
 import grakn.benchmark.profiler.generator.probdensity.FixedConstant;
+import grakn.benchmark.profiler.generator.storage.ConceptStorage;
 import grakn.core.concept.ConceptId;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class CentralConceptProviderTest {
 
@@ -75,5 +81,23 @@ public class CentralConceptProviderTest {
         for (ConceptId expectedId : expectedIdsAfterReset) {
             assertEquals(expectedId, centralConceptProvider.next());
         }
+    }
+
+    @Test
+    public void whenCentralObjectIsNotEmpty_hasNextNTrue() {
+        FixedConstant three = new FixedConstant(3);
+        Iterator<ConceptId> conceptIdProvider = IntStream.range(0, 10).mapToObj(i -> ConceptId.of(Integer.toString(i))).iterator();
+        CentralConceptProvider centralConceptProvider = new CentralConceptProvider(three, conceptIdProvider);
+        assertTrue(centralConceptProvider.hasNextN(1));
+        assertTrue(centralConceptProvider.hasNextN(100));
+    }
+
+    @Test
+    public void whenCentralObjectIsEmpty_hasNextNFalse() {
+        FixedConstant three = new FixedConstant(3);
+        Iterator<ConceptId> conceptIdProvider = Arrays.<ConceptId>asList().iterator();
+        CentralConceptProvider centralConceptProvider = new CentralConceptProvider(three, conceptIdProvider);
+        assertFalse(centralConceptProvider.hasNextN(1));
+        assertFalse(centralConceptProvider.hasNextN(100));
     }
 }

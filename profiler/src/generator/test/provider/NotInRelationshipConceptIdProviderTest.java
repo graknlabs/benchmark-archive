@@ -52,4 +52,22 @@ public class NotInRelationshipConceptIdProviderTest {
         assertEquals(ConceptId.of("b"), conceptIdProvider.next());
 
     }
+
+    @Test
+    public void whenCheckIfHasNextN_returnCorrectBoolean() {
+        ConceptStorage storage = mock(ConceptStorage.class);
+        when(storage.getConceptCount("person")).thenReturn(4);
+        List<ConceptId> idsNotPlayingRole = Arrays.asList(ConceptId.of("a"), ConceptId.of("b"), ConceptId.of("c"), ConceptId.of("d"));
+        when(storage.getIdsNotPlayingRole("person", "friendship", "friend")).thenReturn(idsNotPlayingRole);
+
+        Random random = mock(Random.class);
+        NotInRelationshipConceptIdProvider conceptIdProvider = new NotInRelationshipConceptIdProvider(random, storage, "person", "friendship", "friend");
+
+        assertTrue(conceptIdProvider.hasNextN(0));
+        assertTrue(conceptIdProvider.hasNextN(1));
+        assertTrue(conceptIdProvider.hasNextN(2));
+        assertTrue(conceptIdProvider.hasNextN(3));
+        assertTrue(conceptIdProvider.hasNextN(4));
+        assertFalse(conceptIdProvider.hasNextN(5));
+    }
 }

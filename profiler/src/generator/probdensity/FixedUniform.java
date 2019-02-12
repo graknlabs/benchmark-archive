@@ -19,7 +19,6 @@
 package grakn.benchmark.profiler.generator.probdensity;
 
 import java.util.Random;
-import java.util.stream.IntStream;
 
 /**
  *

@@ -66,15 +66,15 @@ public class RelationshipGenerator implements QueryGenerator {
             int queriesToGenerate = strategy.getNumInstancesPDF().sample();
             int queriesGenerated = 0;
 
-            private boolean allRolePlayerHaveNext() {
+            private boolean allRolePlayerStrategiesHaveSufficientPlayers() {
                 return strategy.getRolePlayerTypeStrategies().stream()
-                        .map(s -> s.getConceptProvider())
-                        .allMatch(b -> b.hasNext());
+                        .map(s -> s.getConceptProvider().hasNextN(s.getNumInstancesPDF().peek()))
+                        .allMatch(b -> b);
             }
 
             @Override
             public boolean hasNext() {
-                boolean tmp = allRolePlayerHaveNext();
+                boolean tmp = allRolePlayerStrategiesHaveSufficientPlayers();
                 return (queriesGenerated < queriesToGenerate) && tmp;
             }
 

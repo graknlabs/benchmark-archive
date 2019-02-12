@@ -53,4 +53,18 @@ public class ConceptIdStorageProviderTest {
 
     }
 
+    @Test
+    public void whenCheckIfHasNextN_returnCorrectBoolean() {
+        ConceptStorage storage = mock(ConceptStorage.class);
+        when(storage.getConceptCount("person")).thenReturn(4);
+        Random random = mock(Random.class);
+        ConceptIdStorageProvider conceptIdProvider = new ConceptIdStorageProvider(random, storage, "person");
+
+        assertTrue(conceptIdProvider.hasNextN(0));
+        assertTrue(conceptIdProvider.hasNextN(1));
+        assertTrue(conceptIdProvider.hasNextN(2));
+        assertTrue(conceptIdProvider.hasNextN(3));
+        assertTrue(conceptIdProvider.hasNextN(4));
+        assertFalse(conceptIdProvider.hasNextN(5));
+    }
 }

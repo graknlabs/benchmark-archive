@@ -338,9 +338,9 @@ public class IgniteConceptStorageTest {
         List<ConceptId> entitiesNotPlayingRole1 = store.getIdsNotPlayingRole(personTypeLabel, relationshipType, role1);
         List<ConceptId> entitiesNotPlayingRole2 = store.getIdsNotPlayingRole(personTypeLabel, relationshipType, role2);
 
-        String[] correctEntities = this.conceptMocks.subList(1, 7).stream()
-                .map(concept->concept.asThing().id().toString())
-                .collect(Collectors.toList()).toArray(new String[]{});
+        ConceptId[] correctEntities = this.conceptMocks.subList(1, 7).stream()
+                .map(concept->concept.asThing().id())
+                .collect(Collectors.toList()).toArray(new ConceptId[]{});
 
         // assert matches in any order, casting to force hamcrest to use the right
         assertThat(entitiesNotPlayingRole1, containsInAnyOrder(correctEntities));

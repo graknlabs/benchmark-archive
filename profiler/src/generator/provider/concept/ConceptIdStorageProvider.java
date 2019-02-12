@@ -3,7 +3,6 @@ package grakn.benchmark.profiler.generator.provider.concept;
 import grakn.benchmark.profiler.generator.storage.ConceptStorage;
 import grakn.core.concept.ConceptId;
 
-import java.util.Iterator;
 import java.util.Random;
 
 public class ConceptIdStorageProvider implements ConceptIdProvider {

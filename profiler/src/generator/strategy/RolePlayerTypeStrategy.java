@@ -20,9 +20,6 @@ package grakn.benchmark.profiler.generator.strategy;
 
 import grakn.benchmark.profiler.generator.probdensity.ProbabilityDensityFunction;
 import grakn.benchmark.profiler.generator.provider.concept.ConceptIdProvider;
-import grakn.core.concept.ConceptId;
-
-import java.util.Iterator;
 
 /**
  * A container for the three things required for how to generate a batch of role players:
@@ -32,14 +29,14 @@ import java.util.Iterator;
  */
 public class RolePlayerTypeStrategy extends TypeStrategy {
 
-    private Iterator<ConceptId> conceptIdProvider;
+    private ConceptIdProvider conceptIdProvider;
 
     public RolePlayerTypeStrategy(String roleLabel, ProbabilityDensityFunction numInstancesPDF, ConceptIdProvider conceptIdProvider) {
         super(roleLabel, numInstancesPDF);
         this.conceptIdProvider = conceptIdProvider;
     }
 
-    public Iterator<ConceptId> getConceptProvider() {
+    public ConceptIdProvider getConceptProvider() {
         return conceptIdProvider;
     }
 }

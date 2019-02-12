@@ -48,17 +48,23 @@ public class CentralConceptProvider implements ConceptIdProvider {
     }
 
     public void resetUniqueness() {
-        this.isReset = true;
+        isReset = true;
     }
 
     @Override
     public boolean hasNext() {
+        if (isReset) {
+            refillBuffer();
+            isReset = false;
+        }
         return !uniqueConceptIdsList.isEmpty();
     }
 
     @Override
     public boolean hasNextN(int n) {
-        return uniqueConceptIdsList.size() >= n;
+        // because we use this as a circular buffer
+        // we always have more unless the buffer is empty
+        return hasNext();
     }
 
     @Override
@@ -66,26 +72,29 @@ public class CentralConceptProvider implements ConceptIdProvider {
         // Get the same list as used previously, or generate one if not seen before
         // Only create a new stream if resetUniqueness() has been called prior
 
-        if (this.isReset) {
-            // re-fill the internal buffer of conceptIds to be repeated (the centrality aspect)
-            int uniqueness = this.centralConceptsPdf.sample();
-
-            this.uniqueConceptIdsList.clear();
-
-            int i = 0;
-            while (iterator.hasNext() && i < uniqueness) {
-                uniqueConceptIdsList.add(iterator.next());
-                i++;
-            }
-
-            this.consumeFrom = 0;
-            this.isReset = false;
+        if (isReset) {
+            refillBuffer();
+            isReset = false;
         }
 
         // construct the circular buffer-reading stream
         ConceptId value = uniqueConceptIdsList.get(consumeFrom);
         consumeFrom = (consumeFrom + 1) % uniqueConceptIdsList.size();
         return value;
+    }
+
+    private void refillBuffer() {
+        // re-fill the internal buffer of conceptIds to be repeated (the centrality aspect)
+        int uniqueness = centralConceptsPdf.sample();
+
+        this.uniqueConceptIdsList.clear();
+
+        int i = 0;
+        while (iterator.hasNext() && i < uniqueness) {
+            uniqueConceptIdsList.add(iterator.next());
+            i++;
+        }
+        this.consumeFrom = 0;
     }
 }
 
