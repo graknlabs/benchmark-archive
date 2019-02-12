@@ -30,10 +30,12 @@ public class FixedUniform implements ProbabilityDensityFunction {
     private int lowerBound;
     private int upperBound;
 
+    private Integer next;
+
     /**
      * @param rand
-     * @param lowerBound
-     * @param upperBound
+     * @param lowerBound (inclusive)
+     * @param upperBound (inclusive)
      */
     public FixedUniform(Random rand, int lowerBound, int upperBound) {
         this.rand = rand;
@@ -46,7 +48,22 @@ public class FixedUniform implements ProbabilityDensityFunction {
      */
     @Override
     public int sample() {
-        IntStream intStream = rand.ints(1, lowerBound, upperBound + 1);
-        return intStream.findFirst().getAsInt();
+        takeSampleIfNextNull();
+        int val = next;
+        next = null;
+        return val;
     }
+
+    @Override
+    public int peek() {
+        takeSampleIfNextNull();
+        return next;
+    }
+
+    private void takeSampleIfNextNull() {
+        if (next == null) {
+            next = lowerBound + rand.nextInt(upperBound - lowerBound + 1);
+        }
+    }
+
 }

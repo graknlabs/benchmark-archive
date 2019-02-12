@@ -39,4 +39,9 @@ public class FixedConstant implements ProbabilityDensityFunction {
     public int sample() {
         return this.constant;
     }
+
+    @Override
+    public int peek() {
+        return this.constant;
+    }
 }

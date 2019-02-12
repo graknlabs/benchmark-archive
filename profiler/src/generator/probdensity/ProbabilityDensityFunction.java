@@ -23,4 +23,5 @@ package grakn.benchmark.profiler.generator.probdensity;
  */
 public interface ProbabilityDensityFunction {
     int sample();
+    int peek();
 }
