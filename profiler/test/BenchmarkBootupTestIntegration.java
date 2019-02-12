@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 /**
  *
  */
-public class GraknBenchmarkTest {
+public class BenchmarkBootupTestIntegration {
 
     private final static Path WEB_CONTENT_CONFIG_PATH = Paths.get("profiler/test/resources/web_content/web_content_config_test.yml");
 

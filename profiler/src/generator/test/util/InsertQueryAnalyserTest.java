@@ -18,7 +18,6 @@
 
 package grakn.benchmark.profiler.generator.util;
 
-import grakn.benchmark.profiler.generator.DataGeneratorException;
 import grakn.core.concept.Concept;
 import grakn.core.concept.ConceptId;
 import grakn.core.concept.Thing;
@@ -31,7 +30,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 import static grakn.core.graql.Graql.var;
 import static junit.framework.TestCase.assertEquals;

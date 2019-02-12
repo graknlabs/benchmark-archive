@@ -20,7 +20,7 @@ import java.util.UUID;
 
 import static grakn.core.graql.Graql.var;
 
-public class GraknBenchmarkE2E {
+public class BenchmarkTestIntegration {
     private final static Path WEB_CONTENT_CONFIG_PATH = Paths.get("profiler/test/resources/web_content/web_content_config_test.yml");
 
     @Rule
