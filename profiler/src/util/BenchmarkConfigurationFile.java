@@ -32,7 +32,6 @@ public class BenchmarkConfigurationFile {
     private Integer repeatsPerQuery;
 
     private boolean commitQueries;
-    private Transaction transaction;
     private Concurrency concurrency;
 
     public void setGraphName(String graphName) {
@@ -77,52 +76,34 @@ public class BenchmarkConfigurationFile {
         return this.repeatsPerQuery;
     }
 
-    // --- transaction configs ---
-    public void setTransaction(Transaction tx) {
-        transaction = tx;
-    }
-    public Integer queriesPerTx() {
-        return transaction.getQueriesPerTx();
-    }
-
     // --- concurrency configs ---
     public void setConcurrency(Concurrency concurrency) {
         this.concurrency = concurrency;
     }
-    public Integer concurrentSessions() {
-        return this.concurrency.sessions();
+    public Integer concurrentClients() {
+        return this.concurrency.clients();
     }
-    public Boolean separateConcurrentKeyspaces() {
-        return this.concurrency.separateKeyspaces();
-    }
-
-}
-
-class Transaction {
-    private Integer queriesPerTx;
-    public void setQueriesPerTx() {
-        this.queriesPerTx = queriesPerTx;
-    }
-    public Integer getQueriesPerTx() {
-        return queriesPerTx;
+    public Boolean uniqueConcurrentKeyspaces() {
+        return this.concurrency.uniqueKeyspaces();
     }
 }
+
 
 class Concurrency {
-    private Integer sessions;
+    private Integer clients;
     private Boolean separateKeyspaces;
 
-    private void setSessions(Integer sessions) {
-        this.sessions = sessions;
+    private void setClients(Integer clients) {
+        this.clients= clients;
     }
-    public Integer sessions() {
-        return sessions;
+    public Integer clients() {
+        return clients;
     }
 
-    private void setSeparateKeyspaces(Boolean separateKeyspaces) {
-        this.separateKeyspaces = separateKeyspaces;
+    private void setUniqueKeyspaces(Boolean uniqueKeyspaces) {
+        this.separateKeyspaces = uniqueKeyspaces;
     }
-    public Boolean separateKeyspaces() {
+    public Boolean uniqueKeyspaces() {
         return separateKeyspaces;
     }
 }

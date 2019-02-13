@@ -30,6 +30,7 @@ import grakn.benchmark.profiler.util.SchemaManager;
 import grakn.benchmark.profiler.util.BenchmarkArguments;
 import grakn.benchmark.profiler.util.BenchmarkConfiguration;
 import grakn.benchmark.profiler.util.ElasticSearchManager;
+import grakn.core.Keyspace;
 import grakn.core.client.Grakn;
 import grakn.core.concept.AttributeType;
 import grakn.core.concept.EntityType;
@@ -41,8 +42,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 /**
  * Class in charge of
@@ -90,16 +93,42 @@ public class GraknBenchmark {
      * - don't generate new data and only profile an existing keyspace
      */
     public void start() {
-        Grakn client = new Grakn(new SimpleURI(config.graknUri()), true);
-        Grakn.Session session = client.session(config.getKeyspace());
-        QueryProfiler queryProfiler = new QueryProfiler(session, config.executionName(), config.graphName(), config.getQueries());
+
+        List<Grakn> clients = new LinkedList<>();
+        List<Grakn.Session> sessions = new LinkedList<>();
+        Set<Keyspace> keyspaces = new HashSet<>();
+
+        String keyspaceBase = config.getKeyspace();
+        // create concurrent clients
+        for (int i = 0; i < config.concurrentClients(); i++) {
+            Grakn client = new Grakn(new SimpleURI(config.graknUri()), true);
+            clients.add(client);
+            String keyspaceName;
+            if (config.uniqueConcurrentKeyspaces()) {
+                // make some unique keyspaces (hopefully empty, TODO this check if not exists further down)
+                keyspaceName = keyspaceBase + "_c" + Integer.toString(i);
+            } else {
+                keyspaceName = keyspaceBase;
+            }
+            Keyspace keyspace = Keyspace.of(keyspaceName);
+            keyspaces.add(keyspace);
+            Grakn.Session session = client.session(keyspace);
+            sessions.add(session);
+        }
+
+
+        QueryProfiler queryProfiler = new QueryProfiler(sessions, config.executionName(), config.graphName(), config.getQueries(), config.commitQueries());
         int repetitionsPerQuery = config.numQueryRepetitions();
 
         if (config.generateData()) {
 
+            if (keyspaces.size() > 1) {
+                throw new BootupException("Cannot currently perform data generatation into more than 1 keyspace");
+            }
+
             Ignite ignite = IgniteManager.initIgnite();
             try {
-                DataGenerator dataGenerator = initDataGenerator(session);
+                DataGenerator dataGenerator = initDataGenerator(sessions.get(0));
                 List<Integer> numConceptsInRun = config.scalesToProfile();
                 for (int numConcepts : numConceptsInRun) {
                     LOG.info("Generating graph to scale... " + numConcepts);
@@ -113,11 +142,25 @@ public class GraknBenchmark {
             }
 
         } else {
-            int numConcepts = queryProfiler.aggregateCount();
+//            int numConcepts = queryProfiler.aggregateCount();
+
+            // TODO remove this
+            // temporarily allow loadng a schema here
+            for (Keyspace keyspace: keyspaces) {
+                LOG.info("Adding schema to keyspace: " +keyspace.toString());
+                // insert schema into each keyspace
+                Grakn.Session session = clients.get(0).session(keyspace);
+                SchemaManager manager = new SchemaManager(session, config.getGraqlSchema());
+            }
+
+            int numConcepts = 0; // TODO re-add this properly for concurrent clients
             queryProfiler.processStaticQueries(repetitionsPerQuery, numConcepts);
         }
 
-        session.close();
+        for (Grakn.Session session: sessions) {
+            session.close();
+        }
+        queryProfiler.cleanup();
     }
 
     private DataGenerator initDataGenerator(Grakn.Session session) {
@@ -134,7 +177,6 @@ public class GraknBenchmark {
         DataGeneratorDefinition dataGeneratorDefinition = DefinitionFactory.getDefinition(graphName, new Random(randomSeed), storage);
 
         QueryProvider queryProvider = new QueryProvider(dataGeneratorDefinition);
-
 
         return new DataGenerator(session, storage, graphName, queryProvider);
     }

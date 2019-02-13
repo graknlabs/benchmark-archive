@@ -91,8 +91,8 @@ public class BenchmarkConfiguration {
         return this.benchmarkConfigFile.getGraphName();
     }
 
-    public Keyspace getKeyspace() {
-        return Keyspace.of(this.keyspace);
+    public String getKeyspace() {
+        return this.keyspace;
     }
 
     public List<String> getGraqlSchema() {
@@ -113,6 +113,18 @@ public class BenchmarkConfiguration {
 
     public int numQueryRepetitions() {
         return this.benchmarkConfigFile.getRepeatsPerQuery();
+    }
+
+    public boolean commitQueries() {
+        return benchmarkConfigFile.commitQueries();
+    }
+
+    public int concurrentClients() {
+        return benchmarkConfigFile.concurrentClients();
+    }
+
+    public boolean uniqueConcurrentKeyspaces() {
+        return benchmarkConfigFile.uniqueConcurrentKeyspaces();
     }
 
 

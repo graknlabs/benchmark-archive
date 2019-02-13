@@ -30,9 +30,14 @@ import grakn.core.graql.answer.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static grakn.core.graql.Graql.var;
 
@@ -46,18 +51,25 @@ public class QueryProfiler {
     private final String executionName;
     private final String graphName;
     private final List<Query> queries;
-    private final Grakn.Session session;
+    private boolean commitQueries;
+    private final List<Grakn.Session> sessions;
+    private ExecutorService executorService;
 
-    public QueryProfiler(Grakn.Session session, String executionName, String graphName, List<String> queryStrings) {
-        this.session = session;
+    public QueryProfiler(List<Grakn.Session> sessions, String executionName, String graphName, List<String> queryStrings, boolean commitQueries) {
+        this.sessions = sessions;
 
         this.executionName = executionName;
         this.graphName = graphName;
 
         // convert Graql strings into Query types
         this.queries = queryStrings.stream()
-                        .map(q -> (Query)Graql.parser().parseQuery(q))
-                        .collect(Collectors.toList());
+                .map(q -> (Query) Graql.parser().parseQuery(q))
+                .collect(Collectors.toList());
+
+        this.commitQueries = commitQueries;
+
+        // create 1 thread per client session
+        executorService = Executors.newFixedThreadPool(sessions.size());
     }
 
     public void processStaticQueries(int numRepeats, int numConcepts) {
@@ -66,7 +78,7 @@ public class QueryProfiler {
         LOG.trace("Finished processStaticQueries");
     }
 
-    public int aggregateCount() {
+    public int aggregateCount(Grakn.Session session) {
         try (Grakn.Transaction tx = session.transaction(GraknTxType.READ)) {
             List<Value> count = tx.graql().match(var("x").isa("thing")).aggregate(Graql.count()).execute();
             return count.get(0).number().intValue();
@@ -74,62 +86,114 @@ public class QueryProfiler {
     }
 
     void processQueries(List<Query> queries, int repetitions, int numConcepts) {
-        try (Grakn.Transaction tx = session.transaction(GraknTxType.WRITE)) {
-            Tracer tracer = Tracing.currentTracer();
+        List<Future> runningQueryProcessors = new LinkedList<>();
 
-            for (int rep = 0; rep < repetitions; rep++) {
+        long start = System.currentTimeMillis();
 
-                for (Query rawQuery : queries) {
-                    Query query = rawQuery.withTx(tx);
-
-                    this.eraselinePrint(String.format("Profiling... (repetition %d/%d):\t%s", rep+1, repetitions, query.toString()));
-                    LOG.trace("Profiling... repetition " + rep + "/" + repetitions + ": " + query.toString());
-                    Span querySpan = tracer.newTrace().name("query");
-                    querySpan.tag("scale", Integer.toString(numConcepts));
-                    querySpan.tag("query", query.toString());
-                    querySpan.tag("executionName", this.executionName);
-                    querySpan.tag("repetitions", Integer.toString(repetitions));
-                    querySpan.tag("graphName", this.graphName);
-                    querySpan.tag("repetition", Integer.toString(rep));
-                    querySpan.start();
-                    LOG.trace("Opened query span");
-
-                    // perform trace in thread-local storage on the client
-                    try (Tracer.SpanInScope ws = tracer.withSpanInScope(querySpan)) {
-                        List<Answer> answer = query.execute();
-                        LOG.trace("executed query successfully");
-                    } finally {
-                        querySpan.finish();
-                        LOG.trace("Closed query span");
-                    }
-                }
-                // wait for out-of-band reporting to complete
-                Thread.sleep(100);
-            }
-            // wait for out-of-band reporting to complete
-            Thread.sleep(1500);
-        } catch (InterruptedException e) {
-            LOG.error("Thread sleeps during data generation were interrupted", e);
-            Thread.currentThread().interrupt();
+        for (int i = 0; i < sessions.size(); i++) {
+            Grakn.Session session = sessions.get(i);
+            QueryProcessor processor = new QueryProcessor(executionName, i, graphName, Tracing.currentTracer(), queries, repetitions, numConcepts, session, commitQueries);
+            runningQueryProcessors.add(executorService.submit(processor));
         }
-        System.out.print("\n\n");
+
+        // wait until all threads have finished
+        try {
+            for (Future future : runningQueryProcessors) {
+                future.get();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        long length = System.currentTimeMillis() - start;
+        System.out.println("Time: " + length);
     }
 
-    private void eraselinePrint(String msg) {
-        System.out.print("\r");
-        System.out.print(msg);
+    public void cleanup() {
+        executorService.shutdown();
     }
 }
 
 class QueryProcessor implements Runnable {
 
-    public QueryProcessor(int processorId, Tracer tracer, List<Query> queries, int repetitions, int numConcepts, Grakn.Session session, boolean commitQuery) {
+    private int concurrentId;
+    private String graphName;
+    private Tracer tracer;
+    private final List<Query> queries;
+    private final int repetitions;
+    private final int numConcepts;
+    private final Grakn.Session session;
+    private final boolean commitQuery;
+    private String executionName;
 
+    public QueryProcessor(String executionName, int concurrentId, String graphName, Tracer tracer, List<Query> queries, int repetitions, int numConcepts, Grakn.Session session, boolean commitQuery) {
+        this.executionName = executionName;
+        this.concurrentId = concurrentId;
+        this.graphName = graphName;
+        this.tracer = tracer;
+        this.queries = queries;
+        this.repetitions = repetitions;
+        this.numConcepts = numConcepts;
+        this.session = session;
+        this.commitQuery = commitQuery;
     }
 
 
     @Override
     public void run() {
+        try {
+            Span concurrentExecutionSpan = tracer.newTrace().name("concurrent-execution");
+            concurrentExecutionSpan.tag("executionName", executionName);
+            concurrentExecutionSpan.tag("concurrentClient", Integer.toString(concurrentId));
+            concurrentExecutionSpan.tag("graphName", this.graphName);
+            concurrentExecutionSpan.tag("repetitions", Integer.toString(repetitions));
+            concurrentExecutionSpan.tag("scale", Integer.toString(numConcepts));
+            concurrentExecutionSpan.start();
 
+            int counter = 0;
+            for (int rep = 0; rep < repetitions; rep++) {
+                for (Query rawQuery : queries) {
+                    counter++;
+                    Span querySpan = tracer.newChild(concurrentExecutionSpan.context());
+                    querySpan.name("query");
+                    querySpan.tag("query", rawQuery.toString());
+                    querySpan.tag("repetitions", Integer.toString(repetitions));
+                    querySpan.tag("repetition", Integer.toString(rep));
+                    querySpan.start();
+
+                    // perform trace in thread-local storage on the client
+                    try (Tracer.SpanInScope ws = tracer.withSpanInScope(querySpan)) {
+                        // open new transaction
+                        Grakn.Transaction tx = session.transaction(GraknTxType.WRITE);
+                        // attach query to transaction
+                        Query query = rawQuery.withTx(tx);
+                        if (counter % 100 == 0) {
+                            System.out.println(String.format("%d [c%d] Profiling... (repetition %d/%d):\t%s", counter, concurrentId, rep + 1, repetitions, query.toString()));
+                        }
+                        List<Answer> answer = query.execute();
+
+                        if (commitQuery) {
+                            tx.commit();
+                        }
+
+                        tx.close();
+                    } finally {
+                        querySpan.finish();
+                    }
+                }
+            }
+
+            concurrentExecutionSpan.finish();
+            // give zipkin reporter time to finish transmitting spans/close spans cleanly
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            System.out.println("Thread sleeps during data generation were interrupted");
+            e.printStackTrace();
+            Thread.currentThread().interrupt();
+        }
+        System.out.println("Thread runnable finished running queries");
+        System.out.print("\n\n");
     }
 }
