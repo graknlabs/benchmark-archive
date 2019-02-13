@@ -1,7 +1,6 @@
-package grakn.benchmark.profiler.generator.provider;
+package grakn.benchmark.profiler.generator.provider.value;
 
 
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
@@ -9,7 +8,7 @@ import java.util.Random;
 /**
  * adapted from https://stackoverflow.com/questions/41107/how-to-generate-a-random-alpha-numeric-string
  */
-public class RandomStringProvider implements Iterator<String> {
+public class RandomStringProvider implements ValueProvider<String> {
 
     private static final String UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final String LOWER = UPPER.toLowerCase(Locale.ROOT);

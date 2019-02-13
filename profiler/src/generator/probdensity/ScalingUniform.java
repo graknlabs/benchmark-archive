@@ -2,7 +2,6 @@ package grakn.benchmark.profiler.generator.probdensity;
 
 import java.util.Random;
 import java.util.function.Supplier;
-import java.util.stream.IntStream;
 
 /**
  *
@@ -14,6 +13,9 @@ public class ScalingUniform implements ProbabilityDensityFunction {
     private double lowerBoundFactor;
     private double upperBoundFactor;
 
+    private Integer next = null;
+    private int lastScale = 0;
+
     public ScalingUniform(Random rand, Supplier<Integer> scaleSupplier, double lowerBoundFactor, double upperBoundFactor) {
         this.rand = rand;
         this.scaleSupplier = scaleSupplier;
@@ -21,15 +23,26 @@ public class ScalingUniform implements ProbabilityDensityFunction {
         this.upperBoundFactor = upperBoundFactor;
     }
 
-    /**
-     * @return
-     */
     @Override
     public int sample() {
-        Integer scale = scaleSupplier.get();
-        int lowerBound = (int)(scale * this.lowerBoundFactor);
-        int upperBound = (int)(scale * this.upperBoundFactor);
-        IntStream intStream = rand.ints(1, lowerBound, upperBound + 1);
-        return intStream.findFirst().getAsInt();
+        takeSampleIfNextNullOrScaleChanged();
+        int val = next;
+        next = null;
+        return val;
+    }
+
+    @Override
+    public int peek() {
+        takeSampleIfNextNullOrScaleChanged();
+        return next;
+    }
+
+    public void takeSampleIfNextNullOrScaleChanged() {
+        int scale = scaleSupplier.get();
+        if (next == null || lastScale != scale) {
+            int lowerBound = (int) (scale * this.lowerBoundFactor);
+            int upperBound = (int) (scale * this.upperBoundFactor);
+            next = lowerBound + rand.nextInt(upperBound - lowerBound + 1);
+        }
     }
 }

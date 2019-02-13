@@ -25,4 +25,9 @@ public class ScalingConstant implements ProbabilityDensityFunction {
     public int sample() {
         return (int)(scaleSupplier.get() * scaleFactor);
     }
+
+    @Override
+    public int peek() {
+        return (int)(scaleSupplier.get() * scaleFactor);
+    }
 }

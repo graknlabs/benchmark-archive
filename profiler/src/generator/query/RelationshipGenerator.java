@@ -18,7 +18,7 @@
 
 package grakn.benchmark.profiler.generator.query;
 
-import grakn.benchmark.profiler.generator.provider.CentralConceptProvider;
+import grakn.benchmark.profiler.generator.provider.concept.CentralConceptProvider;
 import grakn.benchmark.profiler.generator.strategy.RelationshipStrategy;
 import grakn.benchmark.profiler.generator.strategy.RolePlayerTypeStrategy;
 import grakn.core.concept.ConceptId;
@@ -66,15 +66,16 @@ public class RelationshipGenerator implements QueryGenerator {
             int queriesToGenerate = strategy.getNumInstancesPDF().sample();
             int queriesGenerated = 0;
 
-            private boolean allRolePlayerHaveNext() {
+            private boolean allRolePlayerStrategiesHaveSufficientPlayers() {
                 return strategy.getRolePlayerTypeStrategies().stream()
-                        .map(s -> s.getConceptProvider())
-                        .allMatch(b -> b.hasNext());
+                        .map(s -> s.getConceptProvider().hasNextN(s.getNumInstancesPDF().peek()))
+                        .allMatch(b -> b);
             }
 
             @Override
             public boolean hasNext() {
-                return (queriesGenerated < queriesToGenerate) && allRolePlayerHaveNext();
+                boolean tmp = allRolePlayerStrategiesHaveSufficientPlayers();
+                return (queriesGenerated < queriesToGenerate) && tmp;
             }
 
             @Override

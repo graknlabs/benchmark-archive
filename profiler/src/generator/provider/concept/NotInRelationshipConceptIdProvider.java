@@ -1,13 +1,12 @@
-package grakn.benchmark.profiler.generator.provider;
+package grakn.benchmark.profiler.generator.provider.concept;
 
 import grakn.benchmark.profiler.generator.storage.ConceptStorage;
 import grakn.core.concept.ConceptId;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-public class NotInRelationshipConceptIdProvider implements Iterator<ConceptId> {
+public class NotInRelationshipConceptIdProvider implements ConceptIdProvider {
 
     private String relationshipLabel;
     private String roleLabel;
@@ -35,10 +34,15 @@ public class NotInRelationshipConceptIdProvider implements Iterator<ConceptId> {
     }
 
     @Override
+    public boolean hasNextN(int n) {
+        return conceptStorage.getIdsNotPlayingRole(typeLabel, relationshipLabel, roleLabel).size() >= n;
+    }
+
+    @Override
     public ConceptId next() {
-        List<String> notInRelationshipConceptIds = conceptStorage.getIdsNotPlayingRole(typeLabel, relationshipLabel, roleLabel);
+        List<ConceptId> notInRelationshipConceptIds = conceptStorage.getIdsNotPlayingRole(typeLabel, relationshipLabel, roleLabel);
         int randomOffset = rand.nextInt(notInRelationshipConceptIds.size());
-        return ConceptId.of(notInRelationshipConceptIds.get(randomOffset));
+        return notInRelationshipConceptIds.get(randomOffset);
     }
 
 }

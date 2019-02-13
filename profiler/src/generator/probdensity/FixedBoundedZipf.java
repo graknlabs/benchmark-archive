@@ -13,6 +13,8 @@ public class FixedBoundedZipf implements ProbabilityDensityFunction {
 
     private ZipfDistribution zipf;
 
+    private Integer next;
+
     public FixedBoundedZipf(Random random, int rangeLimit, double exponent) {
         this.rand = random;
         this.rangeLimit = rangeLimit;
@@ -32,6 +34,22 @@ public class FixedBoundedZipf implements ProbabilityDensityFunction {
 
     @Override
     public int sample() {
-        return this.zipf.sample();
+        takeSampleIfNextNull();
+        int val = next;
+        next = null;
+        return val;
     }
+
+    @Override
+    public int peek() {
+        takeSampleIfNextNull();
+        return next;
+    }
+
+    private void takeSampleIfNextNull() {
+        if (next == null) {
+            next = zipf.sample();
+        }
+    }
+
 }

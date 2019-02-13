@@ -18,7 +18,15 @@
 
 package grakn.benchmark.profiler.generator.storage;
 
-import grakn.core.concept.*;
+import grakn.core.concept.Attribute;
+import grakn.core.concept.AttributeType;
+import grakn.core.concept.Concept;
+import grakn.core.concept.ConceptId;
+import grakn.core.concept.EntityType;
+import grakn.core.concept.Label;
+import grakn.core.concept.RelationshipType;
+import grakn.core.concept.Thing;
+import grakn.core.concept.Type;
 import org.apache.ignite.IgniteException;
 import org.apache.ignite.Ignition;
 import org.junit.AfterClass;
@@ -31,15 +39,17 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import static org.hamcrest.Matchers.containsInAnyOrder;
 
 /**
  *
@@ -189,7 +199,7 @@ public class IgniteConceptStorageTest {
     }
 
     @Test
-    public void whenConceptIsAdded_conceptIdCanBeRetrieved()  {
+    public void whenConceptIsAdded_conceptIdCanBeRetrieved() {
         int index = 0;
         this.store.addConcept(this.conceptMocks.get(index));
         ConceptId personConceptId = this.store.getConceptId(this.entityTypeLabel, index);
@@ -229,7 +239,7 @@ public class IgniteConceptStorageTest {
         }
 
         // add 6 of 7 entities as role players too
-        for (int i = 0 ; i < 6; i++) {
+        for (int i = 0; i < 6; i++) {
             Concept conceptMock = this.conceptMocks.get(i);
             Thing thing = conceptMock.asThing();
             this.store.addRolePlayer(thing.id().toString(), thing.type().label().toString(), relTypeLabel, "somerole");
@@ -247,10 +257,10 @@ public class IgniteConceptStorageTest {
         }
 
         // ad all but the attribute and relationship
-        for (int i = 0 ; i < conceptMocks.size()-2; i++) {
+        for (int i = 0; i < conceptMocks.size() - 2; i++) {
             Concept conceptMock = this.conceptMocks.get(i);
             Thing thing = conceptMock.asThing();
-            this.store.addRolePlayer(thing.id().toString(), thing.type().label().toString(), relTypeLabel,"somerole");
+            this.store.addRolePlayer(thing.id().toString(), thing.type().label().toString(), relTypeLabel, "somerole");
         }
 
         int orphanAttributes = this.store.totalOrphanAttributes();
@@ -265,7 +275,7 @@ public class IgniteConceptStorageTest {
         }
 
         // add all but the relationship (last element)
-        for (int i = 0 ; i < conceptMocks.size()-1; i++) {
+        for (int i = 0; i < conceptMocks.size() - 1; i++) {
             Concept conceptMock = this.conceptMocks.get(i);
             Thing thing = conceptMock.asThing();
             this.store.addRolePlayer(thing.id().toString(), thing.type().label().toString(), relTypeLabel, "somerole");
@@ -283,7 +293,7 @@ public class IgniteConceptStorageTest {
         }
 
         // add all as role players
-        for (int i = 0 ; i < conceptMocks.size(); i++) {
+        for (int i = 0; i < conceptMocks.size(); i++) {
             Concept conceptMock = this.conceptMocks.get(i);
             Thing thing = conceptMock.asThing();
             this.store.addRolePlayer(thing.id().toString(), thing.type().label().toString(), relTypeLabel, "somerole");
@@ -299,7 +309,7 @@ public class IgniteConceptStorageTest {
             this.store.addConcept(conceptMock);
         }
         String typeLabel = "person"; // we have 7 mocked people
-        List<String> peopleNotPlayingRoles = this.store.getIdsNotPlayingRole(typeLabel, relTypeLabel, "aRole");
+        List<ConceptId> peopleNotPlayingRoles = this.store.getIdsNotPlayingRole(typeLabel, relTypeLabel, "aRole");
         assertEquals(7, peopleNotPlayingRoles.size());
 
     }
@@ -316,7 +326,7 @@ public class IgniteConceptStorageTest {
 
         this.store.addRolePlayer(aPerson.asThing().id().toString(), personTypeLabel, relationshipType, role);
 
-        List<String> entitiesNotPlayingRole = store.getIdsNotPlayingRole(personTypeLabel, relationshipType, role);
+        List<ConceptId> entitiesNotPlayingRole = store.getIdsNotPlayingRole(personTypeLabel, relationshipType, role);
         assertEquals(6, entitiesNotPlayingRole.size());
     }
 
@@ -334,12 +344,12 @@ public class IgniteConceptStorageTest {
         this.store.addRolePlayer(aPerson.asThing().id().toString(), personTypeLabel, relationshipType, role1);
         this.store.addRolePlayer(aPerson.asThing().id().toString(), personTypeLabel, relationshipType, role2);
 
-        List<String> entitiesNotPlayingRole1 = store.getIdsNotPlayingRole(personTypeLabel, relationshipType, role1);
-        List<String> entitiesNotPlayingRole2 = store.getIdsNotPlayingRole(personTypeLabel, relationshipType, role2);
+        List<ConceptId> entitiesNotPlayingRole1 = store.getIdsNotPlayingRole(personTypeLabel, relationshipType, role1);
+        List<ConceptId> entitiesNotPlayingRole2 = store.getIdsNotPlayingRole(personTypeLabel, relationshipType, role2);
 
-        String[] correctEntities = this.conceptMocks.subList(1, 7).stream()
-                .map(concept->concept.asThing().id().toString())
-                .collect(Collectors.toList()).toArray(new String[]{});
+        ConceptId[] correctEntities = this.conceptMocks.subList(1, 7).stream()
+                .map(concept -> concept.asThing().id())
+                .collect(Collectors.toList()).toArray(new ConceptId[]{});
 
         // assert matches in any order, casting to force hamcrest to use the right
         assertThat(entitiesNotPlayingRole1, containsInAnyOrder(correctEntities));
@@ -381,7 +391,7 @@ public class IgniteConceptStorageTest {
         Concept anAge = this.conceptMocks.get(7);
         String ageId = anAge.asThing().id().toString();
         String ageLabel = anAge.asThing().type().label().toString();
-        this.store.addRolePlayer(ageId, ageLabel, "@has-" + ageLabel, "@has-"+ageLabel+"-value");
+        this.store.addRolePlayer(ageId, ageLabel, "@has-" + ageLabel, "@has-" + ageLabel + "-value");
 
         int orphanAttributes = this.store.totalOrphanAttributes();
         assertEquals(0, orphanAttributes);

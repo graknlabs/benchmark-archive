@@ -32,6 +32,8 @@ public class FixedDiscreteGaussian implements ProbabilityDensityFunction {
     private double mean;
     private double stddev;
 
+    private Integer next;
+
     /**
      * @param rand
      * @param mean
@@ -46,8 +48,24 @@ public class FixedDiscreteGaussian implements ProbabilityDensityFunction {
     /**
      * @return
      */
+    @Override
     public int sample() {
-        double z = rand.nextGaussian();
-        return max(0, (int) (stddev * z + mean));
+        takeSampleIfNextNull();
+        int val = next;
+        next = null;
+        return val;
+    }
+
+    @Override
+    public int peek() {
+        takeSampleIfNextNull();
+        return next;
+    }
+
+    private void takeSampleIfNextNull() {
+        if (next == null) {
+            double z = rand.nextGaussian();
+            next = max(0, (int) (stddev * z + mean));
+        }
     }
 }

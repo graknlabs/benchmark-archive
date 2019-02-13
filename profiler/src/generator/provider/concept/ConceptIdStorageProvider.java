@@ -1,12 +1,11 @@
-package grakn.benchmark.profiler.generator.provider;
+package grakn.benchmark.profiler.generator.provider.concept;
 
 import grakn.benchmark.profiler.generator.storage.ConceptStorage;
 import grakn.core.concept.ConceptId;
 
-import java.util.Iterator;
 import java.util.Random;
 
-public class ConceptIdStorageProvider implements Iterator<ConceptId> {
+public class ConceptIdStorageProvider implements ConceptIdProvider {
 
     private final Random rand;
     ConceptStorage conceptStorage;
@@ -21,6 +20,11 @@ public class ConceptIdStorageProvider implements Iterator<ConceptId> {
     @Override
     public boolean hasNext() {
         return this.conceptStorage.getConceptCount(this.typeLabel) > 0;
+    }
+
+    @Override
+    public boolean hasNextN(int n) {
+        return this.conceptStorage.getConceptCount(this.typeLabel) >= n;
     }
 
     @Override

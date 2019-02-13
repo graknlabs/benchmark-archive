@@ -19,6 +19,7 @@
 package grakn.benchmark.profiler.generator.strategy;
 
 import grakn.benchmark.profiler.generator.probdensity.ProbabilityDensityFunction;
+import grakn.benchmark.profiler.generator.provider.value.ValueProvider;
 
 import java.util.Iterator;
 
@@ -29,18 +30,18 @@ import java.util.Iterator;
  * - A PDF that can be sampled to indicate how big the new batch of attributes is going to be
  * - A value provider for the actual values of the attribute of this type
  */
-public class AttributeStrategy<ValueDatatype> extends TypeStrategy {
+public class AttributeStrategy<T> extends TypeStrategy {
 
-    private final Iterator<ValueDatatype> valueProvider;
+    private final Iterator<T> valueProvider;
 
     public AttributeStrategy(String attributeTypeLabel,
                              ProbabilityDensityFunction numInstancesPDF,
-                             Iterator<ValueDatatype> valueProvider) {
+                             ValueProvider<T> valueProvider) {
         super(attributeTypeLabel, numInstancesPDF);
         this.valueProvider = valueProvider;
     }
 
-    public Iterator<ValueDatatype> getValueProvider() {
+    public Iterator<T> getValueProvider() {
         return this.valueProvider;
     }
 }

@@ -18,8 +18,6 @@
 
 package grakn.benchmark.profiler.generator.util;
 
-import com.google.common.collect.ImmutableMultiset;
-import grakn.benchmark.profiler.generator.DataGeneratorException;
 import grakn.core.concept.Concept;
 import grakn.core.graql.InsertQuery;
 import grakn.core.graql.Match;
@@ -32,9 +30,11 @@ import grakn.core.graql.internal.pattern.property.IsaProperty;
 import grakn.core.graql.internal.pattern.property.LabelProperty;
 import grakn.core.graql.internal.pattern.property.RelationshipProperty;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -92,24 +92,28 @@ public class InsertQueryAnalyser {
      *
      * @return
      */
-    public static Map<Concept, String> getRolePlayersAndRoles(InsertQuery query, List<ConceptMap> answers) {
-        Map<Concept, String> rolePlayers = new HashMap<>();
+    public static Map<String, List<Concept>> getRolePlayersAndRoles(InsertQuery query, List<ConceptMap> answers) {
+        Map<String, List<Concept>> rolePlayers = new HashMap<>();
 
         for (VarPatternAdmin patternAdmin : query.admin().varPatterns()) {
             Optional<RelationshipProperty> relationshipProperty = patternAdmin.getProperty(RelationshipProperty.class);
             if (relationshipProperty.isPresent()) {
-                ImmutableMultiset<RelationPlayer> relationPlayers = relationshipProperty.get().relationPlayers();
+                Collection<RelationPlayer> relationPlayers = (Collection<RelationPlayer>)relationshipProperty.get().relationPlayers();
+
                 // extract each role player and concept into the rolePlayers map
                 for (RelationPlayer relationPlayer : relationPlayers) {
+
                     // get the role, if there's no role present, throw an exception
-                    VarPatternAdmin roleAdmin = relationPlayer.getRole().
-                            orElseThrow(() -> new DataGeneratorException("Require explicit roles in data generator"));
+                    VarPatternAdmin roleAdmin = relationPlayer.getRole().get();
                     String role = roleAdmin.getProperty(LabelProperty.class).get().label().toString();
-                    Var var = relationPlayer.getRolePlayer().var();
+                    Var rolePlayerVar = relationPlayer.getRolePlayer().var();
                     // add the (concept, role) to the map
                     answers.stream()
-                            .map(conceptMap -> conceptMap.get(var))
-                            .forEach(concept -> rolePlayers.put(concept, role));
+                            .map(conceptMap -> conceptMap.get(rolePlayerVar))
+                            .forEach(concept -> {
+                                rolePlayers.putIfAbsent(role, new LinkedList<>());
+                                rolePlayers.get(role).add(concept);
+                            });
                 }
             }
         }

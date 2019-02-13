@@ -7,7 +7,6 @@ java_library(
         "//dependencies/maven/artifacts/grakn/core:util",
 
         "//dependencies/maven/artifacts/org/slf4j:slf4j-api",
-        "//dependencies/maven/artifacts/com/google/guava:guava",
         "//dependencies/maven/artifacts/org/apache/commons:commons-math3",
         "//dependencies/maven/artifacts/org/apache/ignite:ignite-core",
         "//dependencies/maven/artifacts/org/apache/ignite:ignite-indexing",

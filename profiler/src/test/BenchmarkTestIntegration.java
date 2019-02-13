@@ -1,5 +1,7 @@
-package grakn.benchmark.profiler;
+package grakn.benchmark.profiler.test;
 
+import grakn.benchmark.profiler.BootupException;
+import grakn.benchmark.profiler.GraknBenchmark;
 import grakn.benchmark.profiler.util.BenchmarkArguments;
 import grakn.core.GraknTxType;
 import grakn.core.Keyspace;
@@ -20,8 +22,8 @@ import java.util.UUID;
 
 import static grakn.core.graql.Graql.var;
 
-public class SchemaManagerE2E {
-    private final static Path WEB_CONTENT_CONFIG_PATH = Paths.get("profiler/test/resources/web_content/web_content_config_test.yml");
+public class BenchmarkTestIntegration {
+    private final static Path WEB_CONTENT_CONFIG_PATH = Paths.get("test/resources/web_content/web_content_config_test.yml");
 
     @Rule
     public final ExpectedException expectedException = ExpectedException.none();
@@ -53,7 +55,7 @@ public class SchemaManagerE2E {
 
         expectedException.expect(BootupException.class);
         expectedException.expectMessage("not empty, contains a schema");
-        String[] args = new String[]{"--config", WEB_CONTENT_CONFIG_PATH.toAbsolutePath().toString(), "--keyspace", keyspace.toString()};
+        String[] args = new String[]{"--config", WEB_CONTENT_CONFIG_PATH.toAbsolutePath().toString(), "--keyspace", keyspace.toString(), "--execution-name", "testing"};
         CommandLine commandLine = BenchmarkArguments.parse(args);
         GraknBenchmark graknBenchmark = new GraknBenchmark(commandLine);
         graknBenchmark.start();
@@ -70,7 +72,7 @@ public class SchemaManagerE2E {
 
         expectedException.expect(BootupException.class);
         expectedException.expectMessage("not empty, contains concept instances");
-        String[] args = new String[] {"--config", WEB_CONTENT_CONFIG_PATH.toAbsolutePath().toString(), "--keyspace", keyspace.toString()};
+        String[] args = new String[] {"--config", WEB_CONTENT_CONFIG_PATH.toAbsolutePath().toString(), "--keyspace", keyspace.toString(), "--execution-name", "testing"};
         CommandLine commandLine = BenchmarkArguments.parse(args);
         GraknBenchmark graknBenchmark = new GraknBenchmark(commandLine);
         graknBenchmark.start();

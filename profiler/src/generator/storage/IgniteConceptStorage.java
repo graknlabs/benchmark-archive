@@ -423,9 +423,9 @@ public class IgniteConceptStorage implements ConceptStorage {
     }
 
     /**
-     * String hacks to stuff all the roles played by a concept of a given type in a specific relationship into one string
+     * String stuffing all the roles played by a concept of a given type in a specific relationship into one
      */
-    public List<String> getIdsNotPlayingRole(String typeLabel, String relationshipType, String role) {
+    public List<ConceptId> getIdsNotPlayingRole(String typeLabel, String relationshipType, String role) {
         String tableName = this.labelToSqlName.get(typeLabel);
         String columnName = this.labelToSqlName.get(relationshipType);
         String roleName = sanitizeString(role);
@@ -433,12 +433,12 @@ public class IgniteConceptStorage implements ConceptStorage {
         String sql = "SELECT ID, " + columnName + " FROM " + tableName +
                 " WHERE (" + columnName + " IS NULL OR " + columnName + "  NOT LIKE '%" + roleName + "%')";
 
-        LinkedList<String> ids = new LinkedList<>();
+        LinkedList<ConceptId> ids = new LinkedList<>();
 
         try (Statement stmt = conn.createStatement()) {
             try (ResultSet rs = stmt.executeQuery(sql)) {
                 while (rs.next()) {
-                    ids.addLast(rs.getString("id"));
+                    ids.addLast(ConceptId.of(rs.getString("id")));
                 }
             } catch (SQLException e) {
                 LOG.trace(e.getMessage(), e);

@@ -14,6 +14,9 @@ public class ScalingDiscreteGaussian implements ProbabilityDensityFunction {
     private double meanScaleFactor;
     private double stddevScaleFactor;
 
+    private Integer next = null;
+    private int lastScale = 0;
+
     /**
      */
     public ScalingDiscreteGaussian(Random rand, Supplier<Integer> scaleSupplier, double meanScaleFactor, double stddevScaleFactor) {
@@ -27,10 +30,31 @@ public class ScalingDiscreteGaussian implements ProbabilityDensityFunction {
      * @return
      */
     public int sample() {
-        double z = rand.nextGaussian();
+        takeSampleIfNextNullOrScaleChanged();
+        int val = next;
+        next = null;
+        return val;
+    }
+
+
+    /**
+     * Peek returns the next sample
+     * @return
+     */
+    @Override
+    public int peek() {
+        takeSampleIfNextNullOrScaleChanged();
+        return next;
+    }
+
+    private void takeSampleIfNextNullOrScaleChanged() {
         int scale = scaleSupplier.get();
-        double stddev = scale * stddevScaleFactor;
-        double mean =  scale * meanScaleFactor;
-        return max(0, (int) (stddev * z + mean));
+        if (next == null || scale != lastScale) {
+            double z = rand.nextGaussian();
+            double stddev = scale * stddevScaleFactor;
+            double mean =  scale * meanScaleFactor;
+            next = max(0, (int) (stddev * z + mean));
+            lastScale = scale;
+        }
     }
 }

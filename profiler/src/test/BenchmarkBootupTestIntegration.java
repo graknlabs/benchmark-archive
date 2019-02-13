@@ -1,5 +1,7 @@
-package grakn.benchmark.profiler;
+package grakn.benchmark.profiler.test;
 
+import grakn.benchmark.profiler.BootupException;
+import grakn.benchmark.profiler.GraknBenchmark;
 import grakn.benchmark.profiler.util.BenchmarkArguments;
 import org.junit.Rule;
 import org.junit.Test;
@@ -13,9 +15,9 @@ import java.nio.file.Paths;
 /**
  *
  */
-public class GraknBenchmarkTest {
+public class BenchmarkBootupTestIntegration {
 
-    private final static Path WEB_CONTENT_CONFIG_PATH = Paths.get("profiler/test/resources/web_content/web_content_config_test.yml");
+    private final static Path WEB_CONTENT_CONFIG_PATH = Paths.get("test/resources/web_content/web_content_config_test.yml");
 
     @Rule
     public final ExpectedException expectedException = ExpectedException.none();

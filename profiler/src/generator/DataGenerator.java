@@ -99,12 +99,14 @@ public class DataGenerator {
             // check if we have to update any roles by first checking if any relationships added
             String relationshipAdded = InsertQueryAnalyser.getRelationshipTypeLabel(q);
             if (relationshipAdded != null) {
-                Map<Concept, String> rolePlayersAdded = InsertQueryAnalyser.getRolePlayersAndRoles(q, insertions);
+                Map<String, List<Concept>> rolePlayersAdded = InsertQueryAnalyser.getRolePlayersAndRoles(q, insertions);
 
-                rolePlayersAdded.forEach((concept, roleName) -> {
-                    String rolePlayerId = concept.id().toString();
-                    String rolePlayerTypeLabel = concept.asThing().type().label().toString();
-                    storage.addRolePlayer(rolePlayerId, rolePlayerTypeLabel, relationshipAdded, roleName);
+                rolePlayersAdded.forEach((roleName, conceptList) -> {
+                    conceptList.forEach(concept -> {
+                        String rolePlayerId = concept.id().toString();
+                        String rolePlayerTypeLabel = concept.asThing().type().label().toString();
+                        storage.addRolePlayer(rolePlayerId, rolePlayerTypeLabel, relationshipAdded, roleName);
+                    });
                 });
             }
         });
