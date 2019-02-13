@@ -18,7 +18,6 @@
 
 package grakn.benchmark.profiler.util;
 
-
 import java.util.List;
 
 /**
@@ -31,6 +30,10 @@ public class BenchmarkConfigurationFile {
     private String queries;
     private List<Integer> scalesToProfile;
     private Integer repeatsPerQuery;
+
+    private boolean commitQueries;
+    private Transaction transaction;
+    private Concurrency concurrency;
 
     public void setGraphName(String graphName) {
         this.graphName = graphName;
@@ -53,6 +56,13 @@ public class BenchmarkConfigurationFile {
         return this.queries;
     }
 
+    public void setCommitQueries(Boolean commitQueries) {
+        this.commitQueries = commitQueries;
+    }
+    public Boolean commitQueries() {
+        return commitQueries;
+    }
+
     public void setScales(List<Integer> scales) {
         this.scalesToProfile = scales;
     }
@@ -66,5 +76,53 @@ public class BenchmarkConfigurationFile {
     public int getRepeatsPerQuery() {
         return this.repeatsPerQuery;
     }
+
+    // --- transaction configs ---
+    public void setTransaction(Transaction tx) {
+        transaction = tx;
+    }
+    public Integer queriesPerTx() {
+        return transaction.getQueriesPerTx();
+    }
+
+    // --- concurrency configs ---
+    public void setConcurrency(Concurrency concurrency) {
+        this.concurrency = concurrency;
+    }
+    public Integer concurrentSessions() {
+        return this.concurrency.sessions();
+    }
+    public Boolean separateConcurrentKeyspaces() {
+        return this.concurrency.separateKeyspaces();
+    }
+
 }
 
+class Transaction {
+    private Integer queriesPerTx;
+    public void setQueriesPerTx() {
+        this.queriesPerTx = queriesPerTx;
+    }
+    public Integer getQueriesPerTx() {
+        return queriesPerTx;
+    }
+}
+
+class Concurrency {
+    private Integer sessions;
+    private Boolean separateKeyspaces;
+
+    private void setSessions(Integer sessions) {
+        this.sessions = sessions;
+    }
+    public Integer sessions() {
+        return sessions;
+    }
+
+    private void setSeparateKeyspaces(Boolean separateKeyspaces) {
+        this.separateKeyspaces = separateKeyspaces;
+    }
+    public Boolean separateKeyspaces() {
+        return separateKeyspaces;
+    }
+}

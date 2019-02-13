@@ -62,7 +62,7 @@ public class QueryProfiler {
 
     public void processStaticQueries(int numRepeats, int numConcepts) {
         LOG.trace("Starting processStaticQueries");
-        this.processQueries(queries.stream(), numRepeats, numConcepts);
+        this.processQueries(queries, numRepeats, numConcepts);
         LOG.trace("Finished processStaticQueries");
     }
 
@@ -73,11 +73,9 @@ public class QueryProfiler {
         }
     }
 
-    void processQueries(Stream<Query> queryStream, int repetitions, int numConcepts) {
+    void processQueries(List<Query> queries, int repetitions, int numConcepts) {
         try (Grakn.Transaction tx = session.transaction(GraknTxType.WRITE)) {
             Tracer tracer = Tracing.currentTracer();
-
-            List<Query> queries = queryStream.collect(Collectors.toList());
 
             for (int rep = 0; rep < repetitions; rep++) {
 
@@ -106,7 +104,7 @@ public class QueryProfiler {
                     }
                 }
                 // wait for out-of-band reporting to complete
-                Thread.sleep(500);
+                Thread.sleep(100);
             }
             // wait for out-of-band reporting to complete
             Thread.sleep(1500);
@@ -120,5 +118,18 @@ public class QueryProfiler {
     private void eraselinePrint(String msg) {
         System.out.print("\r");
         System.out.print(msg);
+    }
+}
+
+class QueryProcessor implements Runnable {
+
+    public QueryProcessor(int processorId, Tracer tracer, List<Query> queries, int repetitions, int numConcepts, Grakn.Session session, boolean commitQuery) {
+
+    }
+
+
+    @Override
+    public void run() {
+
     }
 }

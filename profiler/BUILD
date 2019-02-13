@@ -18,6 +18,15 @@
 
 exports_files(glob(["conf/**/*"]) + ["benchmark"] + ["setup.sh"], visibility = ["//visibility:public"])
 
+java_binary(
+    name = "benchmark-profiler-binary",
+    runtime_deps = [
+        ":benchmark-profiler"
+    ],
+    main_class = "grakn.benchmark.profiler.GraknBenchmark",
+    classpath_resources = [":logback"]
+)
+
 java_library(
     name = "benchmark-profiler",
     srcs = glob(["src/*.java", "src/util/*.java"]),
