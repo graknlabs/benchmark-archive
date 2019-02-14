@@ -1,6 +1,6 @@
 /*
  *  GRAKN.AI - THE KNOWLEDGE GRAPH
- *  Copyright (C) 2018 Grakn Labs Ltd
+ *  Copyright (C) 2018 GraknClient Labs Ltd
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as
@@ -18,24 +18,22 @@
 
 package grakn.benchmark.profiler;
 
-import grakn.benchmark.profiler.generator.DataGeneratorException;
 import grakn.benchmark.profiler.generator.DataGenerator;
-import grakn.benchmark.profiler.generator.query.QueryProvider;
+import grakn.benchmark.profiler.generator.DataGeneratorException;
 import grakn.benchmark.profiler.generator.definition.DataGeneratorDefinition;
 import grakn.benchmark.profiler.generator.definition.DefinitionFactory;
+import grakn.benchmark.profiler.generator.query.QueryProvider;
 import grakn.benchmark.profiler.generator.storage.ConceptStorage;
 import grakn.benchmark.profiler.generator.storage.IgniteConceptStorage;
 import grakn.benchmark.profiler.generator.util.IgniteManager;
-import grakn.benchmark.profiler.util.SchemaManager;
 import grakn.benchmark.profiler.util.BenchmarkArguments;
 import grakn.benchmark.profiler.util.BenchmarkConfiguration;
 import grakn.benchmark.profiler.util.ElasticSearchManager;
-import grakn.core.Keyspace;
-import grakn.core.client.Grakn;
-import grakn.core.concept.AttributeType;
-import grakn.core.concept.EntityType;
-import grakn.core.concept.RelationshipType;
-import grakn.core.util.SimpleURI;
+import grakn.benchmark.profiler.util.SchemaManager;
+import grakn.core.client.GraknClient;
+import grakn.core.graql.concept.AttributeType;
+import grakn.core.graql.concept.EntityType;
+import grakn.core.graql.concept.RelationType;
 import org.apache.commons.cli.CommandLine;
 import org.apache.ignite.Ignite;
 import org.slf4j.Logger;
@@ -76,7 +74,7 @@ public class GraknBenchmark {
             LOG.error("Error in data generator: ", e);
         } catch (Exception e) {
             exitCode = 1;
-            LOG.error("Unable to start Grakn Benchmark:", e);
+            LOG.error("Unable to start GraknClient Benchmark:", e);
         } finally {
             System.exit(exitCode);
         }
@@ -88,20 +86,20 @@ public class GraknBenchmark {
 
 
     /**
-     * Start the Grakn Benchmark, which, based on arguments provided via console, will run one of the following use cases:
+     * Start the GraknClient Benchmark, which, based on arguments provided via console, will run one of the following use cases:
      * - generate synthetic data while profiling the graph at different sizes
      * - don't generate new data and only profile an existing keyspace
      */
     public void start() {
 
-        List<Grakn> clients = new LinkedList<>();
-        List<Grakn.Session> sessions = new LinkedList<>();
-        Set<Keyspace> keyspaces = new HashSet<>();
+        List<GraknClient> clients = new LinkedList<>();
+        List<GraknClient.Session> sessions = new LinkedList<>();
+        Set<String> keyspaces = new HashSet<>();
 
         String keyspaceBase = config.getKeyspace();
         // create concurrent clients
         for (int i = 0; i < config.concurrentClients(); i++) {
-            Grakn client = new Grakn(new SimpleURI(config.graknUri()), true);
+            GraknClient client = new GraknClient(config.graknUri(), true);
             clients.add(client);
             String keyspaceName;
             if (config.uniqueConcurrentKeyspaces()) {
@@ -110,9 +108,8 @@ public class GraknBenchmark {
             } else {
                 keyspaceName = keyspaceBase;
             }
-            Keyspace keyspace = Keyspace.of(keyspaceName);
-            keyspaces.add(keyspace);
-            Grakn.Session session = client.session(keyspace);
+            keyspaces.add(keyspaceName);
+            GraknClient.Session session = client.session(keyspaceName);
             sessions.add(session);
         }
 
@@ -146,10 +143,10 @@ public class GraknBenchmark {
 
             // TODO remove this
             // temporarily allow loadng a schema here
-            for (Keyspace keyspace: keyspaces) {
-                LOG.info("Adding schema to keyspace: " +keyspace.toString());
+            for (String keyspace: keyspaces) {
+                LOG.info("Adding schema to keyspace: " + keyspace);
                 // insert schema into each keyspace
-                Grakn.Session session = clients.get(0).session(keyspace);
+                GraknClient.Session session = clients.get(0).session(keyspace);
                 SchemaManager manager = new SchemaManager(session, config.getGraqlSchema());
             }
 
@@ -157,19 +154,19 @@ public class GraknBenchmark {
             queryProfiler.processStaticQueries(repetitionsPerQuery, numConcepts);
         }
 
-        for (Grakn.Session session: sessions) {
+        for (GraknClient.Session session: sessions) {
             session.close();
         }
         queryProfiler.cleanup();
     }
 
-    private DataGenerator initDataGenerator(Grakn.Session session) {
+    private DataGenerator initDataGenerator(GraknClient.Session session) {
         int randomSeed = 0;
         String graphName = config.graphName();
 
         SchemaManager schemaManager = new SchemaManager(session, config.getGraqlSchema());
         HashSet<EntityType> entityTypes = schemaManager.getEntityTypes();
-        HashSet<RelationshipType> relationshipTypes = schemaManager.getRelationshipTypes();
+        HashSet<RelationType> relationshipTypes = schemaManager.getRelationshipTypes();
         HashSet<AttributeType> attributeTypes = schemaManager.getAttributeTypes();
 
         ConceptStorage storage = new IgniteConceptStorage(entityTypes, relationshipTypes, attributeTypes);

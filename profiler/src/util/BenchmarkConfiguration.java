@@ -22,7 +22,6 @@ package grakn.benchmark.profiler.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import grakn.benchmark.profiler.BootupException;
-import grakn.core.Keyspace;
 import org.apache.commons.cli.CommandLine;
 
 import java.io.IOException;

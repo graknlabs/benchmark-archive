@@ -1,18 +1,18 @@
 package grakn.benchmark.profiler.generator.definition;
 
-import grakn.benchmark.profiler.generator.provider.value.RandomStringProvider;
 import grakn.benchmark.profiler.generator.probdensity.FixedConstant;
 import grakn.benchmark.profiler.generator.probdensity.FixedDiscreteGaussian;
 import grakn.benchmark.profiler.generator.probdensity.ScalingBoundedZipf;
 import grakn.benchmark.profiler.generator.probdensity.ScalingDiscreteGaussian;
-import grakn.benchmark.profiler.generator.storage.ConceptStorage;
 import grakn.benchmark.profiler.generator.provider.concept.ConceptIdStorageProvider;
+import grakn.benchmark.profiler.generator.provider.value.RandomStringProvider;
+import grakn.benchmark.profiler.generator.storage.ConceptStorage;
 import grakn.benchmark.profiler.generator.strategy.AttributeStrategy;
 import grakn.benchmark.profiler.generator.strategy.EntityStrategy;
 import grakn.benchmark.profiler.generator.strategy.RelationshipStrategy;
 import grakn.benchmark.profiler.generator.strategy.RolePlayerTypeStrategy;
-import grakn.benchmark.profiler.generator.util.WeightedPicker;
 import grakn.benchmark.profiler.generator.strategy.TypeStrategy;
+import grakn.benchmark.profiler.generator.util.WeightedPicker;
 
 import java.util.Arrays;
 import java.util.HashSet;

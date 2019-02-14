@@ -19,12 +19,10 @@
 package grakn.benchmark.profiler.generator.query;
 
 import grakn.benchmark.profiler.generator.strategy.EntityStrategy;
-import grakn.core.graql.Graql;
-import grakn.core.graql.InsertQuery;
+import grakn.core.graql.query.Graql;
+import grakn.core.graql.query.query.GraqlInsert;
 
 import java.util.Iterator;
-
-import static grakn.core.graql.internal.pattern.Patterns.var;
 
 /**
  * Generates queries for inserting entity instances
@@ -37,9 +35,9 @@ public class EntityGenerator implements QueryGenerator {
     }
 
     @Override
-    public Iterator<InsertQuery> generate() {
+    public Iterator<GraqlInsert> generate() {
 
-        return new Iterator<InsertQuery>() {
+        return new Iterator<GraqlInsert>() {
             String typeLabel = strategy.getTypeLabel();
             int queriesToGenerate = strategy.getNumInstancesPDF().sample();
             int queriesGenerated = 0;
@@ -50,9 +48,9 @@ public class EntityGenerator implements QueryGenerator {
             }
 
             @Override
-            public InsertQuery next() {
+            public GraqlInsert next() {
                 queriesGenerated++;
-                return Graql.insert(var("x").isa(typeLabel));
+                return Graql.insert(Graql.var("x").isa(typeLabel));
             }
         };
     }

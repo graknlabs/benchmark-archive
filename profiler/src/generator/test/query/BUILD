@@ -4,7 +4,7 @@ java_test(
     srcs = ["AttributeGeneratorTest.java"],
     deps = [
         "//profiler/src/generator:data-generator",
-        "//dependencies/maven/artifacts/grakn/core:grakn-graql",
+        "//dependencies/maven/artifacts/grakn/core:server",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
     ]
 )
@@ -15,7 +15,7 @@ java_test(
     srcs = ["EntityGeneratorTest.java"],
     deps = [
         "//profiler/src/generator:data-generator",
-        "//dependencies/maven/artifacts/grakn/core:grakn-graql",
+        "//dependencies/maven/artifacts/grakn/core:server",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
     ]
 )
@@ -26,7 +26,7 @@ java_test(
     srcs = ["RelationshipGeneratorTest.java"],
     deps = [
         "//profiler/src/generator:data-generator",
-        "//dependencies/maven/artifacts/grakn/core:grakn-graql",
+        "//dependencies/maven/artifacts/grakn/core:server",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
     ]
 )

@@ -48,8 +48,7 @@ java_library(
     srcs = glob(["*.java"]),
     deps = [
         "//dependencies/maven/artifacts/grakn/core:client",
-        "//dependencies/maven/artifacts/grakn/core:grakn-graql",
-        "//dependencies/maven/artifacts/grakn/core:util",
+        "//dependencies/maven/artifacts/grakn/core:server",
 
         "//dependencies/maven/artifacts/commons-cli",
         "//dependencies/maven/artifacts/org/apache/commons:commons-math3",
@@ -85,8 +84,7 @@ java_test(
          "//dependencies/maven/artifacts/junit:junit",
 
         "//dependencies/maven/artifacts/grakn/core:client",
-        "//dependencies/maven/artifacts/grakn/core:grakn-graql",
-        "//dependencies/maven/artifacts/grakn/core:util"
+        "//dependencies/maven/artifacts/grakn/core:server",
      ],
      data = [":test/binaryGraph.csv", ":test/unaryBinaryGraph.csv"],
  )
@@ -118,8 +116,7 @@ java_test(
          "//dependencies/maven/artifacts/junit:junit",
 
         "//dependencies/maven/artifacts/grakn/core:client",
-        "//dependencies/maven/artifacts/grakn/core:grakn-graql",
-        "//dependencies/maven/artifacts/grakn/core:util"
+        "//dependencies/maven/artifacts/grakn/core:server",
      ],
      data = [":test/binaryGraph.csv", ":test/unaryBinaryGraph.csv"],
  )
@@ -144,8 +141,7 @@ java_test(
         "//dependencies/maven/artifacts/junit:junit",
 
         "//dependencies/maven/artifacts/grakn/core:client",
-        "//dependencies/maven/artifacts/grakn/core:grakn-graql",
-        "//dependencies/maven/artifacts/grakn/core:util"
+        "//dependencies/maven/artifacts/grakn/core:server",
     ],
     data = [":test/binaryGraph.csv", ":test/unaryBinaryGraph.csv"],
 )

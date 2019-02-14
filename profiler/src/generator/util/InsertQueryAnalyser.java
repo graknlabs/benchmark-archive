@@ -18,33 +18,32 @@
 
 package grakn.benchmark.profiler.generator.util;
 
-import grakn.core.concept.Concept;
-import grakn.core.graql.InsertQuery;
-import grakn.core.graql.Match;
-import grakn.core.graql.Var;
-import grakn.core.graql.admin.RelationPlayer;
-import grakn.core.graql.admin.VarPatternAdmin;
 import grakn.core.graql.answer.ConceptMap;
-import grakn.core.graql.internal.pattern.property.IdProperty;
-import grakn.core.graql.internal.pattern.property.IsaProperty;
-import grakn.core.graql.internal.pattern.property.LabelProperty;
-import grakn.core.graql.internal.pattern.property.RelationshipProperty;
+import grakn.core.graql.concept.Concept;
+import grakn.core.graql.query.property.IdProperty;
+import grakn.core.graql.query.property.IsaProperty;
+import grakn.core.graql.query.property.RelationProperty;
+import grakn.core.graql.query.property.TypeProperty;
+import grakn.core.graql.query.query.GraqlInsert;
+import grakn.core.graql.query.query.MatchClause;
+import grakn.core.graql.query.statement.Statement;
+import grakn.core.graql.query.statement.Variable;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  *
  */
 public class InsertQueryAnalyser {
 
-    public static HashSet<Concept> getInsertedConcepts(InsertQuery query, List<ConceptMap> answers) {
+    public static HashSet<Concept> getInsertedConcepts(GraqlInsert query, List<ConceptMap> answers) {
         /*
         Method
 
@@ -64,21 +63,21 @@ public class InsertQueryAnalyser {
 
          */
 
-        Iterator<VarPatternAdmin> insertVarPatternsIterator = query.admin().varPatterns().iterator();
+        List<Statement> insertStatements = query.statements();
 
-        HashSet<Var> insertVarsWithoutIds = getVarsWithoutIds(insertVarPatternsIterator);
-        Match match = query.admin().match();
+        HashSet<Variable> insertVarsWithoutIds = getVarsWithoutIds(insertStatements);
+        MatchClause match = query.match();
         if (match != null) {
             // We only do anything with the match clause if it exists
-            Iterator<VarPatternAdmin> matchVarPatternsIterator = match.admin().getPattern().varPatterns().iterator();
-            HashSet<Var> matchVars = getVars(matchVarPatternsIterator);
+            Set<Statement> matchStatements = match.getPatterns().statements();
+            HashSet<Variable> matchVars = getVars(matchStatements);
             insertVarsWithoutIds.removeAll(matchVars);
         }
 
         HashSet<Concept> resultConcepts = new HashSet<>();
 
         for (ConceptMap answer : answers) {
-            for (Var insertVarWithoutId : insertVarsWithoutIds) {
+            for (Variable insertVarWithoutId : insertVarsWithoutIds) {
                 resultConcepts.add(answer.get(insertVarWithoutId));
             }
         }
@@ -92,21 +91,21 @@ public class InsertQueryAnalyser {
      *
      * @return
      */
-    public static Map<String, List<Concept>> getRolePlayersAndRoles(InsertQuery query, List<ConceptMap> answers) {
+    public static Map<String, List<Concept>> getRolePlayersAndRoles(GraqlInsert query, List<ConceptMap> answers) {
         Map<String, List<Concept>> rolePlayers = new HashMap<>();
 
-        for (VarPatternAdmin patternAdmin : query.admin().varPatterns()) {
-            Optional<RelationshipProperty> relationshipProperty = patternAdmin.getProperty(RelationshipProperty.class);
+        for (Statement queryStatements : query.statements()) {
+            Optional<RelationProperty> relationshipProperty = queryStatements.getProperty(RelationProperty.class);
             if (relationshipProperty.isPresent()) {
-                Collection<RelationPlayer> relationPlayers = (Collection<RelationPlayer>)relationshipProperty.get().relationPlayers();
+                Collection<RelationProperty.RolePlayer> relationPlayers = relationshipProperty.get().relationPlayers();
 
                 // extract each role player and concept into the rolePlayers map
-                for (RelationPlayer relationPlayer : relationPlayers) {
+                for (RelationProperty.RolePlayer relationPlayer : relationPlayers) {
 
                     // get the role, if there's no role present, throw an exception
-                    VarPatternAdmin roleAdmin = relationPlayer.getRole().get();
-                    String role = roleAdmin.getProperty(LabelProperty.class).get().label().toString();
-                    Var rolePlayerVar = relationPlayer.getRolePlayer().var();
+                    Statement roleAdmin = relationPlayer.getRole().get();
+                    String role = roleAdmin.getProperty(TypeProperty.class).get().name();
+                    Variable rolePlayerVar = relationPlayer.getPlayer().var();
                     // add the (concept, role) to the map
                     answers.stream()
                             .map(conceptMap -> conceptMap.get(rolePlayerVar))
@@ -120,43 +119,40 @@ public class InsertQueryAnalyser {
         return rolePlayers;
     }
 
-    public static String getRelationshipTypeLabel(InsertQuery query) {
-        for (VarPatternAdmin patternAdmin : query.admin().varPatterns()) {
-            Optional<RelationshipProperty> relationshipProperty = patternAdmin.getProperty(RelationshipProperty.class);
+    public static String getRelationshipTypeLabel(GraqlInsert query) {
+        for (Statement queryStatements: query.statements()) {
+            Optional<RelationProperty> relationshipProperty = queryStatements.getProperty(RelationProperty.class);
             if (relationshipProperty.isPresent()) {
                 // if there's a relationship
                 // there's also a `isa LABEL` property present
-                return patternAdmin.getProperty(IsaProperty.class).get().
-                        type().getProperty(LabelProperty.class).get().label().toString();
+                return queryStatements.getProperty(IsaProperty.class).get().
+                        type().getProperty(TypeProperty.class).get().name();
             }
         }
         return null;
     }
 
-    private static HashSet<Var> getVars(Iterator<VarPatternAdmin> varPatternAdminIterator) {
-        HashSet<Var> vars = new HashSet<>();
-        while (varPatternAdminIterator.hasNext()) {
-            VarPatternAdmin varPatternAdmin = varPatternAdminIterator.next();
-            vars.addAll(varPatternAdmin.commonVars());
+    private static HashSet<Variable> getVars(Set<Statement> statements) {
+        HashSet<Variable> vars = new HashSet<>();
+        for (Statement statement : statements) {
+            vars.addAll(statement.variables());
         }
         return vars;
     }
 
-    private static HashSet<Var> getVarsWithoutIds(Iterator<VarPatternAdmin> varPatternAdminIterator) {
+    private static HashSet<Variable> getVarsWithoutIds(List<Statement> statements) {
 
-        HashSet<Var> varsWithoutIds = new HashSet<>();
-        HashSet<Var> varsWithIds = new HashSet<>();
+        HashSet<Variable> varsWithoutIds = new HashSet<>();
+        HashSet<Variable> varsWithIds = new HashSet<>();
 
-        while (varPatternAdminIterator.hasNext()) {
-
-            VarPatternAdmin varPatternAdmin = varPatternAdminIterator.next();
-            varsWithoutIds.addAll(varPatternAdmin.commonVars());
-            Optional<IdProperty> idProperty = varPatternAdmin.getProperty(IdProperty.class);
+        for (Statement statement: statements) {
+            varsWithoutIds.addAll(statement.variables());
+            Optional<IdProperty> idProperty = statement.getProperty(IdProperty.class);
             if (idProperty.isPresent()) {
-                varsWithIds.add(varPatternAdmin.var());
+                varsWithIds.add(statement.var());
             } else {
                 // If no id is present, then add to the set
-                varsWithoutIds.add(varPatternAdmin.var());
+                varsWithoutIds.add(statement.var());
             }
         }
         varsWithoutIds.removeAll(varsWithIds);

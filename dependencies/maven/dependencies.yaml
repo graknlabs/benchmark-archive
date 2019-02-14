@@ -35,20 +35,23 @@ dependencies:
   # -- Grakn --
   grakn.core:
     client:
-      version: "1.5.0-48e57e1c848a5a2d61dc8d3e1b4e6a8d2a3d8f22-SNAPSHOT"
+      version: "1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT"
       lang: java
       exclude:
         - "org.slf4j:slf4j-log4j12"
-    grakn-graql:
-      version: "1.5.0-48e57e1c848a5a2d61dc8d3e1b4e6a8d2a3d8f22-SNAPSHOT"
+    server:
+      version: "1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT"
       lang: java
       exclude:
-        - "org.slf4j:slf4j-log4j12"
+      - "org.slf4j:slf4j-log4j12"
+    common:
+      version: "1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT"
+      lang: java
     protocol:
-      version: "1.5.0-48e57e1c848a5a2d61dc8d3e1b4e6a8d2a3d8f22-SNAPSHOT"
+      version: "1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT"
       lang: java
-    util:
-      version: "1.5.0-48e57e1c848a5a2d61dc8d3e1b4e6a8d2a3d8f22-SNAPSHOT"
+    graql:
+      version: "1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT"
       lang: java
 
 

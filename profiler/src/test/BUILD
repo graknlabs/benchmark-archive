@@ -19,8 +19,7 @@ java_test(
     deps = [
         "//profiler:benchmark-profiler",
         "//dependencies/maven/artifacts/grakn/core:client",
-        "//dependencies/maven/artifacts/grakn/core:grakn-graql",
-        "//dependencies/maven/artifacts/grakn/core:util",
+        "//dependencies/maven/artifacts/grakn/core:server",
         "//dependencies/maven/artifacts/commons-cli"
     ],
     classpath_resources = ["//profiler/src/test/resources:logback-test"],

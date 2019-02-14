@@ -1,39 +1,40 @@
 package grakn.benchmark.metric;
 
-import grakn.core.GraknTxType;
-import grakn.core.Keyspace;
-import grakn.core.client.Grakn;
-import grakn.core.concept.Concept;
-import grakn.core.concept.ConceptId;
-import grakn.core.graql.ComputeQuery;
-import grakn.core.graql.GetQuery;
-import grakn.core.graql.Syntax;
+import grakn.core.client.GraknClient;
 import grakn.core.graql.answer.ConceptMap;
 import grakn.core.graql.answer.ConceptSetMeasure;
 import grakn.core.graql.answer.Value;
-import grakn.core.util.SimpleURI;
+import grakn.core.graql.concept.Concept;
+import grakn.core.graql.query.Graql;
+import grakn.core.graql.query.query.GraqlCompute;
+import grakn.core.graql.query.query.GraqlGet;
+import grakn.core.server.Transaction;
 import org.apache.commons.math3.util.Pair;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static grakn.core.graql.Graql.count;
-import static grakn.core.graql.Graql.var;
+import static grakn.core.graql.query.Graql.var;
+
 
 public class GraknGraphProperties implements GraphProperties {
 
     String uri;
     String keyspace;
-    Grakn client;
-    Grakn.Session session;
+    GraknClient client;
+    GraknClient.Session session;
 
     public GraknGraphProperties(String uri, String keyspace) {
         this.uri = uri;
         this.keyspace = keyspace;
-        this.client = new Grakn(new SimpleURI(uri));
-        this.session = client.session(Keyspace.of(keyspace));
+        this.client = new GraknClient(uri);
+        this.session = client.session(keyspace);
     }
 
     public GraknGraphProperties copy() {
@@ -45,22 +46,22 @@ public class GraknGraphProperties implements GraphProperties {
         this.session.close();
     }
 
-    private Grakn.Transaction getTx(boolean useWriteTx) {
+    private GraknClient.Transaction getTx(boolean useWriteTx) {
         if (useWriteTx) {
-            return session.transaction(GraknTxType.WRITE);
+            return session.transaction(Transaction.Type.WRITE);
         } else {
-            return session.transaction(GraknTxType.READ);
+            return session.transaction(Transaction.Type.READ);
         }
     }
 
     @Override
     public long maxDegree() {
         // TODO do we need inference here?
-        try (Grakn.Transaction tx = getTx(false)) {
-            ComputeQuery<ConceptSetMeasure> query = tx.graql().compute(Syntax.Compute.Method.CENTRALITY).of("entity");
-            return query.stream().
-                    map(conceptSetMeasure -> conceptSetMeasure.measurement().longValue()).
-                    max(Comparator.naturalOrder())
+        try (GraknClient.Transaction tx = getTx(false)) {
+            GraqlCompute<ConceptSetMeasure> query = Graql.compute(GraqlCompute.Method.CENTRALITY).of("entity");
+            return tx.stream(query)
+                    .map(conceptSetMeasure -> conceptSetMeasure.measurement().longValue())
+                    .max(Comparator.naturalOrder())
                     .orElse(0l);
         }
     }
@@ -71,30 +72,30 @@ public class GraknGraphProperties implements GraphProperties {
 
 
         // TODO do we need inference here?
-        try (Grakn.Transaction tx = getTx(false)) {
+        try (GraknClient.Transaction tx = getTx(false)) {
 
             // `match $r1 ($x) isa edge; $r2 ($x) isa edge; $r1 != $r2; get $r1, $r2;`
-            GetQuery query = tx.graql().match(
+            GraqlGet query = Graql.match(
                     var("r1").isa("relationship").rel(var("x")),
                     var("r2").isa("relationship").rel(var("x")),
                     var("r1").neq(var("r2")),
                     var("x").isa("entity")
-            ).get(var("r1"), var("r2"));
+            ).get("r1", "r2");
 
-            Stream<Pair<Set<String>, Set<String>>> edgePairsStream= query.stream().map(
+            Stream<Pair<Set<String>, Set<String>>> edgePairsStream = tx.stream(query).map(
                     conceptMap -> {
                         Concept r1 = conceptMap.get("r1");
                         Concept r2 = conceptMap.get("r2");
 
                         // retrieve all the entities attached to r1, since r1 may be a hyperedge
-                        Set<String> edge1 = r1.asRelationship()
+                        Set<String> edge1 = r1.asRelation()
                                 .rolePlayers()
                                 .filter(thing -> thing.isEntity())
                                 .map(thing -> thing.id().toString())
                                 .collect(Collectors.toSet());
 
                         // retrieve all the entities attached to r2, since r2 may be a hyperedge
-                        Set<String> edge2 = r2.asRelationship()
+                        Set<String> edge2 = r2.asRelation()
                                 .rolePlayers()
                                 .filter(thing -> thing.isEntity())
                                 .map(thing -> thing.id().toString())
@@ -121,36 +122,36 @@ public class GraknGraphProperties implements GraphProperties {
         List<Pair<Long, Long>> connectedVertexDegrees;
 
         // TODO do we need inference enabled here?
-        try (Grakn.Transaction tx = getTx(false)) {
+        try (GraknClient.Transaction tx = getTx(false)) {
             // compute degree of each entity
             // compute degree of each  entitiy
             // returns mapping { deg_n : set(entity ids) }
             // does NOT return degree 0 entity IDs
-            ComputeQuery<ConceptSetMeasure> computeQuery = tx.graql().compute(Syntax.Compute.Method.CENTRALITY).of("entity").in("relationship");
+            GraqlCompute<ConceptSetMeasure> graqlCompute = Graql.compute(GraqlCompute.Method.CENTRALITY).of("entity").in("relationship");
 
             // create a mapping from ID -> degree (not containing 0 degree entities)
-            Map<String, Long> entityDegreeMap = computeQuery.stream()
+            Map<String, Long> entityDegreeMap = tx.stream(graqlCompute)
                     .map(conceptSetMeasure ->
                             conceptSetMeasure.set().stream()
-                                .map(conceptId -> new Pair<>(conceptId.toString(), conceptSetMeasure.measurement().longValue()))
+                                    .map(conceptId -> new Pair<>(conceptId.toString(), conceptSetMeasure.measurement().longValue()))
                     )
-                    .flatMap(e->e)
-                    .collect(Collectors.toMap(pair->pair.getFirst(), pair->pair.getSecond()));
+                    .flatMap(e -> e)
+                    .collect(Collectors.toMap(pair -> pair.getFirst(), pair -> pair.getSecond()));
 
             // query for all connected entities, which by definition never have degree 0
-            GetQuery edgeList = tx.graql().match(
+            GraqlGet edgeList = Graql.match(
                     var("x").isa("entity"),
                     var("y").isa("entity"),
                     var().isa("relationship").rel(var("x")).rel(var("y"))
             ).get("x", "y");
 
-            connectedVertexDegrees = edgeList.stream()
+            connectedVertexDegrees = tx.stream(edgeList)
                     .map(conceptMap -> new Pair<>(
-                                entityDegreeMap.get(conceptMap.get("x").id().toString()),
-                                entityDegreeMap.get(conceptMap.get("y").id().toString())
+                                    entityDegreeMap.get(conceptMap.get("x").id().toString()),
+                                    entityDegreeMap.get(conceptMap.get("y").id().toString())
                             )
                     )
-            .collect(Collectors.toList());
+                    .collect(Collectors.toList());
         }
         return connectedVertexDegrees;
     }
@@ -163,15 +164,15 @@ public class GraknGraphProperties implements GraphProperties {
         long numZeroDegrees = 0;
 
         // TODO do we need inference enabled here?
-        try (Grakn.Transaction tx = getTx(false)) {
+        try (GraknClient.Transaction tx = getTx(false)) {
 
             // compute degree of each  entitiy
             // returns mapping { deg_n : set(entity ids) }
             // does NOT return degree 0 entity IDs
-            ComputeQuery<ConceptSetMeasure> computeQuery = tx.graql().compute(Syntax.Compute.Method.CENTRALITY).of("entity");
+            GraqlCompute<ConceptSetMeasure> graqlCompute = Graql.compute(GraqlCompute.Method.CENTRALITY).of("entity");
 
             // collect it to a list so we don't have to execute it twice
-            List<ConceptSetMeasure> answerMap = computeQuery.execute();
+            List<ConceptSetMeasure> answerMap = tx.execute(graqlCompute);
 
             // repeatedly emit the degree
             nonzeroDegrees = answerMap.stream().map(
@@ -190,14 +191,14 @@ public class GraknGraphProperties implements GraphProperties {
 
             // ***** `compute centrality using degree` doesn't return 0 for disconnected entities *****
             // count total number of vertices to see how many have degree == 0
-            List<Value> conceptCounts = tx.graql().compute(Syntax.Compute.Method.COUNT).in("entity").execute();
+            List<Value> conceptCounts = tx.execute(Graql.compute(GraqlCompute.Method.COUNT).in("entity"));
             long totalVertices = conceptCounts.get(0).asValue().number().longValue();
             // compute how many vertices have zero degree
             numZeroDegrees = totalVertices - numNonzeroDegrees;
         }
 
         return Stream.concat(nonzeroDegrees,
-                IntStream.range(0, (int)(numZeroDegrees)).map(i->0).asLongStream().boxed())
+                IntStream.range(0, (int) (numZeroDegrees)).map(i -> 0).asLongStream().boxed())
                 .collect(Collectors.toList());
     }
 
@@ -206,23 +207,25 @@ public class GraknGraphProperties implements GraphProperties {
         Set<String> neighborIds = new HashSet<>();
 
         // TODO do we need inference enabled here?
-        try (Grakn.Transaction tx = getTx(false)) {
-            List<ConceptMap> neighbors = tx.graql()
-                    .match(
-                            var("x").id(ConceptId.of(vertexId)),
+        try (GraknClient.Transaction tx = getTx(false)) {
+            List<ConceptMap> neighbors = tx.execute(
+                    Graql.match(
+                            var("x").id(vertexId),
                             var("r").rel(var("x")).rel(var("y"))
-                    ).get(var("y")).execute();
+                    ).get("y"));
 
             for (ConceptMap conceptMap : neighbors) {
-                neighborIds.add(conceptMap.get(var("y")).id().toString());
+                neighborIds.add(conceptMap.get("y").id().toString());
             }
         }
         return neighborIds;
     }
 
     public long numVertices() {
-        try (Grakn.Transaction tx = getTx(false)) {
-            return tx.graql().compute(Syntax.Compute.Method.COUNT).in("entity").execute().stream().findFirst().get().number().longValue();
+        try (GraknClient.Transaction tx = getTx(false)) {
+            return tx.stream(
+                    Graql.compute(GraqlCompute.Method.COUNT).in("entity")
+            ).findFirst().get().number().longValue();
         }
     }
 }

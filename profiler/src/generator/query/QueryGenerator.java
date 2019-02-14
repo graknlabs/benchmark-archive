@@ -18,7 +18,7 @@
 
 package grakn.benchmark.profiler.generator.query;
 
-import grakn.core.graql.InsertQuery;
+import grakn.core.graql.query.query.GraqlInsert;
 
 import java.util.Iterator;
 
@@ -29,5 +29,5 @@ public interface QueryGenerator {
     /**
      * Generate insert query iterator
      */
-    Iterator<InsertQuery> generate();
+    Iterator<GraqlInsert> generate();
 }

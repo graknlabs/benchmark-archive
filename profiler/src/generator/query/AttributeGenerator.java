@@ -18,12 +18,16 @@
 
 package grakn.benchmark.profiler.generator.query;
 
+import grakn.benchmark.profiler.generator.DataGeneratorException;
 import grakn.benchmark.profiler.generator.strategy.AttributeStrategy;
-import grakn.core.graql.Graql;
-import grakn.core.graql.InsertQuery;
-import grakn.core.graql.Var;
+import grakn.core.graql.query.Graql;
+import grakn.core.graql.query.query.GraqlInsert;
+import grakn.core.graql.query.statement.Statement;
+import grakn.core.graql.query.statement.Variable;
 
 import java.util.Iterator;
+
+import static grakn.core.graql.query.Graql.var;
 
 
 /**
@@ -37,8 +41,8 @@ public class AttributeGenerator<Datatype> implements QueryGenerator {
     }
 
     @Override
-    public Iterator<InsertQuery> generate() {
-        return new Iterator<InsertQuery>() {
+    public Iterator<GraqlInsert> generate() {
+        return new Iterator<GraqlInsert>() {
             String attributeTypeLabel = strategy.getTypeLabel();
             Iterator<Datatype> valueProvider = strategy.getValueProvider();
             int queriesToGenerate = strategy.getNumInstancesPDF().sample();
@@ -50,11 +54,21 @@ public class AttributeGenerator<Datatype> implements QueryGenerator {
             }
 
             @Override
-            public InsertQuery next() {
+            public GraqlInsert next() {
                 queriesGenerated++;
-                Var attr = Graql.var().asUserDefined();
+                Variable attr = new Variable().asUserDefined();
                 Datatype value = valueProvider.next(); // get one attribute value
-                return Graql.insert(attr.isa(attributeTypeLabel), attr.val(value));
+
+                Statement attributeValue = var(attr);
+                if (value instanceof Integer) {
+                    attributeValue = attributeValue.val((Integer)value);
+                } else if (value instanceof String) {
+                    attributeValue = attributeValue.val((String)value);
+                } else {
+                    throw new DataGeneratorException("Unimplemented data type " + value.getClass());
+                }
+
+                return Graql.insert(var(attr).isa(attributeTypeLabel), attributeValue);
             }
         };
     }

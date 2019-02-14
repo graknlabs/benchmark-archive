@@ -1,6 +1,6 @@
 /*
  *  GRAKN.AI - THE KNOWLEDGE GRAPH
- *  Copyright (C) 2018 Grakn Labs Ltd
+ *  Copyright (C) 2018 GraknClient Labs Ltd
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as
@@ -21,12 +21,12 @@ package grakn.benchmark.profiler;
 import brave.Span;
 import brave.Tracer;
 import brave.Tracing;
-import grakn.core.GraknTxType;
-import grakn.core.client.Grakn;
-import grakn.core.graql.Graql;
-import grakn.core.graql.Query;
+import grakn.core.client.GraknClient;
 import grakn.core.graql.answer.Answer;
 import grakn.core.graql.answer.Value;
+import grakn.core.graql.query.Graql;
+import grakn.core.graql.query.query.GraqlQuery;
+import grakn.core.server.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,10 +36,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static grakn.core.graql.Graql.var;
+import static grakn.core.graql.query.Graql.var;
+
 
 /**
  *
@@ -50,20 +50,20 @@ public class QueryProfiler {
 
     private final String executionName;
     private final String graphName;
-    private final List<Query> queries;
+    private final List<GraqlQuery> queries;
     private boolean commitQueries;
-    private final List<Grakn.Session> sessions;
+    private final List<GraknClient.Session> sessions;
     private ExecutorService executorService;
 
-    public QueryProfiler(List<Grakn.Session> sessions, String executionName, String graphName, List<String> queryStrings, boolean commitQueries) {
+    public QueryProfiler(List<GraknClient.Session> sessions, String executionName, String graphName, List<String> queryStrings, boolean commitQueries) {
         this.sessions = sessions;
 
         this.executionName = executionName;
         this.graphName = graphName;
 
-        // convert Graql strings into Query types
+        // convert Graql strings into GraqlQuery types
         this.queries = queryStrings.stream()
-                .map(q -> (Query) Graql.parser().parseQuery(q))
+                .map(q -> (GraqlQuery) Graql.parse(q))
                 .collect(Collectors.toList());
 
         this.commitQueries = commitQueries;
@@ -78,20 +78,20 @@ public class QueryProfiler {
         LOG.trace("Finished processStaticQueries");
     }
 
-    public int aggregateCount(Grakn.Session session) {
-        try (Grakn.Transaction tx = session.transaction(GraknTxType.READ)) {
-            List<Value> count = tx.graql().match(var("x").isa("thing")).aggregate(Graql.count()).execute();
+    public int aggregateCount(GraknClient.Session session) {
+        try (GraknClient.Transaction tx = session.transaction(Transaction.Type.READ)) {
+            List<Value> count = tx.execute(Graql.match(var("x").isa("thing")).get().count());
             return count.get(0).number().intValue();
         }
     }
 
-    void processQueries(List<Query> queries, int repetitions, int numConcepts) {
+    void processQueries(List<GraqlQuery> queries, int repetitions, int numConcepts) {
         List<Future> runningQueryProcessors = new LinkedList<>();
 
         long start = System.currentTimeMillis();
 
         for (int i = 0; i < sessions.size(); i++) {
-            Grakn.Session session = sessions.get(i);
+            GraknClient.Session session = sessions.get(i);
             QueryProcessor processor = new QueryProcessor(executionName, i, graphName, Tracing.currentTracer(), queries, repetitions, numConcepts, session, commitQueries);
             runningQueryProcessors.add(executorService.submit(processor));
         }
@@ -121,14 +121,14 @@ class QueryProcessor implements Runnable {
     private int concurrentId;
     private String graphName;
     private Tracer tracer;
-    private final List<Query> queries;
+    private final List<GraqlQuery> queries;
     private final int repetitions;
     private final int numConcepts;
-    private final Grakn.Session session;
+    private final GraknClient.Session session;
     private final boolean commitQuery;
     private String executionName;
 
-    public QueryProcessor(String executionName, int concurrentId, String graphName, Tracer tracer, List<Query> queries, int repetitions, int numConcepts, Grakn.Session session, boolean commitQuery) {
+    public QueryProcessor(String executionName, int concurrentId, String graphName, Tracer tracer, List<GraqlQuery> queries, int repetitions, int numConcepts, GraknClient.Session session, boolean commitQuery) {
         this.executionName = executionName;
         this.concurrentId = concurrentId;
         this.graphName = graphName;
@@ -154,7 +154,7 @@ class QueryProcessor implements Runnable {
 
             int counter = 0;
             for (int rep = 0; rep < repetitions; rep++) {
-                for (Query rawQuery : queries) {
+                for (GraqlQuery rawQuery : queries) {
                     counter++;
                     Span querySpan = tracer.newChild(concurrentExecutionSpan.context());
                     querySpan.name("query");
@@ -166,13 +166,12 @@ class QueryProcessor implements Runnable {
                     // perform trace in thread-local storage on the client
                     try (Tracer.SpanInScope ws = tracer.withSpanInScope(querySpan)) {
                         // open new transaction
-                        Grakn.Transaction tx = session.transaction(GraknTxType.WRITE);
+                        GraknClient.Transaction tx = session.transaction(Transaction.Type.WRITE);
                         // attach query to transaction
-                        Query query = rawQuery.withTx(tx);
-                        if (counter % 100 == 0) {
-                            System.out.println(String.format("%d [c%d] Profiling... (repetition %d/%d):\t%s", counter, concurrentId, rep + 1, repetitions, query.toString()));
-                        }
-                        List<Answer> answer = query.execute();
+//                        if (counter % 100 == 0) {
+//                            System.out.println(String.format("%d [c%d] Profiling... (repetition %d/%d):\t%s", counter, concurrentId, rep + 1, repetitions, rawQuery.toString()));
+//                        }
+                        List<? extends Answer> answer = tx.execute(rawQuery);
 
                         if (commitQuery) {
                             tx.commit();

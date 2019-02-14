@@ -32,8 +32,8 @@ java_library(
     srcs = glob(["src/*.java", "src/util/*.java"]),
     deps = [
         "//dependencies/maven/artifacts/grakn/core:client",
-        "//dependencies/maven/artifacts/grakn/core:grakn-graql",
-        "//dependencies/maven/artifacts/grakn/core:util",
+        "//dependencies/maven/artifacts/grakn/core:server",
+        "//dependencies/maven/artifacts/grakn/core:graql",
 
         "//dependencies/maven/artifacts/com/fasterxml/jackson/core:jackson-core",
         "//dependencies/maven/artifacts/com/fasterxml/jackson/core:jackson-databind",

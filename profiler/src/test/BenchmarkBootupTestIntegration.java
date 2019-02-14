@@ -3,10 +3,10 @@ package grakn.benchmark.profiler.test;
 import grakn.benchmark.profiler.BootupException;
 import grakn.benchmark.profiler.GraknBenchmark;
 import grakn.benchmark.profiler.util.BenchmarkArguments;
+import org.apache.commons.cli.CommandLine;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.apache.commons.cli.CommandLine;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

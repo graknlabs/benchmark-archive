@@ -21,17 +21,18 @@ package grakn.benchmark.profiler.generator.query;
 import grakn.benchmark.profiler.generator.provider.concept.CentralConceptProvider;
 import grakn.benchmark.profiler.generator.strategy.RelationshipStrategy;
 import grakn.benchmark.profiler.generator.strategy.RolePlayerTypeStrategy;
-import grakn.core.concept.ConceptId;
-import grakn.core.graql.Graql;
-import grakn.core.graql.InsertQuery;
-import grakn.core.graql.Pattern;
-import grakn.core.graql.Var;
-import grakn.core.graql.VarPattern;
+import grakn.core.graql.concept.ConceptId;
+import grakn.core.graql.query.Graql;
+import grakn.core.graql.query.pattern.Pattern;
+import grakn.core.graql.query.query.GraqlInsert;
+import grakn.core.graql.query.statement.Statement;
+import grakn.core.graql.query.statement.Variable;
 
 import java.util.Iterator;
 import java.util.Set;
 
-import static grakn.core.graql.internal.pattern.Patterns.var;
+import static grakn.core.graql.query.Graql.and;
+import static grakn.core.graql.query.Graql.var;
 
 /**
  * Generate insert queries for the relationship type indicated by the RelationshipStrategy.
@@ -47,7 +48,7 @@ public class RelationshipGenerator implements QueryGenerator {
     }
 
     @Override
-    public Iterator<InsertQuery> generate() {
+    public Iterator<GraqlInsert> generate() {
 
         Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies = this.strategy.getRolePlayerTypeStrategies();
         for (RolePlayerTypeStrategy rolePlayerTypeStrategy : rolePlayerTypeStrategies) {
@@ -59,8 +60,8 @@ public class RelationshipGenerator implements QueryGenerator {
         return buildInsertRelationshipQueryIterator();
     }
 
-    private Iterator<InsertQuery> buildInsertRelationshipQueryIterator() {
-        return new Iterator<InsertQuery>() {
+    private Iterator<GraqlInsert> buildInsertRelationshipQueryIterator() {
+        return new Iterator<GraqlInsert>() {
 
             String relationshipTypeLabel = strategy.getTypeLabel();
             int queriesToGenerate = strategy.getNumInstancesPDF().sample();
@@ -79,10 +80,10 @@ public class RelationshipGenerator implements QueryGenerator {
             }
 
             @Override
-            public InsertQuery next() {
+            public GraqlInsert next() {
 
                 Pattern matchVarPattern = null;  //TODO It will be faster to use a pure insert, supplying the ids for the roleplayers' variables
-                VarPattern insertVarPattern = var("r").isa(relationshipTypeLabel);
+                Statement insertVarPattern = var("r").isa(relationshipTypeLabel);
 
                 // For each role type strategy
                 for (RolePlayerTypeStrategy rolePlayerTypeStrategy : strategy.getRolePlayerTypeStrategies()) {
@@ -98,14 +99,14 @@ public class RelationshipGenerator implements QueryGenerator {
                     while (conceptProvider.hasNext() && rolePlayersAssigned < rolePlayersRequired) {
                         ConceptId conceptId = conceptProvider.next();
                         // Add the concept to the query
-                        Var v = Graql.var().asUserDefined();
+                        Variable v = new Variable().asUserDefined();
                         if (matchVarPattern == null) {
-                            matchVarPattern = v.id(conceptId);
+                            matchVarPattern = var(v).id(conceptId.toString());
                         } else {
-                            Pattern varPattern = v.id(conceptId);
-                            matchVarPattern = matchVarPattern.and(varPattern);
+                            Pattern varPattern = var(v).id(conceptId.toString());
+                            matchVarPattern = and(matchVarPattern, varPattern);
                         }
-                        insertVarPattern = insertVarPattern.rel(roleLabel, v);
+                        insertVarPattern = insertVarPattern.rel(roleLabel, var(v));
                         rolePlayersAssigned++;
                     }
                 }

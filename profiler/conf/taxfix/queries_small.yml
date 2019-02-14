@@ -1,0 +1,10 @@
+queries:
+- "insert $taxpayer isa User; $declaration isa TaxDeclaration; $form isa TaxDeclarationForm; (filer: $taxpayer, declaration: $declaration) isa files_tax_declaration; (declaration: $declaration, form: $form) isa materializes_in_form;"
+- "match $taxpayer isa User; $taxpayer has is_land_owner == true; $ownership (owner: $taxpayer, possession: $land); $ownership isa owns; $land isa Property; $ownership has index 0; $land has type_of_property \"land\"; $land_rental (lender: $taxpayer, property: $land); $land_rental isa lends; insert $rental_income isa RentalIncome; $rental_income has amount 75.76; (earner: $taxpayer, profit: $rental_income) isa earns; (income: $rental_income, income_source: $land_rental) isa has_source_of_income;"
+- "match $result isa computed_value; delete;"
+- "match $taxpayer isa User; (filer: $taxpayer, declaration: $declaration) isa files_tax_declaration; (earner: $taxpayer, profit: $professional_income) isa earns; $professional_income isa ProfessionalIncome; $professional_income has amount $income_amount; get; limit 1;"
+- "match $life_and_accident_insurance isa LifeAccidentInsuranceExpense; (expense_payer: $taxpayer, expense: $life_and_accident_insurance) isa bears; get; limit 1;"
+- "match $insurance_for_disabled isa DisabledInsuranceExpense; (expense_payer: $taxpayer, expense: $insurance_for_disabled) isa bears; get; limit 1;"
+- "match (supporter: $taxpayer, dependant: $dependant) isa has_dependant; get; limit 1;"
+- "match $taxpayer has has_complementary_pension_plan == true; get; limit 1;"
+- "match $capital_income isa CapitalIncome; (earner: $taxpayer, profit: $capital_income) isa earns; $capital_income has income_type \"Dividends\"; $capital_income has payer \"Italian company (shares non negotiated in a regulated market)\"; get; limit 1;"

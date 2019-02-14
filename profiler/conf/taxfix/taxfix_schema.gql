@@ -146,7 +146,7 @@ has_complementary_pension_plan sub attribute, datatype boolean;
 reflected_salary_withholding sub attribute, datatype string;
 same_employer_as_prior_year sub attribute, datatype string;
 is_erasmus sub attribute, datatype boolean;
-type sub attribute, datatype string;
+income_type sub attribute, datatype string;
 is_direct_trader sub attribute, datatype boolean;
 cupe sub attribute, datatype boolean;
 payer sub attribute, datatype string;
@@ -228,7 +228,7 @@ Person sub entity, has is_unsupported, has unsupported_reason, has repatriated_i
 Employer sub entity, has name, has tax_id, plays employer;
 Scholarship sub entity, has payer, has is_erasmus, plays scholarship, plays scholarship_received;
 Degree sub entity, has name, plays scholarship, plays employee, plays degree;
-CapitalIncome sub entity, has type, has payer, has amount, has cupe, plays profit;
+CapitalIncome sub entity, has income_type, has payer, has amount, has cupe, plays profit;
 Property sub entity, has cadastral_number, has has_annex_property, has has_rentals, has has_long_term_rentals, has has_short_term_rentals, has type_of_use, has type_of_property, has acquired_for_renting, has acquisition_price, has rented_6_months_after_purchase, has acquisition_date, has acquisition_notary_cost, has agriculture_cadastral_number, has is_exonerated_from_property_tax, plays property, plays housing, plays possession, plays object, plays main_property, plays annex;
 Mortgage sub entity, has mortgage_type, has interest_paid, has year, plays mortgage;
 RenovationMortgage sub Mortgage;
@@ -238,7 +238,7 @@ RentalAgreement sub entity, has type_of_rental_contract, has cedolare_secca, has
 LandRentalAgreement sub RentalAgreement, has land_rental_condition;
 SoldProperty sub Property, has type_of_acquisition, has is_gift_from_relative, has is_residence_relative, has date_of_sale, has flat_tax_20_percent, has sale_price;
 CapitalGain sub entity, plays profit, plays gain;
-ProfessionalIncome sub entity, has index, has type, has type_of_contract, has amount, has amount_performance_bonus_ord_tax, has amount_performance_bonus_subst_tax, has withholding_substitute_tax, has amount_benefit, has amount_benefit_ord_tax, has number_of_days, has withholding_irpef, has withholding_prep_regional, has withholding_prep_communal_tax_year, has withholding_balance_communal_tax_year, has withholding_prep_communal_current_year, has is_bonus_irpef_paid, has amount_bonus_irpef_paid, has bonus_irpef_exemption, has bonus_irpef_quota_tfr, plays profit;
+ProfessionalIncome sub entity, has index, has income_type, has type_of_contract, has amount, has amount_performance_bonus_ord_tax, has amount_performance_bonus_subst_tax, has withholding_substitute_tax, has amount_benefit, has amount_benefit_ord_tax, has number_of_days, has withholding_irpef, has withholding_prep_regional, has withholding_prep_communal_tax_year, has withholding_balance_communal_tax_year, has withholding_prep_communal_current_year, has is_bonus_irpef_paid, has amount_bonus_irpef_paid, has bonus_irpef_exemption, has bonus_irpef_quota_tfr, plays profit;
 RentalIncome sub entity, has amount, has rental_taxes_in_cu, has withheld_tax_amount, plays profit, plays income;
 Expense sub entity, has amount, plays expense;
 AlimonyExpense sub Expense, has based_on_judicial_decision, has includes_children_alimonies, has tax_id, plays expense;

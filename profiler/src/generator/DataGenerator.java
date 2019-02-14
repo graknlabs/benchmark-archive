@@ -21,11 +21,12 @@ package grakn.benchmark.profiler.generator;
 import grakn.benchmark.profiler.generator.query.QueryProvider;
 import grakn.benchmark.profiler.generator.storage.ConceptStorage;
 import grakn.benchmark.profiler.generator.util.InsertQueryAnalyser;
-import grakn.core.GraknTxType;
-import grakn.core.client.Grakn;
-import grakn.core.concept.Concept;
-import grakn.core.graql.InsertQuery;
+import grakn.core.client.GraknClient;
 import grakn.core.graql.answer.ConceptMap;
+import grakn.core.graql.concept.Concept;
+import grakn.core.graql.query.query.GraqlInsert;
+import grakn.core.server.Transaction;
+import grakn.core.server.exception.InvalidKBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +45,7 @@ import java.util.Map;
 public class DataGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(DataGenerator.class);
 
-    private final Grakn.Session session;
+    private final GraknClient.Session session;
     private final String graphName;
     private final QueryProvider queryProvider;
     private final ConceptStorage storage;
@@ -52,7 +53,7 @@ public class DataGenerator {
     private int iteration;
 
 
-    public DataGenerator(Grakn.Session session, ConceptStorage storage, String graphName, QueryProvider queryProvider) {
+    public DataGenerator(GraknClient.Session session, ConceptStorage storage, String graphName, QueryProvider queryProvider) {
         this.session = session;
         this.graphName = graphName;
         this.queryProvider = queryProvider;
@@ -69,29 +70,33 @@ public class DataGenerator {
     public void generate(int graphScaleLimit) {
 
         while (storage.getGraphScale() < graphScaleLimit) {
-            try (Grakn.Transaction tx = session.transaction(GraknTxType.WRITE)) {
+            try (GraknClient.Transaction tx = session.transaction(Transaction.Type.WRITE)) {
 
                 // create the stream of insert/match-insert queries
-                Iterator<InsertQuery> queryStream = queryProvider.nextQueryBatch();
+                Iterator<GraqlInsert> queryStream = queryProvider.nextQueryBatch();
 
                 // execute & parse the results
                 processQueryStream(queryStream, tx);
 
                 printProgress();
-                tx.commit();
+                try {
+                    tx.commit();
+                } catch (InvalidKBException e) {
+                    e.printStackTrace();
+                }
             }
             iteration++;
         }
         System.out.print("\n");
     }
 
-    private void processQueryStream(Iterator<InsertQuery> queryIterator, Grakn.Transaction tx) {
+    private void processQueryStream(Iterator<GraqlInsert> queryIterator, GraknClient.Transaction tx) {
         /*
         Make the data insertions from the stream of queries generated
          */
         queryIterator.forEachRemaining(q -> {
 
-            List<ConceptMap> insertions = q.withTx(tx).execute();
+            List<ConceptMap> insertions = tx.execute(q);
             HashSet<Concept> insertedConcepts = InsertQueryAnalyser.getInsertedConcepts(q, insertions);
 
             insertedConcepts.forEach(storage::addConcept);

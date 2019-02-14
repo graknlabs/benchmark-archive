@@ -19,14 +19,14 @@
 package grakn.benchmark.profiler.generator.storage;
 
 import grakn.benchmark.profiler.generator.DataGeneratorException;
-import grakn.core.concept.Attribute;
-import grakn.core.concept.AttributeType;
-import grakn.core.concept.Concept;
-import grakn.core.concept.ConceptId;
-import grakn.core.concept.EntityType;
-import grakn.core.concept.Label;
-import grakn.core.concept.RelationshipType;
-import grakn.core.concept.SchemaConcept;
+import grakn.core.graql.concept.Attribute;
+import grakn.core.graql.concept.AttributeType;
+import grakn.core.graql.concept.Concept;
+import grakn.core.graql.concept.ConceptId;
+import grakn.core.graql.concept.EntityType;
+import grakn.core.graql.concept.Label;
+import grakn.core.graql.concept.RelationType;
+import grakn.core.graql.concept.SchemaConcept;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,12 +46,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static grakn.core.concept.AttributeType.DataType.BOOLEAN;
-import static grakn.core.concept.AttributeType.DataType.DATE;
-import static grakn.core.concept.AttributeType.DataType.DOUBLE;
-import static grakn.core.concept.AttributeType.DataType.FLOAT;
-import static grakn.core.concept.AttributeType.DataType.LONG;
-import static grakn.core.concept.AttributeType.DataType.STRING;
+import static grakn.core.graql.concept.AttributeType.DataType.BOOLEAN;
+import static grakn.core.graql.concept.AttributeType.DataType.DATE;
+import static grakn.core.graql.concept.AttributeType.DataType.DOUBLE;
+import static grakn.core.graql.concept.AttributeType.DataType.FLOAT;
+import static grakn.core.graql.concept.AttributeType.DataType.LONG;
+import static grakn.core.graql.concept.AttributeType.DataType.STRING;
+
 
 /**
  * Stores identifiers for all concepts in a Grakn
@@ -89,7 +90,7 @@ public class IgniteConceptStorage implements ConceptStorage {
         DATATYPE_MAPPING = Collections.unmodifiableMap(mapBuilder);
     }
 
-    public IgniteConceptStorage(HashSet<EntityType> entityTypes, HashSet<RelationshipType> relationshipTypes, HashSet<AttributeType> attributeTypes) {
+    public IgniteConceptStorage(HashSet<EntityType> entityTypes, HashSet<RelationType> relationshipTypes, HashSet<AttributeType> attributeTypes) {
         LOG.info("Initialising ignite...");
         // Read schema concepts and create ignite tables
         collectTypeLabels(entityTypes, relationshipTypes, attributeTypes);
@@ -100,7 +101,7 @@ public class IgniteConceptStorage implements ConceptStorage {
     }
 
     private void collectTypeLabels(Set<EntityType> entityTypes,
-                                   Set<RelationshipType> relationshipTypes,
+                                   Set<RelationType> relationshipTypes,
                                    Set<AttributeType> attributeTypes) {
         this.entityTypeLabels = this.getTypeLabels(entityTypes);
         this.explicitRelationshipTypeLabels = this.getTypeLabels(relationshipTypes);
