@@ -32,6 +32,7 @@ load("//dependencies/tools:dependencies.bzl", "tools_dependencies")
 tools_dependencies()
 
 
+
 #####################################
 # Load Java dependencies from Maven #
 #####################################
@@ -39,7 +40,6 @@ load("//dependencies/maven:dependencies.bzl", "maven_dependencies")
 maven_dependencies()
 
 # TODO remove this when graknlabs/benchmark issue #58 is resolved
-# (this shouldn't have to be stated here?)
 git_repository(
     name = "bazel_skylib",
     remote = "https://github.com/bazelbuild/bazel-skylib.git",
@@ -65,14 +65,28 @@ http_file(
   ],
 )
 
+
+##################################
+# Load Distribution Dependencies #
+##################################
+
+load("//dependencies/distribution:dependencies.bzl", "distribution_dependencies")
+distribution_dependencies()
+
+load("@graknlabs_bazel_distribution//github:dependencies.bzl", "github_dependencies_for_deployment")
+github_dependencies_for_deployment()
+
+# Why does it break when we move thie declaration after loading tools_dependencies?
+load("@com_github_google_bazel_common//:workspace_defs.bzl", "google_common_workspace_rules")
+google_common_workspace_rules()
+
+
 ########################################
 #     Load Deployment Dependencies     #
 ########################################
-git_repository(
-    name="graknlabs_rules_deployment",
-    remote="https://github.com/graknlabs/deployment",
-    commit="1fd6f328d55b28ca70b047894917cb169d5f028e",
-)
+#git_repository(
+#    name="graknlabs_rules_deployment",
+#    remote="https://github.com/graknlabs/deployment",
+#    commit="1fd6f328d55b28ca70b047894917cb169d5f028e",
+#)
 
-load("//dependencies/deployment/maven:dependencies.bzl", maven_dependencies_for_deployment = "maven_dependencies")
-maven_dependencies_for_deployment()

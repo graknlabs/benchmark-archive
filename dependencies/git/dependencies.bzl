@@ -16,5 +16,11 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-exports_files(["pom_template.xml", "deploy.sh"])
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
+def graknlabs_graql():
+    git_repository(
+        name = "graknlabs_graql",
+        remote = "https://github.com/graknlabs/graql",
+        commit = "e8f9e0c4fdb3ea0d76aab957b7c005d22f514094"
+    )

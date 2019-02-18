@@ -16,7 +16,13 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-github.repository=benchmark
-maven.repository-url.snapshot=http://maven.grakn.ai/nexus/content/repositories/snapshots
-maven.repository-url.release=http://maven.grakn.ai/nexus/content/repositories/releases
-maven.packages=lib
+
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+
+
+def distribution_dependencies():
+    git_repository(
+        name="graknlabs_bazel_distribution",
+        remote="https://github.com/graknlabs/bazel-distribution",
+        commit="5f7a464b943fc3c370c42d2f5b59993ec2cd435f"
+    )

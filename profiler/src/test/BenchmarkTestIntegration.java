@@ -6,7 +6,6 @@ import grakn.benchmark.profiler.util.BenchmarkArguments;
 import grakn.core.client.GraknClient;
 import grakn.core.graql.answer.ConceptMap;
 import grakn.core.graql.query.Graql;
-import grakn.core.server.Transaction;
 import org.apache.commons.cli.CommandLine;
 import org.junit.After;
 import org.junit.Before;
@@ -33,7 +32,8 @@ public class BenchmarkTestIntegration {
 
     @Before
     public void setUp() {
-        client = new GraknClient("localhost:48555");
+        String uri = "localhost:48555";
+        client = new GraknClient(uri);
         String uuid = UUID.randomUUID().toString().substring(0, 30).replace("-", "");
         keyspace = "test_" + uuid;
         session = client.session(keyspace);
@@ -48,7 +48,7 @@ public class BenchmarkTestIntegration {
     @Test
     public void whenSchemaExistsInKeyspace_throwException() {
 
-        try (GraknClient.Transaction tx = session.transaction(Transaction.Type.WRITE)) {
+        try (GraknClient.Transaction tx = session.transaction(GraknClient.Transaction.Type.WRITE)) {
             List<ConceptMap> answer = tx.execute(Graql.define(type("person").sub("entity")));
             tx.commit();
         }
@@ -64,7 +64,7 @@ public class BenchmarkTestIntegration {
     @Test
     public void whenDataExistsInKeyspace_throwException() {
 
-        try (GraknClient.Transaction tx = session.transaction(Transaction.Type.WRITE)) {
+        try (GraknClient.Transaction tx = session.transaction(GraknClient.Transaction.Type.WRITE)) {
             List<ConceptMap> answer = tx.execute(Graql.define(type("person").sub("entity")));
             answer = tx.execute(Graql.insert(var("x").isa("person")));
             tx.commit();

@@ -17,7 +17,7 @@
 #
 
 
-load("//dependencies/deployment/maven:rules.bzl", "deploy_maven_jar")
+load("//dependencies/maven:rules.bzl", "deploy_maven_jar")
 
 java_library(
     name = "lib",
@@ -37,6 +37,6 @@ java_library(
 
 deploy_maven_jar(
     name = "deploy-maven-jar",
-    targets = [":lib"],
-    version_file = "//:VERSION",
+    target = ":lib",
+    package = "lib"
 )

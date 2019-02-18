@@ -19,12 +19,22 @@
 exports_files(["VERSION", "deployment.properties"], visibility = ["//visibility:public"])
 
 # TODO: the distribution only includes 'benchmark-profiler'. Need to add 'benchmark-dashboard'.
-load("@graknlabs_rules_deployment//distribution:rules.bzl", distribution = "distribution")
-distribution(
-    name = "distribution",
+load("@graknlabs_bazel_distribution//distribution:rules.bzl", "distribution_structure", "distribution_zip")
+
+
+distribution_structure(
+    name="benchmark-binary",
     targets = {
-        "//profiler:benchmark-profiler": "lib/",
+        "//profiler:benchmark-profiler-binary": "lib/"
     },
+    visibility = ["//:__pkg__"]
+)
+
+distribution_zip(
+    name = "distribution",
+    distribution_structures = [
+        "//:benchmark-binary"
+    ],
     additional_files = {
         "//profiler:benchmark": "benchmark",
         "//profiler:conf/road_network/queries.yml": "conf/road_network/queries.yml",

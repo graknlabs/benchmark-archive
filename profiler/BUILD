@@ -24,7 +24,8 @@ java_binary(
         ":benchmark-profiler"
     ],
     main_class = "grakn.benchmark.profiler.GraknBenchmark",
-    classpath_resources = [":logback"]
+    classpath_resources = [":logback"],
+    visibility = ["//visibility:public"]
 )
 
 java_library(

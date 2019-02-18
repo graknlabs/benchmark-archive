@@ -157,14 +157,19 @@ dependencies:
       version: "2.6.4"
       lang: java
 
-
   io.grpc:
-   grpc-core:
+    grpc-core:
       version: "1.15.0"
       lang: java
-   grpc-netty-shaded:
+    grpc-netty-shaded:
      version: "1.15.0"
      lang: java
+    grpc-netty:
+      version: "1.15.0"
+      lang: java
+    grpc-stub:
+      version: "1.15.0"
+      lang: java
 
 
   com.google.protobuf:

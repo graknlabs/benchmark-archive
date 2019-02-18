@@ -15,8 +15,3 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
-
-github.repository=benchmark
-maven.repository-url.snapshot=http://maven.grakn.ai/nexus/content/repositories/snapshots
-maven.repository-url.release=http://maven.grakn.ai/nexus/content/repositories/releases
-maven.packages=lib
