@@ -5,5 +5,5 @@ repeatsPerQuery: 2
 
 commitQueries: true
 concurrency:
-  clients: 32
+  clients: 1
   uniqueKeyspaces: true

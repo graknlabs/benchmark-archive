@@ -120,7 +120,7 @@ public class ServerTracingInstrumentation {
      * @param spanName
      * @return
      */
-    public static ScopedSpan createScopedChildSpan(String spanName) {
+    public static ScopedSpan startScopedChildSpan(String spanName) {
         Span currentSpan = currentSpan();
         return startScopedChildSpanWithParentContext(spanName, currentSpan.context());
     }

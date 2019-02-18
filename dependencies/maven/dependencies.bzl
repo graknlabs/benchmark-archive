@@ -71,9 +71,9 @@ def list_dependencies():
     {"artifact": "aopalliance:aopalliance:1.0", "lang": "java", "sha1": "0235ba8b489512805ac13a8f9ea77a1ca5ebe3e8", "sha256": "0addec670fedcd3f113c5c8091d783280d23f75e3acb841b61a9cdb079376a08", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/aopalliance/aopalliance/1.0/aopalliance-1.0.jar", "source": {"sha1": "4a4b6d692e17846a9f3da036438a7ac491d3c814", "sha256": "e6ef91d439ada9045f419c77543ebe0416c3cdfc5b063448343417a3e4a72123", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/aopalliance/aopalliance/1.0/aopalliance-1.0-sources.jar"} , "name": "aopalliance-aopalliance", "actual": "@aopalliance-aopalliance//jar", "bind": "jar/aopalliance/aopalliance"},
     {"artifact": "asm:asm:3.1", "lang": "java", "sha1": "c157def142714c544bdea2e6144645702adf7097", "sha256": "333ff5369043975b7e031b8b27206937441854738e038c1f47f98d072a20437a", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/asm/asm/3.1/asm-3.1.jar", "source": {"sha1": "2eaa4de56203f433f287a6df5885ef9ad3c5bcae", "sha256": "7192812253956896289973f2a8ae53813af5611ddcb8beca7f9fa5b88a79b003", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/asm/asm/3.1/asm-3.1-sources.jar"} , "name": "asm-asm", "actual": "@asm-asm//jar", "bind": "jar/asm/asm"},
 # duplicates in ch.qos.logback:logback-classic fixed to 1.2.3
-# - grakn.core:client:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 1.2.3
-# - grakn.core:common:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 1.2.3
-# - grakn.core:server:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 1.2.3
+# - grakn.core:client:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 1.2.3
+# - grakn.core:common:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 1.2.3
+# - grakn.core:server:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 1.2.3
 # - org.apache.cassandra:cassandra-all:3.11.3 wanted version 1.1.3
 # - org.janusgraph:janusgraph-cassandra:0.3.0 wanted version 1.1.2
 # - org.janusgraph:janusgraph-es:0.3.0 wanted version 1.1.2
@@ -81,9 +81,9 @@ def list_dependencies():
     {"artifact": "ch.qos.logback:logback-classic:1.2.3", "lang": "java", "sha1": "7c4f3c474fb2c041d8028740440937705ebb473a", "sha256": "fb53f8539e7fcb8f093a56e138112056ec1dc809ebb020b59d8a36a5ebac37e0", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/ch/qos/logback/logback-classic/1.2.3/logback-classic-1.2.3.jar", "source": {"sha1": "cfd5385e0c5ed1c8a5dce57d86e79cf357153a64", "sha256": "480cb5e99519271c9256716d4be1a27054047435ff72078d9deae5c6a19f63eb", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/ch/qos/logback/logback-classic/1.2.3/logback-classic-1.2.3-sources.jar"} , "name": "ch-qos-logback-logback-classic", "actual": "@ch-qos-logback-logback-classic//jar", "bind": "jar/ch/qos/logback/logback-classic"},
 # duplicates in ch.qos.logback:logback-core promoted to 1.2.3
 # - ch.qos.logback:logback-classic:1.2.3 wanted version 1.2.3
-# - grakn.core:client:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 1.2.3
-# - grakn.core:common:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 1.2.3
-# - grakn.core:server:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 1.2.3
+# - grakn.core:client:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 1.2.3
+# - grakn.core:common:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 1.2.3
+# - grakn.core:server:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 1.2.3
 # - org.apache.cassandra:cassandra-all:3.11.3 wanted version 1.1.3
     {"artifact": "ch.qos.logback:logback-core:1.2.3", "lang": "java", "sha1": "864344400c3d4d92dfeb0a305dc87d953677c03c", "sha256": "5946d837fe6f960c02a53eda7a6926ecc3c758bbdd69aa453ee429f858217f22", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/ch/qos/logback/logback-core/1.2.3/logback-core-1.2.3.jar", "source": {"sha1": "3ebabe69eba0196af9ad3a814f723fb720b9101e", "sha256": "1f69b6b638ec551d26b10feeade5a2b77abe347f9759da95022f0da9a63a9971", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/ch/qos/logback/logback-core/1.2.3/logback-core-1.2.3-sources.jar"} , "name": "ch-qos-logback-logback-core", "actual": "@ch-qos-logback-logback-core//jar", "bind": "jar/ch/qos/logback/logback-core"},
     {"artifact": "com.addthis.metrics:reporter-config-base:3.0.3", "lang": "java", "sha1": "18602360f5e606cbca07ded5ecfeda6121789c9f", "sha256": "995bac87ddd893e23c0da5f312b47a91b5849c5ab29483e21983f9835cbab38f", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/com/addthis/metrics/reporter-config-base/3.0.3/reporter-config-base-3.0.3.jar", "source": {"sha1": "16e2ab2f4be5d49a164202c0adb65bc70a8afc17", "sha256": "16a2fdd63f09bd716536c6bf114ecc54f5d5f28b0f86263ee918f1b83e53c3ab", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/com/addthis/metrics/reporter-config-base/3.0.3/reporter-config-base-3.0.3-sources.jar"} , "name": "com-addthis-metrics-reporter-config-base", "actual": "@com-addthis-metrics-reporter-config-base//jar", "bind": "jar/com/addthis/metrics/reporter-config-base"},
@@ -102,7 +102,7 @@ def list_dependencies():
     {"artifact": "com.codahale.metrics:metrics-ganglia:3.0.1", "lang": "java", "sha1": "1c574e1b154dab30302668f4a474bd8ecf89e5b5", "sha256": "92cace141fd15d03e6e7b52cbc13f3980e90e7c72570b1379201fcef66d4a0c5", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/com/codahale/metrics/metrics-ganglia/3.0.1/metrics-ganglia-3.0.1.jar", "source": {"sha1": "a7fa3dc03a282cf073944e9038d30a9bb3dd24d7", "sha256": "91322c5ba751c37602523d33b72ec3c22cde740914c4be3d7633f83b3b204481", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/com/codahale/metrics/metrics-ganglia/3.0.1/metrics-ganglia-3.0.1-sources.jar"} , "name": "com-codahale-metrics-metrics-ganglia", "actual": "@com-codahale-metrics-metrics-ganglia//jar", "bind": "jar/com/codahale/metrics/metrics-ganglia"},
     {"artifact": "com.codahale.metrics:metrics-graphite:3.0.1", "lang": "java", "sha1": "2389e1501d8b9b1ab3b2cd8da16afef56430ba15", "sha256": "da9d6ea17abdf32d3b0463e84cfe491cf5632d7c6f692722afbc33dab514a001", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/com/codahale/metrics/metrics-graphite/3.0.1/metrics-graphite-3.0.1.jar", "source": {"sha1": "ac0a5d08f3045de34822a5c237bff3b7d1033986", "sha256": "a06bbbfad45f933f036b9ed4141fb80ac0003a2a90d515611f6ed6950d2aaf64", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/com/codahale/metrics/metrics-graphite/3.0.1/metrics-graphite-3.0.1-sources.jar"} , "name": "com-codahale-metrics-metrics-graphite", "actual": "@com-codahale-metrics-metrics-graphite//jar", "bind": "jar/com/codahale/metrics/metrics-graphite"},
 # duplicates in com.datastax.cassandra:cassandra-driver-core promoted to 3.5.1
-# - grakn.core:server:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 3.5.1
+# - grakn.core:server:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 3.5.1
 # - org.janusgraph:janusgraph-hadoop:0.3.0 wanted version 3.3.2
     {"artifact": "com.datastax.cassandra:cassandra-driver-core:3.5.1", "lang": "java", "sha1": "f13f50879a6f0f9f953b9f774d2abf891cf97183", "sha256": "2e4b3f9009344a95e6a17eb4010ccb69f9c717a2d9d53fef290a8b2865050064", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/com/datastax/cassandra/cassandra-driver-core/3.5.1/cassandra-driver-core-3.5.1.jar", "source": {"sha1": "6eeffed1d6be109a697da26b2d0465394f49b33e", "sha256": "541a651c484672d159963acf3fbcf84f3c1285f2da2842649462474976b72424", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/com/datastax/cassandra/cassandra-driver-core/3.5.1/cassandra-driver-core-3.5.1-sources.jar"} , "name": "com-datastax-cassandra-cassandra-driver-core", "actual": "@com-datastax-cassandra-cassandra-driver-core//jar", "bind": "jar/com/datastax/cassandra/cassandra-driver-core"},
     {"artifact": "com.eaio.uuid:uuid:3.2", "lang": "java", "sha1": "77ba5105d949cd589aff75400d9f7d3676691a46", "sha256": "45b0b58282c92b81a6a338c95bf5ef8bb42eefacc26e21db0bfcf347bc4bfd37", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/com/eaio/uuid/uuid/3.2/uuid-3.2.jar", "source": {"sha1": "1ccd15614c8848831943a5283ce17763c04cee3c", "sha256": "4b40ec74d0d416d36399266d5c92824f167009b5a298b5a2563039c17bed9e9a", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/com/eaio/uuid/uuid/3.2/uuid-3.2-sources.jar"} , "name": "com-eaio-uuid-uuid", "actual": "@com-eaio-uuid-uuid//jar", "bind": "jar/com/eaio/uuid/uuid"},
@@ -157,8 +157,8 @@ def list_dependencies():
 # duplicates in com.google.code.findbugs:jsr305 promoted to 3.0.1
 # - com.google.code.findbugs:annotations:3.0.1 wanted version 3.0.1
 # - com.google.guava:guava:23.0 wanted version 1.3.9
-# - grakn.core:client:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 2.0.2
-# - grakn.core:server:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 2.0.2
+# - grakn.core:client:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 2.0.2
+# - grakn.core:server:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 2.0.2
 # - io.grpc:grpc-core:1.15.0 wanted version 3.0.0
 # - org.apache.hadoop:hadoop-common:2.7.2 wanted version 3.0.0
 # - org.apache.spark:spark-core_2.11:2.2.0 wanted version 1.3.9
@@ -183,10 +183,10 @@ def list_dependencies():
 # - com.github.os72:protobuf-java-util-shaded-351:0.9 wanted version 19.0
 # - com.netflix.astyanax:astyanax-core:3.8.0 wanted version 15.0
 # - com.netflix.astyanax:astyanax-recipes:3.8.0 wanted version 15.0
-# - grakn.core:client:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 23.0
-# - grakn.core:common:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 23.0
-# - grakn.core:protocol:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 23.0
-# - grakn.core:server:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 23.0
+# - grakn.core:client:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 23.0
+# - grakn.core:common:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 23.0
+# - grakn.core:protocol:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 23.0
+# - grakn.core:server:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 23.0
 # - io.airlift:airline:0.6 wanted version 12.0
 # - io.grpc:grpc-core:1.15.0 wanted version 20.0
 # - io.grpc:grpc-protobuf-lite:1.15.0 wanted version 20.0
@@ -214,7 +214,7 @@ def list_dependencies():
     {"artifact": "com.google.j2objc:j2objc-annotations:1.1", "lang": "java", "sha1": "ed28ded51a8b1c6b112568def5f4b455e6809019", "sha256": "2994a7eb78f2710bd3d3bfb639b2c94e219cedac0d4d084d516e78c16dddecf6", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/com/google/j2objc/j2objc-annotations/1.1/j2objc-annotations-1.1.jar", "source": {"sha1": "1efdf5b737b02f9b72ebdec4f72c37ec411302ff", "sha256": "2cd9022a77151d0b574887635cdfcdf3b78155b602abc89d7f8e62aba55cfb4f", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/com/google/j2objc/j2objc-annotations/1.1/j2objc-annotations-1.1-sources.jar"} , "name": "com-google-j2objc-j2objc-annotations", "actual": "@com-google-j2objc-j2objc-annotations//jar", "bind": "jar/com/google/j2objc/j2objc-annotations"},
 # duplicates in com.google.protobuf:protobuf-java fixed to 3.5.1
 # - grakn.benchmark:lib:1.5.0-837e62dabf6198ac09b7b9f35c2cd793bac2deb4-SNAPSHOT wanted version 3.5.1
-# - grakn.core:protocol:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 3.4.0
+# - grakn.core:protocol:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 3.4.0
 # - io.grpc:grpc-protobuf:1.15.0 wanted version 3.5.1
 # - org.apache.hadoop:hadoop-common:2.7.2 wanted version 2.5.0
 # - org.apache.hadoop:hadoop-hdfs:2.7.2 wanted version 2.5.0
@@ -263,7 +263,7 @@ def list_dependencies():
     {"artifact": "com.twitter:chill-java:0.8.0", "lang": "java", "sha1": "7ab1c85ae80f25c6e6d4aab720ff9394a5ac4d5d", "sha256": "35437ca2491823b74df3f9e98b2534a7fc853c562bf0969db12e21372a4f5e59", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/com/twitter/chill-java/0.8.0/chill-java-0.8.0.jar", "source": {"sha1": "fc9ce334557d0abadf92cf001f4e86992df8b8f9", "sha256": "1e5a0457a9fdf01ea0063e6ea139e65ccf683e9f4bd3322b237c0c85a1cee09c", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/com/twitter/chill-java/0.8.0/chill-java-0.8.0-sources.jar"} , "name": "com-twitter-chill-java", "actual": "@com-twitter-chill-java//jar", "bind": "jar/com/twitter/chill-java"},
     {"artifact": "com.twitter:chill_2.11:0.8.0", "lang": "java", "sha1": "3cbb2bf5382e5a2abfce0e258637060ed23266fc", "sha256": "e854418893cffbaba023699aa0e0e16020741ce6855da25373be80dd92863cb9", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/com/twitter/chill_2.11/0.8.0/chill_2.11-0.8.0.jar", "source": {"sha1": "353d4e565b0ace56827696299898cbacecb32f9b", "sha256": "b5372d8d8a06765f9e7f26139507a5be9d0de0a1238e7b23e9e72b2e3ebec38c", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/com/twitter/chill_2.11/0.8.0/chill_2.11-0.8.0-sources.jar"} , "name": "com-twitter-chill_2-11", "actual": "@com-twitter-chill_2-11//jar", "bind": "jar/com/twitter/chill-2-11"},
 # duplicates in commons-cli:commons-cli fixed to 1.3.1
-# - grakn.core:server:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 1.3
+# - grakn.core:server:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 1.3
 # - org.apache.cassandra:cassandra-all:3.11.3 wanted version 1.1
 # - org.apache.hadoop:hadoop-common:2.7.2 wanted version 1.2
 # - org.apache.hadoop:hadoop-hdfs:2.7.2 wanted version 1.2
@@ -289,7 +289,7 @@ def list_dependencies():
     {"artifact": "commons-codec:commons-codec:1.11", "lang": "java", "sha1": "3acb4705652e16236558f0f4f2192cc33c3bd189", "sha256": "e599d5318e97aa48f42136a2927e6dfa4e8881dff0e6c8e3109ddbbff51d7b7d", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/commons-codec/commons-codec/1.11/commons-codec-1.11.jar", "source": {"sha1": "bce4ba84fd527950e35040b20a991c63e90e2850", "sha256": "901cb5d1f7c2877017c95d3c5efd5a497738d0162ef72cdf58e9cb13f50b2e9c", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/commons-codec/commons-codec/1.11/commons-codec-1.11-sources.jar"} , "name": "commons-codec-commons-codec", "actual": "@commons-codec-commons-codec//jar", "bind": "jar/commons-codec/commons-codec"},
     {"artifact": "commons-collections:commons-collections:3.2.2", "lang": "java", "sha1": "8ad72fe39fa8c91eaaf12aadb21e0c3661fe26d5", "sha256": "eeeae917917144a68a741d4c0dff66aa5c5c5fd85593ff217bced3fc8ca783b8", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/commons-collections/commons-collections/3.2.2/commons-collections-3.2.2.jar", "source": {"sha1": "78c50ebda5784937ca1615fc0e1d0cb35857d572", "sha256": "a5b5ee16a02edadf7fe637f250217c19878bc6134f15eb55635c48996f6fed1d", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/commons-collections/commons-collections/3.2.2/commons-collections-3.2.2-sources.jar"} , "name": "commons-collections-commons-collections", "actual": "@commons-collections-commons-collections//jar", "bind": "jar/commons-collections/commons-collections"},
 # duplicates in commons-configuration:commons-configuration promoted to 1.10
-# - grakn.core:server:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 1.10
+# - grakn.core:server:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 1.10
 # - org.apache.hadoop:hadoop-common:2.7.2 wanted version 1.6
 # - org.apache.tinkerpop:gremlin-core:3.3.3 wanted version 1.10
 # - org.janusgraph:janusgraph-core:0.3.0 wanted version 1.10
@@ -309,8 +309,8 @@ def list_dependencies():
 # duplicates in commons-lang:commons-lang promoted to 2.6
 # - com.netflix.astyanax:astyanax-core:3.8.0 wanted version 2.4
 # - commons-configuration:commons-configuration:1.10 wanted version 2.6
-# - grakn.core:graql:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 2.6
-# - grakn.core:server:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 2.6
+# - grakn.core:graql:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 2.6
+# - grakn.core:server:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 2.6
 # - org.apache.hadoop:hadoop-common:2.7.2 wanted version 2.6
 # - org.apache.hadoop:hadoop-hdfs:2.7.2 wanted version 2.6
 # - org.apache.hadoop:hadoop-yarn-api:2.7.2 wanted version 2.6
@@ -339,15 +339,15 @@ def list_dependencies():
     {"artifact": "de.jflex:jflex:1.6.0", "lang": "java", "sha1": "9d3b308283617fe047b437839e45dc4fe48a4f2a", "sha256": "ca3254be580773457758478977ea613587b7ddc026759131f8c63e61146492e7", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/de/jflex/jflex/1.6.0/jflex-1.6.0.jar", "source": {"sha1": "222abcb1ee7be263d1bd5ca2248fc9bbb4c5e147", "sha256": "0cdc9c8e2968e5fbd38fa1beafc2204847116835f85dc982f9584fe9118b27e2", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/de/jflex/jflex/1.6.0/jflex-1.6.0-sources.jar"} , "name": "de-jflex-jflex", "actual": "@de-jflex-jflex//jar", "bind": "jar/de/jflex/jflex"},
     {"artifact": "dom4j:dom4j:1.6.1", "lang": "java", "sha1": "5d3ccc056b6f056dbf0dddfdf43894b9065a8f94", "sha256": "593552ffea3c5823c6602478b5002a7c525fd904a3c44f1abe4065c22edfac73", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar", "source": {"sha1": "a8e7149359255f43e0e5e3b1837948f9ed5861fb", "sha256": "4d37275f80991a37be460e73b01890172f82fd561253ba2130b62a7a5d07222d", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/dom4j/dom4j/1.6.1/dom4j-1.6.1-sources.jar"} , "name": "dom4j-dom4j", "actual": "@dom4j-dom4j//jar", "bind": "jar/dom4j/dom4j"},
     {"artifact": "grakn.benchmark:lib:1.5.0-837e62dabf6198ac09b7b9f35c2cd793bac2deb4-SNAPSHOT", "lang": "java", "sha1": "57cb6079d1501435163e98c72c79c8aaa201a154", "sha256": "93c97dc719a9298b09537c96c08f3b9f32f7a3c6afad8012c565200a9c7a8053", "repository": "http://maven.grakn.ai/nexus/content/repositories/snapshots/", "url": "http://maven.grakn.ai/nexus/content/repositories/snapshots/grakn/benchmark/lib/1.5.0-837e62dabf6198ac09b7b9f35c2cd793bac2deb4-SNAPSHOT/lib-1.5.0-837e62dabf6198ac09b7b9f35c2cd793bac2deb4-SNAPSHOT.jar", "name": "grakn-benchmark-lib", "actual": "@grakn-benchmark-lib//jar", "bind": "jar/grakn/benchmark/lib"},
-    {"artifact": "grakn.core:client:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT", "lang": "java", "sha1": "ecda1d0a15bc32267817f72b396ae5cb520257cf", "sha256": "8565636a3c99427c8fbd8c4d7c2b87dfa86023c6160c96345654b7ce7ea53b1d", "repository": "http://maven.grakn.ai/nexus/content/repositories/snapshots/", "url": "http://maven.grakn.ai/nexus/content/repositories/snapshots/grakn/core/client/1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT/client-1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT.jar", "name": "grakn-core-client", "actual": "@grakn-core-client//jar", "bind": "jar/grakn/core/client"},
-    {"artifact": "grakn.core:common:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT", "lang": "java", "sha1": "132abba0c70e3e51640b4a3150e3871e58255a1d", "sha256": "037fcf053849797bbce999a643df35f0b2eb5fc72a5ceff8f6b6a3f6b4de0bc0", "repository": "http://maven.grakn.ai/nexus/content/repositories/snapshots/", "url": "http://maven.grakn.ai/nexus/content/repositories/snapshots/grakn/core/common/1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT/common-1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT.jar", "name": "grakn-core-common", "actual": "@grakn-core-common//jar", "bind": "jar/grakn/core/common"},
-    {"artifact": "grakn.core:graql:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT", "lang": "java", "sha1": "38ce558f72c75cdf5547b9e05d16c341b58041bb", "sha256": "0f31af9515c7c881fc4f68e07334995ab6060ec019d0f16da20c2281c2d4b311", "repository": "http://maven.grakn.ai/nexus/content/repositories/snapshots/", "url": "http://maven.grakn.ai/nexus/content/repositories/snapshots/grakn/core/graql/1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT/graql-1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT.jar", "name": "grakn-core-graql", "actual": "@grakn-core-graql//jar", "bind": "jar/grakn/core/graql"},
-# duplicates in grakn.core:protocol fixed to 1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT
+    {"artifact": "grakn.core:client:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT", "lang": "java", "sha1": "6bcef73cca8806a5440f47fc95ae3f38ccb5e175", "sha256": "278a3b79e9c24d46f1fbd614c461f26f50d75aa015af9c4272a54f12b09992b2", "repository": "http://maven.grakn.ai/nexus/content/repositories/snapshots/", "url": "http://maven.grakn.ai/nexus/content/repositories/snapshots/grakn/core/client/1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT/client-1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT.jar", "name": "grakn-core-client", "actual": "@grakn-core-client//jar", "bind": "jar/grakn/core/client"},
+    {"artifact": "grakn.core:common:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT", "lang": "java", "sha1": "d8c932f790f5b299a4a664bda7814ca22c655ef1", "sha256": "d3f04d614b3e2b9a83a18d339cfb7a27e9af23e371b6410476115ec6d5afaead", "repository": "http://maven.grakn.ai/nexus/content/repositories/snapshots/", "url": "http://maven.grakn.ai/nexus/content/repositories/snapshots/grakn/core/common/1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT/common-1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT.jar", "name": "grakn-core-common", "actual": "@grakn-core-common//jar", "bind": "jar/grakn/core/common"},
+    {"artifact": "grakn.core:graql:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT", "lang": "java", "sha1": "380276455d6d5a3694acb02c850618ff19163b89", "sha256": "309fd4cb45e5091440ef434c8c6194d52c0e346f439504e45ffbb6664dd24104", "repository": "http://maven.grakn.ai/nexus/content/repositories/snapshots/", "url": "http://maven.grakn.ai/nexus/content/repositories/snapshots/grakn/core/graql/1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT/graql-1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT.jar", "name": "grakn-core-graql", "actual": "@grakn-core-graql//jar", "bind": "jar/grakn/core/graql"},
+# duplicates in grakn.core:protocol fixed to 1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT
 # - grakn.benchmark:lib:1.5.0-837e62dabf6198ac09b7b9f35c2cd793bac2deb4-SNAPSHOT wanted version 1.5.0-48e57e1c848a5a2d61dc8d3e1b4e6a8d2a3d8f22-SNAPSHOT
-# - grakn.core:client:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT
-# - grakn.core:server:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT
-    {"artifact": "grakn.core:protocol:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT", "lang": "java", "sha1": "25e8267599426f43489d38478db74e3c05be7341", "sha256": "0bafec636dadb83bf51459484634d01e1a5e39790bfd2b2f784f4055eec80b49", "repository": "http://maven.grakn.ai/nexus/content/repositories/snapshots/", "url": "http://maven.grakn.ai/nexus/content/repositories/snapshots/grakn/core/protocol/1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT/protocol-1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT.jar", "name": "grakn-core-protocol", "actual": "@grakn-core-protocol//jar", "bind": "jar/grakn/core/protocol"},
-    {"artifact": "grakn.core:server:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT", "lang": "java", "sha1": "b6bf9856a89923ed2dcd0a359cd5bacfd899e9b1", "sha256": "e949a9d08265dbad4a3bcbb569fa606ce3a316808e9c44717f690fddf5500261", "repository": "http://maven.grakn.ai/nexus/content/repositories/snapshots/", "url": "http://maven.grakn.ai/nexus/content/repositories/snapshots/grakn/core/server/1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT/server-1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT.jar", "name": "grakn-core-server", "actual": "@grakn-core-server//jar", "bind": "jar/grakn/core/server"},
+# - grakn.core:client:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT
+# - grakn.core:server:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT
+    {"artifact": "grakn.core:protocol:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT", "lang": "java", "sha1": "092ce02c11fdd36453e3b7f9e44bf3500e5653c1", "sha256": "5833dde865a8e976d32f648335bdfe4d65fe45e1c5dd890e9b6a0961974bcc05", "repository": "http://maven.grakn.ai/nexus/content/repositories/snapshots/", "url": "http://maven.grakn.ai/nexus/content/repositories/snapshots/grakn/core/protocol/1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT/protocol-1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT.jar", "name": "grakn-core-protocol", "actual": "@grakn-core-protocol//jar", "bind": "jar/grakn/core/protocol"},
+    {"artifact": "grakn.core:server:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT", "lang": "java", "sha1": "d68c8b399cc885e3f3f7a81e32a40d967468c284", "sha256": "f0f0efab6a06131d22ca7c2ab2a30354e31e07a3b4be80efa41368edb654ad3b", "repository": "http://maven.grakn.ai/nexus/content/repositories/snapshots/", "url": "http://maven.grakn.ai/nexus/content/repositories/snapshots/grakn/core/server/1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT/server-1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT.jar", "name": "grakn-core-server", "actual": "@grakn-core-server//jar", "bind": "jar/grakn/core/server"},
     {"artifact": "info.ganglia.gmetric4j:gmetric4j:1.0.3", "lang": "java", "sha1": "badb330453496c7a2465148903b3bd2a49462307", "sha256": "0175395aaba56bdb0319ccdbdaafa83bd2f13f14cb5c03fb434466e814eb93af", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/info/ganglia/gmetric4j/gmetric4j/1.0.3/gmetric4j-1.0.3.jar", "source": {"sha1": "3c7cc6430ca91cc8576cac58f35626ccff21730e", "sha256": "3bcde44d5d495c41e347afd44b124797510ed789e507279e8de1c6388d9e05d2", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/info/ganglia/gmetric4j/gmetric4j/1.0.3/gmetric4j-1.0.3-sources.jar"} , "name": "info-ganglia-gmetric4j-gmetric4j", "actual": "@info-ganglia-gmetric4j-gmetric4j//jar", "bind": "jar/info/ganglia/gmetric4j/gmetric4j"},
     {"artifact": "io.airlift:airline:0.6", "lang": "java", "sha1": "a545c95d96a4081698777b240574983b7ed39187", "sha256": "7afe74fbd29072011181e570cedbdef81a9340777c2b5b750ade7de995127216", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/io/airlift/airline/0.6/airline-0.6.jar", "source": {"sha1": "ff5f3cd0976c5a3509c45f082eed565b07a846c3", "sha256": "7554b470161f8577a1537be8f1b67f710ecef70f4c784b3e98c069b922522d4b", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/io/airlift/airline/0.6/airline-0.6-sources.jar"} , "name": "io-airlift-airline", "actual": "@io-airlift-airline//jar", "bind": "jar/io/airlift/airline"},
 # duplicates in io.dropwizard.metrics:metrics-core promoted to 3.2.2
@@ -369,9 +369,9 @@ def list_dependencies():
     {"artifact": "io.grpc:grpc-context:1.15.0", "lang": "java", "sha1": "bdfb1d0c90d83fa998a9f25976a71019aebe7bcc", "sha256": "512e99587fa389d7ba7830d91f1e2f949162814ec077073cd4d6766fa63896f7", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/io/grpc/grpc-context/1.15.0/grpc-context-1.15.0.jar", "source": {"sha1": "ba18517ab3e41edb72ff74b20e59abb7a7833dee", "sha256": "a8634faeb270a2440368b0d4a908066dee0e9903e471358575c0fa3e39fe9323", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/io/grpc/grpc-context/1.15.0/grpc-context-1.15.0-sources.jar"} , "name": "io-grpc-grpc-context", "actual": "@io-grpc-grpc-context//jar", "bind": "jar/io/grpc/grpc-context"},
 # duplicates in io.grpc:grpc-core fixed to 1.15.0
 # - grakn.benchmark:lib:1.5.0-837e62dabf6198ac09b7b9f35c2cd793bac2deb4-SNAPSHOT wanted version 1.15.0
-# - grakn.core:client:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 1.15.0
-# - grakn.core:protocol:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 1.15.0
-# - grakn.core:server:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 1.15.0
+# - grakn.core:client:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 1.15.0
+# - grakn.core:protocol:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 1.15.0
+# - grakn.core:server:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 1.15.0
 # - io.grpc:grpc-netty-shaded:1.15.0 wanted version [1.15.0]
 # - io.grpc:grpc-netty:1.15.0 wanted version [1.15.0]
 # - io.grpc:grpc-protobuf-lite:1.15.0 wanted version 1.15.0
@@ -384,8 +384,8 @@ def list_dependencies():
     {"artifact": "io.grpc:grpc-protobuf:1.15.0", "lang": "java", "sha1": "3fd81064ee583fc7613f14323f79edb43c29643b", "sha256": "792bbe5fc54272b9abb2102bb3ebc70e4a35d672690ed05e0726e6faa1c75bf4", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/io/grpc/grpc-protobuf/1.15.0/grpc-protobuf-1.15.0.jar", "source": {"sha1": "c2f557b9f55b7a8d1c1bdd25f393d2cae13a64d1", "sha256": "8bb9f8f9c00da099f8d47625f43d5cafea58687eaf0c9cb3964415e6a67081f6", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/io/grpc/grpc-protobuf/1.15.0/grpc-protobuf-1.15.0-sources.jar"} , "name": "io-grpc-grpc-protobuf", "actual": "@io-grpc-grpc-protobuf//jar", "bind": "jar/io/grpc/grpc-protobuf"},
     {"artifact": "io.grpc:grpc-stub:1.15.0", "lang": "java", "sha1": "17ac6d74d9bef3dec6eddbd0772fede89865261c", "sha256": "d3fa20905203778dac4db1d8a1f1230eaa8c0c42e5e4afefc0c74afb48bacbbe", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/io/grpc/grpc-stub/1.15.0/grpc-stub-1.15.0.jar", "source": {"sha1": "a61e3a69182fe0e43dadacf5ff37864dd5f61833", "sha256": "b713744855c7246d4e6aea33fe5e1a65c3b86209b60d7b871533edf7604daf38", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/io/grpc/grpc-stub/1.15.0/grpc-stub-1.15.0-sources.jar"} , "name": "io-grpc-grpc-stub", "actual": "@io-grpc-grpc-stub//jar", "bind": "jar/io/grpc/grpc-stub"},
 # duplicates in io.netty:netty-all promoted to 4.1.30.Final
-# - grakn.core:client:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 4.1.30.Final
-# - grakn.core:server:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 4.1.30.Final
+# - grakn.core:client:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 4.1.30.Final
+# - grakn.core:server:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 4.1.30.Final
 # - org.apache.cassandra:cassandra-all:3.11.3 wanted version 4.0.44.Final
 # - org.apache.hadoop:hadoop-hdfs:2.7.2 wanted version 4.0.23.Final
 # - org.apache.spark:spark-core_2.11:2.2.0 wanted version 4.0.43.Final
@@ -418,17 +418,17 @@ def list_dependencies():
     {"artifact": "io.zipkin.brave:brave:5.1.2", "lang": "java", "sha1": "86811d9fc2c230e9a784f2a3ab2f58bc3debb46b", "sha256": "4df7d875875d1d841f00f4ec04ed2b2c9eb2a5982d41b1606861772965118e3d", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/io/zipkin/brave/brave/5.1.2/brave-5.1.2.jar", "source": {"sha1": "9d5753a8cdfde716d6ef890bbe1b2e6fa42ef149", "sha256": "7df9b0c0c899f57058498bbad9d6d25a4a988be57f9c09f5b8b521054352a72c", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/io/zipkin/brave/brave/5.1.2/brave-5.1.2-sources.jar"} , "name": "io-zipkin-brave-brave", "actual": "@io-zipkin-brave-brave//jar", "bind": "jar/io/zipkin/brave/brave"},
 # duplicates in io.zipkin.reporter2:zipkin-reporter fixed to 2.7.10
 # - grakn.benchmark:lib:1.5.0-837e62dabf6198ac09b7b9f35c2cd793bac2deb4-SNAPSHOT wanted version 2.7.10
-# - grakn.core:client:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 2.7.6
+# - grakn.core:client:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 2.7.6
 # - io.zipkin.brave:brave:5.1.2 wanted version 2.7.6
 # - io.zipkin.reporter2:zipkin-sender-urlconnection:2.7.10 wanted version 2.7.10
     {"artifact": "io.zipkin.reporter2:zipkin-reporter:2.7.10", "lang": "java", "sha1": "e0fb4db0bfa1745297295eab6f5b05c837421ee6", "sha256": "dd04b9abf8d392744063764b67e90d692b6c1494fce71626118745e3fab3e936", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/io/zipkin/reporter2/zipkin-reporter/2.7.10/zipkin-reporter-2.7.10.jar", "source": {"sha1": "421dc464882e4c31007d5ee548609262e8bc4792", "sha256": "f7a2fee97d0aee1da7be3a70d2451ac2bffbbc38e05658184f59cfc1e543b003", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/io/zipkin/reporter2/zipkin-reporter/2.7.10/zipkin-reporter-2.7.10-sources.jar"} , "name": "io-zipkin-reporter2-zipkin-reporter", "actual": "@io-zipkin-reporter2-zipkin-reporter//jar", "bind": "jar/io/zipkin/reporter2/zipkin-reporter"},
 # duplicates in io.zipkin.reporter2:zipkin-sender-urlconnection fixed to 2.7.10
 # - grakn.benchmark:lib:1.5.0-837e62dabf6198ac09b7b9f35c2cd793bac2deb4-SNAPSHOT wanted version 2.7.10
-# - grakn.core:client:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 2.7.6
+# - grakn.core:client:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 2.7.6
     {"artifact": "io.zipkin.reporter2:zipkin-sender-urlconnection:2.7.10", "lang": "java", "sha1": "b1f05d51ff588950dfe079b8cfb2fa00b7116abd", "sha256": "b89b89c23febaad0addc54e3cae04d188cc2fbb45ac63f5eb5f82d00238fa084", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/io/zipkin/reporter2/zipkin-sender-urlconnection/2.7.10/zipkin-sender-urlconnection-2.7.10.jar", "source": {"sha1": "a4ad9f177562237a63e603bbc2f5f71696d3d9bb", "sha256": "23b41c77be330907414b49206bcf7288b007d57d7bc04284c85ae98f219259a9", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/io/zipkin/reporter2/zipkin-sender-urlconnection/2.7.10/zipkin-sender-urlconnection-2.7.10-sources.jar"} , "name": "io-zipkin-reporter2-zipkin-sender-urlconnection", "actual": "@io-zipkin-reporter2-zipkin-sender-urlconnection//jar", "bind": "jar/io/zipkin/reporter2/zipkin-sender-urlconnection"},
 # duplicates in io.zipkin.zipkin2:zipkin fixed to 2.11.8
 # - grakn.benchmark:lib:1.5.0-837e62dabf6198ac09b7b9f35c2cd793bac2deb4-SNAPSHOT wanted version 2.11.8
-# - grakn.core:client:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 2.9.4
+# - grakn.core:client:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 2.9.4
 # - io.zipkin.brave:brave:5.1.2 wanted version 2.9.4
 # - io.zipkin.reporter2:zipkin-reporter:2.7.10 wanted version 2.11.7
 # - io.zipkin.reporter2:zipkin-sender-urlconnection:2.7.10 wanted version 2.11.7
@@ -516,13 +516,13 @@ def list_dependencies():
 # duplicates in org.apache.cassandra:cassandra-all promoted to 3.11.3
 # - com.netflix.astyanax:astyanax-cassandra:3.8.0 wanted version 2.0.12
 # - com.netflix.astyanax:astyanax-core:3.8.0 wanted version 2.0.12
-# - grakn.core:server:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 3.11.3
+# - grakn.core:server:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 3.11.3
 # - org.janusgraph:janusgraph-cassandra:0.3.0 wanted version 2.1.20
     {"artifact": "org.apache.cassandra:cassandra-all:3.11.3", "lang": "java", "sha1": "4480b8b3601e1e2a73ccf6979d6932b13e5659e8", "sha256": "357b72b71cba5af49fb220dae2a56579375e90e6c18c538f49ffeed40166d126", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/org/apache/cassandra/cassandra-all/3.11.3/cassandra-all-3.11.3.jar", "source": {"sha1": "5ff9b676e5cf865d078936c38437035141100b79", "sha256": "726cc699d4210a0b6f0ee2c544fc8e72d6e561ad1d38182849b53f8e20a927b1", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/org/apache/cassandra/cassandra-all/3.11.3/cassandra-all-3.11.3-sources.jar"} , "name": "org-apache-cassandra-cassandra-all", "actual": "@org-apache-cassandra-cassandra-all//jar", "bind": "jar/org/apache/cassandra/cassandra-all"},
 # duplicates in org.apache.cassandra:cassandra-thrift promoted to 3.11.3
 # - com.netflix.astyanax:astyanax-cassandra:3.8.0 wanted version 2.0.12
 # - com.netflix.astyanax:astyanax-thrift:3.8.0 wanted version 2.0.12
-# - grakn.core:server:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 3.11.3
+# - grakn.core:server:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 3.11.3
 # - org.apache.cassandra:cassandra-all:3.11.3 wanted version 3.11.3
     {"artifact": "org.apache.cassandra:cassandra-thrift:3.11.3", "lang": "java", "sha1": "0028e94bd4147bf21fb2913cbe18c608adaf191f", "sha256": "f30b2e4af29264e14dcdefddbfb83b3e927ca9712947d144e23ac7d199fb0851", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/org/apache/cassandra/cassandra-thrift/3.11.3/cassandra-thrift-3.11.3.jar", "source": {"sha1": "e648c37562e25920c4945466846d67c51e4b8935", "sha256": "e67cbae4b3b9c15268dfd280dd79619d4c716a014479bdf6c3abb4515f06a102", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/org/apache/cassandra/cassandra-thrift/3.11.3/cassandra-thrift-3.11.3-sources.jar"} , "name": "org-apache-cassandra-cassandra-thrift", "actual": "@org-apache-cassandra-cassandra-thrift//jar", "bind": "jar/org/apache/cassandra/cassandra-thrift"},
 # duplicates in org.apache.commons:commons-compress promoted to 1.16.1
@@ -535,7 +535,7 @@ def list_dependencies():
 # duplicates in org.apache.commons:commons-lang3 promoted to 3.6
 # - com.addthis.metrics:reporter-config-base:3.0.3 wanted version 3.1
 # - com.addthis.metrics:reporter-config3:3.0.3 wanted version 3.1
-# - grakn.core:server:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 3.3.1
+# - grakn.core:server:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 3.3.1
 # - org.apache.cassandra:cassandra-all:3.11.3 wanted version 3.1
 # - org.apache.cassandra:cassandra-thrift:3.11.3 wanted version 3.1
 # - org.apache.spark:spark-core_2.11:2.2.0 wanted version 3.5
@@ -617,7 +617,7 @@ def list_dependencies():
 # duplicates in org.apache.thrift:libthrift promoted to 0.9.2
 # - com.netflix.astyanax:astyanax-thrift:3.8.0 wanted version 0.9.1
 # - com.thinkaurelius.thrift:thrift-server:0.3.7 wanted version 0.9.1
-# - grakn.core:server:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 0.9.2
+# - grakn.core:server:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 0.9.2
 # - org.apache.cassandra:cassandra-all:3.11.3 wanted version 0.9.2
 # - org.apache.cassandra:cassandra-thrift:3.11.3 wanted version 0.9.2
     {"artifact": "org.apache.thrift:libthrift:0.9.2", "lang": "java", "sha1": "9b067e2e2c5291e9f0d8b3561b1654286e6d81ee", "sha256": "d7f37db17a5418c151258dd03b604cdfd3e2aa55cdba34528f86a2478c46fe8f", "repository": "https://repo.maven.apache.org/maven2/", "url": "https://repo.maven.apache.org/maven2/org/apache/thrift/libthrift/0.9.2/libthrift-0.9.2.jar", "name": "org-apache-thrift-libthrift", "actual": "@org-apache-thrift-libthrift//jar", "bind": "jar/org/apache/thrift/libthrift"},
@@ -797,7 +797,7 @@ def list_dependencies():
 # duplicates in org.scala-lang:scala-library promoted to 2.11.8
 # - com.fasterxml.jackson.module:jackson-module-scala_2.11:2.6.6 wanted version 2.11.8
 # - com.twitter:chill_2.11:0.8.0 wanted version 2.11.7
-# - grakn.core:server:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 2.11.8
+# - grakn.core:server:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 2.11.8
 # - org.apache.spark:spark-core_2.11:2.2.0 wanted version 2.11.8
 # - org.apache.spark:spark-tags_2.11:2.2.0 wanted version 2.11.8
 # - org.apache.tinkerpop:spark-gremlin:3.3.3 wanted version 2.11.8
@@ -836,9 +836,9 @@ def list_dependencies():
 # - com.netflix.astyanax:astyanax-recipes:3.8.0 wanted version 1.7.2
 # - com.thinkaurelius.thrift:thrift-server:0.3.7 wanted version 1.6.1
 # - grakn.benchmark:lib:1.5.0-837e62dabf6198ac09b7b9f35c2cd793bac2deb4-SNAPSHOT wanted version 1.7.25
-# - grakn.core:client:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 1.7.20
-# - grakn.core:common:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 1.7.20
-# - grakn.core:server:1.5.0-ed3702bec5fd8bf761303cd5fe088b0cc1b6f7f8-SNAPSHOT wanted version 1.7.20
+# - grakn.core:client:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 1.7.20
+# - grakn.core:common:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 1.7.20
+# - grakn.core:server:1.5.0-94154e9579a5760fdaaf610ff586f5fba495b864-SNAPSHOT wanted version 1.7.20
 # - io.dropwizard.metrics:metrics-core:3.2.2 wanted version 1.7.22
 # - io.dropwizard.metrics:metrics-graphite:3.1.2 wanted version 1.7.7
 # - io.dropwizard.metrics:metrics-json:3.1.2 wanted version 1.7.7

@@ -18,6 +18,10 @@
 
 package grakn.benchmark.profiler;
 
+import brave.ScopedSpan;
+import brave.Span;
+import brave.Tracer;
+import brave.Tracing;
 import grakn.benchmark.profiler.generator.DataGenerator;
 import grakn.benchmark.profiler.generator.DataGeneratorException;
 import grakn.benchmark.profiler.generator.definition.DataGeneratorDefinition;
@@ -143,11 +147,16 @@ public class GraknBenchmark {
 
             // TODO remove this
             // temporarily allow loadng a schema here
-            for (String keyspace: keyspaces) {
+            for (String keyspace : keyspaces) {
                 LOG.info("Adding schema to keyspace: " + keyspace);
                 // insert schema into each keyspace
-                GraknClient.Session session = clients.get(0).session(keyspace);
-                SchemaManager manager = new SchemaManager(session, config.getGraqlSchema());
+                Span span = Tracing.currentTracer().newTrace().name("Inserting schema into new Keyspace " + keyspace);
+                span.start();
+                try (Tracer.SpanInScope ws = Tracing.currentTracer().withSpanInScope(span)) {
+                    GraknClient.Session session = clients.get(0).session(keyspace);
+                    SchemaManager manager = new SchemaManager(session, config.getGraqlSchema());
+                }
+                span.finish();
             }
 
             int numConcepts = 0; // TODO re-add this properly for concurrent clients

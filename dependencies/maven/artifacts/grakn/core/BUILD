@@ -134,6 +134,7 @@ java_library(
         "//dependencies/maven/artifacts/org/sharegov:mjson",
         "//dependencies/maven/artifacts/org/slf4j:slf4j-api",
         ":common",
+        ":graql",
         ":protocol"
     ],
     visibility = [
