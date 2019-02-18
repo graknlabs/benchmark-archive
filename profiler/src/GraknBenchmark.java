@@ -18,7 +18,6 @@
 
 package grakn.benchmark.profiler;
 
-import brave.ScopedSpan;
 import brave.Span;
 import brave.Tracer;
 import brave.Tracing;
@@ -96,45 +95,23 @@ public class GraknBenchmark {
      */
     public void start() {
 
-        List<GraknClient> clients = new LinkedList<>();
-        List<GraknClient.Session> sessions = new LinkedList<>();
-        Set<String> keyspaces = new HashSet<>();
-
-        String keyspaceBase = config.getKeyspace();
-        // create concurrent clients
-        for (int i = 0; i < config.concurrentClients(); i++) {
-            GraknClient client = new GraknClient(config.graknUri(), true);
-            clients.add(client);
-            String keyspaceName;
-            if (config.uniqueConcurrentKeyspaces()) {
-                // make some unique keyspaces (hopefully empty, TODO this check if not exists further down)
-                keyspaceName = keyspaceBase + "_c" + Integer.toString(i);
-            } else {
-                keyspaceName = keyspaceBase;
-            }
-            keyspaces.add(keyspaceName);
-            GraknClient.Session session = client.session(keyspaceName);
-            sessions.add(session);
+        if (config.generateData() && config.concurrentClients() > 1 && config.uniqueConcurrentKeyspaces()) {
+            throw new BootupException("Cannot currently perform data generation into more than 1 keyspace");
         }
 
-
-        QueryProfiler queryProfiler = new QueryProfiler(sessions, config.executionName(), config.graphName(), config.getQueries(), config.commitQueries());
-        int repetitionsPerQuery = config.numQueryRepetitions();
+        List<GraknClient.Session> concurrentSessions = initKeyspaces();
+        QueryProfiler queryProfiler = new QueryProfiler(concurrentSessions, config.executionName(), config.graphName(), config.getQueries(), config.commitQueries());
 
         if (config.generateData()) {
-
-            if (keyspaces.size() > 1) {
-                throw new BootupException("Cannot currently perform data generatation into more than 1 keyspace");
-            }
-
             Ignite ignite = IgniteManager.initIgnite();
             try {
-                DataGenerator dataGenerator = initDataGenerator(sessions.get(0));
+                // data generator has its own non-benchmarking client to the keyspace
+                DataGenerator dataGenerator = initDataGenerator(new GraknClient(config.graknUri(), false), config.getKeyspace());
                 List<Integer> numConceptsInRun = config.scalesToProfile();
                 for (int numConcepts : numConceptsInRun) {
                     LOG.info("Generating graph to scale... " + numConcepts);
                     dataGenerator.generate(numConcepts);
-                    queryProfiler.processStaticQueries(repetitionsPerQuery, numConcepts);
+                    queryProfiler.processStaticQueries(config.numQueryRepetitions(), numConcepts);
                 }
             } catch (Exception e) {
                 throw e;
@@ -144,36 +121,86 @@ public class GraknBenchmark {
 
         } else {
 //            int numConcepts = queryProfiler.aggregateCount();
-
-            // TODO remove this
-            // temporarily allow loadng a schema here
-            for (String keyspace : keyspaces) {
-                LOG.info("Adding schema to keyspace: " + keyspace);
-                // insert schema into each keyspace
-                Span span = Tracing.currentTracer().newTrace().name("Inserting schema into new Keyspace " + keyspace);
-                span.start();
-                try (Tracer.SpanInScope ws = Tracing.currentTracer().withSpanInScope(span)) {
-                    GraknClient.Session session = clients.get(0).session(keyspace);
-                    SchemaManager manager = new SchemaManager(session, config.getGraqlSchema());
-                }
-                span.finish();
-            }
-
             int numConcepts = 0; // TODO re-add this properly for concurrent clients
-            queryProfiler.processStaticQueries(repetitionsPerQuery, numConcepts);
+            queryProfiler.processStaticQueries(config.numQueryRepetitions(), numConcepts);
         }
 
-        for (GraknClient.Session session: sessions) {
+        for (GraknClient.Session session : concurrentSessions) {
             session.close();
         }
         queryProfiler.cleanup();
     }
 
-    private DataGenerator initDataGenerator(GraknClient.Session session) {
+    /**
+     * Create and trace creation of keyspaces (via client.session()), schema insertions
+     * If profiling a pre-populated keyspace, just instantiate the required concurrent sessions
+     * @return
+     */
+    private List<GraknClient.Session> initKeyspaces() {
+
+        String keyspace = config.getKeyspace();
+        List<GraknClient.Session> sessions = new LinkedList<>();
+
+        for (int i = 0; i < config.concurrentClients(); i++) {
+            GraknClient client = new GraknClient(config.graknUri(), true);
+
+            if (config.generateData() || config.loadSchema()) {
+                // if we generate data or load a schema at all
+                // we want to trace the creation of the keyspace (via client.session())
+                // and the insertion of the schema
+
+                if (config.uniqueConcurrentKeyspaces()) {
+                    String keyspaceName = keyspace + "_" + i;
+                    GraknClient.Session session = traceInitKeyspace(client, keyspaceName);
+                    sessions.add(session);
+                } else {
+                    GraknClient.Session session;
+                    if (i == 0) {
+                        session = traceInitKeyspace(client, keyspace);
+                    } else {
+                        session = client.session(keyspace);
+                    }
+                    sessions.add(session);
+                }
+            } else {
+                // if we are only profiling an existing keyspace
+                // we only open sessions that connect to that keyspace (can't concurrently benchmark multiple pre-populated keyspaces)
+                GraknClient.Session session = client.session(keyspace);
+                sessions.add(session);
+            }
+        }
+        return sessions;
+    }
+
+    private GraknClient.Session traceInitKeyspace(GraknClient client, String keyspace) {
+        // time creation of keyspace and insertion of schema
+        LOG.info("Adding schema to keyspace: " + keyspace);
+        Span span = Tracing.currentTracer().newTrace().name("New Keyspace + schema: " + keyspace);
+        span.start();
+
+        GraknClient.Session session = client.session(keyspace);
+
+        try (Tracer.SpanInScope ws = Tracing.currentTracer().withSpanInScope(span)) {
+            SchemaManager manager = new SchemaManager(session, config.getGraqlSchema());
+            span.annotate("Verifying keyspace is empty");
+            manager.verifyEmptyKeyspace();
+            span.annotate("Loading qraql schema");
+            manager.loadSchema();
+        }
+
+        span.finish();
+        return session;
+    }
+
+
+    /**
+     * Connect a data generator to pre-prepared keyspace
+     */
+    private DataGenerator initDataGenerator(GraknClient client, String keyspace) {
         int randomSeed = 0;
         String graphName = config.graphName();
 
-        SchemaManager schemaManager = new SchemaManager(session, config.getGraqlSchema());
+        SchemaManager schemaManager = new SchemaManager(client.session(keyspace), config.getGraqlSchema());
         HashSet<EntityType> entityTypes = schemaManager.getEntityTypes();
         HashSet<RelationType> relationshipTypes = schemaManager.getRelationshipTypes();
         HashSet<AttributeType> attributeTypes = schemaManager.getAttributeTypes();
@@ -184,7 +211,7 @@ public class GraknBenchmark {
 
         QueryProvider queryProvider = new QueryProvider(dataGeneratorDefinition);
 
-        return new DataGenerator(session, storage, graphName, queryProvider);
+        return new DataGenerator(client, keyspace, storage, graphName, queryProvider);
     }
 
     private static void printAscii() {

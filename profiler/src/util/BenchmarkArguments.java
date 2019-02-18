@@ -17,6 +17,7 @@ public class BenchmarkArguments {
     public final static String GRAKN_URI = "grakn-uri";
     public final static String KEYSPACE_ARGUMENT = "keyspace";
     public final static String NO_DATA_GENERATION_ARGUMENT = "no-data-generation";
+    public final static String LOAD_SCHEMA_ARGUMENT = "load-schema";
     public final static String EXECUTION_NAME_ARGUMENT = "execution-name";
     public final static String ELASTIC_URI = "elastic-uri";
 
@@ -65,6 +66,12 @@ public class BenchmarkArguments {
                 .longOpt(NO_DATA_GENERATION_ARGUMENT)
                 .required(false)
                 .desc("Disable data generation")
+                .type(Boolean.class)
+                .build();
+        Option loadSchema = Option.builder("ls")
+                .longOpt(LOAD_SCHEMA_ARGUMENT)
+                .required(false)
+                .desc("Load a schema, even if data generation is disabled")
                 .type(Boolean.class)
                 .build();
         Option elasticsearchAddressOption = Option.builder("e")

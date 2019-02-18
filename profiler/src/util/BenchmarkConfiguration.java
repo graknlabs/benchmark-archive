@@ -35,6 +35,7 @@ import static grakn.benchmark.profiler.util.BenchmarkArguments.CONFIG_ARGUMENT;
 import static grakn.benchmark.profiler.util.BenchmarkArguments.EXECUTION_NAME_ARGUMENT;
 import static grakn.benchmark.profiler.util.BenchmarkArguments.GRAKN_URI;
 import static grakn.benchmark.profiler.util.BenchmarkArguments.KEYSPACE_ARGUMENT;
+import static grakn.benchmark.profiler.util.BenchmarkArguments.LOAD_SCHEMA_ARGUMENT;
 import static grakn.benchmark.profiler.util.BenchmarkArguments.NO_DATA_GENERATION_ARGUMENT;
 
 /**
@@ -48,6 +49,7 @@ public class BenchmarkConfiguration {
     private static final String DEFAULT_GRAKN_URI = "localhost:48555";
 
     private final boolean generateData;
+    private final boolean loadSchema;
     private List<String> queries;
     private List<String> graqlSchema;
     private BenchmarkConfigurationFile benchmarkConfigFile;
@@ -76,6 +78,9 @@ public class BenchmarkConfiguration {
 
         // If --no-data-generation is specified, don't generate any data (work with existing keyspace)
         this.generateData = !(arguments.hasOption(NO_DATA_GENERATION_ARGUMENT));
+
+        // If --load-schema is specified, load a schema even if data generation is disabled
+        this.loadSchema = arguments.hasOption(LOAD_SCHEMA_ARGUMENT);
     }
 
     public String graknUri() {
@@ -109,6 +114,8 @@ public class BenchmarkConfiguration {
     public boolean generateData() {
         return generateData;
     }
+
+    public boolean loadSchema() { return loadSchema; }
 
     public int numQueryRepetitions() {
         return this.benchmarkConfigFile.getRepeatsPerQuery();

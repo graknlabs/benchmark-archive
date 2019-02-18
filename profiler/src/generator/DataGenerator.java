@@ -45,7 +45,8 @@ import java.util.Map;
 public class DataGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(DataGenerator.class);
 
-    private final GraknClient.Session session;
+    private final GraknClient client;
+    private final String keyspace;
     private final String graphName;
     private final QueryProvider queryProvider;
     private final ConceptStorage storage;
@@ -53,8 +54,9 @@ public class DataGenerator {
     private int iteration;
 
 
-    public DataGenerator(GraknClient.Session session, ConceptStorage storage, String graphName, QueryProvider queryProvider) {
-        this.session = session;
+    public DataGenerator(GraknClient client, String keyspace, ConceptStorage storage, String graphName, QueryProvider queryProvider) {
+        this.client = client;
+        this.keyspace = keyspace;
         this.graphName = graphName;
         this.queryProvider = queryProvider;
         this.iteration = 0;
@@ -68,6 +70,8 @@ public class DataGenerator {
      * @param graphScaleLimit
      */
     public void generate(int graphScaleLimit) {
+
+        GraknClient.Session session = client.session(keyspace);
 
         while (storage.getGraphScale() < graphScaleLimit) {
             try (GraknClient.Transaction tx = session.transaction(Transaction.Type.WRITE)) {
@@ -87,6 +91,8 @@ public class DataGenerator {
             }
             iteration++;
         }
+
+        session.close();
         System.out.print("\n");
     }
 

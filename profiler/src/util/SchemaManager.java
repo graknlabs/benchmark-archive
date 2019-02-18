@@ -29,7 +29,6 @@ import grakn.core.graql.internal.Schema;
 import grakn.core.graql.query.Graql;
 import grakn.core.graql.query.query.GraqlGet;
 import grakn.core.graql.query.query.GraqlQuery;
-import grakn.core.graql.query.query.MatchClause;
 import grakn.core.server.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +43,7 @@ import static grakn.core.graql.query.Graql.var;
 
 
 /**
- * This class performs basic operations and checks on a given keyspace session.
+ * This class performs basic operations and checks on a given keyspace.
  *
  * This will be replaced by GraknClient Client when all features will be implemented in it.
  */
@@ -52,17 +51,15 @@ import static grakn.core.graql.query.Graql.var;
 public class SchemaManager {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaManager.class);
 
-    private final GraknClient.Session session;
+    private GraknClient.Session session;
+    private List<String> schemaQueries;
 
     public SchemaManager(GraknClient.Session session, List<String> graqlSchemaQueries) {
         this.session = session;
-        verifyEmptyKeyspace();
-        initialiseKeyspace(graqlSchemaQueries);
+        this.schemaQueries = graqlSchemaQueries;
     }
 
-    //TODO this checks that currentKeyspace does not exist, if it does throw exception
-    // this can be done once we implement keyspaces().retrieve() on the client Java (issue #4675)
-    private void verifyEmptyKeyspace() {
+    public void verifyEmptyKeyspace() {
         try (GraknClient.Transaction tx = session.transaction(Transaction.Type.READ)) {
             // check for concept instances
             boolean existingConcepts = tx.stream(new GraqlGet(Graql.match(var("x").isa("thing")))).findFirst().isPresent();
@@ -78,26 +75,31 @@ public class SchemaManager {
         }
     }
 
-    private void initialiseKeyspace(List<String> graqlSchemaQueries) {
+    public void loadSchema() {
         // load schema
-        LOG.info("Initialising keyspace `" + this.session.keyspace() + "`...");
+        LOG.info("Initialising keyspace `" + session.keyspace() + "`...");
         try (GraknClient.Transaction tx = session.transaction(Transaction.Type.WRITE)) {
-            Stream<GraqlQuery> query = parseList(graqlSchemaQueries.stream().collect(Collectors.joining("\n")));
+            Stream<GraqlQuery> query = parseList(schemaQueries.stream().collect(Collectors.joining("\n")));
             query.forEach(q -> tx.execute(q));
             tx.commit();
         }
     }
 
     private <T extends Type> HashSet<T> getTypesOfMetaType(String metaTypeName) {
-        Transaction tx = session.transaction(Transaction.Type.READ);
-        GraqlGet graqlGet = Graql.match(var("x").sub(metaTypeName)).get();
-        List<ConceptMap> result = tx.execute(graqlGet);
+        HashSet<T> types;
+        try (Transaction tx = session.transaction(Transaction.Type.READ)) {
 
-        return result.stream()
-                .map(answer -> (T) answer.get("x").asType())
-                .filter(type -> !type.isImplicit())
-                .filter(type -> !Schema.MetaSchema.isMetaLabel(type.label()))
-                .collect(Collectors.toCollection(HashSet::new));
+            GraqlGet graqlGet = Graql.match(var("x").sub(metaTypeName)).get();
+            List<ConceptMap> result = tx.execute(graqlGet);
+
+            types = result.stream()
+                    .map(answer -> (T) answer.get("x").asType())
+                    .filter(type -> !type.isImplicit())
+                    .filter(type -> !Schema.MetaSchema.isMetaLabel(type.label()))
+                    .collect(Collectors.toCollection(HashSet::new));
+
+        }
+        return types;
     }
 
     public HashSet<AttributeType> getAttributeTypes(){

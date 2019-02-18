@@ -146,16 +146,15 @@ class QueryProcessor implements Runnable {
         try {
             Span concurrentExecutionSpan = tracer.newTrace().name("concurrent-execution");
             concurrentExecutionSpan.tag("executionName", executionName);
+            concurrentExecutionSpan.tag("client", Integer.toString(concurrentId));
             concurrentExecutionSpan.tag("concurrentClient", Integer.toString(concurrentId));
             concurrentExecutionSpan.tag("graphName", this.graphName);
             concurrentExecutionSpan.tag("repetitions", Integer.toString(repetitions));
             concurrentExecutionSpan.tag("scale", Integer.toString(numConcepts));
             concurrentExecutionSpan.start();
 
-            int counter = 0;
             for (int rep = 0; rep < repetitions; rep++) {
                 for (GraqlQuery rawQuery : queries) {
-                    counter++;
                     Span querySpan = tracer.newChild(concurrentExecutionSpan.context());
                     querySpan.name("query");
                     querySpan.tag("query", rawQuery.toString());
@@ -167,10 +166,6 @@ class QueryProcessor implements Runnable {
                     try (Tracer.SpanInScope ws = tracer.withSpanInScope(querySpan)) {
                         // open new transaction
                         GraknClient.Transaction tx = session.transaction(Transaction.Type.WRITE);
-                        // attach query to transaction
-//                        if (counter % 100 == 0) {
-//                            System.out.println(String.format("%d [c%d] Profiling... (repetition %d/%d):\t%s", counter, concurrentId, rep + 1, repetitions, rawQuery.toString()));
-//                        }
                         List<? extends Answer> answer = tx.execute(rawQuery);
 
                         if (commitQuery) {
