@@ -43,7 +43,7 @@ java_library(
         ":grpc-core"
     ],
     visibility = [
-        "//visibility:public"
+        "//dependencies/maven/artifacts:__subpackages__"
     ]
 )
 
@@ -108,7 +108,7 @@ java_library(
         ":grpc-core"
     ],
     visibility = [
-        "//visibility:public"
+        "//dependencies/maven/artifacts:__subpackages__"
     ]
 )
 

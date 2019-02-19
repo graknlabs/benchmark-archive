@@ -81,12 +81,3 @@ load("@com_github_google_bazel_common//:workspace_defs.bzl", "google_common_work
 google_common_workspace_rules()
 
 
-########################################
-#     Load Deployment Dependencies     #
-########################################
-#git_repository(
-#    name="graknlabs_rules_deployment",
-#    remote="https://github.com/graknlabs/deployment",
-#    commit="1fd6f328d55b28ca70b047894917cb169d5f028e",
-#)
-

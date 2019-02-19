@@ -21,11 +21,9 @@ java_test(
         "//dependencies/maven/artifacts/grakn/core:client",
         "//dependencies/maven/artifacts/grakn/core:server",
         "//dependencies/maven/artifacts/commons-cli",
+        "//dependencies/maven/artifacts/io/grpc:grpc-core",
     ],
     runtime_deps = [
-        "//dependencies/maven/artifacts/io/grpc:grpc-core",
-        "//dependencies/maven/artifacts/io/grpc:grpc-netty",
-        "//dependencies/maven/artifacts/io/grpc:grpc-stub",
     ],
     classpath_resources = ["//profiler/src/test/resources:logback-test"],
     data = [

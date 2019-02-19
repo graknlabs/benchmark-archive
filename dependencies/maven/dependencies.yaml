@@ -164,12 +164,6 @@ dependencies:
     grpc-netty-shaded:
      version: "1.15.0"
      lang: java
-    grpc-netty:
-      version: "1.15.0"
-      lang: java
-    grpc-stub:
-      version: "1.15.0"
-      lang: java
 
 
   com.google.protobuf:

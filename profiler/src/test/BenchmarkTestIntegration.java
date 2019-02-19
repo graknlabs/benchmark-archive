@@ -33,7 +33,7 @@ public class BenchmarkTestIntegration {
     @Before
     public void setUp() {
         String uri = "localhost:48555";
-        client = new GraknClient(uri, false);
+        client = new GraknClient(uri);
         String uuid = UUID.randomUUID().toString().substring(0, 30).replace("-", "");
         keyspace = "test_" + uuid;
         session = client.session(keyspace);
