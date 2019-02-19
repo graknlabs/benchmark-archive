@@ -4,3 +4,8 @@ queries: "queries.yml"
 scales:
   - 2000
 repeatsPerQuery: 0
+
+commitQueries: false
+concurrency:
+  clients: 1
+  uniqueKeyspaces: false

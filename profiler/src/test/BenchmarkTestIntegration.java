@@ -22,7 +22,7 @@ import static grakn.core.graql.query.Graql.type;
 import static grakn.core.graql.query.Graql.var;
 
 public class BenchmarkTestIntegration {
-    private final static Path WEB_CONTENT_CONFIG_PATH = Paths.get("test/resources/web_content/web_content_config_test.yml");
+    private final static Path WEB_CONTENT_CONFIG_PATH = Paths.get("profiler/src/test/resources/web_content/web_content_config_test.yml");
 
     @Rule
     public final ExpectedException expectedException = ExpectedException.none();
@@ -33,7 +33,7 @@ public class BenchmarkTestIntegration {
     @Before
     public void setUp() {
         String uri = "localhost:48555";
-        client = new GraknClient(uri);
+        client = new GraknClient(uri, false);
         String uuid = UUID.randomUUID().toString().substring(0, 30).replace("-", "");
         keyspace = "test_" + uuid;
         session = client.session(keyspace);
@@ -55,7 +55,7 @@ public class BenchmarkTestIntegration {
 
         expectedException.expect(BootupException.class);
         expectedException.expectMessage("not empty, contains a schema");
-        String[] args = new String[]{"--config", WEB_CONTENT_CONFIG_PATH.toAbsolutePath().toString(), "--keyspace", keyspace.toString(), "--execution-name", "testing"};
+        String[] args = new String[]{"--config", WEB_CONTENT_CONFIG_PATH.toAbsolutePath().toString(), "--keyspace", keyspace, "--execution-name", "testing"};
         CommandLine commandLine = BenchmarkArguments.parse(args);
         GraknBenchmark graknBenchmark = new GraknBenchmark(commandLine);
         graknBenchmark.start();
@@ -72,7 +72,7 @@ public class BenchmarkTestIntegration {
 
         expectedException.expect(BootupException.class);
         expectedException.expectMessage("not empty, contains concept instances");
-        String[] args = new String[] {"--config", WEB_CONTENT_CONFIG_PATH.toAbsolutePath().toString(), "--keyspace", keyspace.toString(), "--execution-name", "testing"};
+        String[] args = new String[] {"--config", WEB_CONTENT_CONFIG_PATH.toAbsolutePath().toString(), "--keyspace", keyspace, "--execution-name", "testing"};
         CommandLine commandLine = BenchmarkArguments.parse(args);
         GraknBenchmark graknBenchmark = new GraknBenchmark(commandLine);
         graknBenchmark.start();
