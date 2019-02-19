@@ -1,7 +1,7 @@
 package grakn.benchmark.profiler.generator.provider.concept;
 
 import grakn.benchmark.profiler.generator.storage.ConceptStorage;
-import grakn.core.concept.ConceptId;
+import grakn.core.graql.concept.ConceptId;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;

@@ -1,7 +1,7 @@
 
 java_test(
     name = "ignite-conceptid-store-test",
-    test_class = "grakn.benchmark.profiler.generator.util.IgniteConceptStorageTest",
+    test_class = "grakn.benchmark.profiler.generator.storage.IgniteConceptStorageTest",
     srcs = ["IgniteConceptStorageTest.java"],
 
     deps = [

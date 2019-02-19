@@ -18,14 +18,14 @@
 
 package grakn.benchmark.profiler.generator.util;
 
-import grakn.core.concept.Concept;
-import grakn.core.concept.ConceptId;
-import grakn.core.concept.Thing;
-import grakn.core.graql.Graql;
-import grakn.core.graql.InsertQuery;
-import grakn.core.graql.Var;
-import grakn.core.graql.VarPattern;
 import grakn.core.graql.answer.ConceptMap;
+import grakn.core.graql.concept.Concept;
+import grakn.core.graql.concept.ConceptId;
+import grakn.core.graql.concept.Thing;
+import grakn.core.graql.query.Graql;
+import grakn.core.graql.query.query.GraqlInsert;
+import grakn.core.graql.query.statement.Statement;
+import grakn.core.graql.query.statement.Variable;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -37,7 +37,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import static grakn.core.graql.Graql.var;
+import static grakn.core.graql.query.Graql.and;
+import static grakn.core.graql.query.Graql.var;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -52,11 +53,11 @@ public class InsertQueryAnalyserTest {
     @Rule
     public final ExpectedException expectedException = ExpectedException.none();
 
-    private ArrayList<ConceptMap> mockConceptMaps(Map<Var, String> variables) {
+    private ArrayList<ConceptMap> mockConceptMaps(Map<Variable, String> variables) {
 
         ArrayList<ConceptMap> answerList = new ArrayList<>();
         ConceptMap answerMock = mock(ConceptMap.class);
-        for (Map.Entry<Var, String> variable : variables.entrySet()) {
+        for (Map.Entry<Variable, String> variable : variables.entrySet()) {
 
             // Mock the answer object
             Concept conceptMock = mock(Concept.class);
@@ -73,10 +74,10 @@ public class InsertQueryAnalyserTest {
     @Test
     public void whenEntityInserted_identifyEntityWasInserted() {
 
-        Var x = var("x");
-        InsertQuery query = Graql.insert(x.isa("company"));
+        Variable x = new Variable("x");
+        GraqlInsert query = Graql.insert(var(x).isa("company"));
 
-        HashMap<Var, String> vars = new HashMap<>();
+        HashMap<Variable, String> vars = new HashMap<>();
         vars.put(x, "V123456");
         ArrayList<ConceptMap> answerList = this.mockConceptMaps(vars);
 
@@ -94,26 +95,25 @@ public class InsertQueryAnalyserTest {
         String yId = "Vy";
         String zId = "Vz";
 
-        Var r = var("r");
-        Var x = var("x").asUserDefined();
-        Var y = var("y").asUserDefined();
-        Var z = var("z").asUserDefined();
+        Variable r = new Variable("r");
+        Variable x = new Variable("x").asUserDefined();
+        Variable y = new Variable("y").asUserDefined();
+        Variable z = new Variable("z").asUserDefined();
 
-        HashMap<Var, String> vars = new HashMap<>();
+        HashMap<Variable, String> vars = new HashMap<>();
         vars.put(r, rId);
         vars.put(x, xId);
         vars.put(y, yId);
         vars.put(z, zId);
 
-        InsertQuery query = Graql.match(
-                x.id(ConceptId.of(xId))
-                        .and(y.id(ConceptId.of(xId)))
-                        .and(z.id(ConceptId.of(xId)))
-        ).insert(
-                r.isa("employment")
-                        .rel("employee", x)
-                        .rel("employee", y)
-                        .rel("employee", z));
+        GraqlInsert query = Graql.match(
+                and(var(x).id(xId),
+                        var(y).id(xId),
+                        var(z).id(xId))
+        ).insert(var(r).isa("employment")
+                .rel("employee", var(x))
+                .rel("employee", var(y))
+                .rel("employee", var(z)));
 
         ArrayList<ConceptMap> answerList = this.mockConceptMaps(vars);
 
@@ -131,25 +131,25 @@ public class InsertQueryAnalyserTest {
         String yId = "Vy";
         String zId = "Vz";
 
-        Var r = var("r");
-        Var x = var("x").asUserDefined();
-        Var y = var("y").asUserDefined();
-        Var z = var("z").asUserDefined();
+        Variable r = new Variable("r");
+        Variable x = new Variable("x").asUserDefined();
+        Variable y = new Variable("y").asUserDefined();
+        Variable z = new Variable("z").asUserDefined();
 
-        HashMap<Var, String> vars = new HashMap<>();
+        HashMap<Variable, String> vars = new HashMap<>();
         vars.put(r, rId);
         vars.put(x, xId);
         vars.put(y, yId);
         vars.put(z, zId);
 
-        InsertQuery query = Graql.insert(
-                r.isa("employment")
-                        .rel("employee", x)
-                        .rel("employee", y)
-                        .rel("employee", z),
-                        x.id(ConceptId.of(xId)),
-                        y.id(ConceptId.of(xId)),
-                        z.id(ConceptId.of(xId)));
+        GraqlInsert query = Graql.insert(var(r)
+                        .isa("employment")
+                        .rel("employee", var(x))
+                        .rel("employee", var(y))
+                        .rel("employee", var(z)),
+                var(x).id(xId),
+                var(y).id(yId),
+                var(z).id(zId));
 
         ArrayList<ConceptMap> answerList = this.mockConceptMaps(vars);
 
@@ -166,14 +166,14 @@ public class InsertQueryAnalyserTest {
 
         String cAttr = "c-name";
 
-        Var x = var("x").asUserDefined();
-        Var y = var("y").asUserDefined();
+        Variable x = new Variable("x").asUserDefined();
+        Variable y = new Variable("y").asUserDefined();
 
-        HashMap<Var, String> vars = new HashMap<>();
+        HashMap<Variable, String> vars = new HashMap<>();
         vars.put(x, xId);
         vars.put(y, yId);
 
-        InsertQuery query = Graql.insert(x.isa("company").has("name", y), x.id(ConceptId.of(xId)), y.val(cAttr));
+        GraqlInsert query = Graql.insert(var(x).isa("company").has("name", var(y)), var(x).id(xId), var(y).val(cAttr));
 
         ArrayList<ConceptMap> answerList = this.mockConceptMaps(vars);
 
@@ -190,14 +190,14 @@ public class InsertQueryAnalyserTest {
 
         String cAttr = "c-name";
 
-        Var x = var("x").asUserDefined();
-        Var y = var("y").asUserDefined();
+        Variable x = new Variable("x").asUserDefined();
+        Variable y = new Variable("y").asUserDefined();
 
-        HashMap<Var, String> vars = new HashMap<>();
+        HashMap<Variable, String> vars = new HashMap<>();
         vars.put(x, xId);
         vars.put(y, yId);
 
-        InsertQuery query = Graql.insert(x.isa("company").has("name", y).id(ConceptId.of(xId)), y.val(cAttr));
+        GraqlInsert query = Graql.insert(var(x).isa("company").has("name", var(y)).id(xId), var(y).val(cAttr));
 
         ArrayList<ConceptMap> answerList = this.mockConceptMaps(vars);
 
@@ -209,17 +209,19 @@ public class InsertQueryAnalyserTest {
 
     @Test
     public void whenInsertRelationship_identifyRolePlayers() {
-        VarPattern x = var("x").asUserDefined().id(ConceptId.of("V123"));
-        VarPattern y = var("y").asUserDefined().id(ConceptId.of("V234"));
-        InsertQuery insertQuery = Graql.match(x, y).insert(var("r").rel("friend", x).rel("friend", y).isa("friendship"));
+        Variable xVar = new Variable("x").asUserDefined();
+        Variable yVar = new Variable("y").asUserDefined();
+        Statement x = var(xVar).id("V123");
+        Statement y = var(yVar).id("V234");
+        GraqlInsert insertQuery = Graql.match(x, y).insert(var("r").rel("friend", x).rel("friend", y).isa("friendship"));
 
         ConceptMap map = mock(ConceptMap.class);
         Concept xConcept = mock(Concept.class);
         when(xConcept.id()).thenReturn(ConceptId.of("V123"));
         Concept yConcept = mock(Concept.class);
         when(yConcept.id()).thenReturn(ConceptId.of("V234"));
-        when(map.get(var("x"))).thenReturn(xConcept);
-        when(map.get(var("y"))).thenReturn(yConcept);
+        when(map.get(xVar)).thenReturn(xConcept);
+        when(map.get(yVar)).thenReturn(yConcept);
 
         Map<String, List<Concept>> rolePlayers = InsertQueryAnalyser.getRolePlayersAndRoles(insertQuery, Arrays.asList(map));
 
@@ -231,17 +233,17 @@ public class InsertQueryAnalyserTest {
 
     @Test
     public void whenInsertNonRelationship_returnEmptySet() {
-        VarPattern x = var("x").asUserDefined();
-        VarPattern y = var("y").asUserDefined();
-        InsertQuery insertQuery = Graql.insert(x.isa("company").has("name", y).id(ConceptId.of("V123")), y.val("john"));
+        Variable x = new Variable("x").asUserDefined();
+        Variable y = new Variable("y").asUserDefined();
+        GraqlInsert insertQuery = Graql.insert(var(x).isa("company").has("name", var(y)).id("V123"), var(y).val("john"));
 
         ConceptMap map = mock(ConceptMap.class);
         Concept xConcept = mock(Concept.class);
         when(xConcept.id()).thenReturn(ConceptId.of("V123"));
         Concept yConcept = mock(Concept.class);
         when(yConcept.id()).thenReturn(ConceptId.of("V234"));
-        when(map.get(var("x"))).thenReturn(xConcept);
-        when(map.get(var("y"))).thenReturn(yConcept);
+        when(map.get(x)).thenReturn(xConcept);
+        when(map.get(y)).thenReturn(yConcept);
 
         Map<String, List<Concept>> rolePlayers = InsertQueryAnalyser.getRolePlayersAndRoles(insertQuery, Arrays.asList(map));
         assertEquals(0, rolePlayers.size());
@@ -249,32 +251,32 @@ public class InsertQueryAnalyserTest {
 
     @Test
     public void whenRelationshipInserted_relationshipLabelFound() {
-        VarPattern x = var("x").asUserDefined().id(ConceptId.of("V123"));
-        VarPattern y = var("y").asUserDefined().id(ConceptId.of("V234"));
-        InsertQuery insertQuery = Graql.match(x, y).insert(var("r").rel("friend", x).rel("friend", y).isa("friendship"));
+        Statement x = var( new Variable("x").asUserDefined()).id("V123");
+        Statement y = var(new Variable("y").asUserDefined()).id("V234");
+        GraqlInsert insertQuery = Graql.match(x, y).insert(var("r").rel("friend", x).rel("friend", y).isa("friendship"));
         String relationshipLabel = InsertQueryAnalyser.getRelationshipTypeLabel(insertQuery);
         assertEquals("friendship", relationshipLabel);
     }
 
     @Test
     public void whenNoRelationshipInserted_nullReturned() {
-        VarPattern x = var("x").asUserDefined();
-        VarPattern y = var("y").asUserDefined();
-        InsertQuery insertQuery = Graql.insert(x.isa("company").has("name", y).id(ConceptId.of("V123")), y.val("john"));
+        Statement x = var( new Variable("x").asUserDefined());
+        Statement y = var(new Variable("y").asUserDefined());
+        GraqlInsert insertQuery = Graql.insert(x.isa("company").has("name", y).id("V123"), y.val("john"));
         String relationshipLabel = InsertQueryAnalyser.getRelationshipTypeLabel(insertQuery);
         assertEquals(null, relationshipLabel);
     }
 
     @Test
     public void whenSameConceptPlaysTwoRoles_conceptRolePairReturnedTwice() {
-        VarPattern x = var("x").asUserDefined().id(ConceptId.of("V123"));
-        InsertQuery insertQuery = Graql.match(x).insert(var("r").rel("friend", x).rel("friend", x).isa("friendship"));
-
+        Variable xVar = new Variable("x").asUserDefined();
+        Statement x = var(xVar).id("V123");
+        GraqlInsert insertQuery = Graql.match(x).insert(var("r").rel("friend", x).rel("friend", x).isa("friendship"));
 
         ConceptMap map = mock(ConceptMap.class);
         Concept xConcept = mock(Concept.class);
         when(xConcept.id()).thenReturn(ConceptId.of("V123"));
-        when(map.get(var("x"))).thenReturn(xConcept);
+        when(map.get(xVar)).thenReturn(xConcept);
 
         Map<String, List<Concept>> mapping = InsertQueryAnalyser.getRolePlayersAndRoles(insertQuery, Arrays.asList(map));
         assertEquals(2, mapping.get("friend").size());

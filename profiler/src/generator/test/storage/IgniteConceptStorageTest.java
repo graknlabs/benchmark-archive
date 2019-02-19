@@ -18,15 +18,15 @@
 
 package grakn.benchmark.profiler.generator.storage;
 
-import grakn.core.concept.Attribute;
-import grakn.core.concept.AttributeType;
-import grakn.core.concept.Concept;
-import grakn.core.concept.ConceptId;
-import grakn.core.concept.EntityType;
-import grakn.core.concept.Label;
-import grakn.core.concept.RelationshipType;
-import grakn.core.concept.Thing;
-import grakn.core.concept.Type;
+import grakn.core.graql.concept.Attribute;
+import grakn.core.graql.concept.AttributeType;
+import grakn.core.graql.concept.Concept;
+import grakn.core.graql.concept.ConceptId;
+import grakn.core.graql.concept.EntityType;
+import grakn.core.graql.concept.Label;
+import grakn.core.graql.concept.RelationType;
+import grakn.core.graql.concept.Thing;
+import grakn.core.graql.concept.Type;
 import org.apache.ignite.IgniteException;
 import org.apache.ignite.Ignition;
 import org.junit.AfterClass;
@@ -67,7 +67,7 @@ public class IgniteConceptStorageTest {
     HashSet<AttributeType> attributeTypes;
 
     private String relTypeLabel;
-    HashSet<RelationshipType> relationshipTypes;
+    HashSet<RelationType> relationshipTypes;
 
     @BeforeClass
     public static void initIgniteServer() throws IgniteException {
@@ -158,7 +158,7 @@ public class IgniteConceptStorageTest {
         relTypeLabel = "friendship";
         typeLabelsSet.add(relTypeLabel);
         relationshipTypes = new HashSet<>();
-        RelationshipType friendRelationshipType = mock(RelationshipType.class);
+        RelationType friendRelationshipType = mock(RelationType.class);
         when(friendRelationshipType.label()).thenReturn(Label.of("friendship"));
         relationshipTypes.add(friendRelationshipType);
 

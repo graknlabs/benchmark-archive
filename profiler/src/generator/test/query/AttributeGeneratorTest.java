@@ -4,7 +4,7 @@ import grakn.benchmark.profiler.generator.probdensity.FixedConstant;
 import grakn.benchmark.profiler.generator.provider.value.RandomStringProvider;
 import grakn.benchmark.profiler.generator.provider.value.UniqueIntegerProvider;
 import grakn.benchmark.profiler.generator.strategy.AttributeStrategy;
-import grakn.core.graql.InsertQuery;
+import grakn.core.graql.query.query.GraqlInsert;
 import org.junit.Test;
 
 import java.util.Iterator;
@@ -27,11 +27,11 @@ public class AttributeGeneratorTest {
 
         AttributeGenerator<Integer> insertAttributeQueryGenerator = new AttributeGenerator<>(strategy);
 
-        Iterator<InsertQuery> insertAttributeQueries = insertAttributeQueryGenerator.generate();
+        Iterator<GraqlInsert> insertAttributeQueries = insertAttributeQueryGenerator.generate();
 
         int nextValue = 0;
         while (insertAttributeQueries.hasNext()) {
-            InsertQuery query = insertAttributeQueries.next();
+            GraqlInsert query = insertAttributeQueries.next();
             String queryString = query.toString();
 
             assertTrue(queryString.startsWith("insert"));
@@ -51,7 +51,7 @@ public class AttributeGeneratorTest {
 
         AttributeGenerator<String> insertAttributeQueryGenerator = new AttributeGenerator<>(strategy);
 
-        Iterator<InsertQuery> insertAttributeQueries = insertAttributeQueryGenerator.generate();
+        Iterator<GraqlInsert> insertAttributeQueries = insertAttributeQueryGenerator.generate();
 
         for (int i = 0; i < 3; i++) {
             assertTrue(insertAttributeQueries.hasNext());

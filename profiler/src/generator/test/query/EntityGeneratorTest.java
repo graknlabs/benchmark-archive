@@ -2,7 +2,7 @@ package grakn.benchmark.profiler.generator.query;
 
 import grakn.benchmark.profiler.generator.probdensity.FixedConstant;
 import grakn.benchmark.profiler.generator.strategy.EntityStrategy;
-import grakn.core.graql.InsertQuery;
+import grakn.core.graql.query.query.GraqlInsert;
 import org.junit.Test;
 
 import java.util.Iterator;
@@ -21,7 +21,7 @@ public class EntityGeneratorTest {
         when(strategy.getNumInstancesPDF()).thenReturn(new FixedConstant(0)); // always generate 3
 
         EntityGenerator generator = new EntityGenerator(strategy);
-        Iterator<InsertQuery> insertEntityQueries = generator.generate();
+        Iterator<GraqlInsert> insertEntityQueries = generator.generate();
         assertFalse(insertEntityQueries.hasNext());
     }
 
@@ -32,7 +32,7 @@ public class EntityGeneratorTest {
         when(strategy.getNumInstancesPDF()).thenReturn(new FixedConstant(5)); // always generate 3
 
         EntityGenerator generator = new EntityGenerator(strategy);
-        Iterator<InsertQuery> insertEntityQueries = generator.generate();
+        Iterator<GraqlInsert> insertEntityQueries = generator.generate();
 
         for (int i = 0; i < 5; i++) {
             assertTrue(insertEntityQueries.hasNext());

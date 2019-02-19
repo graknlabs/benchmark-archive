@@ -5,8 +5,8 @@ import grakn.benchmark.profiler.generator.provider.concept.CentralConceptProvide
 import grakn.benchmark.profiler.generator.provider.concept.ConceptIdProvider;
 import grakn.benchmark.profiler.generator.strategy.RelationshipStrategy;
 import grakn.benchmark.profiler.generator.strategy.RolePlayerTypeStrategy;
-import grakn.core.concept.ConceptId;
-import grakn.core.graql.InsertQuery;
+import grakn.core.graql.concept.ConceptId;
+import grakn.core.graql.query.query.GraqlInsert;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -45,7 +45,7 @@ public class RelationshipGeneratorTest {
 
 
         RelationshipGenerator relationshipQueryGenerator = new RelationshipGenerator(strategy);
-        Iterator<InsertQuery> queries = relationshipQueryGenerator.generate();
+        Iterator<GraqlInsert> queries = relationshipQueryGenerator.generate();
 
         verify(centralConceptProvider, times(1)).resetUniqueness();
     }
@@ -79,16 +79,16 @@ public class RelationshipGeneratorTest {
 
 
         RelationshipGenerator queryGenerator = new RelationshipGenerator(strategy);
-        Iterator<InsertQuery> queries = queryGenerator.generate();
+        Iterator<GraqlInsert> queries = queryGenerator.generate();
 
         assertTrue(queries.hasNext());
-        InsertQuery firstInsert = queries.next();
+        GraqlInsert firstInsert = queries.next();
         String queryString = firstInsert.toString();
         assertTrue(queryString.contains("owner: ") && queryString.contains("id a"));
         assertTrue(queryString.contains("property: ") && queryString.contains("id c"));
 
         assertTrue(queries.hasNext());
-        InsertQuery secondInsert = queries.next();
+        GraqlInsert secondInsert = queries.next();
         queryString = secondInsert.toString();
         assertTrue(queryString.contains("owner: ") && queryString.contains("id b"));
         assertTrue(queryString.contains("property: ") && queryString.contains("id d"));
@@ -125,17 +125,17 @@ public class RelationshipGeneratorTest {
         when(strategy.getNumInstancesPDF()).thenReturn(new FixedConstant(1));
 
         RelationshipGenerator queryGenerator = new RelationshipGenerator(strategy);
-        Iterator<InsertQuery> queries = queryGenerator.generate();
+        Iterator<GraqlInsert> queries = queryGenerator.generate();
 
         assertTrue(queries.hasNext());
-        InsertQuery firstInsert = queries.next();
+        GraqlInsert firstInsert = queries.next();
         String queryString = firstInsert.toString();
         assertTrue(queryString.contains("id a") && queryString.contains("id b") && queryString.contains("id c"));
         // want to check that "friend" occurs three times in the string
         int firstIndex = queryString.indexOf("friend:", 0);
-        int secondIndex = queryString.indexOf("friend:",firstIndex+7);
-        int thirdIndex = queryString.indexOf("friend:", secondIndex+7);
-        int nonIndex = queryString.indexOf("friend:", thirdIndex+7);
+        int secondIndex = queryString.indexOf("friend:", firstIndex + 7);
+        int thirdIndex = queryString.indexOf("friend:", secondIndex + 7);
+        int nonIndex = queryString.indexOf("friend:", thirdIndex + 7);
 
         assertTrue(firstIndex > 0);
         assertTrue(secondIndex > 0);
@@ -175,10 +175,10 @@ public class RelationshipGeneratorTest {
         when(strategy.getNumInstancesPDF()).thenReturn(new FixedConstant(2));
 
         RelationshipGenerator queryGenerator = new RelationshipGenerator(strategy);
-        Iterator<InsertQuery> queries = queryGenerator.generate();
+        Iterator<GraqlInsert> queries = queryGenerator.generate();
 
         assertTrue(queries.hasNext());
-        InsertQuery firstInsert = queries.next();
+        GraqlInsert firstInsert = queries.next();
         assertFalse(queries.hasNext());
     }
 
@@ -213,10 +213,10 @@ public class RelationshipGeneratorTest {
         when(strategy.getNumInstancesPDF()).thenReturn(new FixedConstant(2));
 
         RelationshipGenerator queryGenerator = new RelationshipGenerator(strategy);
-        Iterator<InsertQuery> queries = queryGenerator.generate();
+        Iterator<GraqlInsert> queries = queryGenerator.generate();
 
         assertTrue(queries.hasNext());
-        InsertQuery firstInsert = queries.next();
+        GraqlInsert firstInsert = queries.next();
         assertFalse(queries.hasNext());
     }
 }
