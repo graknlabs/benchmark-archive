@@ -86,6 +86,7 @@ public class BenchmarkArguments {
         options.addOption(graknAddressOption);
         options.addOption(keyspaceOption);
         options.addOption(noDataGenerationOption);
+        options.addOption(loadSchema);
         options.addOption(executionNameOption);
         options.addOption(elasticsearchAddressOption);
         return options;

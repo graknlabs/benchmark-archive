@@ -52,7 +52,6 @@ java_library(
         "//dependencies/maven/artifacts/org/apache/ignite:ignite-core",
 
         "//profiler/src/generator:data-generator"
-
     ],
     runtime_deps = [
         "//dependencies/maven/artifacts/io/grpc:grpc-netty-shaded",
