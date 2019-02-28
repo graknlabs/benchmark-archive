@@ -6,7 +6,6 @@ java_test(
         "@graknlabs_graql//java:graql",
         "@graknlabs_grakn_core//concept:concept",
         "//profiler/src/generator:data-generator",
-        "//dependencies/maven/artifacts/grakn/core:server",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
     ]
 )
@@ -19,7 +18,6 @@ java_test(
         "@graknlabs_graql//java:graql",
         "@graknlabs_grakn_core//concept:concept",
         "//profiler/src/generator:data-generator",
-        "//dependencies/maven/artifacts/grakn/core:server",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
     ]
 )
@@ -32,7 +30,6 @@ java_test(
         "@graknlabs_graql//java:graql",
         "@graknlabs_grakn_core//concept:concept",
         "//profiler/src/generator:data-generator",
-        "//dependencies/maven/artifacts/grakn/core:server",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
     ]
 )

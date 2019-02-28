@@ -32,11 +32,9 @@ java_library(
     name = "benchmark-profiler",
     srcs = glob(["src/*.java", "src/util/*.java"]),
     deps = [
-#        "//dependencies/maven/artifacts/grakn/core:client",
         "@graknlabs_client_java//:client-java",
         "@graknlabs_grakn_core//api:api",
-        "//dependencies/maven/artifacts/grakn/core:server",
-#        "//dependencies/maven/artifacts/grakn/core:graql",
+        "@graknlabs_grakn_core//server:server",
         "@graknlabs_graql//java:graql",
         "@graknlabs_grakn_core//concept:concept",
 

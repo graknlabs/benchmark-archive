@@ -24,7 +24,6 @@ import grakn.benchmark.profiler.generator.util.InsertQueryAnalyser;
 import grakn.core.client.GraknClient;
 import grakn.core.concept.Concept;
 import grakn.core.concept.answer.ConceptMap;
-import grakn.core.server.exception.InvalidKBException;
 import graql.lang.query.GraqlInsert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,11 +81,7 @@ public class DataGenerator {
                 processQueryStream(queryStream, tx);
 
                 printProgress();
-                try {
-                    tx.commit();
-                } catch (InvalidKBException e) {
-                    e.printStackTrace();
-                }
+                tx.commit();
             }
             iteration++;
         }

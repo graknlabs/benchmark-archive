@@ -22,7 +22,6 @@ java_test(
         "@graknlabs_client_java//:client-java",
         "@graknlabs_grakn_core//concept:concept",
         "@graknlabs_graql//java:graql",
-        "//dependencies/maven/artifacts/grakn/core:server",
         "//dependencies/maven/artifacts/commons-cli",
 
         "//dependencies/maven/artifacts/io/grpc:grpc-core",
