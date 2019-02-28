@@ -1,9 +1,9 @@
 graphName: "taxfix"
 schema: "taxfix_schema.gql"
-queries: "queries.yml"
-repeatsPerQuery: 2
+queries: "queries_all.yml"
+repeatsPerQuery: 1
 
 commitQueries: true
 concurrency:
-  clients: 12
+  clients: 2
   uniqueKeyspaces: true

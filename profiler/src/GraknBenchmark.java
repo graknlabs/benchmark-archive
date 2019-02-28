@@ -177,9 +177,10 @@ public class GraknBenchmark {
         Span span = Tracing.currentTracer().newTrace().name("New Keyspace + schema: " + keyspace);
         span.start();
 
-        GraknClient.Session session = client.session(keyspace);
-
+        GraknClient.Session session;
         try (Tracer.SpanInScope ws = Tracing.currentTracer().withSpanInScope(span)) {
+            span.annotate("Opening new session");
+            session = client.session(keyspace);
             SchemaManager manager = new SchemaManager(session, config.getGraqlSchema());
             span.annotate("Verifying keyspace is empty");
             manager.verifyEmptyKeyspace();
