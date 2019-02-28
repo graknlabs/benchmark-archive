@@ -23,7 +23,7 @@ java_library(
     name = "lib",
     srcs = glob(["**/*.java"]),
     deps = [
-        "//dependencies/maven/artifacts/grakn/core:protocol",
+        "@graknlabs_grakn_core//protocol:protocol-java",
         "//dependencies/maven/artifacts/io/grpc:grpc-core",
         "//dependencies/maven/artifacts/com/google/protobuf:protobuf-java",
         "//dependencies/maven/artifacts/io/zipkin/brave:brave",
@@ -33,6 +33,7 @@ java_library(
         "//dependencies/maven/artifacts/org/slf4j:slf4j-api",
     ],
     tags = ["maven_coordinates=grakn.benchmark:lib:{pom_version}"],
+    visibility = ["//visibility:public"]
 )
 
 deploy_maven_jar(

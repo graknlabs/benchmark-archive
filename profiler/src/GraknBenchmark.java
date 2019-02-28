@@ -33,6 +33,7 @@ import grakn.benchmark.profiler.util.BenchmarkArguments;
 import grakn.benchmark.profiler.util.BenchmarkConfiguration;
 import grakn.benchmark.profiler.util.ElasticSearchManager;
 import grakn.benchmark.profiler.util.SchemaManager;
+import grakn.benchmark.profiler.util.TracingGraknClient;
 import grakn.core.client.GraknClient;
 import grakn.core.concept.type.AttributeType;
 import grakn.core.concept.type.EntityType;
@@ -105,7 +106,7 @@ public class GraknBenchmark {
             Ignite ignite = IgniteManager.initIgnite();
             try {
                 // data generator has its own non-benchmarking client to the keyspace
-                DataGenerator dataGenerator = initDataGenerator(new GraknClient(config.graknUri()), config.getKeyspace());
+                DataGenerator dataGenerator = initDataGenerator(TracingGraknClient.get(config.graknUri()), config.getKeyspace());
                 List<Integer> numConceptsInRun = config.scalesToProfile();
                 for (int numConcepts : numConceptsInRun) {
                     LOG.info("Generating graph to scale... " + numConcepts);
@@ -141,7 +142,7 @@ public class GraknBenchmark {
         List<GraknClient.Session> sessions = new LinkedList<>();
 
         for (int i = 0; i < config.concurrentClients(); i++) {
-            GraknClient client = new GraknClient(config.graknUri());
+            GraknClient client = TracingGraknClient.get(config.graknUri());
 
             if (config.generateData() || config.loadSchema()) {
                 // if we generate data or load a schema at all

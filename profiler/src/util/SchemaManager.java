@@ -79,7 +79,8 @@ public class SchemaManager {
         LOG.info("Initialising keyspace `" + session.keyspace() + "`...");
         try (GraknClient.Transaction tx = session.transaction().write()) {
             Stream<GraqlQuery> query = parseList(schemaQueries.stream().collect(Collectors.joining("\n")));
-            query.forEach(q -> tx.execute(q));
+            query.forEach(q -> {
+                System.out.println(q);tx.execute(q); });
             tx.commit();
         }
     }
