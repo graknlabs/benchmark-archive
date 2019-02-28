@@ -20,9 +20,9 @@ package grakn.benchmark.profiler.generator.query;
 
 import grakn.benchmark.profiler.generator.DataGeneratorException;
 import grakn.benchmark.profiler.generator.strategy.AttributeStrategy;
-import graql.lang.statement.Statement;
 import graql.lang.Graql;
 import graql.lang.query.GraqlInsert;
+import graql.lang.statement.Statement;
 import graql.lang.statement.Variable;
 
 import java.util.Iterator;

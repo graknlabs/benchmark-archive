@@ -25,8 +25,8 @@ import grakn.core.concept.ConceptId;
 import graql.lang.Graql;
 import graql.lang.pattern.Pattern;
 import graql.lang.query.GraqlInsert;
-import graql.lang.statement.Variable;
 import graql.lang.statement.Statement;
+import graql.lang.statement.Variable;
 
 import java.util.Iterator;
 import java.util.Set;

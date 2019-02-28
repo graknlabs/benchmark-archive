@@ -18,16 +18,12 @@ java_test(
     srcs = ["BenchmarkTestIntegration.java"],
     deps = [
         "//profiler:benchmark-profiler",
-#        "//dependencies/maven/artifacts/grakn/core:client",
         "@graknlabs_client_java//:client-java",
         "@graknlabs_grakn_core//concept:concept",
         "@graknlabs_graql//java:graql",
         "//dependencies/maven/artifacts/commons-cli",
 
         "//dependencies/maven/artifacts/io/grpc:grpc-core",
-    ],
-    runtime_deps = [
-#        "//dependencies/maven/artifacts/io/grpc:grpc-netty-shaded",
     ],
     classpath_resources = ["//profiler/src/test/resources:logback-test"],
     data = [
