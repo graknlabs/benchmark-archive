@@ -18,8 +18,9 @@
 
 package grakn.benchmark.profiler.generator.storage;
 
-import grakn.core.graql.concept.Concept;
-import grakn.core.graql.concept.ConceptId;
+
+import grakn.core.concept.Concept;
+import grakn.core.concept.ConceptId;
 
 import java.util.Date;
 import java.util.List;

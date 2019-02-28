@@ -3,6 +3,8 @@ java_test(
     test_class = "grakn.benchmark.profiler.generator.query.AttributeGeneratorTest",
     srcs = ["AttributeGeneratorTest.java"],
     deps = [
+        "@graknlabs_graql//java:graql",
+        "@graknlabs_grakn_core//concept:concept",
         "//profiler/src/generator:data-generator",
         "//dependencies/maven/artifacts/grakn/core:server",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
@@ -14,6 +16,8 @@ java_test(
     test_class = "grakn.benchmark.profiler.generator.query.EntityGeneratorTest",
     srcs = ["EntityGeneratorTest.java"],
     deps = [
+        "@graknlabs_graql//java:graql",
+        "@graknlabs_grakn_core//concept:concept",
         "//profiler/src/generator:data-generator",
         "//dependencies/maven/artifacts/grakn/core:server",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
@@ -25,6 +29,8 @@ java_test(
     test_class = "grakn.benchmark.profiler.generator.query.RelationshipGeneratorTest",
     srcs = ["RelationshipGeneratorTest.java"],
     deps = [
+        "@graknlabs_graql//java:graql",
+        "@graknlabs_grakn_core//concept:concept",
         "//profiler/src/generator:data-generator",
         "//dependencies/maven/artifacts/grakn/core:server",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",

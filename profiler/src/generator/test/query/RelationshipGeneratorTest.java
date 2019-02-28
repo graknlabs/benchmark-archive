@@ -5,8 +5,8 @@ import grakn.benchmark.profiler.generator.provider.concept.CentralConceptProvide
 import grakn.benchmark.profiler.generator.provider.concept.ConceptIdProvider;
 import grakn.benchmark.profiler.generator.strategy.RelationshipStrategy;
 import grakn.benchmark.profiler.generator.strategy.RolePlayerTypeStrategy;
-import grakn.core.graql.concept.ConceptId;
-import grakn.core.graql.query.query.GraqlInsert;
+import grakn.core.concept.ConceptId;
+import graql.lang.query.GraqlInsert;
 import org.junit.Test;
 
 import java.util.Arrays;

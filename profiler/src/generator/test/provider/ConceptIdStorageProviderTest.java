@@ -1,7 +1,7 @@
 package grakn.benchmark.profiler.generator.provider.concept;
 
 import grakn.benchmark.profiler.generator.storage.ConceptStorage;
-import grakn.core.graql.concept.ConceptId;
+import grakn.core.concept.ConceptId;
 import org.junit.Test;
 
 import java.util.Random;

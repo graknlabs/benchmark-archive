@@ -19,8 +19,8 @@
 package grakn.benchmark.profiler.generator.query;
 
 import grakn.benchmark.profiler.generator.strategy.EntityStrategy;
-import grakn.core.graql.query.Graql;
-import grakn.core.graql.query.query.GraqlInsert;
+import graql.lang.Graql;
+import graql.lang.query.GraqlInsert;
 
 import java.util.Iterator;
 

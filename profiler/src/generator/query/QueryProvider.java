@@ -5,7 +5,7 @@ import grakn.benchmark.profiler.generator.strategy.AttributeStrategy;
 import grakn.benchmark.profiler.generator.strategy.EntityStrategy;
 import grakn.benchmark.profiler.generator.strategy.RelationshipStrategy;
 import grakn.benchmark.profiler.generator.strategy.TypeStrategy;
-import grakn.core.graql.query.query.GraqlInsert;
+import graql.lang.query.GraqlInsert;
 
 import java.util.Iterator;
 

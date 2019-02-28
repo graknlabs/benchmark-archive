@@ -2,7 +2,11 @@ java_library(
     name = "data-generator",
     srcs = glob(["**/*.java", "*.java"]),
     deps = [
-        "//dependencies/maven/artifacts/grakn/core:client",
+#        "//dependencies/maven/artifacts/grakn/core:client",
+        "@graknlabs_client_java//:client-java",
+        "@graknlabs_grakn_core//api:api",
+        "@graknlabs_grakn_core//concept:concept",
+        "@graknlabs_graql//java:graql",
         "//dependencies/maven/artifacts/grakn/core:server",
         "//dependencies/maven/artifacts/grakn/core:common",
 

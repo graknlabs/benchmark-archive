@@ -18,7 +18,8 @@
 
 package grakn.benchmark.profiler.generator.query;
 
-import grakn.core.graql.query.query.GraqlInsert;
+
+import graql.lang.query.GraqlInsert;
 
 import java.util.Iterator;
 

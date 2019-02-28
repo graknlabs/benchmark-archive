@@ -19,7 +19,7 @@
 package grakn.benchmark.profiler.generator.provider.concept;
 
 import grakn.benchmark.profiler.generator.probdensity.ProbabilityDensityFunction;
-import grakn.core.graql.concept.ConceptId;
+import grakn.core.concept.ConceptId;
 
 import java.util.ArrayList;
 import java.util.Iterator;

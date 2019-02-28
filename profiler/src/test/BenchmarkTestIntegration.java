@@ -4,8 +4,8 @@ import grakn.benchmark.profiler.BootupException;
 import grakn.benchmark.profiler.GraknBenchmark;
 import grakn.benchmark.profiler.util.BenchmarkArguments;
 import grakn.core.client.GraknClient;
-import grakn.core.graql.answer.ConceptMap;
-import grakn.core.graql.query.Graql;
+import grakn.core.concept.answer.ConceptMap;
+import graql.lang.Graql;
 import org.apache.commons.cli.CommandLine;
 import org.junit.After;
 import org.junit.Before;
@@ -18,8 +18,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
-import static grakn.core.graql.query.Graql.type;
-import static grakn.core.graql.query.Graql.var;
+import static graql.lang.Graql.type;
+import static graql.lang.Graql.var;
 
 public class BenchmarkTestIntegration {
     private final static Path WEB_CONTENT_CONFIG_PATH = Paths.get("profiler/src/test/resources/web_content/web_content_config_test.yml");
@@ -48,7 +48,7 @@ public class BenchmarkTestIntegration {
     @Test
     public void whenSchemaExistsInKeyspace_throwException() {
 
-        try (GraknClient.Transaction tx = session.transaction(GraknClient.Transaction.Type.WRITE)) {
+        try (GraknClient.Transaction tx = session.transaction().write()) {
             List<ConceptMap> answer = tx.execute(Graql.define(type("person").sub("entity")));
             tx.commit();
         }
@@ -64,7 +64,7 @@ public class BenchmarkTestIntegration {
     @Test
     public void whenDataExistsInKeyspace_throwException() {
 
-        try (GraknClient.Transaction tx = session.transaction(GraknClient.Transaction.Type.WRITE)) {
+        try (GraknClient.Transaction tx = session.transaction().write()){
             List<ConceptMap> answer = tx.execute(Graql.define(type("person").sub("entity")));
             answer = tx.execute(Graql.insert(var("x").isa("person")));
             tx.commit();

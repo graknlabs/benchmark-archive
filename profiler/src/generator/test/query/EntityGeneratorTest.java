@@ -2,7 +2,7 @@ package grakn.benchmark.profiler.generator.query;
 
 import grakn.benchmark.profiler.generator.probdensity.FixedConstant;
 import grakn.benchmark.profiler.generator.strategy.EntityStrategy;
-import grakn.core.graql.query.query.GraqlInsert;
+import graql.lang.query.GraqlInsert;
 import org.junit.Test;
 
 import java.util.Iterator;

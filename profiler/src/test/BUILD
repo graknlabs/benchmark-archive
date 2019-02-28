@@ -18,7 +18,10 @@ java_test(
     srcs = ["BenchmarkTestIntegration.java"],
     deps = [
         "//profiler:benchmark-profiler",
-        "//dependencies/maven/artifacts/grakn/core:client",
+#        "//dependencies/maven/artifacts/grakn/core:client",
+        "@graknlabs_client_java//:client-java",
+        "@graknlabs_grakn_core//concept:concept",
+        "@graknlabs_graql//java:graql",
         "//dependencies/maven/artifacts/grakn/core:server",
         "//dependencies/maven/artifacts/commons-cli",
 

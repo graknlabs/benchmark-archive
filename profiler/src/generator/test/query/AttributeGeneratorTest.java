@@ -4,7 +4,7 @@ import grakn.benchmark.profiler.generator.probdensity.FixedConstant;
 import grakn.benchmark.profiler.generator.provider.value.RandomStringProvider;
 import grakn.benchmark.profiler.generator.provider.value.UniqueIntegerProvider;
 import grakn.benchmark.profiler.generator.strategy.AttributeStrategy;
-import grakn.core.graql.query.query.GraqlInsert;
+import graql.lang.query.GraqlInsert;
 import org.junit.Test;
 
 import java.util.Iterator;

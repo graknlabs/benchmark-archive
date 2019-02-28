@@ -21,18 +21,19 @@ package grakn.benchmark.profiler.generator.query;
 import grakn.benchmark.profiler.generator.provider.concept.CentralConceptProvider;
 import grakn.benchmark.profiler.generator.strategy.RelationshipStrategy;
 import grakn.benchmark.profiler.generator.strategy.RolePlayerTypeStrategy;
-import grakn.core.graql.concept.ConceptId;
-import grakn.core.graql.query.Graql;
-import grakn.core.graql.query.pattern.Pattern;
-import grakn.core.graql.query.query.GraqlInsert;
-import grakn.core.graql.query.statement.Statement;
-import grakn.core.graql.query.statement.Variable;
+import grakn.core.concept.ConceptId;
+import graql.lang.Graql;
+import graql.lang.pattern.Pattern;
+import graql.lang.query.GraqlInsert;
+import graql.lang.statement.Variable;
+import graql.lang.statement.Statement;
 
 import java.util.Iterator;
 import java.util.Set;
 
-import static grakn.core.graql.query.Graql.and;
-import static grakn.core.graql.query.Graql.var;
+import static graql.lang.Graql.and;
+import static graql.lang.Graql.var;
+
 
 /**
  * Generate insert queries for the relationship type indicated by the RelationshipStrategy.

@@ -18,14 +18,14 @@
 
 package grakn.benchmark.profiler.generator.util;
 
-import grakn.core.graql.answer.ConceptMap;
-import grakn.core.graql.concept.Concept;
-import grakn.core.graql.concept.ConceptId;
-import grakn.core.graql.concept.Thing;
-import grakn.core.graql.query.Graql;
-import grakn.core.graql.query.query.GraqlInsert;
-import grakn.core.graql.query.statement.Statement;
-import grakn.core.graql.query.statement.Variable;
+import grakn.core.concept.Concept;
+import grakn.core.concept.ConceptId;
+import grakn.core.concept.answer.ConceptMap;
+import grakn.core.concept.thing.Thing;
+import graql.lang.Graql;
+import graql.lang.query.GraqlInsert;
+import graql.lang.statement.Statement;
+import graql.lang.statement.Variable;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -37,8 +37,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import static grakn.core.graql.query.Graql.and;
-import static grakn.core.graql.query.Graql.var;
+import static graql.lang.Graql.and;
+import static graql.lang.Graql.var;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static org.mockito.Mockito.mock;

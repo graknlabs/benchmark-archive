@@ -55,12 +55,12 @@ public class DegreeDistributionIT {
         String keyspaceName = "binary_graph_degree_dist_it";
         client.keyspaces().delete(keyspaceName);
         GraknClient.Session session = client.session(keyspaceName);
-        GraknClient.Transaction tx = session.transaction(GraknClient.Transaction.Type.WRITE);
-        List<?> answer = tx.execute((GraqlDefine)Graql.parse("define vertex sub entity, plays endpt; edge sub relationship, relates endpt;"));
+        GraknClient.Transaction tx = session.transaction().write();
+        List<?> answer = tx.execute(Graql.<GraqlDefine>parse("define vertex sub entity, plays endpt; edge sub relationship, relates endpt;"));
         tx.commit();
 
         // insert same data as `binaryGraph.csv`
-        tx = session.transaction(GraknClient.Transaction.Type.WRITE);
+        tx = session.transaction().write();
         answer = tx.execute((GraqlInsert)Graql.parse("insert" +
                 "$v1 isa vertex; $v2 isa vertex; $v3 isa vertex; $v4 isa vertex; $v5 isa vertex; $v6 isa vertex;" +
                 "$v7 isa vertex; $v8 isa vertex; $v9 isa vertex; $v10 isa vertex; " +
@@ -96,13 +96,13 @@ public class DegreeDistributionIT {
         String keyspaceName = "binary_graph_degree_dist_it";
         client.keyspaces().delete(keyspaceName);
         GraknClient.Session session = client.session(keyspaceName);
-        GraknClient.Transaction tx = session.transaction(GraknClient.Transaction.Type.WRITE);
-        List<?> answer = tx.execute((GraqlDefine)Graql.parse("define vertex sub entity, plays endpt; edge sub relationship, relates endpt;"));
+        GraknClient.Transaction tx = session.transaction().write();
+        List<?> answer = tx.execute(Graql.<GraqlDefine>parse("define vertex sub entity, plays endpt; edge sub relationship, relates endpt;"));
         tx.commit();
 
         // insert same data as `unaryBinaryGraph.csv`
-        tx = session.transaction(GraknClient.Transaction.Type.WRITE);
-        answer = tx.execute((GraqlInsert)Graql.parse("insert" +
+        tx = session.transaction().write();
+        answer = tx.execute(Graql.<GraqlInsert>parse("insert" +
                 "$v1 isa vertex; $v2 isa vertex; $v3 isa vertex; $v4 isa vertex; $v5 isa vertex; $v6 isa vertex;" +
                 "$v7 isa vertex; $v8 isa vertex; $v9 isa vertex; $v10 isa vertex; " +
                 "(endpt: $v1, endpt: $v1) isa edge; " + // self-loop

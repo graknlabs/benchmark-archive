@@ -20,10 +20,9 @@ package grakn.benchmark.profiler;
 
 import brave.Tracing;
 import grakn.core.client.GraknClient;
-import grakn.core.graql.answer.Value;
-import grakn.core.graql.query.Graql;
-import grakn.core.graql.query.query.GraqlQuery;
-import grakn.core.server.Transaction;
+import grakn.core.concept.answer.Numeric;
+import graql.lang.Graql;
+import graql.lang.query.GraqlQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +34,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-import static grakn.core.graql.query.Graql.var;
+import static graql.lang.Graql.var;
 
 
 /**
@@ -76,8 +75,8 @@ public class QueryProfiler {
     }
 
     public int aggregateCount(GraknClient.Session session) {
-        try (GraknClient.Transaction tx = session.transaction(Transaction.Type.READ)) {
-            List<Value> count = tx.execute(Graql.match(var("x").isa("thing")).get().count());
+        try (GraknClient.Transaction tx = session.transaction().read()) {
+            List<Numeric> count = tx.execute(Graql.match(var("x").isa("thing")).get().count());
             return count.get(0).number().intValue();
         }
     }
@@ -90,6 +89,7 @@ public class QueryProfiler {
         for (int i = 0; i < sessions.size(); i++) {
             GraknClient.Session session = sessions.get(i);
             ConcurrentQueries processor = new ConcurrentQueries(executionName, i, graphName, Tracing.currentTracer(), queries, repetitions, numConcepts, session, commitQueries);
+
             runningConcurrentQueries.add(executorService.submit(processor));
         }
 

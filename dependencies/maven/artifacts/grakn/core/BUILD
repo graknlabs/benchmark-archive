@@ -1,37 +1,4 @@
 java_library(
-    name = "client",
-    exports = [
-        "//external:jar/grakn/core/client"
-    ],
-    runtime_deps = [
-        "//dependencies/maven/artifacts/ch/qos/logback:logback-classic",
-        "//dependencies/maven/artifacts/ch/qos/logback:logback-core",
-        "//dependencies/maven/artifacts/com/google/auto/value:auto-value",
-        "//dependencies/maven/artifacts/com/google/code/findbugs:jsr305",
-        "//dependencies/maven/artifacts/com/google/guava:guava",
-        "//dependencies/maven/artifacts/grakn/benchmark:lib",
-        "//dependencies/maven/artifacts/io/grpc:grpc-core",
-        "//dependencies/maven/artifacts/io/grpc:grpc-netty",
-        "//dependencies/maven/artifacts/io/grpc:grpc-stub",
-        "//dependencies/maven/artifacts/io/netty:netty-all",
-        "//dependencies/maven/artifacts/io/zipkin/brave:brave",
-        "//dependencies/maven/artifacts/io/zipkin/brave:brave-instrumentation-grpc",
-        "//dependencies/maven/artifacts/io/zipkin/reporter2:zipkin-reporter",
-        "//dependencies/maven/artifacts/io/zipkin/reporter2:zipkin-sender-urlconnection",
-        "//dependencies/maven/artifacts/io/zipkin/zipkin2:zipkin",
-        "//dependencies/maven/artifacts/org/slf4j:slf4j-api",
-        ":common",
-        ":protocol",
-        ":server"
-    ],
-    visibility = [
-        "//visibility:public"
-    ]
-)
-
-
-
-java_library(
     name = "common",
     exports = [
         "//external:jar/grakn/core/common"

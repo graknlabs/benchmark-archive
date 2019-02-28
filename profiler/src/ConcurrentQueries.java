@@ -4,9 +4,8 @@ package grakn.benchmark.profiler;
 import brave.Span;
 import brave.Tracer;
 import grakn.core.client.GraknClient;
-import grakn.core.graql.answer.Answer;
-import grakn.core.graql.query.query.GraqlQuery;
-import grakn.core.server.Transaction;
+import grakn.core.concept.answer.Answer;
+import graql.lang.query.GraqlQuery;
 
 import java.util.List;
 
@@ -47,8 +46,14 @@ class ConcurrentQueries implements Runnable {
             concurrentExecutionSpan.tag("scale", Integer.toString(numConcepts));
             concurrentExecutionSpan.start();
 
+            int counter = 0;
+            long startTime = System.currentTimeMillis();
             for (int rep = 0; rep < repetitions; rep++) {
                 for (GraqlQuery rawQuery : queries) {
+
+                    if (counter % 100 == 0) {
+                        System.out.println("Executed query #: " + counter + ", elapsed time " + (System.currentTimeMillis() - startTime));
+                    }
                     Span querySpan = tracer.newChild(concurrentExecutionSpan.context());
                     querySpan.name("query");
                     querySpan.tag("query", rawQuery.toString());
@@ -59,7 +64,7 @@ class ConcurrentQueries implements Runnable {
                     // perform trace in thread-local storage on the client
                     try (Tracer.SpanInScope ws = tracer.withSpanInScope(querySpan)) {
                         // open new transaction
-                        GraknClient.Transaction tx = session.transaction(Transaction.Type.WRITE);
+                        GraknClient.Transaction tx = session.transaction().write();
                         List<? extends Answer> answer = tx.execute(rawQuery);
 
                         if (commitQuery) {
@@ -70,6 +75,7 @@ class ConcurrentQueries implements Runnable {
                     } finally {
                         querySpan.finish();
                     }
+                    counter++;
                 }
             }
 

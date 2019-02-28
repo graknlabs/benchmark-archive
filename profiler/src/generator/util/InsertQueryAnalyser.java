@@ -18,16 +18,17 @@
 
 package grakn.benchmark.profiler.generator.util;
 
-import grakn.core.graql.answer.ConceptMap;
-import grakn.core.graql.concept.Concept;
-import grakn.core.graql.query.property.IdProperty;
-import grakn.core.graql.query.property.IsaProperty;
-import grakn.core.graql.query.property.RelationProperty;
-import grakn.core.graql.query.property.TypeProperty;
-import grakn.core.graql.query.query.GraqlInsert;
-import grakn.core.graql.query.query.MatchClause;
-import grakn.core.graql.query.statement.Statement;
-import grakn.core.graql.query.statement.Variable;
+
+import grakn.core.concept.Concept;
+import grakn.core.concept.answer.ConceptMap;
+import graql.lang.property.IdProperty;
+import graql.lang.property.IsaProperty;
+import graql.lang.property.RelationProperty;
+import graql.lang.property.TypeProperty;
+import graql.lang.query.GraqlInsert;
+import graql.lang.query.MatchClause;
+import graql.lang.statement.Statement;
+import graql.lang.statement.Variable;
 
 import java.util.Collection;
 import java.util.HashMap;

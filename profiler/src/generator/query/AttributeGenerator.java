@@ -20,14 +20,14 @@ package grakn.benchmark.profiler.generator.query;
 
 import grakn.benchmark.profiler.generator.DataGeneratorException;
 import grakn.benchmark.profiler.generator.strategy.AttributeStrategy;
-import grakn.core.graql.query.Graql;
-import grakn.core.graql.query.query.GraqlInsert;
-import grakn.core.graql.query.statement.Statement;
-import grakn.core.graql.query.statement.Variable;
+import graql.lang.statement.Statement;
+import graql.lang.Graql;
+import graql.lang.query.GraqlInsert;
+import graql.lang.statement.Variable;
 
 import java.util.Iterator;
 
-import static grakn.core.graql.query.Graql.var;
+import static graql.lang.Graql.var;
 
 
 /**

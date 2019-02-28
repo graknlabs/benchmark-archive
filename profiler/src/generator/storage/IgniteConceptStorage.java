@@ -19,14 +19,14 @@
 package grakn.benchmark.profiler.generator.storage;
 
 import grakn.benchmark.profiler.generator.DataGeneratorException;
-import grakn.core.graql.concept.Attribute;
-import grakn.core.graql.concept.AttributeType;
-import grakn.core.graql.concept.Concept;
-import grakn.core.graql.concept.ConceptId;
-import grakn.core.graql.concept.EntityType;
-import grakn.core.graql.concept.Label;
-import grakn.core.graql.concept.RelationType;
-import grakn.core.graql.concept.SchemaConcept;
+import grakn.core.concept.Concept;
+import grakn.core.concept.ConceptId;
+import grakn.core.concept.Label;
+import grakn.core.concept.thing.Attribute;
+import grakn.core.concept.type.AttributeType;
+import grakn.core.concept.type.EntityType;
+import grakn.core.concept.type.RelationType;
+import grakn.core.concept.type.SchemaConcept;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,12 +46,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static grakn.core.graql.concept.AttributeType.DataType.BOOLEAN;
-import static grakn.core.graql.concept.AttributeType.DataType.DATE;
-import static grakn.core.graql.concept.AttributeType.DataType.DOUBLE;
-import static grakn.core.graql.concept.AttributeType.DataType.FLOAT;
-import static grakn.core.graql.concept.AttributeType.DataType.LONG;
-import static grakn.core.graql.concept.AttributeType.DataType.STRING;
+import static grakn.core.concept.type.AttributeType.DataType.BOOLEAN;
+import static grakn.core.concept.type.AttributeType.DataType.DATE;
+import static grakn.core.concept.type.AttributeType.DataType.DOUBLE;
+import static grakn.core.concept.type.AttributeType.DataType.FLOAT;
+import static grakn.core.concept.type.AttributeType.DataType.LONG;
+import static grakn.core.concept.type.AttributeType.DataType.STRING;
 
 
 /**

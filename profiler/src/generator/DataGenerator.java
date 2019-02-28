@@ -22,11 +22,10 @@ import grakn.benchmark.profiler.generator.query.QueryProvider;
 import grakn.benchmark.profiler.generator.storage.ConceptStorage;
 import grakn.benchmark.profiler.generator.util.InsertQueryAnalyser;
 import grakn.core.client.GraknClient;
-import grakn.core.graql.answer.ConceptMap;
-import grakn.core.graql.concept.Concept;
-import grakn.core.graql.query.query.GraqlInsert;
-import grakn.core.server.Transaction;
+import grakn.core.concept.Concept;
+import grakn.core.concept.answer.ConceptMap;
 import grakn.core.server.exception.InvalidKBException;
+import graql.lang.query.GraqlInsert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +73,7 @@ public class DataGenerator {
         GraknClient.Session session = client.session(keyspace);
 
         while (storage.getGraphScale() < graphScaleLimit) {
-            try (GraknClient.Transaction tx = session.transaction(Transaction.Type.WRITE)) {
+            try (GraknClient.Transaction tx = session.transaction().write()) {
 
                 // create the stream of insert/match-insert queries
                 Iterator<GraqlInsert> queryStream = queryProvider.nextQueryBatch();
