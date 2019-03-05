@@ -4,9 +4,8 @@ import grakn.benchmark.metric.DegreeDistribution;
 import grakn.benchmark.metric.GraknGraphProperties;
 import grakn.benchmark.metric.StandardGraphProperties;
 import grakn.core.client.GraknClient;
-import grakn.core.graql.query.Graql;
-import grakn.core.graql.query.query.GraqlDefine;
-import grakn.core.graql.query.query.GraqlInsert;
+import graql.lang.Graql;
+import graql.lang.query.GraqlInsert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -56,7 +55,7 @@ public class DegreeDistributionIT {
         client.keyspaces().delete(keyspaceName);
         GraknClient.Session session = client.session(keyspaceName);
         GraknClient.Transaction tx = session.transaction().write();
-        List<?> answer = tx.execute(Graql.<GraqlDefine>parse("define vertex sub entity, plays endpt; edge sub relationship, relates endpt;"));
+        List<?> answer = tx.execute(Graql.parse("define vertex sub entity, plays endpt; edge sub relation, relates endpt;").asDefine());
         tx.commit();
 
         // insert same data as `binaryGraph.csv`
@@ -97,7 +96,7 @@ public class DegreeDistributionIT {
         client.keyspaces().delete(keyspaceName);
         GraknClient.Session session = client.session(keyspaceName);
         GraknClient.Transaction tx = session.transaction().write();
-        List<?> answer = tx.execute(Graql.<GraqlDefine>parse("define vertex sub entity, plays endpt; edge sub relationship, relates endpt;"));
+        List<?> answer = tx.execute(Graql.parse("define vertex sub entity, plays endpt; edge sub relation, relates endpt;").asDefine());
         tx.commit();
 
         // insert same data as `unaryBinaryGraph.csv`

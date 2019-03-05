@@ -3,10 +3,9 @@ package grakn.benchmark.metric.test;
 import grakn.benchmark.metric.Assortativity;
 import grakn.benchmark.metric.GraknGraphProperties;
 import grakn.benchmark.metric.StandardGraphProperties;
-import grakn.core.GraknTxType;
-import grakn.core.Keyspace;
-import grakn.core.client.Grakn;
-import grakn.core.util.SimpleURI;
+import grakn.core.client.GraknClient;
+import grakn.core.concept.answer.ConceptMap;
+import graql.lang.Graql;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -40,19 +39,19 @@ public class AssortativityIT {
 
     @Test
     public void graknBinaryGraphAssortativity() {
-        Grakn client = new Grakn(new SimpleURI("localhost:48555"));
+        GraknClient client = new GraknClient("localhost:48555");
 
         // define basic schema
         String keyspaceName = "assortativity_it";
-        client.keyspaces().delete(Keyspace.of(keyspaceName));
-        Grakn.Session session = client.session(Keyspace.of(keyspaceName));
-        Grakn.Transaction tx = session.transaction(GraknTxType.WRITE);
-        List<?> answer = tx.graql().parse("define vertex sub entity, plays endpt; edge sub relationship, relates endpt;").execute();
+        client.keyspaces().delete(keyspaceName);
+        GraknClient.Session session = client.session(keyspaceName);
+        GraknClient.Transaction tx = session.transaction().write();
+        List<ConceptMap> answer = tx.execute(Graql.parse("define vertex sub entity, plays endpt; edge sub relation, relates endpt;").asDefine());
         tx.commit();
 
         // insert same data as `binaryGraph.csv`
-        tx = session.transaction(GraknTxType.WRITE);
-        answer = tx.graql().parse("insert" +
+        tx = session.transaction().write();
+        answer = tx.execute(Graql.parse("insert" +
                 "$v1 isa vertex; $v2 isa vertex; $v3 isa vertex; $v4 isa vertex; $v5 isa vertex; $v6 isa vertex;" +
                 "$v7 isa vertex; $v8 isa vertex; $v9 isa vertex; $v10 isa vertex; " +
                 "(endpt: $v1, endpt: $v2) isa edge; " +
@@ -64,7 +63,7 @@ public class AssortativityIT {
                 "(endpt: $v8, endpt: $v7) isa edge; " +
                 "(endpt: $v8, endpt: $v9) isa edge; " +
                 "(endpt: $v8, endpt: $v10) isa edge; " +
-                "(endpt: $v9, endpt: $v10) isa edge; ").execute();
+                "(endpt: $v9, endpt: $v10) isa edge; ").asInsert());
         tx.commit();
 
         GraknGraphProperties graphProperties = new GraknGraphProperties("localhost:48555", keyspaceName);
@@ -72,7 +71,7 @@ public class AssortativityIT {
         double computedAssortativity = Assortativity.computeAssortativity(Assortativity.jointDegreeOccurrence(graphProperties));
         double correctAssortativity = -0.38888888888888995;
         double allowedDeviation = 0.000001;
-        client.keyspaces().delete(Keyspace.of(keyspaceName));
+        client.keyspaces().delete(keyspaceName);
         session.close();
         assertEquals(correctAssortativity, computedAssortativity, allowedDeviation);
     }
@@ -80,19 +79,19 @@ public class AssortativityIT {
 
     @Test
     public void graknUnaryBinaryGraphAssortativity() {
-        Grakn client = new Grakn(new SimpleURI("localhost:48555"));
+        GraknClient client = new GraknClient("localhost:48555");
 
         // define basic schema
         String keyspaceName = "assortativity_it";
-        client.keyspaces().delete(Keyspace.of(keyspaceName));
-        Grakn.Session session = client.session(Keyspace.of(keyspaceName));
-        Grakn.Transaction tx = session.transaction(GraknTxType.WRITE);
-        List<?> answer = tx.graql().parse("define vertex sub entity, plays endpt; edge sub relationship, relates endpt;").execute();
+        client.keyspaces().delete(keyspaceName);
+        GraknClient.Session session = client.session(keyspaceName);
+        GraknClient.Transaction tx = session.transaction().write();
+        List<?> answer = tx.execute(Graql.parse("define vertex sub entity, plays endpt; edge sub relation, relates endpt;").asDefine());
         tx.commit();
 
         // insert same data as `unaryBinaryGraph.csv`
-        tx = session.transaction(GraknTxType.WRITE);
-        answer = tx.graql().parse("insert" +
+        tx = session.transaction().write();
+        answer = tx.execute(Graql.parse("insert" +
                 "$v1 isa vertex; $v2 isa vertex; $v3 isa vertex; $v4 isa vertex; $v5 isa vertex; $v6 isa vertex;" +
                 "$v7 isa vertex; $v8 isa vertex; $v9 isa vertex; $v10 isa vertex; " +
                 "(endpt: $v1, endpt: $v1) isa edge; " + // self-loop
@@ -106,7 +105,7 @@ public class AssortativityIT {
                 "(endpt: $v8, endpt: $v7) isa edge; " +
                 "(endpt: $v8, endpt: $v9) isa edge; " +
                 "(endpt: $v8, endpt: $v10) isa edge; " +
-                "(endpt: $v9, endpt: $v10) isa edge; ").execute();
+                "(endpt: $v9, endpt: $v10) isa edge; ").asInsert());
         tx.commit();
 
         GraknGraphProperties graphProperties = new GraknGraphProperties("localhost:48555", keyspaceName);
@@ -114,7 +113,7 @@ public class AssortativityIT {
         double computedAssortativity = Assortativity.computeAssortativity(Assortativity.jointDegreeOccurrence(graphProperties));
         double correctAssortativity = -0.2767857142857146;
         double allowedDeviation = 0.000001;
-        client.keyspaces().delete(Keyspace.of(keyspaceName));
+        client.keyspaces().delete(keyspaceName);
         session.close();
         assertEquals(correctAssortativity, computedAssortativity, allowedDeviation);
     }

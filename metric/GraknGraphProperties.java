@@ -1,14 +1,13 @@
 package grakn.benchmark.metric;
 
 import grakn.core.client.GraknClient;
-import grakn.core.graql.answer.ConceptMap;
-import grakn.core.graql.answer.ConceptSetMeasure;
-import grakn.core.graql.answer.Value;
-import grakn.core.graql.concept.Concept;
-import grakn.core.graql.query.Graql;
-import grakn.core.graql.query.query.GraqlCompute;
-import grakn.core.graql.query.query.GraqlGet;
-import grakn.core.server.Transaction;
+import grakn.core.concept.Concept;
+import grakn.core.concept.answer.ConceptMap;
+import grakn.core.concept.answer.ConceptSetMeasure;
+import grakn.core.concept.answer.Numeric;
+import graql.lang.Graql;
+import graql.lang.query.GraqlCompute;
+import graql.lang.query.GraqlGet;
 import org.apache.commons.math3.util.Pair;
 
 import java.util.Comparator;
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static grakn.core.graql.query.Graql.var;
+import static graql.lang.Graql.var;
 
 
 public class GraknGraphProperties implements GraphProperties {
@@ -48,9 +47,9 @@ public class GraknGraphProperties implements GraphProperties {
 
     private GraknClient.Transaction getTx(boolean useWriteTx) {
         if (useWriteTx) {
-            return session.transaction(Transaction.Type.WRITE);
+            return session.transaction().write();
         } else {
-            return session.transaction(Transaction.Type.READ);
+            return session.transaction().read();
         }
     }
 
@@ -58,8 +57,8 @@ public class GraknGraphProperties implements GraphProperties {
     public long maxDegree() {
         // TODO do we need inference here?
         try (GraknClient.Transaction tx = getTx(false)) {
-            GraqlCompute<ConceptSetMeasure> query = Graql.compute(GraqlCompute.Method.CENTRALITY).of("entity");
-            return tx.stream(query)
+            GraqlCompute.Centrality centralities = Graql.compute().centrality().of("entity");
+            return tx.stream(centralities)
                     .map(conceptSetMeasure -> conceptSetMeasure.measurement().longValue())
                     .max(Comparator.naturalOrder())
                     .orElse(0l);
@@ -76,8 +75,8 @@ public class GraknGraphProperties implements GraphProperties {
 
             // `match $r1 ($x) isa edge; $r2 ($x) isa edge; $r1 != $r2; get $r1, $r2;`
             GraqlGet query = Graql.match(
-                    var("r1").isa("relationship").rel(var("x")),
-                    var("r2").isa("relationship").rel(var("x")),
+                    var("r1").isa("relation").rel(var("x")),
+                    var("r2").isa("relation").rel(var("x")),
                     var("r1").neq(var("r2")),
                     var("x").isa("entity")
             ).get("r1", "r2");
@@ -127,7 +126,7 @@ public class GraknGraphProperties implements GraphProperties {
             // compute degree of each  entitiy
             // returns mapping { deg_n : set(entity ids) }
             // does NOT return degree 0 entity IDs
-            GraqlCompute<ConceptSetMeasure> graqlCompute = Graql.compute(GraqlCompute.Method.CENTRALITY).of("entity").in("relationship");
+            GraqlCompute.Centrality graqlCompute = Graql.compute().centrality().of("entity").in("relation");
 
             // create a mapping from ID -> degree (not containing 0 degree entities)
             Map<String, Long> entityDegreeMap = tx.stream(graqlCompute)
@@ -142,7 +141,7 @@ public class GraknGraphProperties implements GraphProperties {
             GraqlGet edgeList = Graql.match(
                     var("x").isa("entity"),
                     var("y").isa("entity"),
-                    var().isa("relationship").rel(var("x")).rel(var("y"))
+                    var().isa("relation").rel(var("x")).rel(var("y"))
             ).get("x", "y");
 
             connectedVertexDegrees = tx.stream(edgeList)
@@ -169,7 +168,7 @@ public class GraknGraphProperties implements GraphProperties {
             // compute degree of each  entitiy
             // returns mapping { deg_n : set(entity ids) }
             // does NOT return degree 0 entity IDs
-            GraqlCompute<ConceptSetMeasure> graqlCompute = Graql.compute(GraqlCompute.Method.CENTRALITY).of("entity");
+            GraqlCompute.Centrality graqlCompute = Graql.compute().centrality().of("entity");
 
             // collect it to a list so we don't have to execute it twice
             List<ConceptSetMeasure> answerMap = tx.execute(graqlCompute);
@@ -191,8 +190,8 @@ public class GraknGraphProperties implements GraphProperties {
 
             // ***** `compute centrality using degree` doesn't return 0 for disconnected entities *****
             // count total number of vertices to see how many have degree == 0
-            List<Value> conceptCounts = tx.execute(Graql.compute(GraqlCompute.Method.COUNT).in("entity"));
-            long totalVertices = conceptCounts.get(0).asValue().number().longValue();
+            List<Numeric> conceptCounts = tx.execute(Graql.compute().count().in("entity"));
+            long totalVertices = conceptCounts.get(0).number().longValue();
             // compute how many vertices have zero degree
             numZeroDegrees = totalVertices - numNonzeroDegrees;
         }
@@ -223,9 +222,7 @@ public class GraknGraphProperties implements GraphProperties {
 
     public long numVertices() {
         try (GraknClient.Transaction tx = getTx(false)) {
-            return tx.stream(
-                    Graql.compute(GraqlCompute.Method.COUNT).in("entity")
-            ).findFirst().get().number().longValue();
+            return tx.stream(Graql.compute().count().in("entity")).findFirst().get().number().longValue();
         }
     }
 }

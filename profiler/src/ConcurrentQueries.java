@@ -39,7 +39,6 @@ class ConcurrentQueries implements Runnable {
         try {
             Span concurrentExecutionSpan = tracer.newTrace().name("concurrent-execution");
             concurrentExecutionSpan.tag("executionName", executionName);
-            concurrentExecutionSpan.tag("client", Integer.toString(concurrentId));
             concurrentExecutionSpan.tag("concurrentClient", Integer.toString(concurrentId));
             concurrentExecutionSpan.tag("graphName", this.graphName);
             concurrentExecutionSpan.tag("repetitions", Integer.toString(repetitions));

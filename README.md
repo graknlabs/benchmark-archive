@@ -2,12 +2,18 @@
 
 Benchmark is a piece of software used for generating data and measuring the performance of Grakn. It is composed of two main components:
 
-1. *GraknBenchmark*, used to run one of the two use cases (done using the `runner` package):
+1. *Profiler*, used to run one of the following use cases (accessed using the `profiler` package):
 
-       1. Generate data to different scales and profile performances with different sizes of graph
+       1. [With Data Generation] Generate hypergraphs to different scales and profile performances  
 
-       2. Profile an existing graph
-2. *Web Dashboard*, used for visualising the benchmark results (done using the `dashboard` package)
+       2. [Without Data Generation] Profile an existing graph in a keyspace (without committing profiled queries)
+       
+       3. [Without Data Generation] Profile an empty keyspace that evolves as profiled queries are committed
+       
+2. *Benchmark Service*, (accessed using the `service` package), which can be used to: 
+    * Spin up a GCP instance that listens to commits on a specific repository (configused using Github web hooks)
+    * Launch the Profiler and benchmark commits/PRs to the repository
+    * Visualise tracing and other data recorded into ElasticSearch by Zipkin in a web dashboard hosted by the GCP instance
 
 ## Requirements
 

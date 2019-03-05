@@ -53,7 +53,7 @@ public class GlobalTransitivityIT {
         client.keyspaces().delete(keyspaceName);
         GraknClient.Session session = client.session(keyspaceName);
         GraknClient.Transaction tx = session.transaction().write();
-        List<?> answer = tx.execute(Graql.<GraqlDefine>parse("define vertex sub entity, plays endpt; edge sub relationship, relates endpt;"));
+        List<?> answer = tx.execute(Graql.<GraqlDefine>parse("define vertex sub entity, plays endpt; edge sub relation, relates endpt;"));
         tx.commit();
 
         // insert same data as `binaryGraph.csv`
@@ -93,7 +93,7 @@ public class GlobalTransitivityIT {
         client.keyspaces().delete(keyspaceName);
         GraknClient.Session session = client.session(keyspaceName);
         GraknClient.Transaction tx = session.transaction().write();
-        List<?> answer = tx.execute(Graql.<GraqlDefine>parse("define vertex sub entity, plays endpt; edge sub relationship, relates endpt;"));
+        List<?> answer = tx.execute(Graql.<GraqlDefine>parse("define vertex sub entity, plays endpt; edge sub relation, relates endpt;"));
         tx.commit();
 
         // insert same data as `unaryBinaryGraph.csv`

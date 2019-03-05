@@ -47,10 +47,10 @@ java_library(
     name = "metric",
     srcs = glob(["*.java"]),
     deps = [
-#        "//dependencies/maven/artifacts/grakn/core:client",
         "@graknlabs_client_java//:client-java",
         "@graknlabs_grakn_core//api:api",
-        "//dependencies/maven/artifacts/grakn/core:server",
+        "@graknlabs_graql//java:graql",
+        "@graknlabs_grakn_core//concept:concept",
 
         "//dependencies/maven/artifacts/commons-cli",
         "//dependencies/maven/artifacts/org/apache/commons:commons-math3",
@@ -84,11 +84,10 @@ java_test(
      deps = [
          "//metric:metric",
          "//dependencies/maven/artifacts/junit:junit",
-
-#        "//dependencies/maven/artifacts/grakn/core:client",
-        "//dependencies/maven/artifacts/grakn/core:server",
         "@graknlabs_client_java//:client-java",
         "@graknlabs_grakn_core//api:api",
+        "@graknlabs_grakn_core//concept:concept",
+        "@graknlabs_graql//java:graql"
      ],
      data = [":test/binaryGraph.csv", ":test/unaryBinaryGraph.csv"],
  )
@@ -118,11 +117,10 @@ java_test(
      deps = [
          "//metric:metric",
          "//dependencies/maven/artifacts/junit:junit",
-
-#        "//dependencies/maven/artifacts/grakn/core:client",
         "@graknlabs_client_java//:client-java",
         "@graknlabs_grakn_core//api:api",
-        "//dependencies/maven/artifacts/grakn/core:server",
+        "@graknlabs_grakn_core//concept:concept",
+        "@graknlabs_graql//java:graql",
      ],
      data = [":test/binaryGraph.csv", ":test/unaryBinaryGraph.csv"],
  )
@@ -146,11 +144,8 @@ java_test(
         "//metric:metric",
         "//dependencies/maven/artifacts/junit:junit",
         "@graknlabs_graql//java:graql",
-
-#        "//dependencies/maven/artifacts/grakn/core:client",
         "@graknlabs_client_java//:client-java",
         "@graknlabs_grakn_core//api:api",
-        "//dependencies/maven/artifacts/grakn/core:server",
     ],
     data = [":test/binaryGraph.csv", ":test/unaryBinaryGraph.csv"],
 )
