@@ -55,11 +55,7 @@ public class DegreeDistributionIT {
         client.keyspaces().delete(keyspaceName);
         GraknClient.Session session = client.session(keyspaceName);
         GraknClient.Transaction tx = session.transaction().write();
-<<<<<<< HEAD
         List<?> answer = tx.execute(Graql.parse("define vertex sub entity, plays endpt; edge sub relation, relates endpt;").asDefine());
-=======
-        List<?> answer = tx.execute(Graql.<GraqlDefine>parse("define vertex sub entity, plays endpt; edge sub relationship, relates endpt;"));
->>>>>>> master
         tx.commit();
 
         // insert same data as `binaryGraph.csv`
