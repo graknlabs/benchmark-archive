@@ -36,12 +36,12 @@ tmux new-session -d -s elastic $es_cmd
 # 
 # cd ~/infrastructure/benchmark/service/web-server
 # npm install
-# tmux new-session -d -s node_server "node ~/infrastructure/benchmark/service/web-server/src/server.js > >(tee -a ~/logs/node_server_stdout.log) 2> >(tee -a ~/logs/node_server_stderr.log >&2) "
+# tmux new-session -d -s node_server "node ~/infrastructure/benchmark/service/web-server/src/server.js 2>&1 | tee -a ~/logs/node_server.log "
 
 # cd ~/service/dashboard
 # npm install && npm run build
 
 cd ~/service/web-server
 npm install
-tmux new-session -d -s node_server "node ~/service/web-server/src/server.js > >(tee -a ~/logs/node_server_stdout.log) 2> >(tee -a ~/logs/node_server_stderr.log >&2) "
+tmux new-session -d -s node_server "node ~/service/web-server/src/server.js 2>&1 | tee -a ~/logs/node_server.log "
 

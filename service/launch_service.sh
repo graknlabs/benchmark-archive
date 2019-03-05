@@ -21,9 +21,9 @@ gcloud compute instances create $INSTANCE_NAME          \
 
 # build dashboard
 echo "Building dashboard..."
-cd service/dashboard
+cd dashboard
 npm install && npm run build
-cd ../..
+cd ..
 
 # Wait until machine is up and running
 echo "Waiting for $INSTANCE_NAME to be up and running..."
@@ -38,24 +38,23 @@ echo "Uploading service files to $INSTANCE_NAME..."
 
 #Copy web dashboard files
 gcloud compute ssh ubuntu@$INSTANCE_NAME --zone=$ZONE --command='mkdir -p ~/service/dashboard/'
-gcloud compute scp --recurse service/dashboard/dist ubuntu@$INSTANCE_NAME:~/service/dashboard/ --zone=$ZONE
+gcloud compute scp --recurse dashboard/dist ubuntu@$INSTANCE_NAME:~/service/dashboard/ --zone=$ZONE
 
 #Copy web server files
 gcloud compute ssh ubuntu@$INSTANCE_NAME --zone=$ZONE --command='mkdir -p ~/service/web-server/'
-gcloud compute scp --recurse service/web-server/src ubuntu@$INSTANCE_NAME:~/service/web-server/ --zone=$ZONE
-gcloud compute scp service/web-server/package.json ubuntu@$INSTANCE_NAME:~/service/web-server/ --zone=$ZONE
+gcloud compute scp --recurse web-server/src ubuntu@$INSTANCE_NAME:~/service/web-server/ --zone=$ZONE
+gcloud compute scp web-server/package.json ubuntu@$INSTANCE_NAME:~/service/web-server/ --zone=$ZONE
 
 #Copy executor scripts
 gcloud compute scp --recurse executor ubuntu@$INSTANCE_NAME:~/executor --zone=$ZONE
 
 #Copy service scripts
-gcloud compute scp service/delete_instance.sh ubuntu@$INSTANCE_NAME:~/service --zone=$ZONE
-gcloud compute scp service/launch_executor_server.sh ubuntu@$INSTANCE_NAME:~/service --zone=$ZONE
-gcloud compute scp service/run_service.sh ubuntu@$INSTANCE_NAME:~/service --zone=$ZONE
-
+gcloud compute scp delete_instance.sh ubuntu@$INSTANCE_NAME:~/service --zone=$ZONE
+gcloud compute scp launch_executor_server.sh ubuntu@$INSTANCE_NAME:~/service --zone=$ZONE
+gcloud compute scp run_service.sh ubuntu@$INSTANCE_NAME:~/service --zone=$ZONE
 
 
 echo "Initializing instance..."
 gcloud compute ssh ubuntu@$INSTANCE_NAME --zone=$ZONE --command='chmod +x ~/service/run_service.sh && mkdir -p ~/logs'
 echo "Launching service..."
-gcloud compute ssh ubuntu@$INSTANCE_NAME --zone=$ZONE --command='tmux new -d -s run_service "~/service/run_service.sh > >(tee -a ~/logs/run_service_stdout.log) 2> >(tee -a ~/logs/run_service_stderr.log >&2) " '
+gcloud compute ssh ubuntu@$INSTANCE_NAME --zone=$ZONE --command='tmux new -d -s run_service "~/service/run_service.sh 2>&1 | tee -a ~/logs/run_service.log" '
