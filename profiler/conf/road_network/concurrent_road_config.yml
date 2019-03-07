@@ -6,14 +6,8 @@ scales:
   - 400
 
 repeatsPerQuery: 5
-  # TODO
-  # concurrency:
-  #   clients: 1
-# mixed:
-# replication: 1
 
-commitQueries: true
-
+commitQueries: false
 concurrency:
-  clients: 11
-  uniqueKeyspaces: false
+  clients: 1
+  uniqueKeyspaces: true
