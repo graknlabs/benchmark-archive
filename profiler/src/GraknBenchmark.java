@@ -79,6 +79,7 @@ public class GraknBenchmark {
             exitCode = 1;
             LOG.error("Unable to start GraknClient Benchmark:", e);
         } finally {
+            System.out.println("Exiting benchmark with exit code " + exitCode);
             System.exit(exitCode);
         }
     }

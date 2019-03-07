@@ -1,7 +1,7 @@
 define
 
     # fixed increments
-    biochem-id sub attribute datatype long;
+    biochem-id sub attribute, datatype long;
 
     # fixed increments
     chemical sub entity,
@@ -14,6 +14,6 @@ define
         has biochem-id; # append unique (1 per enzyme)
 
     # fixed increments
-    interaction sub relationship,
+    interaction sub relation,
         relates agent, # scale number of agents over time
         relates catalyst; # scale number of catalysts over time

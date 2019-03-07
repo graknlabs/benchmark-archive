@@ -1,7 +1,7 @@
 define
 
     # fixed increments
-    name sub attribute datatype string;
+    name sub attribute, datatype string;
 
     # fixed increments
     person sub entity,
@@ -14,10 +14,10 @@ define
         plays liked;
 
     # scaling increments
-    friendship sub relationship,
+    friendship sub relation,
         relates friend; # 2 friends in a friendship only
 
     # scaling increments
-    like sub relationship,
+    like sub relation,
         relates liked, # only 1 liked per like
         relates liker; # only 1 liker per like

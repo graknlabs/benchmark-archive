@@ -1,7 +1,7 @@
 define
 
     # fixed increments
-    name sub attribute datatype string;
+    name sub attribute, datatype string;
     # region-code sub attribute datatype long;
 
     # fixed increments
@@ -10,5 +10,5 @@ define
         has name; # fixed number of names per road
 
     # fixed increments
-    intersection sub relationship,
+    intersection sub relation,
         relates endpoint; # fixed upper bound on RPs
