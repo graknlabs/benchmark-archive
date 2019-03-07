@@ -87,8 +87,7 @@ jobs:
       - run: unzip bazel-genfiles/external/graknlabs_grakn_core/grakn-core-all.zip -d bazel-genfiles/dist/
       - run: nohup bazel-genfiles/dist/grakn-core-all/grakn server start
 
-      - bazel:
-          command: bazel test //profiler/test:profiler-bootup-test-integration --test_output=streamed
+      - run: bazel test //profiler/test:profiler-bootup-test-integration --test_output=streamed
 
 workflows:
   version: 2
