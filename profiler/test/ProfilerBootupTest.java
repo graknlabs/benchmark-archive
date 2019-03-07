@@ -1,5 +1,7 @@
 package grakn.benchmark.profiler;
 
+import grakn.benchmark.profiler.BootupException;
+import grakn.benchmark.profiler.GraknBenchmark;
 import grakn.benchmark.profiler.util.BenchmarkArguments;
 import org.apache.commons.cli.CommandLine;
 import org.junit.Rule;

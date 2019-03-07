@@ -5,7 +5,7 @@ java_test(
     deps = [
         "@graknlabs_graql//java:graql",
         "@graknlabs_grakn_core//concept:concept",
-        "//profiler/generator:data-generator",
+        "//profiler/src/generator:data-generator",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
         "//dependencies/maven/artifacts/org/hamcrest:hamcrest-all"
     ]

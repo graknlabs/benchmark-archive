@@ -6,7 +6,7 @@ java_test(
 
     deps = [
         "@graknlabs_grakn_core//concept:concept",
-        "//profiler/generator:data-generator",
+        "//profiler/src/generator:data-generator",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
         "//dependencies/maven/artifacts/org/apache/ignite:ignite-core",
         "//dependencies/maven/artifacts/org/apache/ignite:ignite-indexing",

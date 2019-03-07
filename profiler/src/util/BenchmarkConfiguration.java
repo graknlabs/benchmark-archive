@@ -31,13 +31,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static grakn.benchmark.profiler.util.BenchmarkArguments.CONFIG_ARGUMENT;
-import static grakn.benchmark.profiler.util.BenchmarkArguments.EXECUTION_NAME_ARGUMENT;
-import static grakn.benchmark.profiler.util.BenchmarkArguments.GRAKN_URI;
-import static grakn.benchmark.profiler.util.BenchmarkArguments.KEYSPACE_ARGUMENT;
-import static grakn.benchmark.profiler.util.BenchmarkArguments.LOAD_SCHEMA_ARGUMENT;
-import static grakn.benchmark.profiler.util.BenchmarkArguments.NO_DATA_GENERATION_ARGUMENT;
-
 /**
  * This class parses multiple yaml files into object and wraps them
  * making all the configurations needed for a benchmark execution
@@ -60,7 +53,7 @@ public class BenchmarkConfiguration {
     public BenchmarkConfiguration(CommandLine arguments) {
         Path configFilePath = getConfigFilePath(arguments);
 
-        this.executionName = arguments.getOptionValue(EXECUTION_NAME_ARGUMENT);
+        this.executionName = arguments.getOptionValue(BenchmarkArguments.EXECUTION_NAME_ARGUMENT);
 
         // Parse yaml file with generic configurations
         this.benchmarkConfigFile = parseConfigurationFile(configFilePath);
@@ -72,15 +65,15 @@ public class BenchmarkConfiguration {
         this.graqlSchema = parseGraqlSchema(configFilePath);
 
         // use given keyspace string if exists, otherwise use yaml file `name` tag
-        this.keyspace = arguments.hasOption(KEYSPACE_ARGUMENT) ? arguments.getOptionValue(KEYSPACE_ARGUMENT) : this.graphName();
+        this.keyspace = arguments.hasOption(BenchmarkArguments.KEYSPACE_ARGUMENT) ? arguments.getOptionValue(BenchmarkArguments.KEYSPACE_ARGUMENT) : this.graphName();
 
-        this.graknUri = (arguments.hasOption(GRAKN_URI)) ? arguments.getOptionValue(GRAKN_URI) : DEFAULT_GRAKN_URI;
+        this.graknUri = (arguments.hasOption(BenchmarkArguments.GRAKN_URI)) ? arguments.getOptionValue(BenchmarkArguments.GRAKN_URI) : DEFAULT_GRAKN_URI;
 
         // If --no-data-generation is specified, don't generate any data (work with existing keyspace)
-        this.generateData = !(arguments.hasOption(NO_DATA_GENERATION_ARGUMENT));
+        this.generateData = !(arguments.hasOption(BenchmarkArguments.NO_DATA_GENERATION_ARGUMENT));
 
         // If --load-schema is specified, load a schema even if data generation is disabled
-        this.loadSchema = arguments.hasOption(LOAD_SCHEMA_ARGUMENT);
+        this.loadSchema = arguments.hasOption(BenchmarkArguments.LOAD_SCHEMA_ARGUMENT);
     }
 
     public String graknUri() {
@@ -141,7 +134,7 @@ public class BenchmarkConfiguration {
      * @return absolute path to configuration file
      */
     private Path getConfigFilePath(CommandLine arguments) {
-        String configFileName = arguments.getOptionValue(CONFIG_ARGUMENT);
+        String configFileName = arguments.getOptionValue(BenchmarkArguments.CONFIG_ARGUMENT);
         Path configFilePath = Paths.get(configFileName);
         String workingDirectory = System.getProperty("working.dir");
 

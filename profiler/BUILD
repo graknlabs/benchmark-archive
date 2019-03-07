@@ -21,56 +21,10 @@ exports_files(glob(["conf/**/*"]) + ["benchmark"] + ["setup.sh"], visibility = [
 java_binary(
     name = "benchmark-profiler-binary",
     runtime_deps = [
-        ":benchmark-profiler"
+        "//profiler/src:benchmark-profiler"
     ],
     main_class = "grakn.benchmark.profiler.GraknBenchmark",
-    classpath_resources = [":logback"],
+    classpath_resources = ["//profiler/src:logback"],
     visibility = ["//visibility:public"]
 )
 
-java_library(
-    name = "benchmark-profiler",
-    srcs = glob(["*.java", "util/*.java"]),
-    deps = [
-        "@graknlabs_client_java//:client-java",
-        "@graknlabs_grakn_core//api:api",
-        "@graknlabs_grakn_core//server:server",
-        "@graknlabs_grakn_core//common:common",
-        "@graknlabs_graql//java:graql",
-        "@graknlabs_grakn_core//concept:concept",
-
-        "//lib:lib",
-
-        # TODO should this be via grakn-core's deps?
-        "//dependencies/maven/artifacts/io/grpc:grpc-core",
-
-        "//dependencies/maven/artifacts/com/fasterxml/jackson/core:jackson-core",
-        "//dependencies/maven/artifacts/com/fasterxml/jackson/core:jackson-databind",
-        "//dependencies/maven/artifacts/com/fasterxml/jackson/dataformat:jackson-dataformat-yaml",
-
-        "//dependencies/maven/artifacts/io/zipkin/brave:brave",
-
-        "//dependencies/maven/artifacts/org/slf4j:slf4j-api",
-        "//dependencies/maven/artifacts/org/elasticsearch/client:elasticsearch-rest-client",
-        "//dependencies/maven/artifacts/org/apache/httpcomponents:httpcore",
-        "//dependencies/maven/artifacts/org/apache/httpcomponents:httpclient",
-
-        "//dependencies/maven/artifacts/commons-cli",
-
-        "//dependencies/maven/artifacts/org/apache/ignite:ignite-core",
-
-        "//profiler/generator:data-generator"
-    ],
-    runtime_deps = [
-        "//dependencies/maven/artifacts/io/grpc:grpc-netty-shaded",
-        "//dependencies/maven/artifacts/ch/qos/logback:logback-classic",
-    ],
-    visibility = ["//visibility:public"]
-)
-
-
-filegroup(
-    name = "logback",
-    srcs = ["logback.xml"],
-    visibility = ["//visibility:public"]
-)

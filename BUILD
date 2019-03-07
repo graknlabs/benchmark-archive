@@ -53,7 +53,7 @@ distribution_zip(
         "//profiler:conf/biochemical_network/biochemical_config.yml": "conf/biochemical_network/biochemical_config.yml",
         "//profiler:conf/biochemical_network/biochemical_network.gql": "conf/biochemical_network/biochemical_network.gql",
 
-        "//profiler:logback": "conf/logback.xml",
+        "//profiler/src:logback": "conf/logback.xml",
 
         # External dependencies: Elasticsearch and Zipkin
         "//profiler:setup.sh": "external-dependencies/setup.sh",

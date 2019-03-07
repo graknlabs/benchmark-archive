@@ -79,7 +79,7 @@ jobs:
       - bazel_add_rbe_credential
       # run unit tests
       - bazel:
-          command: bazel test //profiler/generator/test:data-generator-unit-tests --test_output=streamed
+          command: bazel test //profiler/src/generator/test:data-generator-unit-tests --test_output=streamed
       - bazel:
           command: bazel test //profiler/test:profiler-bootup-test --test_output=streamed
       # run integration tests
