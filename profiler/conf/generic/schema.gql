@@ -1,8 +1,51 @@
 define
 
-    blob sub entity;
-    square sub entity;
+    blob sub entity,
+        plays blobber,
+        plays bigger,
+        plays smaller,
+        plays owner,
+        plays owned,
+        has value;
+
+    square sub entity,
+        plays squarer,
+        plays bigger,
+        plays smaller,
+        plays owner,
+        plays owned,
+        has value;
+
     circle sub entity;
+        plays circler,
+        plays bigger,
+        plays smaller,
+        plays owner,
+        plays owned,
+        has value;
+
+
+    interaction sub relation,
+        relates blobber,
+        relates circler,
+        relates squarer,
+        has interacton-value;
+
+    ownership sub relation,
+        relates owner,
+        relates owned,
+        has ownership-cost;
+
+    sizing sub relation,
+        relates bigger,
+        relates smaller,
+        has size;
+
+    value sub attribute, datatype long;
+    interaction-value sub attribute, datatype long;
+    ownership-cost sub attribute, datatype long;
+    size sub attribute, datatype double;
+
 
 
 

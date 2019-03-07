@@ -1,0 +1,40 @@
+queries:
+
+  # linear chain of 3, each possible different starting type
+  # should test the starting point statistics
+  # one generic relationship definitely shouldn't be a starting point
+  - "match
+      $x isa blob;
+      ($x, $y) isa interaction;
+      $y isa square;
+      ($y, $z) isa relationship;
+      $z isa circle;"
+
+
+  # branching from one entity, width 3, depth 1
+  - "match
+      $b1 isa blob;
+      $b2 isa blob;
+      ($b1, $b2) isa ownership;
+
+      $c1 isa circle;
+      ($b1, $c1) isa interaction;
+
+      #s1 isa square;
+      ($b1, $s1) isa interaction;"
+
+  # branching from one entity, width 3, depth 3
+
+  # star, many role players, half with attribute values
+  - "match
+      ($b1, $b2, $c1, $c2, $s1, $s2) isa interaction;
+      $b1 isa blob, has value 1;
+      $b2 isa blob;
+      $c1 isa circle, has value 2;
+      $c2 isa circle;
+      $s1 isa square, has value 3;
+      $s2 isa square;"
+
+  # circle
+
+  # highly connected square
