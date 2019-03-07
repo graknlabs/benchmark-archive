@@ -1,4 +1,4 @@
-package grakn.benchmark.profiler.generator.test.provider;
+package grakn.benchmark.profiler.generator.provider.concept;
 
 import grakn.benchmark.profiler.generator.probdensity.FixedConstant;
 import grakn.benchmark.profiler.generator.provider.concept.CentralConceptProvider;

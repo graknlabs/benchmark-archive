@@ -1,7 +1,6 @@
-package grakn.benchmark.profiler.generator.test.provider;
+package grakn.benchmark.profiler.generator.provider.concept;
 
 import grakn.benchmark.profiler.generator.storage.ConceptStorage;
-import grakn.benchmark.profiler.generator.provider.concept.ConceptIdStorageProvider;
 import grakn.core.concept.ConceptId;
 import org.junit.Test;
 

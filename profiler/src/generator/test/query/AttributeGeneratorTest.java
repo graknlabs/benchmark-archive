@@ -1,4 +1,4 @@
-package grakn.benchmark.profiler.generator.test.query;
+package grakn.benchmark.profiler.generator.query;
 
 import grakn.benchmark.profiler.generator.probdensity.FixedConstant;
 import grakn.benchmark.profiler.generator.provider.value.RandomStringProvider;

@@ -16,9 +16,8 @@
  * along with Grakn. If not, see <http://www.gnu.org/licenses/agpl.txt>.
  */
 
-package grakn.benchmark.profiler.generator.test.storage;
+package grakn.benchmark.profiler.generator.storage;
 
-import grakn.benchmark.profiler.generator.storage.IgniteConceptStorage;
 import grakn.core.concept.Concept;
 import grakn.core.concept.ConceptId;
 import grakn.core.concept.Label;
