@@ -1,7 +1,5 @@
-package grakn.benchmark.profiler.test;
+package grakn.benchmark.profiler;
 
-import grakn.benchmark.profiler.BootupException;
-import grakn.benchmark.profiler.GraknBenchmark;
 import grakn.benchmark.profiler.util.BenchmarkArguments;
 import org.apache.commons.cli.CommandLine;
 import org.junit.Rule;
@@ -15,7 +13,7 @@ import java.nio.file.Paths;
 /**
  *
  */
-public class BenchmarkBootupTestIntegration {
+public class ProfilerBootupTest {
 
     private final static Path WEB_CONTENT_CONFIG_PATH = Paths.get("profiler/test/resources/web_content/web_content_config_test.yml");
 

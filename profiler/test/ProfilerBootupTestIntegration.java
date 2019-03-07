@@ -1,4 +1,4 @@
-package grakn.benchmark.profiler.test;
+package grakn.benchmark.profiler;
 
 import grakn.benchmark.profiler.BootupException;
 import grakn.benchmark.profiler.GraknBenchmark;
@@ -21,7 +21,7 @@ import java.util.UUID;
 import static graql.lang.Graql.type;
 import static graql.lang.Graql.var;
 
-public class BenchmarkTestIntegration {
+public class ProfilerBootupTestIntegration {
     private final static Path WEB_CONTENT_CONFIG_PATH = Paths.get("profiler/test/resources/web_content/web_content_config_test.yml");
 
     @Rule
