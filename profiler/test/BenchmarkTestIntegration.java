@@ -22,7 +22,7 @@ import static graql.lang.Graql.type;
 import static graql.lang.Graql.var;
 
 public class BenchmarkTestIntegration {
-    private final static Path WEB_CONTENT_CONFIG_PATH = Paths.get("profiler/src/test/resources/web_content/web_content_config_test.yml");
+    private final static Path WEB_CONTENT_CONFIG_PATH = Paths.get("profiler/test/resources/web_content/web_content_config_test.yml");
 
     @Rule
     public final ExpectedException expectedException = ExpectedException.none();

@@ -6,9 +6,9 @@ java_test(
         "//profiler:benchmark-profiler",
         "//dependencies/maven/artifacts/commons-cli",
     ],
-    classpath_resources = ["//profiler/src/test/resources:logback-test"],
+    classpath_resources = ["//profiler/test/resources:logback-test"],
     data = [
-        "//profiler/src/test/resources:web-content-config"
+        "//profiler/test/resources:web-content-config"
     ]
 )
 
@@ -25,8 +25,8 @@ java_test(
 
         "//dependencies/maven/artifacts/io/grpc:grpc-core",
     ],
-    classpath_resources = ["//profiler/src/test/resources:logback-test"],
+    classpath_resources = ["//profiler/test/resources:logback-test"],
     data = [
-        "//profiler/src/test/resources:web-content-config"
+        "//profiler/test/resources:web-content-config"
     ]
 )

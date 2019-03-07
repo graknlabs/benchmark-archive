@@ -4,7 +4,7 @@ java_test(
     srcs = ["CentralConceptProviderTest.java"],
     deps = [
         "@graknlabs_grakn_core//concept:concept",
-        "//profiler/src/generator:data-generator",
+        "//profiler/generator:data-generator",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
     ]
 )
@@ -15,7 +15,7 @@ java_test(
     srcs = ["ConceptIdStorageProviderTest.java"],
     deps = [
         "@graknlabs_grakn_core//concept:concept",
-        "//profiler/src/generator:data-generator",
+        "//profiler/generator:data-generator",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
     ]
 )
@@ -26,7 +26,7 @@ java_test(
      srcs = ["NotInRelationshipConceptIdProviderTest.java"],
      deps = [
         "@graknlabs_grakn_core//concept:concept",
-        "//profiler/src/generator:data-generator",
+        "//profiler/generator:data-generator",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
      ]
  )

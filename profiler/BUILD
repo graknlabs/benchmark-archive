@@ -30,7 +30,7 @@ java_binary(
 
 java_library(
     name = "benchmark-profiler",
-    srcs = glob(["src/*.java", "src/util/*.java"]),
+    srcs = glob(["*.java", "util/*.java"]),
     deps = [
         "@graknlabs_client_java//:client-java",
         "@graknlabs_grakn_core//api:api",
@@ -59,7 +59,7 @@ java_library(
 
         "//dependencies/maven/artifacts/org/apache/ignite:ignite-core",
 
-        "//profiler/src/generator:data-generator"
+        "//profiler/generator:data-generator"
     ],
     runtime_deps = [
         "//dependencies/maven/artifacts/io/grpc:grpc-netty-shaded",
@@ -70,6 +70,6 @@ java_library(
 
 filegroup(
     name = "logback",
-    srcs = ["src/logback.xml"],
+    srcs = ["logback.xml"],
     visibility = ["//visibility:public"]
 )
