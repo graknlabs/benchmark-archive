@@ -40,9 +40,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.assertEquals;
@@ -61,13 +63,13 @@ public class IgniteConceptStorageTest {
     private ArrayList<ConceptId> conceptIds;
     private ArrayList<Concept> conceptMocks;
     private String entityTypeLabel;
-    HashSet<EntityType> entityTypes;
+    HashSet<String> entityTypes;
 
     private String attrTypeLabel;
-    HashSet<AttributeType> attributeTypes;
+    Map<String, AttributeType.DataType<?>> attributeTypes;
 
     private String relTypeLabel;
-    HashSet<RelationType> relationshipTypes;
+    HashSet<String> relationshipTypes;
 
     @BeforeClass
     public static void initIgniteServer() throws IgniteException {
@@ -88,11 +90,7 @@ public class IgniteConceptStorageTest {
         typeLabelsSet = new HashSet<>();
         typeLabelsSet.add(entityTypeLabel);
         entityTypes = new HashSet<>();
-
-        EntityType personEntityType = mock(EntityType.class);
-        when(personEntityType.label()).thenReturn(Label.of("person"));
-
-        entityTypes.add(personEntityType);
+        entityTypes.add("person");
 
         conceptIds = new ArrayList<>();
         conceptIds.add(ConceptId.of("V123456"));
@@ -134,11 +132,11 @@ public class IgniteConceptStorageTest {
 
         attrTypeLabel = "age";
         typeLabelsSet.add(attrTypeLabel);
-        attributeTypes = new HashSet<>();
+        attributeTypes = new HashMap<>();
         AttributeType ageAttributeType = mock(AttributeType.class);
         when(ageAttributeType.label()).thenReturn(Label.of(attrTypeLabel));
         when(ageAttributeType.dataType()).thenReturn(AttributeType.DataType.LONG); // Data Type
-        attributeTypes.add(ageAttributeType);
+        attributeTypes.put(attrTypeLabel, AttributeType.DataType.LONG);
 
         Concept conceptMock = mock(Concept.class);
         conceptMocks.add(conceptMock);
@@ -160,7 +158,7 @@ public class IgniteConceptStorageTest {
         relationshipTypes = new HashSet<>();
         RelationType friendRelationshipType = mock(RelationType.class);
         when(friendRelationshipType.label()).thenReturn(Label.of("friendship"));
-        relationshipTypes.add(friendRelationshipType);
+        relationshipTypes.add(relTypeLabel);
 
         Concept relConceptMock = mock(Concept.class);
         conceptMocks.add(relConceptMock);
@@ -321,7 +319,7 @@ public class IgniteConceptStorageTest {
         }
         Concept aPerson = this.conceptMocks.get(0);
         String personTypeLabel = aPerson.asThing().type().label().toString(); // follow what's implemented in mocks
-        String relationshipType = relationshipTypes.stream().findFirst().get().label().toString();
+        String relationshipType = relationshipTypes.stream().findFirst().get();
         String role = "some-role"; // test the string safety conversion too by including -
 
         this.store.addRolePlayer(aPerson.asThing().id().toString(), personTypeLabel, relationshipType, role);
@@ -337,7 +335,7 @@ public class IgniteConceptStorageTest {
         }
         Concept aPerson = this.conceptMocks.get(0);
         String personTypeLabel = aPerson.asThing().type().label().toString(); // follow what's implemented in mocks
-        String relationshipType = relationshipTypes.stream().findFirst().get().label().toString();
+        String relationshipType = relationshipTypes.stream().findFirst().get();
         String role1 = "some-role-1"; // test the string safety conversion too by including -
         String role2 = "some-role-2"; // test the string safety conversion too by including -
 
@@ -364,7 +362,7 @@ public class IgniteConceptStorageTest {
         }
         Concept aPerson = this.conceptMocks.get(0);
         String personTypeLabel = aPerson.asThing().type().label().toString(); // follow what's implemented in mocks
-        String relationshipType = relationshipTypes.stream().findFirst().get().label().toString();
+        String relationshipType = relationshipTypes.stream().findFirst().get();
         String role = "some-role"; // test the string safety conversion too by including -
 
         this.store.addRolePlayer(aPerson.asThing().id().toString(), personTypeLabel, relationshipType, role);
