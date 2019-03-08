@@ -130,7 +130,7 @@ public class GraknBenchmark {
             }
 
 
-        } else if (config.loadSchema()) {  // USECASE:  Load Schema + Profile at different scales running queries from config file
+        } else if (config.loadSchema()) {  // USECASE:  Load Schema + Profile running queries from config file
 
             GraknClient tracingClient = TracingGraknClient.get(config.graknUri());
             List<String> keyspaces;
@@ -143,7 +143,7 @@ public class GraknBenchmark {
             }
 
             QueryProfiler queryProfiler = new QueryProfiler(tracingClient, keyspaces, config);
-            int numConcepts = 0; // TODO re-add this properly for concurrent clients
+            int numConcepts = 0;
             queryProfiler.processStaticQueries(config.numQueryRepetitions(), numConcepts);
             queryProfiler.cleanup();
             tracingClient.close();

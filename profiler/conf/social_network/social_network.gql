@@ -5,7 +5,7 @@ define
 
     # fixed increments
     person sub entity,
-        plays friend
+        plays friend,
         plays liker,
         has name; # increasing number of names added each iter - people will have many names
 
@@ -18,6 +18,6 @@ define
         relates friend; # 2 friends in a friendship only
 
     # scaling increments
-    like sub relation,
+    likes sub relation,
         relates liked, # only 1 liked per like
         relates liker; # only 1 liker per like

@@ -68,16 +68,19 @@ public class RelationGenerator implements QueryGenerator {
             int queriesToGenerate = strategy.getNumInstancesPDF().sample();
             int queriesGenerated = 0;
 
-            private boolean allRolePlayerStrategiesHaveSufficientPlayers() {
+            private boolean haveRequiredRolePlayers() {
+                /*
+                Require that each PDF requires at least 1 role player, else hasNext() may be true but not generate any queries
+                AND that the provider has actually got this many role players
+                 */
                 return strategy.getRolePlayerTypeStrategies().stream()
-                        .map(s -> s.getConceptProvider().hasNextN(s.getNumInstancesPDF().peek()))
+                        .map(s -> s.getNumInstancesPDF().peek() > 0 && s.getConceptProvider().hasNextN(s.getNumInstancesPDF().peek()))
                         .allMatch(b -> b);
             }
 
             @Override
             public boolean hasNext() {
-                boolean tmp = allRolePlayerStrategiesHaveSufficientPlayers();
-                return (queriesGenerated < queriesToGenerate) && tmp;
+                return (queriesGenerated < queriesToGenerate) && haveRequiredRolePlayers();
             }
 
             @Override

@@ -117,7 +117,7 @@ public class SocialNetworkDefinition implements DataGeneratorDefinition {
         this.relationshipStrategies.add(
                 1.0,
                 new RelationStrategy(
-                        "like",
+                        "likes",
                         new ScalingDiscreteGaussian(random, () -> storage.getGraphScale(), 0.05, 0.001),
                         new HashSet<>(Arrays.asList(likedPageRole, likerPersonRole))
                 )
