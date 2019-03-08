@@ -28,11 +28,11 @@ import java.util.Set;
  * - A PDF that can be sampled to indicate how big the new batch of relationships is going to be
  * - A _set_ of RolePlayerTypeStrategy, which in turn contain a type label, quantity PDF and provider for IDs to play that role
  */
-public class RelationshipStrategy extends TypeStrategy {
+public class RelationStrategy extends TypeStrategy {
 
     private Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies;
 
-    public <P extends ProbabilityDensityFunction> RelationshipStrategy(String typeLabel, P numInstancesPDF, Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies) {
+    public <P extends ProbabilityDensityFunction> RelationStrategy(String typeLabel, P numInstancesPDF, Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies) {
         super(typeLabel, numInstancesPDF);
         this.rolePlayerTypeStrategies = rolePlayerTypeStrategies;
     }

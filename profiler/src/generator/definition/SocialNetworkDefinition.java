@@ -9,7 +9,7 @@ import grakn.benchmark.profiler.generator.provider.value.RandomStringProvider;
 import grakn.benchmark.profiler.generator.storage.ConceptStorage;
 import grakn.benchmark.profiler.generator.strategy.AttributeStrategy;
 import grakn.benchmark.profiler.generator.strategy.EntityStrategy;
-import grakn.benchmark.profiler.generator.strategy.RelationshipStrategy;
+import grakn.benchmark.profiler.generator.strategy.RelationStrategy;
 import grakn.benchmark.profiler.generator.strategy.RolePlayerTypeStrategy;
 import grakn.benchmark.profiler.generator.strategy.TypeStrategy;
 import grakn.benchmark.profiler.generator.util.WeightedPicker;
@@ -95,7 +95,7 @@ public class SocialNetworkDefinition implements DataGeneratorDefinition {
         );
         this.relationshipStrategies.add(
                 1.0,
-                new RelationshipStrategy(
+                new RelationStrategy(
                         "friendship",
                         new ScalingBoundedZipf(this.random, () -> storage.getGraphScale(), 0.5, 2.3),
                         new HashSet<>(Arrays.asList(friendRoleFiller))
@@ -116,8 +116,8 @@ public class SocialNetworkDefinition implements DataGeneratorDefinition {
         );
         this.relationshipStrategies.add(
                 1.0,
-                new RelationshipStrategy(
-                        "like",
+                new RelationStrategy(
+                        "likes",
                         new ScalingDiscreteGaussian(random, () -> storage.getGraphScale(), 0.05, 0.001),
                         new HashSet<>(Arrays.asList(likedPageRole, likerPersonRole))
                 )
@@ -139,7 +139,7 @@ public class SocialNetworkDefinition implements DataGeneratorDefinition {
         );
         this.relationshipStrategies.add(
                 1.0,
-                new RelationshipStrategy(
+                new RelationStrategy(
                         "@has-name",
                         new ScalingDiscreteGaussian(random, () -> storage.getGraphScale(), 0.1, 0.03),
                         new HashSet<>(Arrays.asList(nameOwner, nameValue))

@@ -1,6 +1,6 @@
 /*
  *  GRAKN.AI - THE KNOWLEDGE GRAPH
- *  Copyright (C) 2018 GraknClient Labs Ltd
+ *  Copyright (C) 2018 Grakn Labs Ltd
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as
@@ -22,8 +22,6 @@ import grakn.benchmark.profiler.BootupException;
 import grakn.core.client.GraknClient;
 import grakn.core.concept.answer.ConceptMap;
 import grakn.core.concept.type.AttributeType;
-import grakn.core.concept.type.EntityType;
-import grakn.core.concept.type.RelationType;
 import grakn.core.concept.type.Type;
 import grakn.core.server.kb.Schema;
 import graql.lang.Graql;
@@ -32,6 +30,7 @@ import graql.lang.query.GraqlQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,7 +42,7 @@ import static graql.lang.Graql.var;
 
 /**
  * This class performs basic operations and checks on a given keyspace.
- *
+ * <p>
  * This will be replaced by GraknClient Client when all features will be implemented in it.
  */
 @SuppressWarnings("CheckReturnValue")
@@ -84,30 +83,62 @@ public class SchemaManager {
         }
     }
 
-    private <T extends Type> HashSet<T> getTypesOfMetaType(String metaTypeName) {
-        HashSet<T> types;
+    private HashSet<String> getLabelsOfMetaType(String metaTypeName) {
+        HashSet<Type> types;
+        HashSet<String> typeLabels = new HashSet<>();
         try (GraknClient.Transaction tx = session.transaction().read()) {
 
             GraqlGet graqlGet = Graql.match(var("x").sub(metaTypeName)).get();
             List<ConceptMap> result = tx.execute(graqlGet);
 
             types = result.stream()
-                    .map(answer -> (T) answer.get("x").asType())
+                    .map(answer -> answer.get("x").asType())
                     .filter(type -> !type.isImplicit())
                     .filter(type -> !Schema.MetaSchema.isMetaLabel(type.label()))
                     .collect(Collectors.toCollection(HashSet::new));
 
+
+            for (Type conceptType : types) {
+                typeLabels.add(conceptType.label().toString());
+            }
         }
-        return types;
+        return typeLabels;
     }
 
-    public HashSet<AttributeType> getAttributeTypes(){
-        return getTypesOfMetaType("attribute");
+    private HashMap<String, AttributeType.DataType<?>> getAttributeTypeLabels(String metaTypeName) {
+        HashSet<AttributeType> types;
+        HashMap<String, AttributeType.DataType<?>> typeLabels = new HashMap<>();
+        try (GraknClient.Transaction tx = session.transaction().read()) {
+
+            GraqlGet graqlGet = Graql.match(var("x").sub(metaTypeName)).get();
+            List<ConceptMap> result = tx.execute(graqlGet);
+
+            types = result.stream()
+                    .map(answer -> answer.get("x").asAttributeType())
+                    .filter(type -> !type.isImplicit())
+                    .filter(type -> !Schema.MetaSchema.isMetaLabel(type.label()))
+                    .collect(Collectors.toCollection(HashSet::new));
+
+
+            for (AttributeType conceptType : types) {
+                String label = conceptType.label().toString();
+                AttributeType.DataType<?> datatype = conceptType.dataType();
+                typeLabels.put(label, datatype);
+            }
+        }
+
+        return typeLabels;
     }
-    public HashSet<RelationType> getRelationshipTypes(){
-        return getTypesOfMetaType("relationship");
+
+    public HashMap<String, AttributeType.DataType<?>> getAttributeTypes() {
+        return getAttributeTypeLabels("attribute");
     }
-    public HashSet<EntityType> getEntityTypes(){
-        return getTypesOfMetaType("entity");
+
+    public HashSet<String> getRelationTypes() {
+        return getLabelsOfMetaType("relation");
+    }
+
+    public HashSet<String> getEntityTypes() {
+        return getLabelsOfMetaType("entity");
     }
 }

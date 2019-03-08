@@ -66,7 +66,7 @@ public class ScalingBoundedZipf implements ProbabilityDensityFunction {
 
     @Override
     public int sample() {
-        takeSampleIfNextNullOrScaleChanged();
+        computeNextSample();
         int val = next;
         next = null;
         return val;
@@ -74,11 +74,11 @@ public class ScalingBoundedZipf implements ProbabilityDensityFunction {
 
     @Override
     public int peek() {
-        takeSampleIfNextNullOrScaleChanged();
+        computeNextSample();
         return next;
     }
 
-    public void takeSampleIfNextNullOrScaleChanged() {
+    private void computeNextSample() {
         int newScale = scaleSupplier.get();
         if (next == null || newScale != previousScale) {
             if (newScale != previousScale && newScale != 0) {
@@ -108,15 +108,18 @@ public class ScalingBoundedZipf implements ProbabilityDensityFunction {
                     newExponent = solver.solve(100, func, expLowerBound, expUpperBound, previousExponent);
                     LOG.debug("Old (range, exponent) zipf parameters: (" + oldRange + ", " + previousExponent + "). New params: (" +
                             newRange + ", " + newExponent + ")");
-                    this.zipf = new ZipfDistribution(randomGenerator, newRange, newExponent);
+                    zipf = new ZipfDistribution(randomGenerator, newRange, newExponent);
                     previousExponent = newExponent;
-                    next = this.zipf.sample();
+                    previousScale = newScale;
+                    next = zipf.sample();
                 }
             } else if (newScale == 0) {
                 // just return 0 if the allowed range is 0 length
                 next = 0;
+            } else {
+                // just sample from the current zipf again
+                next = zipf.sample();
             }
-            previousScale = newScale;
         }
     }
 

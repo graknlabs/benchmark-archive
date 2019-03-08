@@ -19,7 +19,7 @@
 package grakn.benchmark.profiler.generator.query;
 
 import grakn.benchmark.profiler.generator.provider.concept.CentralConceptProvider;
-import grakn.benchmark.profiler.generator.strategy.RelationshipStrategy;
+import grakn.benchmark.profiler.generator.strategy.RelationStrategy;
 import grakn.benchmark.profiler.generator.strategy.RolePlayerTypeStrategy;
 import grakn.core.concept.ConceptId;
 import graql.lang.Graql;
@@ -41,10 +41,10 @@ import static graql.lang.Graql.var;
  * <p>
  * If a role cannot be filled no relationship will be generated.
  */
-public class RelationshipGenerator implements QueryGenerator {
-    private final RelationshipStrategy strategy;
+public class RelationGenerator implements QueryGenerator {
+    private final RelationStrategy strategy;
 
-    public RelationshipGenerator(RelationshipStrategy strategy) {
+    public RelationGenerator(RelationStrategy strategy) {
         this.strategy = strategy;
     }
 
@@ -68,16 +68,19 @@ public class RelationshipGenerator implements QueryGenerator {
             int queriesToGenerate = strategy.getNumInstancesPDF().sample();
             int queriesGenerated = 0;
 
-            private boolean allRolePlayerStrategiesHaveSufficientPlayers() {
+            private boolean haveRequiredRolePlayers() {
+                /*
+                Require that each PDF requires at least 1 role player, else hasNext() may be true but not generate any queries
+                AND that the provider has actually got this many role players
+                 */
                 return strategy.getRolePlayerTypeStrategies().stream()
-                        .map(s -> s.getConceptProvider().hasNextN(s.getNumInstancesPDF().peek()))
+                        .map(s -> s.getNumInstancesPDF().peek() > 0 && s.getConceptProvider().hasNextN(s.getNumInstancesPDF().peek()))
                         .allMatch(b -> b);
             }
 
             @Override
             public boolean hasNext() {
-                boolean tmp = allRolePlayerStrategiesHaveSufficientPlayers();
-                return (queriesGenerated < queriesToGenerate) && tmp;
+                return (queriesGenerated < queriesToGenerate) && haveRequiredRolePlayers();
             }
 
             @Override

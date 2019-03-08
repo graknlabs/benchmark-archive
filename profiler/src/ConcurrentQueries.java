@@ -85,6 +85,8 @@ class ConcurrentQueries implements Runnable {
             System.out.println("Thread sleeps during data generation were interrupted");
             e.printStackTrace();
             Thread.currentThread().interrupt();
+        } finally {
+            session.close();
         }
         System.out.println("Thread runnable finished running queries");
         System.out.print("\n\n");

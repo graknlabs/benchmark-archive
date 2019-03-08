@@ -3,9 +3,8 @@ package grakn.benchmark.profiler.generator.query;
 import grakn.benchmark.profiler.generator.probdensity.FixedConstant;
 import grakn.benchmark.profiler.generator.provider.concept.CentralConceptProvider;
 import grakn.benchmark.profiler.generator.provider.concept.ConceptIdProvider;
-import grakn.benchmark.profiler.generator.strategy.RelationshipStrategy;
+import grakn.benchmark.profiler.generator.strategy.RelationStrategy;
 import grakn.benchmark.profiler.generator.strategy.RolePlayerTypeStrategy;
-import grakn.benchmark.profiler.generator.query.RelationshipGenerator;
 import grakn.core.concept.ConceptId;
 import graql.lang.query.GraqlInsert;
 import org.junit.Test;
@@ -23,12 +22,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class RelationshipGeneratorTest {
+public class RelationGeneratorTest {
 
     @Test
     public void whenUsingCentralRolePlayerProvider_resetIsCalled() {
 
-        RelationshipStrategy strategy = mock(RelationshipStrategy.class);
+        RelationStrategy strategy = mock(RelationStrategy.class);
 
         Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies = new HashSet<>();
         RolePlayerTypeStrategy rolePlayerTypeStrategy = mock(RolePlayerTypeStrategy.class);
@@ -45,7 +44,7 @@ public class RelationshipGeneratorTest {
         when(centralConceptProvider.next()).thenReturn(conceptIdList.get(0));
 
 
-        RelationshipGenerator relationshipQueryGenerator = new RelationshipGenerator(strategy);
+        RelationGenerator relationshipQueryGenerator = new RelationGenerator(strategy);
         Iterator<GraqlInsert> queries = relationshipQueryGenerator.generate();
 
         verify(centralConceptProvider, times(1)).resetUniqueness();
@@ -54,7 +53,7 @@ public class RelationshipGeneratorTest {
     @Test
     public void whenUsingMultipleRolesWithPdf2_allRolePlayersFilledTwice() {
 
-        RelationshipStrategy strategy = mock(RelationshipStrategy.class);
+        RelationStrategy strategy = mock(RelationStrategy.class);
 
         List<ConceptId> ownerRolePlayers = Arrays.asList(ConceptId.of("a"), ConceptId.of("b"));
         ConceptIdProvider ownerIdProvider = mock(ConceptIdProvider.class);
@@ -79,7 +78,7 @@ public class RelationshipGeneratorTest {
         when(strategy.getNumInstancesPDF()).thenReturn(new FixedConstant(2));
 
 
-        RelationshipGenerator queryGenerator = new RelationshipGenerator(strategy);
+        RelationGenerator queryGenerator = new RelationGenerator(strategy);
         Iterator<GraqlInsert> queries = queryGenerator.generate();
 
         assertTrue(queries.hasNext());
@@ -99,7 +98,7 @@ public class RelationshipGeneratorTest {
 
     @Test
     public void whenRepeatedRole_roleIsRepeatedInQuery() {
-        RelationshipStrategy strategy = mock(RelationshipStrategy.class);
+        RelationStrategy strategy = mock(RelationStrategy.class);
 
         List<ConceptId> friendRolePlayers1 = Arrays.asList(ConceptId.of("a"), ConceptId.of("b"));
         ConceptIdProvider ownerIdProvider = mock(ConceptIdProvider.class);
@@ -125,7 +124,7 @@ public class RelationshipGeneratorTest {
         when(strategy.getTypeLabel()).thenReturn("friendship");
         when(strategy.getNumInstancesPDF()).thenReturn(new FixedConstant(1));
 
-        RelationshipGenerator queryGenerator = new RelationshipGenerator(strategy);
+        RelationGenerator queryGenerator = new RelationGenerator(strategy);
         Iterator<GraqlInsert> queries = queryGenerator.generate();
 
         assertTrue(queries.hasNext());
@@ -147,7 +146,7 @@ public class RelationshipGeneratorTest {
 
     @Test
     public void whenRoleProvidersHaveDifferentAvailability_generateFewerInsertQueries() {
-        RelationshipStrategy strategy = mock(RelationshipStrategy.class);
+        RelationStrategy strategy = mock(RelationStrategy.class);
 
         // this RolePlayer filler will only have enough for ONE relationship with two role players
         List<ConceptId> friendRolePlayers1 = Arrays.asList(ConceptId.of("a"), ConceptId.of("b"));
@@ -175,7 +174,7 @@ public class RelationshipGeneratorTest {
         // target: generate two relationships
         when(strategy.getNumInstancesPDF()).thenReturn(new FixedConstant(2));
 
-        RelationshipGenerator queryGenerator = new RelationshipGenerator(strategy);
+        RelationGenerator queryGenerator = new RelationGenerator(strategy);
         Iterator<GraqlInsert> queries = queryGenerator.generate();
 
         assertTrue(queries.hasNext());
@@ -185,7 +184,7 @@ public class RelationshipGeneratorTest {
 
     @Test
     public void whenARoleProviderHasTooFewPlayers_generateFewerQueries() {
-        RelationshipStrategy strategy = mock(RelationshipStrategy.class);
+        RelationStrategy strategy = mock(RelationStrategy.class);
 
         // this RolePlayer filler will only have enough for 1.5 relationship with two role players
         List<ConceptId> friendRolePlayers1 = Arrays.asList(ConceptId.of("a"), ConceptId.of("b"), ConceptId.of("e"));
@@ -213,7 +212,7 @@ public class RelationshipGeneratorTest {
         // target: generate two relationships
         when(strategy.getNumInstancesPDF()).thenReturn(new FixedConstant(2));
 
-        RelationshipGenerator queryGenerator = new RelationshipGenerator(strategy);
+        RelationGenerator queryGenerator = new RelationGenerator(strategy);
         Iterator<GraqlInsert> queries = queryGenerator.generate();
 
         assertTrue(queries.hasNext());

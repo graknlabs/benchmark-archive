@@ -19,6 +19,7 @@
 package grakn.benchmark.profiler;
 
 import brave.Tracing;
+import grakn.benchmark.profiler.util.BenchmarkConfiguration;
 import grakn.core.client.GraknClient;
 import grakn.core.concept.answer.Numeric;
 import graql.lang.Graql;
@@ -47,25 +48,28 @@ public class QueryProfiler {
     private final String executionName;
     private final String graphName;
     private final List<GraqlQuery> queries;
+    private final GraknClient client;
+    private final List<String> keyspaces;
+    private final int concurrentClients;
     private boolean commitQueries;
-    private final List<GraknClient.Session> sessions;
     private ExecutorService executorService;
 
-    public QueryProfiler(List<GraknClient.Session> sessions, String executionName, String graphName, List<String> queryStrings, boolean commitQueries) {
-        this.sessions = sessions;
-
-        this.executionName = executionName;
-        this.graphName = graphName;
+    public QueryProfiler(GraknClient client, List<String> keyspaces, BenchmarkConfiguration config) {
+        this.client = client;
+        this.keyspaces = keyspaces;
+        this.concurrentClients = config.concurrentClients();
+        this.executionName = config.executionName();
+        this.graphName = config.graphName();
 
         // convert Graql strings into GraqlQuery types
-        this.queries = queryStrings.stream()
+        this.queries = config.getQueries().stream()
                 .map(q -> (GraqlQuery) Graql.parse(q))
                 .collect(Collectors.toList());
 
-        this.commitQueries = commitQueries;
+        this.commitQueries = config.commitQueries();
 
         // create 1 thread per client session
-        executorService = Executors.newFixedThreadPool(sessions.size());
+        executorService = Executors.newFixedThreadPool(concurrentClients);
     }
 
     public void processStaticQueries(int numRepeats, int numConcepts) {
@@ -86,8 +90,10 @@ public class QueryProfiler {
 
         long start = System.currentTimeMillis();
 
-        for (int i = 0; i < sessions.size(); i++) {
-            GraknClient.Session session = sessions.get(i);
+        for (int i = 0; i < concurrentClients; i++) {
+            // TODO: this can probably be optimised (keeping sessions open)
+            String keyspace = (keyspaces.size() > 1) ? keyspaces.get(i) : keyspaces.get(0);
+            GraknClient.Session session = client.session(keyspace);
             ConcurrentQueries processor = new ConcurrentQueries(executionName, i, graphName, Tracing.currentTracer(), queries, repetitions, numConcepts, session, commitQueries);
 
             runningConcurrentQueries.add(executorService.submit(processor));
@@ -98,9 +104,7 @@ public class QueryProfiler {
             for (Future future : runningConcurrentQueries) {
                 future.get();
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
 

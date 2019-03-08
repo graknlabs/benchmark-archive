@@ -9,7 +9,7 @@ import grakn.benchmark.profiler.generator.provider.value.UniqueIntegerProvider;
 import grakn.benchmark.profiler.generator.storage.ConceptStorage;
 import grakn.benchmark.profiler.generator.strategy.AttributeStrategy;
 import grakn.benchmark.profiler.generator.strategy.EntityStrategy;
-import grakn.benchmark.profiler.generator.strategy.RelationshipStrategy;
+import grakn.benchmark.profiler.generator.strategy.RelationStrategy;
 import grakn.benchmark.profiler.generator.strategy.RolePlayerTypeStrategy;
 import grakn.benchmark.profiler.generator.strategy.TypeStrategy;
 import grakn.benchmark.profiler.generator.util.WeightedPicker;
@@ -108,7 +108,7 @@ public class BiochemicalNetworkDefinition implements DataGeneratorDefinition {
         );
         this.relationshipStrategies.add(
                 3.0,
-                new RelationshipStrategy(
+                new RelationStrategy(
                         "interaction",
                         new FixedDiscreteGaussian(this.random, 50, 25),
                         new HashSet<>(Arrays.asList(agentRolePlayer, catalystRolePlayer))
@@ -140,7 +140,7 @@ public class BiochemicalNetworkDefinition implements DataGeneratorDefinition {
         );
         this.relationshipStrategies.add(
                 1.0,
-                new RelationshipStrategy(
+                new RelationStrategy(
                         "@has-biochem-id",
                         new FixedDiscreteGaussian(random, 20, 5), // more than number of entities being created to compensate for being picked less
                         new HashSet<>(Arrays.asList(chemicalIdOwner, chemicalIdValue))
@@ -169,7 +169,7 @@ public class BiochemicalNetworkDefinition implements DataGeneratorDefinition {
         );
         this.relationshipStrategies.add(
                 1.0,
-                new RelationshipStrategy(
+                new RelationStrategy(
                         "@has-biochem-id",
                         new FixedDiscreteGaussian(random, 20, 5), // more than number of entities being created to compensate for being picked less
                         new HashSet<>(Arrays.asList(enzymeIdOwner, enzymeIdValue))

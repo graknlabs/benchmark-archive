@@ -9,7 +9,7 @@ import grakn.benchmark.profiler.generator.provider.value.RandomStringProvider;
 import grakn.benchmark.profiler.generator.storage.ConceptStorage;
 import grakn.benchmark.profiler.generator.strategy.AttributeStrategy;
 import grakn.benchmark.profiler.generator.strategy.EntityStrategy;
-import grakn.benchmark.profiler.generator.strategy.RelationshipStrategy;
+import grakn.benchmark.profiler.generator.strategy.RelationStrategy;
 import grakn.benchmark.profiler.generator.strategy.RolePlayerTypeStrategy;
 import grakn.benchmark.profiler.generator.strategy.TypeStrategy;
 import grakn.benchmark.profiler.generator.util.WeightedPicker;
@@ -98,7 +98,7 @@ public class RoadNetworkDefinition implements DataGeneratorDefinition {
 
         this.relationshipStrategies.add(
                 1.0,
-                new RelationshipStrategy(
+                new RelationStrategy(
                         "intersection",
                         new FixedUniform(random, 20, 100),
                         new HashSet<>(Arrays.asList(unusedEndpointRoads, anyEndpointRoads))
@@ -138,7 +138,7 @@ public class RoadNetworkDefinition implements DataGeneratorDefinition {
         );
         this.relationshipStrategies.add(
                 1.0,
-                new RelationshipStrategy(
+                new RelationStrategy(
                         "@has-name",
                         new FixedConstant(60),
                         new HashSet<>(Arrays.asList(nameOwner, nameValue))

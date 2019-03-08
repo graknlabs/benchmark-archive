@@ -63,7 +63,7 @@ public class IgniteConceptStorage implements ConceptStorage {
     private HashSet<String> entityTypeLabels;
     private HashSet<String> relationshipTypeLabels;
     private HashSet<String> explicitRelationshipTypeLabels;
-    private HashMap<java.lang.String, AttributeType.DataType<?>> attributeTypeLabels; // typeLabel, datatype
+    private Map<String, AttributeType.DataType<?>> attributeTypeLabels; // typeLabel, datatype
     private HashMap<String, String> labelToSqlName;
 
     private Connection conn;
@@ -90,31 +90,27 @@ public class IgniteConceptStorage implements ConceptStorage {
         DATATYPE_MAPPING = Collections.unmodifiableMap(mapBuilder);
     }
 
-    public IgniteConceptStorage(HashSet<EntityType> entityTypes, HashSet<RelationType> relationshipTypes, HashSet<AttributeType> attributeTypes) {
+    public IgniteConceptStorage(HashSet<String> entityTypeLabels, HashSet<String> relationshipTypeLabels, Map<String, AttributeType.DataType<?>> attributeTypeLabels) {
         LOG.info("Initialising ignite...");
         // Read schema concepts and create ignite tables
-        collectTypeLabels(entityTypes, relationshipTypes, attributeTypes);
-        labelToSqlName = mapLabelToSqlName(entityTypeLabels, relationshipTypeLabels, attributeTypeLabels.keySet());
-        cleanTables();
-        initializeSqlDriver();
-        createTables();
-    }
+        this.entityTypeLabels = entityTypeLabels;
+        this.explicitRelationshipTypeLabels = relationshipTypeLabels;
+        this.attributeTypeLabels = attributeTypeLabels;
 
-    private void collectTypeLabels(Set<EntityType> entityTypes,
-                                   Set<RelationType> relationshipTypes,
-                                   Set<AttributeType> attributeTypes) {
-        this.entityTypeLabels = this.getTypeLabels(entityTypes);
-        this.explicitRelationshipTypeLabels = this.getTypeLabels(relationshipTypes);
-        this.attributeTypeLabels = this.getAttributeTypeLabels(attributeTypes);
-
-        this.relationshipTypeLabels = this.getTypeLabels(relationshipTypes);
+        this.relationshipTypeLabels = relationshipTypeLabels;
         // add @has-[attribute] relationships as possible relationships
         // sanitize the @has-[attribute] to valid SQL strings
         for (String s : this.attributeTypeLabels.keySet()) {
             this.relationshipTypeLabels.add("@has-" + s);
         }
 
+
+        labelToSqlName = mapLabelToSqlName(entityTypeLabels, relationshipTypeLabels, attributeTypeLabels.keySet());
+        cleanTables();
+        initializeSqlDriver();
+        createTables();
     }
+
 
     /**
      * Convert raw type labels to more specific SQL names by appending _entity/_relationship/_attr
@@ -133,24 +129,6 @@ public class IgniteConceptStorage implements ConceptStorage {
             labelToSqlName.put(relationshipLabel, sanitizeString(relationshipLabel + "_relationship"));
         }
         return labelToSqlName;
-    }
-
-    private <T extends SchemaConcept> HashSet<String> getTypeLabels(Set<T> conceptTypes) {
-        HashSet<String> typeLabels = new HashSet<>();
-        for (T conceptType : conceptTypes) {
-            typeLabels.add(conceptType.label().toString());
-        }
-        return typeLabels;
-    }
-
-    private HashMap<String, AttributeType.DataType<?>> getAttributeTypeLabels(Set<AttributeType> conceptTypes) {
-        HashMap<String, AttributeType.DataType<?>> typeLabels = new HashMap<>();
-        for (AttributeType conceptType : conceptTypes) {
-            String label = conceptType.label().toString();
-            AttributeType.DataType<?> datatype = conceptType.dataType();
-            typeLabels.put(label, datatype);
-        }
-        return typeLabels;
     }
 
     private void cleanTables() {

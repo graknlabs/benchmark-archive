@@ -40,7 +40,7 @@
     </appender>
 
     <root level="INFO"/>
-    <logger name="grakn.benchmark.profiler.src.GraknBenchmark" level="INFO">
+    <logger name="grakn.benchmark.profiler.GraknBenchmark" level="INFO">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="grakn.benchmark" level="INFO">
