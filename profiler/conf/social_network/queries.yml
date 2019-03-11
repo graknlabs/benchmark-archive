@@ -2,3 +2,9 @@ queries:
   - "match $x isa person; get;"
   - "match $x has name $n; $n isa name; get;"
   - "match $r (friend: $f); $f isa person; get;"
+
+
+  # NOTE: all pure insert queries must provide variables for each inserted concept or they won't be deleted
+  - "insert $x isa person;"
+  - "insert $x isa name; $x \"johnny boy\";" # insert an attr value that doesn't exist
+  - "insert $person isa person; $page isa page; $r (liker: $person, liked: $page) isa likes;"

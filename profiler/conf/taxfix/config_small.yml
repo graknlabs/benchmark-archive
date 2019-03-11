@@ -3,8 +3,8 @@ schema: "taxfix_schema.gql"
 repeatsPerQuery: 2
 
 queries: "queries_small.yml"
-commitQueries: true
 deleteCommitedQueries: false
+traceDeleteInsertedConcepts: false
 
 concurrency:
   clients: 1

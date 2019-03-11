@@ -4,10 +4,11 @@ scales:
   - 400
   - 1000
   - 2000
-repeatsPerQuery: 5
+repeatsPerQuery: 10
 
 queries: "queries.yml"
 deleteInsertedConcepts: true
+traceDeleteInsertedConcepts: false
 
 concurrency:
   clients: 1

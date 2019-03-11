@@ -5,3 +5,9 @@ queries:
   - "match $x has name $n; get;"
   # expect to see scale in role player (upper bounded) * number of relationships (fixed increments)
   - "match $r (endpoint: $endpoint); get $endpoint;"
+
+
+  # NOTE: all pure insert queries must provide variables for each inserted concept or they won't be deleted
+  - "insert $x isa road;"
+  - "insert $x isa name; $x \"helloworld\";" # insert an attr value that doesn't exist
+  - "insert $r1 isa road; $r2 isa road; $r3 isa road; $inter (endpoint: $r1, endpoint: $r2, endpoint: $r3) isa interaction;"

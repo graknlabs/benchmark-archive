@@ -32,6 +32,7 @@ public class BenchmarkConfigurationFile {
     private Integer repeatsPerQuery;
 
     private boolean deleteInsertedConcepts;
+    private boolean traceDeleteInsertedConcepts;
     private Concurrency concurrency;
 
     public void setGraphName(String graphName) {
@@ -59,6 +60,11 @@ public class BenchmarkConfigurationFile {
         this.deleteInsertedConcepts = deleteInsertedConcepts;
     }
     public boolean deleteInsertedConcepts() { return deleteInsertedConcepts; }
+
+    public void setTraceDeleteInsertedConcepts(Boolean traceDeleteInsertedConcepts) {
+        this.traceDeleteInsertedConcepts = traceDeleteInsertedConcepts;
+    }
+    public boolean traceDeleteInsertedConcepts() { return traceDeleteInsertedConcepts; }
 
     public void setScales(List<Integer> scales) {
         this.scalesToProfile = scales;

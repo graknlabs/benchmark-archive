@@ -8,12 +8,16 @@ import grakn.core.client.GraknClient;
 import grakn.core.concept.answer.Answer;
 import grakn.core.concept.answer.ConceptMap;
 import graql.lang.Graql;
+import graql.lang.query.GraqlCompute;
+import graql.lang.query.GraqlDelete;
+import graql.lang.query.GraqlGet;
 import graql.lang.query.GraqlInsert;
 import graql.lang.query.GraqlQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 class ConcurrentQueries implements Runnable {
@@ -27,9 +31,10 @@ class ConcurrentQueries implements Runnable {
     private final int numConcepts;
     private final GraknClient.Session session;
     private final boolean deleteInsertedConcepts;
+    private final boolean traceDeleteInsertedConcepts;
     private String executionName;
 
-    public ConcurrentQueries(String executionName, int concurrentId, String graphName, Tracer tracer, List<GraqlQuery> queries, int repetitions, int numConcepts, GraknClient.Session session, boolean deleteInsertedConcepts) {
+    public ConcurrentQueries(String executionName, int concurrentId, String graphName, Tracer tracer, List<GraqlQuery> queries, int repetitions, int numConcepts, GraknClient.Session session, boolean deleteInsertedConcepts, boolean traceDeleteInsertedConcepts) {
         this.executionName = executionName;
         this.concurrentId = concurrentId;
         this.graphName = graphName;
@@ -39,6 +44,7 @@ class ConcurrentQueries implements Runnable {
         this.numConcepts = numConcepts;
         this.session = session;
         this.deleteInsertedConcepts = deleteInsertedConcepts;
+        this.traceDeleteInsertedConcepts = traceDeleteInsertedConcepts;
     }
 
     @Override
@@ -61,6 +67,13 @@ class ConcurrentQueries implements Runnable {
                         System.out.println("Executed query #: " + counter + ", elapsed time " + (System.currentTimeMillis() - startTime));
                     }
                     Span querySpan = tracer.newChild(concurrentExecutionSpan.context());
+
+                    if (query instanceof GraqlInsert) { querySpan.name("insert-query"); }
+                    else if (query instanceof GraqlGet) { querySpan.name("get-query"); }
+                    else if (query instanceof GraqlDelete) { querySpan.name("delete-query"); }
+                    else if (query instanceof GraqlCompute) { querySpan.name("compute-query"); }
+                    else { querySpan.name("query"); }
+
                     querySpan.name("query");
                     querySpan.tag("query", query.toString());
                     querySpan.tag("repetitions", Integer.toString(repetitions));
@@ -68,7 +81,7 @@ class ConcurrentQueries implements Runnable {
                     querySpan.start();
 
                     // perform trace in thread-local storage on the client
-                    List<String> insertedConceptIds = null;
+                    Set<String> insertedConceptIds = null;
                     try (Tracer.SpanInScope span = tracer.withSpanInScope(querySpan)) {
                         // open new transaction
                         GraknClient.Transaction tx = session.transaction().write();
@@ -77,7 +90,7 @@ class ConcurrentQueries implements Runnable {
                         if (query instanceof GraqlInsert) {
                             insertedConceptIds = InsertQueryAnalyser.getInsertedConcepts((GraqlInsert)query, (List<ConceptMap>)answer)
                                         .stream().map(concept -> concept.id().toString())
-                                        .collect(Collectors.toList());
+                                        .collect(Collectors.toSet());
                         }
                         tx.commit();
                     } finally {
@@ -86,22 +99,24 @@ class ConcurrentQueries implements Runnable {
 
 
                     if (deleteInsertedConcepts && insertedConceptIds != null) {
-                        Span deleteQuerySpan = tracer.newChild(concurrentExecutionSpan.context());
-                        deleteQuerySpan.name("deleteQuery");
-                        try (Tracer.SpanInScope span = tracer.withSpanInScope(deleteQuerySpan)) {
-                            for (String conceptId : insertedConceptIds) {
-                                try {
-                                    GraknClient.Transaction tx = session.transaction().write();
+                        if (traceDeleteInsertedConcepts) {
+                            Span deleteQuerySpan = tracer.newChild(concurrentExecutionSpan.context());
+                            deleteQuerySpan.name("delete-query");
+                            deleteQuerySpan.start();
+                            try (Tracer.SpanInScope span = tracer.withSpanInScope(deleteQuerySpan)) {
+                                // create one tx per ID in case the concept no longer exists and throws an error (attr dedup)
+                                GraknClient.Transaction tx = session.transaction().write();
+                                for (String conceptId : insertedConceptIds) {
                                     tx.execute(Graql.parse("match $x id " + conceptId + "; delete $x;").asDelete());
-                                    tx.commit();
-                                } catch (Exception e) {
-                                    // we may be trying to delete an ID that has been de-duplicated
-                                    // because we're eventually consistent, so this is non-fatal
-                                    LOG.warn("Delete query failed following insert", e);
                                 }
+                                tx.commit();
+                            } finally {
+                                deleteQuerySpan.finish();
                             }
-                        } finally {
-                            deleteQuerySpan.finish();
+                        } else {
+                            GraknClient.Transaction tx = session.transaction().write();
+                            insertedConceptIds.iterator().forEachRemaining(id -> tx.execute(Graql.parse("match $x id " + id + "; delete $x;").asDelete()));
+                            tx.commit();
                         }
                     }
                     counter++;

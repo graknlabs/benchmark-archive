@@ -4,6 +4,7 @@ repeatsPerQuery: 1
 
 queries: "queries.yml"
 deleteInsertedConcepts: false
+traceDeleteInsertedConcepts: false
 
 concurrency:
   clients: 2

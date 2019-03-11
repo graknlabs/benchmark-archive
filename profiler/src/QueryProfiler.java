@@ -52,6 +52,7 @@ public class QueryProfiler {
     private final List<String> keyspaces;
     private final int concurrentClients;
     private boolean deleteInsertedConcepts;
+    private boolean traceDeleteInsertedConcepts;
     private ExecutorService executorService;
 
     public QueryProfiler(GraknClient client, List<String> keyspaces, BenchmarkConfiguration config) {
@@ -60,13 +61,15 @@ public class QueryProfiler {
         this.concurrentClients = config.concurrentClients();
         this.executionName = config.executionName();
         this.graphName = config.graphName();
+        this.deleteInsertedConcepts = config.deleteInsertedConcepts();
+        this.traceDeleteInsertedConcepts = config.traceDeleteInsertedConcepts();
+
 
         // convert Graql strings into GraqlQuery types
         this.queries = config.getQueries().stream()
                 .map(q -> (GraqlQuery) Graql.parse(q))
                 .collect(Collectors.toList());
 
-        this.deleteInsertedConcepts = config.deleteInsertedConcepts();
 
         // create 1 thread per client session
         executorService = Executors.newFixedThreadPool(concurrentClients);
@@ -94,7 +97,7 @@ public class QueryProfiler {
             // TODO: this can probably be optimised (keeping sessions open)
             String keyspace = (keyspaces.size() > 1) ? keyspaces.get(i) : keyspaces.get(0);
             GraknClient.Session session = client.session(keyspace);
-            ConcurrentQueries processor = new ConcurrentQueries(executionName, i, graphName, Tracing.currentTracer(), queries, repetitions, numConcepts, session, deleteInsertedConcepts);
+            ConcurrentQueries processor = new ConcurrentQueries(executionName, i, graphName, Tracing.currentTracer(), queries, repetitions, numConcepts, session, deleteInsertedConcepts, traceDeleteInsertedConcepts);
             runningConcurrentQueries.add(executorService.submit(processor));
         }
 

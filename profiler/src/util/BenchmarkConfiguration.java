@@ -118,6 +118,10 @@ public class BenchmarkConfiguration {
         return benchmarkConfigFile.deleteInsertedConcepts();
     }
 
+    public boolean traceDeleteInsertedConcepts() {
+        return benchmarkConfigFile.traceDeleteInsertedConcepts();
+    }
+
     public int concurrentClients() {
         return benchmarkConfigFile.concurrentClients();
     }
