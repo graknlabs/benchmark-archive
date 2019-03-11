@@ -13,8 +13,5 @@ test_suite(
 
         # ignite concept storage
         "//profiler/src/generator/test/storage:ignite-concept-store-test",
-
-        # inserted concept analysis test
-        "//profiler/src/test/analysis:insertion-analysis-test"
     ]
 )
