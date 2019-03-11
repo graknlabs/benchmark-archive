@@ -1,5 +1,5 @@
 java_test(
-    name = "insertion-analysis-unit-test",
+    name = "insert-analysis-unit-test",
     test_class = "grakn.benchmark.profiler.analysis.InsertQueryAnalyserTest",
     srcs = ["InsertQueryAnalyserTest.java"],
     deps = [
