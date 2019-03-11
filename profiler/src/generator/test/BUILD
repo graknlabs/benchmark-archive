@@ -15,6 +15,6 @@ test_suite(
         "//profiler/src/generator/test/storage:ignite-concept-store-test",
 
         # inserted concept analysis test
-        "//profiler/src/generator/test/util:insertion-analysis-test"
+        "//profiler/src/test/analysis:insertion-analysis-test"
     ]
 )

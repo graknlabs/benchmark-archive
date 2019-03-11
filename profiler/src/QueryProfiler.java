@@ -51,7 +51,7 @@ public class QueryProfiler {
     private final GraknClient client;
     private final List<String> keyspaces;
     private final int concurrentClients;
-    private boolean commitQueries;
+    private boolean deleteInsertedConcepts;
     private ExecutorService executorService;
 
     public QueryProfiler(GraknClient client, List<String> keyspaces, BenchmarkConfiguration config) {
@@ -66,7 +66,7 @@ public class QueryProfiler {
                 .map(q -> (GraqlQuery) Graql.parse(q))
                 .collect(Collectors.toList());
 
-        this.commitQueries = config.commitQueries();
+        this.deleteInsertedConcepts = config.deleteInsertedConcepts();
 
         // create 1 thread per client session
         executorService = Executors.newFixedThreadPool(concurrentClients);
@@ -94,8 +94,7 @@ public class QueryProfiler {
             // TODO: this can probably be optimised (keeping sessions open)
             String keyspace = (keyspaces.size() > 1) ? keyspaces.get(i) : keyspaces.get(0);
             GraknClient.Session session = client.session(keyspace);
-            ConcurrentQueries processor = new ConcurrentQueries(executionName, i, graphName, Tracing.currentTracer(), queries, repetitions, numConcepts, session, commitQueries);
-
+            ConcurrentQueries processor = new ConcurrentQueries(executionName, i, graphName, Tracing.currentTracer(), queries, repetitions, numConcepts, session, deleteInsertedConcepts);
             runningConcurrentQueries.add(executorService.submit(processor));
         }
 

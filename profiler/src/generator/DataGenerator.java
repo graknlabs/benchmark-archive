@@ -20,7 +20,7 @@ package grakn.benchmark.profiler.generator;
 
 import grakn.benchmark.profiler.generator.query.QueryProvider;
 import grakn.benchmark.profiler.generator.storage.ConceptStorage;
-import grakn.benchmark.profiler.generator.util.InsertQueryAnalyser;
+import grakn.benchmark.profiler.analysis.InsertQueryAnalyser;
 import grakn.core.client.GraknClient;
 import grakn.core.concept.Concept;
 import grakn.core.concept.answer.ConceptMap;

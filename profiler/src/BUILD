@@ -20,6 +20,10 @@ java_library(
     name = "benchmark-profiler",
     srcs = glob(["*.java", "util/*.java"]),
     deps = [
+        "//lib:lib",
+        "//profiler/src/analysis:insert-query-analyser",
+        "//profiler/src/generator:data-generator",
+
         "@graknlabs_client_java//:client-java",
         "@graknlabs_grakn_core//api:api",
         "@graknlabs_grakn_core//server:server",
@@ -27,7 +31,6 @@ java_library(
         "@graknlabs_graql//java:graql",
         "@graknlabs_grakn_core//concept:concept",
 
-        "//lib:lib",
 
         # TODO should this be via grakn-core's deps?
         "//dependencies/maven/artifacts/io/grpc:grpc-core",
@@ -47,7 +50,6 @@ java_library(
 
         "//dependencies/maven/artifacts/org/apache/ignite:ignite-core",
 
-        "//profiler/src/generator:data-generator"
     ],
     runtime_deps = [
         "//dependencies/maven/artifacts/io/grpc:grpc-netty-shaded",

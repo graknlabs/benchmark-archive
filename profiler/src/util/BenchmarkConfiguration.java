@@ -114,8 +114,8 @@ public class BenchmarkConfiguration {
         return this.benchmarkConfigFile.getRepeatsPerQuery();
     }
 
-    public boolean commitQueries() {
-        return benchmarkConfigFile.commitQueries();
+    public boolean deleteInsertedConcepts() {
+        return benchmarkConfigFile.deleteInsertedConcepts();
     }
 
     public int concurrentClients() {

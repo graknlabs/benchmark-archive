@@ -5,3 +5,8 @@ queries:
   # expect to see scale in role players * number of relationships
   - "match $r (transactor: $trader); $r isa transaction; get $trader;"
 
+
+  # NOTE: all pure insert queries must provide variables for each inserted concept or they won't be deleted
+  - "insert $x isa trader;"
+  - "insert $x isa quantity; $x -100;" # create an attribute that isn't in the data generator range
+  - "insert $r (transactor: $trader1, transactor: $trader2); $trader1 isa trader; $trader2 is trader;"

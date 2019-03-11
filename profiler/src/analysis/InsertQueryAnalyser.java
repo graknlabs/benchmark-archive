@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.profiler.generator.util;
+package grakn.benchmark.profiler.analysis;
 
 
 import grakn.core.concept.Concept;

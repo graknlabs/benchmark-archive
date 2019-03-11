@@ -31,7 +31,7 @@ public class BenchmarkConfigurationFile {
     private List<Integer> scalesToProfile;
     private Integer repeatsPerQuery;
 
-    private boolean commitQueries;
+    private boolean deleteInsertedConcepts;
     private Concurrency concurrency;
 
     public void setGraphName(String graphName) {
@@ -55,12 +55,10 @@ public class BenchmarkConfigurationFile {
         return this.queries;
     }
 
-    public void setCommitQueries(Boolean commitQueries) {
-        this.commitQueries = commitQueries;
+    public void setDeleteInsertedConcepts(Boolean deleteInsertedConcepts) {
+        this.deleteInsertedConcepts = deleteInsertedConcepts;
     }
-    public Boolean commitQueries() {
-        return commitQueries;
-    }
+    public boolean deleteInsertedConcepts() { return deleteInsertedConcepts; }
 
     public void setScales(List<Integer> scales) {
         this.scalesToProfile = scales;
@@ -89,6 +87,9 @@ public class BenchmarkConfigurationFile {
 }
 
 
+/**
+ * Sub-object in yaml file that indicates concurrency configuration options
+ */
 class Concurrency {
     private Integer clients;
     private Boolean separateKeyspaces;

@@ -1,6 +1,5 @@
 graphName: "road_network"
 schema: "road_network.gql"
-queries: "queries.yml"
 scales:
 - 400
 - 1000
@@ -9,7 +8,9 @@ scales:
 
 repeatsPerQuery: 5
 
-commitQueries: false
+queries: "queries.yml"
+deleteInsertedConcepts: true
+
 concurrency:
   clients: 1
   uniqueKeyspaces: true
