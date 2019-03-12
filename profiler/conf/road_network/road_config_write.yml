@@ -1,14 +1,16 @@
 graphName: "road_network"
 schema: "road_network.gql"
-
 scales:
-  - 400
+- 400
+- 1000
+- 2000
+#  - 14000
 
 repeatsPerQuery: 5
 
-queries: "queries.yml"
+queries: "queries_write.yml"
 deleteInsertedConcepts: true
-traceDeletion: false
+traceDeleteInsertedConcepts: false
 
 concurrency:
   clients: 1

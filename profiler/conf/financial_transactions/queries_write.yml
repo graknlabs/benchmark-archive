@@ -1,11 +1,4 @@
 queries:
-  - "match $x isa trader; get;"
-  # expect to see scale in out degree of name * number of name assuming QP starts at `name` label
-  - "match $x has quantity $n; get;"
-  # expect to see scale in role players * number of relationships
-  - "match $r (transactor: $trader); $r isa transaction; get $trader;"
-
-
   # NOTE: all pure insert queries must provide variables for each inserted concept or they won't be deleted
   - "insert $x isa trader;"
   - "insert $x isa quantity; $x -100;" # create an attribute that isn't in the data generator range

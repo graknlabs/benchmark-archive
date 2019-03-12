@@ -1,0 +1,17 @@
+graphName: "generic_network"
+schema: "schema.gql"
+scales:
+  - 1000
+#  - 4000
+#  - 6000
+#  - 8000
+
+repeatsPerQuery: 3
+
+queries: "queries_complex_read.yml"
+deleteInsertedConcepts: true
+traceDeleteInsertedConcepts: false
+
+concurrency:
+  clients: 1
+  uniqueKeyspaces: true

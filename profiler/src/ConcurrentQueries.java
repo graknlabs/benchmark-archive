@@ -74,7 +74,6 @@ class ConcurrentQueries implements Runnable {
                     else if (query instanceof GraqlCompute) { querySpan.name("compute-query"); }
                     else { querySpan.name("query"); }
 
-                    querySpan.name("query");
                     querySpan.tag("query", query.toString());
                     querySpan.tag("repetitions", Integer.toString(repetitions));
                     querySpan.tag("repetition", Integer.toString(rep));

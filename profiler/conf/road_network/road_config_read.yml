@@ -1,8 +1,12 @@
-graphName: "web_content"
-schema: "web_content_schema.gql"
+graphName: "road_network"
+schema: "road_network.gql"
 scales:
-  - 2000
-repeatsPerQuery: 0
+- 400
+- 1000
+- 2000
+#  - 14000
+
+repeatsPerQuery: 5
 
 queries: "queries_read.yml"
 deleteInsertedConcepts: true
@@ -10,4 +14,4 @@ traceDeleteInsertedConcepts: false
 
 concurrency:
   clients: 1
-  uniqueKeyspaces: false
+  uniqueKeyspaces: true

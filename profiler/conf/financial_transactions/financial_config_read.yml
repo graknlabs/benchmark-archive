@@ -1,12 +1,12 @@
-graphName: "biochemical_network"
-schema: "biochemical_network.gql"
+graphName: "financial"
+schema: "financial.gql"
 scales:
-  - 500
+  - 400
   - 1000
   - 2000
 repeatsPerQuery: 5
 
-queries: "queries.yml"
+queries: "queries_read.yml"
 deleteInsertedConcepts: true
 traceDeleteInsertedConcepts: false
 

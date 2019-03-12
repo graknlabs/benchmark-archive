@@ -1,12 +1,12 @@
-graphName: "financial"
-schema: "financial.gql"
+graphName: "social_network"
+schema: "social_network.gql"
 scales:
   - 400
   - 1000
   - 2000
-repeatsPerQuery: 5
+repeatsPerQuery: 10
 
-queries: "queries.yml"
+queries: "queries_read.yml"
 deleteInsertedConcepts: true
 traceDeleteInsertedConcepts: false
 

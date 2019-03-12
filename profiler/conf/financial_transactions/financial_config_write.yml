@@ -1,0 +1,15 @@
+graphName: "financial"
+schema: "financial.gql"
+scales:
+  - 400
+  - 1000
+  - 2000
+repeatsPerQuery: 5
+
+queries: "queries_write.yml"
+deleteInsertedConcepts: true
+traceDeleteInsertedConcepts: false
+
+concurrency:
+  clients: 1
+  uniqueKeyspaces: true

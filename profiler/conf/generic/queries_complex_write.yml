@@ -1,0 +1,68 @@
+queries:
+  - "insert
+      $x isa blob;
+      ($x, $y) isa interaction;
+      $y isa square;
+      ($y, $z) isa relationship;
+      $z isa circle;"
+
+  # branching from one entity, width 3, depth 1
+  - "insert
+      $b1 isa blob;
+      $b2 isa blob;
+      ($b1, $b2) isa ownership;
+
+      $c isa circle;
+      ($b1, $c) isa interaction;
+
+      #s isa square;
+      ($b1, $s) isa interaction;"
+
+  # branching from one entity, width 3, depth 3
+  # -
+
+  # star, 6 role players, half with attribute values
+  - "insert
+      ($b1, $b2, $c1, $c2, $s1, $s2) isa interaction;
+      $b1 isa blob, has value -1;
+      $b2 isa blob;
+      $c1 isa circle, has value -2;
+      $c2 isa circle;
+      $s1 isa square, has value -3;
+      $s2 isa square;"
+
+  # circle (ie. pentagon)
+  - "match
+      $b isa blob;
+      $c1 isa circle;
+      $c2 isa circle;
+      $s1 isa square;
+      $s2 isa square;
+
+      ($b, $c1) isa relationship;
+      ($c1, $s1) isa relationship;
+      ($s1, $c2) isa relationship;
+      ($c2, $s2) isa relationship;
+      ($c2, $b) isa relationship;"
+
+  # highly connected square - edges, diagonals, ternary relation and quaternary relations
+  - "match
+      $b1 isa blob;
+      $b2 isa blob;
+      $c isa circle;
+      $s isa square;
+
+      ($b1, $b2) isa relationship;
+      ($b2, $c) isa relationship;
+      ($c, $s) isa relationship;
+      ($s, $b1) isa relationship;
+
+      ($b1, $c) isa relationship;
+      ($b2, $s) isa relationship;
+
+      ($b1, $b2, $c) isa relationship;
+      ($b1, $b2, $s) isa relationship;
+      ($b2, $c, $s) isa relationship;
+      ($b1, $c, $s) isa relationship;
+
+      ($b1, $b2, $c, $s) isa relationship;"

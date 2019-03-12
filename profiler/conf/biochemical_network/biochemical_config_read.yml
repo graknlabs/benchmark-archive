@@ -1,12 +1,12 @@
-graphName: "social_network"
-schema: "social_network.gql"
+graphName: "biochemical_network"
+schema: "biochemical_network.gql"
 scales:
-  - 400
+  - 500
   - 1000
   - 2000
-repeatsPerQuery: 10
+repeatsPerQuery: 5
 
-queries: "queries.yml"
+queries: "queries_read.yml"
 deleteInsertedConcepts: true
 traceDeleteInsertedConcepts: false
 

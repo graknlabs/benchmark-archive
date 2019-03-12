@@ -1,5 +1,4 @@
 define
-
     blob sub entity,
         plays blobber,
         plays bigger,
@@ -16,7 +15,7 @@ define
         plays owned,
         has value;
 
-    circle sub entity;
+    circle sub entity,
         plays circler,
         plays bigger,
         plays smaller,
@@ -29,7 +28,7 @@ define
         relates blobber,
         relates circler,
         relates squarer,
-        has interacton-value;
+        has interaction-value;
 
     ownership sub relation,
         relates owner,
@@ -38,13 +37,11 @@ define
 
     sizing sub relation,
         relates bigger,
-        relates smaller,
-        has size;
+        relates smaller;
 
     value sub attribute, datatype long;
     interaction-value sub attribute, datatype long;
     ownership-cost sub attribute, datatype long;
-    size sub attribute, datatype double;
 
 
 

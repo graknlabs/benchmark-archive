@@ -2,7 +2,7 @@ graphName: "taxfix"
 schema: "taxfix_schema.gql"
 repeatsPerQuery: 1
 
-queries: "queries.yml"
+queries: "queries_read.yml"
 deleteInsertedConcepts: false
 traceDeleteInsertedConcepts: false
 

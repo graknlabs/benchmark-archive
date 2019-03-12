@@ -1,0 +1,4 @@
+queries:
+  - "match $x isa person; get;"
+  - "match $x has name $n; $n isa name; get;"
+  - "match $r (friend: $f); $f isa person; get;"
