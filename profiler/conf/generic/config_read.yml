@@ -1,12 +1,13 @@
-graphName: "generic_network"
+graphName: "generic_uniform_network"
 schema: "schema.gql"
 scales:
   - 1000
-#  - 4000
-#  - 6000
-#  - 8000
-
-repeatsPerQuery: 3
+  - 4000
+  - 6000
+  - 8000
+  - 10000
+  - 12000
+repeatsPerQuery: 0
 
 queries: "queries_complex_read.yml"
 deleteInsertedConcepts: true

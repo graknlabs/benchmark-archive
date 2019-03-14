@@ -1,4 +1,4 @@
-graphName: "generic_network"
+graphName: "generic_uniform_network"
 schema: "schema.gql"
 scales:
   - 2000

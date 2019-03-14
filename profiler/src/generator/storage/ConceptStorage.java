@@ -46,6 +46,8 @@ public interface ConceptStorage {
 
     int totalExplicitRelationships();
 
+    int totalImplicitRelationships();
+
     int totalEntities();
 
     int totalAttributes();

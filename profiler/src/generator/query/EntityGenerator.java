@@ -21,6 +21,8 @@ package grakn.benchmark.profiler.generator.query;
 import grakn.benchmark.profiler.generator.strategy.EntityStrategy;
 import graql.lang.Graql;
 import graql.lang.query.GraqlInsert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 
@@ -28,6 +30,8 @@ import java.util.Iterator;
  * Generates queries for inserting entity instances
  */
 public class EntityGenerator implements QueryGenerator {
+    private static final Logger LOG = LoggerFactory.getLogger(EntityGenerator.class);
+
     private final EntityStrategy strategy;
 
     public EntityGenerator(EntityStrategy strategy) {
@@ -36,6 +40,7 @@ public class EntityGenerator implements QueryGenerator {
 
     @Override
     public Iterator<GraqlInsert> generate() {
+        LOG.trace("Generating Entity Type " + strategy.getTypeLabel() + ", target quantity: " + strategy.getNumInstancesPDF().peek());
 
         return new Iterator<GraqlInsert>() {
             String typeLabel = strategy.getTypeLabel();

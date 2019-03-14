@@ -129,6 +129,8 @@ public class DataGenerator {
         int explicitRelationships = this.storage.totalExplicitRelationships();
         int attributes = this.storage.totalAttributes();
 
+        int implicitRelationships = this.storage.totalImplicitRelationships();
+
 
         int orphanEntities = this.storage.totalOrphanEntities();
         int orphanAttrs = this.storage.totalOrphanAttributes();
@@ -151,16 +153,16 @@ public class DataGenerator {
 
         // print info to console on one self-erasing line
         System.out.print("\r");
-        System.out.print(String.format("[%d] %s Scale: %d\t(%f Deg_Cin, %f Deg_Rout, %f Deg_Aout)\t(%d, %d, %d) Entity/Rel/Attr \t (%d EO, %d AO) \t %f density",
+        System.out.print(String.format("[%d] %s Scale: %d\t(%f Deg_Cin, %f Deg_Rout, %f Deg_Aout)\t(%d, %d, %d, %d) Entity/Expl Rel/Impl Rel/Attr \t (%d EO, %d AO) \t %f density",
                 this.iteration, this.graphName, graphScale, meanInDegree, meanRolePlayersPerRelationship, meanAttributeOwners,
-                entities, explicitRelationships, attributes,
+                entities, explicitRelationships, implicitRelationships, attributes,
                 orphanEntities, orphanAttrs, density));
 
         // write to log verbosely in DEBUG that it doesn't overwrite
         LOG.debug(String.format("----- Iteration %d [%s] ----- ", this.iteration, this.graphName));
 //        LOG.debug(String.format(">> Generating instances of concept type \"%s\"", generatedTypeLabel));
         LOG.debug(String.format(">> %d - Scale", graphScale));
-        LOG.debug(String.format(">> %d, %d, %d - entity, explicit relationships, attributes", entities, explicitRelationships, attributes));
+        LOG.debug(String.format(">> %d, %d, %d, %d - entity, explicit rels, implicit rels, attributes", entities, explicitRelationships, implicitRelationships, attributes));
         LOG.debug(String.format(">> %d, %d - entity orphans, attribute orphans ", orphanEntities, orphanAttrs));
         LOG.debug(String.format(">> %d - Total relationship double counts", relDoubleCounts));
         LOG.debug(String.format(">> %f, %f, %f - mean Deg_Cin, mean Deg_Rout, mean Deg_Aout",

@@ -27,6 +27,8 @@ import graql.lang.pattern.Pattern;
 import graql.lang.query.GraqlInsert;
 import graql.lang.statement.Statement;
 import graql.lang.statement.Variable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -42,6 +44,8 @@ import static graql.lang.Graql.var;
  * If a role cannot be filled no relationship will be generated.
  */
 public class RelationGenerator implements QueryGenerator {
+    private static final Logger LOG = LoggerFactory.getLogger(RelationGenerator.class);
+
     private final RelationStrategy strategy;
 
     public RelationGenerator(RelationStrategy strategy) {
@@ -50,6 +54,14 @@ public class RelationGenerator implements QueryGenerator {
 
     @Override
     public Iterator<GraqlInsert> generate() {
+
+        String roles = "(";
+        for (RolePlayerTypeStrategy rolePlayerTypeStrategy : this.strategy.getRolePlayerTypeStrategies()) {
+            String role = rolePlayerTypeStrategy.getTypeLabel();
+            roles += role;
+            roles += ",";
+        }
+        LOG.trace("Generating Rel " + strategy.getTypeLabel() + roles + "), target quantity: " + strategy.getNumInstancesPDF().peek());
 
         Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies = this.strategy.getRolePlayerTypeStrategies();
         for (RolePlayerTypeStrategy rolePlayerTypeStrategy : rolePlayerTypeStrategies) {

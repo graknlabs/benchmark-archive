@@ -5,7 +5,7 @@ define
         plays smaller,
         plays owner,
         plays owned,
-        has value;
+        has blob-value;
 
     square sub entity,
         plays squarer,
@@ -13,7 +13,7 @@ define
         plays smaller,
         plays owner,
         plays owned,
-        has value;
+        has square-value;
 
     circle sub entity,
         plays circler,
@@ -21,7 +21,7 @@ define
         plays smaller,
         plays owner,
         plays owned,
-        has value;
+        has circle-value;
 
 
     interaction sub relation,
@@ -35,11 +35,41 @@ define
         relates owned,
         has ownership-cost;
 
+
+    ownership-of-square sub ownership,
+        relates owner,
+        relates owned;
+
+    ownership-of-circle sub ownership,
+        relates owner,
+        relates owned;
+
+    ownership-of-blob sub ownership,
+        relates owner,
+        relates owned;
+
+
     sizing sub relation,
         relates bigger,
         relates smaller;
 
-    value sub attribute, datatype long;
+    sizing-blob sub sizing,
+        relates bigger,
+        relates smaller;
+
+    sizing-circle sub sizing,
+        relates bigger,
+        relates smaller;
+
+    sizing-square sub sizing,
+        relates bigger,
+        relates smaller;
+
+    shape-value sub attribute, datatype long;
+    blob-value sub shape-value;
+    circle-value sub shape-value;
+    square-value sub shape-value;
+
     interaction-value sub attribute, datatype long;
     ownership-cost sub attribute, datatype long;
 

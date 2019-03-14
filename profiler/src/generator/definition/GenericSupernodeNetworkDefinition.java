@@ -5,7 +5,6 @@ import grakn.benchmark.profiler.generator.probdensity.FixedDiscreteGaussian;
 import grakn.benchmark.profiler.generator.probdensity.FixedUniform;
 import grakn.benchmark.profiler.generator.provider.concept.ConceptIdStorageProvider;
 import grakn.benchmark.profiler.generator.provider.concept.NotInRelationshipConceptIdProvider;
-import grakn.benchmark.profiler.generator.provider.value.RepeatingIntegerProvider;
 import grakn.benchmark.profiler.generator.provider.value.UniqueIntegerProvider;
 import grakn.benchmark.profiler.generator.storage.ConceptStorage;
 import grakn.benchmark.profiler.generator.strategy.AttributeStrategy;
@@ -19,7 +18,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 
-public class GenericNetworkDefinition implements DataGeneratorDefinition {
+public class GenericSupernodeNetworkDefinition implements DataGeneratorDefinition {
 
     private Random random;
     private ConceptStorage storage;
@@ -29,7 +28,7 @@ public class GenericNetworkDefinition implements DataGeneratorDefinition {
     private WeightedPicker<TypeStrategy> attributeStrategies;
     private WeightedPicker<WeightedPicker<TypeStrategy>> metaTypeStrategies;
 
-    public GenericNetworkDefinition(Random random, ConceptStorage storage) {
+    public GenericSupernodeNetworkDefinition(Random random, ConceptStorage storage) {
         this.random = random;
         this.storage = storage;
         buildDefinition();
@@ -48,7 +47,7 @@ public class GenericNetworkDefinition implements DataGeneratorDefinition {
 
         this.metaTypeStrategies = new WeightedPicker<>(random);
         this.metaTypeStrategies.add(1.0, entityStrategies);
-        this.metaTypeStrategies.add(3.0, relationshipStrategies);
+        this.metaTypeStrategies.add(5.0, relationshipStrategies);
         this.metaTypeStrategies.add(1.0, attributeStrategies);
     }
 
@@ -78,41 +77,37 @@ public class GenericNetworkDefinition implements DataGeneratorDefinition {
     }
 
     private void buildAttributeStrategies() {
-        // values are repeated some numerb of times (mean 20 times)
-        RepeatingIntegerProvider valueGenerator = new RepeatingIntegerProvider(0, new FixedDiscreteGaussian(random, 20, 5));
-        this.attributeStrategies.add(
-                1.0,
-                new AttributeStrategy<>(
-                        "value",
-                        new FixedDiscreteGaussian(this.random, 50, 15),
-                        valueGenerator
-                )
-        );
+            this.attributeStrategies.add(
+                    1.0,
+                    new AttributeStrategy<>(
+                            "value",
+                            new FixedUniform(this.random, 10, 30),
+                            new UniqueIntegerProvider(0)
+                    )
+            );
 
-        // interaction values are unique
-        UniqueIntegerProvider interactionValueGenerator = new UniqueIntegerProvider(0);
-        this.attributeStrategies.add(
-                1.0,
-                new AttributeStrategy<>(
-                        "interaction-value",
-                        // TODO adjust values
-                        new FixedUniform(this.random, 3, 9),
-                        interactionValueGenerator
-                )
-        );
+            // interaction values are unique
+            this.attributeStrategies.add(
+                    1.0,
+                    new AttributeStrategy<>(
+                            "interaction-value",
+                            // TODO adjust values
+                            new FixedUniform(this.random, 8, 22),
+                            new UniqueIntegerProvider(0)
+                    )
+            );
 
-        // costs are repeated (mean 5 times)
-        RepeatingIntegerProvider costGenerator = new RepeatingIntegerProvider(0, new FixedDiscreteGaussian(random, 5, 1));
-        this.attributeStrategies.add(
-                1.0,
-                new AttributeStrategy<>(
-                        "ownership-cost",
-                        // TODO adjust values
-                        new FixedUniform(this.random, 2, 8),
-                        costGenerator
-                )
-        );
-    }
+            // costs are repeated (mean 5 times)
+            this.attributeStrategies.add(
+                    1.0,
+                    new AttributeStrategy<>(
+                            "ownership-cost",
+                            // TODO adjust values
+                            new FixedUniform(this.random, 5, 10),
+                            new UniqueIntegerProvider(0)
+                    )
+            );
+        }
 
     private void buildExplicitRelationshipStrategies() {
 

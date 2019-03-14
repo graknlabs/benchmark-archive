@@ -94,7 +94,7 @@ public class IgniteConceptStorage implements ConceptStorage {
         LOG.info("Initialising ignite...");
         // Read schema concepts and create ignite tables
         this.entityTypeLabels = entityTypeLabels;
-        this.explicitRelationshipTypeLabels = relationshipTypeLabels;
+        this.explicitRelationshipTypeLabels = new HashSet<>(relationshipTypeLabels);
         this.attributeTypeLabels = attributeTypeLabels;
 
         this.relationshipTypeLabels = relationshipTypeLabels;
@@ -533,6 +533,15 @@ public class IgniteConceptStorage implements ConceptStorage {
             total += getConceptCount(relationshipType);
         }
         return total;
+    }
+
+    @Override
+    public int totalImplicitRelationships() {
+        int totalRelationships = 0;
+        for (String relationshipType : this.relationshipTypeLabels) {
+            totalRelationships += getConceptCount(relationshipType);
+        }
+        return totalRelationships - totalExplicitRelationships();
     }
 
     @Override
