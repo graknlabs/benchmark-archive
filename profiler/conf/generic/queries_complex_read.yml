@@ -3,19 +3,68 @@ queries:
   # linear chain of 3, each possible different starting type
   # should test the starting point statistics
   # one generic relations definitely shouldn't be a starting point
-  - "match $x isa blob; ($x, $y) isa interaction; $y isa square; ($y, $z) isa relation; $z isa circle; get; limit 5;"
+  - "match
+      $x isa blob;
+      ($x, $y) isa interaction;
+      $y isa square;
+      ($y, $z) isa relation;
+      $z isa circle;
+      get; limit 5;"
 
   # branching from one entity, width 3, depth 1
-  - "match $b1 isa blob; $b2 isa blob; ($b1, $b2) isa ownership; $c isa circle; ($b1, $c) isa interaction; $s isa square; ($b1, $s) isa interaction; get; limit 5;"
+  - "match
+      $b1 isa blob;
+      $b2 isa blob;
+      ($b1, $b2) isa ownership;
+      $c isa circle;
+      ($b1, $c) isa interaction;
+      $s isa square;
+      ($b1, $s) isa interaction;
+      get; limit 5;"
 
   # branching from one entity, width 3, depth 3
   # -
 
   # star, 6 role players, half with attribute values
-  - "match ($b1, $b2, $c1, $c2, $s1, $s2) isa interaction; $b1 isa blob, has blob-value 1; $b2 isa blob; $c1 isa circle, has circle-value 2; $c2 isa circle; $s1 isa square, has shape-value 3; $s2 isa square; get;limit 5;"
+  - "match
+      ($b1, $b2, $c1, $c2, $s1, $s2) isa interaction;
+      $b1 isa blob, has blob-value 1;
+      $b2 isa blob;
+      $c1 isa circle, has circle-value 2;
+      $c2 isa circle;
+      $s1 isa square, has shape-value 3;
+      $s2 isa square;
+      get;limit 5;"
 
   # circle (ie. pentagon)
-  - "match $b isa blob; $c1 isa circle; $c2 isa circle; $s1 isa square; $s2 isa square; ($b, $c1) isa relation; ($c1, $s1) isa relation; ($s1, $c2) isa relation; ($c2, $s2) isa relation; ($c2, $b) isa relation; get;limit 5;"
+  - "match
+      $b isa blob;
+      $c1 isa circle;
+      $c2 isa circle;
+      $s1 isa square;
+      $s2 isa square;
+      ($b, $c1) isa relation;
+      ($c1, $s1) isa relation;
+      ($s1, $c2) isa relation;
+      ($c2, $s2) isa relation;
+      ($c2, $b) isa relation;
+      get;limit 5;"
 
   # highly connected square - edges, diagonals, ternary relation and quaternary relations
-  - "match $b1 isa blob; $b2 isa blob; $c isa circle; $s isa square; ($b1, $b2) isa sizing; ($b2, $c) isa ownership; ($c, $s) isa ownership; ($s, $b1) isa interaction; ($b1, $c) isa relation; ($b2, $s) isa relation; ($b1, $b2, $c) isa relation; ($b1, $b2, $s) isa relation; ($b2, $c, $s) isa relation; ($b1, $c, $s) isa relation; ($b1, $b2, $c, $s) isa interaction; get;limit 5;"
+  - "match
+      $b1 isa blob;
+      $b2 isa blob;
+      $c isa circle;
+      $s isa square;
+      ($b1, $b2) isa sizing;
+      ($b2, $c) isa ownership;
+      ($c, $s) isa ownership;
+      ($s, $b1) isa interaction;
+      ($b1, $c) isa relation;
+      ($b2, $s) isa relation;
+      ($b1, $b2, $c) isa relation;
+      ($b1, $b2, $s) isa relation;
+      ($b2, $c, $s) isa relation;
+      ($b1, $c, $s) isa relation;
+      ($b1, $b2, $c, $s) isa interaction;
+      get;limit 5;"
