@@ -25,7 +25,8 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
     private ConceptStorage storage;
 
     private WeightedPicker<TypeStrategy> entityStrategies;
-    private WeightedPicker<TypeStrategy> relationshipStrategies;
+    private WeightedPicker<TypeStrategy> explicitRelationshipStrategies;
+    private WeightedPicker<TypeStrategy> implicitRelationshipStrategies;
     private WeightedPicker<TypeStrategy> attributeStrategies;
     private WeightedPicker<WeightedPicker<TypeStrategy>> metaTypeStrategies;
 
@@ -37,9 +38,10 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
 
     private void buildDefinition() {
 
-        this.entityStrategies = new WeightedPicker<>(random);
-        this.relationshipStrategies = new WeightedPicker<>(random);
-        this.attributeStrategies = new WeightedPicker<>(random);
+        entityStrategies = new WeightedPicker<>(random);
+        explicitRelationshipStrategies = new WeightedPicker<>(random);
+        implicitRelationshipStrategies = new WeightedPicker<>(random);
+        attributeStrategies = new WeightedPicker<>(random);
 
         buildEntityStrategies();
         buildAttributeStrategies();
@@ -48,8 +50,9 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
 
         this.metaTypeStrategies = new WeightedPicker<>(random);
         this.metaTypeStrategies.add(1.0, entityStrategies);
-        this.metaTypeStrategies.add(2.0, relationshipStrategies);
-        this.metaTypeStrategies.add(1.0, attributeStrategies);
+        this.metaTypeStrategies.add(8.0, explicitRelationshipStrategies);
+        this.metaTypeStrategies.add(8.0/3, implicitRelationshipStrategies);
+        this.metaTypeStrategies.add(5.0/3, attributeStrategies);
     }
 
 
@@ -58,21 +61,21 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
                 1.0,
                 new EntityStrategy(
                         "blob",
-                        new FixedUniform(this.random, 5, 15))
+                        new FixedUniform(this.random, 8, 18))
         );
 
         this.entityStrategies.add(
                 1.0,
                 new EntityStrategy(
                         "square",
-                        new FixedUniform(this.random, 10, 20))
+                        new FixedUniform(this.random, 11, 21))
         );
 
         this.entityStrategies.add(
                 1.0,
                 new EntityStrategy(
                         "circle",
-                        new FixedUniform(this.random, 15, 25))
+                        new FixedUniform(this.random, 16, 26))
         );
 
     }
@@ -82,15 +85,6 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
                 1.0,
                 new AttributeStrategy<>(
                         "blob-value",
-                        new FixedUniform(this.random, 1, 3),
-                        new UniqueIntegerProvider(0)
-                )
-        );
-
-        this.attributeStrategies.add(
-                1.0,
-                new AttributeStrategy<>(
-                        "circle-value",
                         new FixedUniform(this.random, 1, 5),
                         new UniqueIntegerProvider(0)
                 )
@@ -100,7 +94,16 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
                 1.0,
                 new AttributeStrategy<>(
                         "square-value",
-                        new FixedUniform(this.random, 2, 9),
+                        new FixedUniform(this.random, 3, 11),
+                        new UniqueIntegerProvider(0)
+                )
+        );
+
+        this.attributeStrategies.add(
+                1.0,
+                new AttributeStrategy<>(
+                        "circle-value",
+                        new FixedUniform(this.random, 1, 3),
                         new UniqueIntegerProvider(0)
                 )
         );
@@ -109,7 +112,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
                 1.0,
                 new AttributeStrategy<>(
                         "interaction-value",
-                        new FixedUniform(this.random, 1, 5),
+                        new FixedUniform(this.random, 2, 18),
                         new UniqueIntegerProvider(0)
                 )
         );
@@ -118,7 +121,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
                 1.0,
                 new AttributeStrategy<>(
                         "ownership-cost",
-                        new FixedUniform(this.random, 1, 4),
+                        new FixedUniform(this.random, 3, 15),
                         new UniqueIntegerProvider(0)
                 )
         );
@@ -132,19 +135,19 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         /* _interaction_ with 2-12 role players */
         RolePlayerTypeStrategy blobberRolePlayer = new RolePlayerTypeStrategy("blobber",
                 new FixedUniform(random, 0, 4),
-                new ConceptIdStorageProvider(random, this.storage, "blob")
-        );
-        RolePlayerTypeStrategy circlerRolePlayer = new RolePlayerTypeStrategy("circler",
-                new FixedUniform(random, 1, 7),
-                new ConceptIdStorageProvider(random, this.storage, "circle")
+                new ConceptIdStorageProvider(random, storage, "blob")
         );
         RolePlayerTypeStrategy squarerRolePlayer = new RolePlayerTypeStrategy("squarer",
-                new FixedUniform(random, 1, 11),
-                new ConceptIdStorageProvider(random, this.storage, "square")
+                new FixedUniform(random, 0, 7),
+                new ConceptIdStorageProvider(random, storage, "square")
         );
-        this.relationshipStrategies.add(1.0,
+        RolePlayerTypeStrategy circlerRolePlayer = new RolePlayerTypeStrategy("circler",
+                new FixedUniform(random, 0, 11),
+                new ConceptIdStorageProvider(random, storage, "circle")
+        );
+        this.explicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("interaction",
-                        new FixedUniform(this.random, 15, 35),
+                        new FixedUniform(this.random, 45, 75),
                         new HashSet<>(Arrays.asList(blobberRolePlayer, circlerRolePlayer, squarerRolePlayer))
                 )
         );
@@ -163,14 +166,14 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
                 new FixedConstant(1),
                 new ConceptIdStorageProvider(random, this.storage, "blob")
         );
-        this.relationshipStrategies.add(1.0,
+        this.explicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("ownership-of-blob",
-                        new FixedUniform(this.random, 20, 40),
+                        new FixedUniform(this.random, 10, 20),
                         new HashSet<>(Arrays.asList(blobOwner, blobOwned))
                 )
         );
 
-        /* blob not an owner gets assigned an average of 15 quares to own */
+        /* blob not an owner gets assigned an average of 15 squares to own */
         RolePlayerTypeStrategy blobOwnerSquare = new RolePlayerTypeStrategy("owner",
                 new FixedConstant(1),
                 new CentralConceptProvider(
@@ -182,9 +185,9 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
                 new FixedConstant(1),
                 new ConceptIdStorageProvider(random, this.storage, "square")
         );
-        this.relationshipStrategies.add(1.0,
+        this.explicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("ownership-of-square",
-                        new FixedUniform(this.random, 30, 50),
+                        new FixedUniform(this.random, 20, 30),
                         new HashSet<>(Arrays.asList(blobOwnerSquare, squareOwnedBlob))
                 )
         );
@@ -201,9 +204,9 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
                 new FixedConstant(1),
                 new ConceptIdStorageProvider(random, storage, "circle")
         );
-        this.relationshipStrategies.add(1.0,
+        this.explicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("ownership-of-circle",
-                        new FixedUniform(this.random, 35, 55),
+                        new FixedUniform(this.random, 25, 35),
                         new HashSet<>(Arrays.asList(circleOwner, circleOwned))
                 )
         );
@@ -220,7 +223,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
                 new FixedConstant(1),
                 new ConceptIdStorageProvider(random, storage, "blob")
         );
-        this.relationshipStrategies.add(1.0,
+        this.explicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("ownership-of-blob",
                         new FixedUniform(this.random, 12, 20),
                         new HashSet<>(Arrays.asList(blobOwnedCircle, circleOwnerBlob))
@@ -239,7 +242,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
                 new FixedConstant(1),
                 new ConceptIdStorageProvider(random, storage, "circle")
         );
-        this.relationshipStrategies.add(1.0,
+        this.explicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("ownership-of-circle",
                         new FixedUniform(this.random, 12, 26),
                         new HashSet<>(Arrays.asList(circleOwnedSquare, squareOwnsCircle))
@@ -250,7 +253,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         RolePlayerTypeStrategy squareOwnsBlob = new RolePlayerTypeStrategy("owner",
                 new FixedConstant(1),
                 new CentralConceptProvider(
-                        new FixedDiscreteGaussian(random, 18, 10),
+                        new FixedDiscreteGaussian(random, 15, 10),
                         new NotInRelationshipConceptIdProvider(random, storage, "square", "ownership-of-blob", "owner")
                 )
         );
@@ -258,9 +261,9 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
                 new FixedConstant(1),
                 new ConceptIdStorageProvider(random, storage, "blob")
         );
-        this.relationshipStrategies.add(1.0,
+        this.explicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("ownership-of-blob",
-                        new FixedUniform(this.random, 2, 40),
+                        new FixedUniform(this.random, 2, 30),
                         new HashSet<>(Arrays.asList(blobOwnedSquare, squareOwnsBlob))
                 )
         );
@@ -272,8 +275,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         RolePlayerTypeStrategy blobBigger = new RolePlayerTypeStrategy("bigger",
                 new FixedConstant(1),
                 new CentralConceptProvider(
-                        // TODO,
-                        null,
+                        new FixedDiscreteGaussian(random, 4, 2),
                         new NotInRelationshipConceptIdProvider(random, storage, "blob", "sizing-blob", "bigger")
                 )
         );
@@ -281,9 +283,9 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
                 new FixedConstant(1),
                 new ConceptIdStorageProvider(random, storage, "blob")
         );
-        this.relationshipStrategies.add(1.0,
+        this.explicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("sizing-blob",
-                        new FixedUniform(this.random, 5, 14),
+                        new FixedUniform(this.random, 5, 13),
                         new HashSet<>(Arrays.asList(blobBigger, blobSmaller))
                 )
         );
@@ -293,8 +295,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         RolePlayerTypeStrategy blobBiggerCircle = new RolePlayerTypeStrategy("bigger",
                 new FixedConstant(1),
                 new CentralConceptProvider(
-                        // TODO,
-                        null,
+                        new FixedDiscreteGaussian(random,6, 2),
                         new NotInRelationshipConceptIdProvider(random, storage, "blob", "sizing-circle", "bigger")
                 )
         );
@@ -302,9 +303,9 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
                 new FixedConstant(1),
                 new ConceptIdStorageProvider(random, storage, "circle")
         );
-        this.relationshipStrategies.add(1.0,
+        this.explicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("sizing-circle",
-                        new FixedUniform(this.random, 4, 10),
+                        new FixedUniform(random, 4, 10),
                         new HashSet<>(Arrays.asList(blobBiggerCircle, circleSmallerBlob))
                 )
         );
@@ -314,8 +315,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         RolePlayerTypeStrategy blobBiggerSquare = new RolePlayerTypeStrategy("bigger",
                 new FixedConstant(1),
                 new CentralConceptProvider(
-                        // TODO,
-                        null,
+                        new FixedDiscreteGaussian(random, 4, 1.5),
                         new NotInRelationshipConceptIdProvider(random, storage, "blob", "sizing-square", "bigger")
                 )
         );
@@ -323,9 +323,9 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
                 new FixedConstant(1),
                 new ConceptIdStorageProvider(random, storage, "square")
         );
-        this.relationshipStrategies.add(1.0,
+        this.explicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("sizing-square",
-                        new FixedUniform(this.random, 3, 8),
+                        new FixedUniform(random, 3, 8),
                         new HashSet<>(Arrays.asList(blobBiggerSquare, squareSmallerBlob))
                 )
         );
@@ -334,8 +334,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         RolePlayerTypeStrategy circleBiggerSquare = new RolePlayerTypeStrategy("bigger",
                 new FixedConstant(1),
                 new CentralConceptProvider(
-                        // TODO
-                        null,
+                        new FixedDiscreteGaussian(random, 3, 1),
                         new NotInRelationshipConceptIdProvider(random, storage, "circle", "sizing-square", "bigger")
                 )
 
@@ -344,9 +343,9 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
                 new FixedConstant(1),
                 new ConceptIdStorageProvider(random, storage, "square")
         );
-        this.relationshipStrategies.add(1.0,
+        this.explicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("sizing-square",
-                        new FixedUniform(this.random, 2, 6),
+                        new FixedUniform(random, 2, 6),
                         new HashSet<>(Arrays.asList(circleBiggerSquare, squareSmallerCircle))
                 )
         );
@@ -355,8 +354,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         RolePlayerTypeStrategy squareBiggerBlob = new RolePlayerTypeStrategy("bigger",
                 new FixedConstant(1),
                 new CentralConceptProvider(
-                        // TODO
-                        null,
+                        new FixedDiscreteGaussian(random, 2, 1),
                         new NotInRelationshipConceptIdProvider(random, storage, "square", "sizing-blob", "bigger")
                 )
         );
@@ -364,7 +362,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
                 new FixedConstant(1),
                 new ConceptIdStorageProvider(random, storage, "blob")
         );
-        this.relationshipStrategies.add(1.0,
+        this.explicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("sizing-blob",
                         new FixedUniform(this.random, 1, 5),
                         new HashSet<>(Arrays.asList(squareBiggerBlob, blobSmallerSquare))
@@ -377,24 +375,18 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         // assign randomly values to blobs that don't have values
         RolePlayerTypeStrategy blobValueOwner = new RolePlayerTypeStrategy("@has-blob-value-owner",
                 new FixedConstant(1),
-                new CentralConceptProvider(
-                        // TODO
-                        null,
-                        new NotInRelationshipConceptIdProvider(random, storage, "blob", "@has-blob-value", "@has-blob-value-owner")
-                )
+                new NotInRelationshipConceptIdProvider(random, storage, "blob", "@has-blob-value", "@has-blob-value-owner")
         );
         RolePlayerTypeStrategy blobValueValue = new RolePlayerTypeStrategy("@has-blob-value-value",
                 new FixedConstant(1),
-
                 new CentralConceptProvider(
-                        // TODO
-                        null,
+                        new FixedDiscreteGaussian(random, 3, 1),
                         new NotInRelationshipConceptIdProvider(random, storage, "blob-value", "@has-blob-value", "@has-blob-value-value")
                 )
         );
-        this.relationshipStrategies.add(1.0,
+        implicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("@has-blob-value",
-                        new FixedUniform(random, 10, 50),
+                        new FixedUniform(random, 7, 19),
                         new HashSet<>(Arrays.asList(blobValueOwner, blobValueValue))
                 )
         );
@@ -402,47 +394,37 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         // assign squares values that don't have values
         RolePlayerTypeStrategy squareValueOwner = new RolePlayerTypeStrategy("@has-square-value-owner",
                 new FixedConstant(1),
-                new CentralConceptProvider(
-                        // TODO
-                        null,
-                        new NotInRelationshipConceptIdProvider(random, storage, "square", "@has-square-value", "@has-square-value-owner")
-                )
+                new NotInRelationshipConceptIdProvider(random, storage, "square", "@has-square-value", "@has-square-value-owner")
         );
         RolePlayerTypeStrategy squareValueValue = new RolePlayerTypeStrategy("@has-square-value-value",
                 new FixedConstant(1),
                 new CentralConceptProvider(
-                        // TODO
-                        null,
+                        new FixedDiscreteGaussian(random, 7, 2),
                         new NotInRelationshipConceptIdProvider(random, storage, "square-value", "@has-square-value", "@has-square-value-value")
                 )
         );
-        this.relationshipStrategies.add(1.0,
+        implicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("@has-square-value",
-                        new FixedUniform(this.random, 20, 65),
+                        new FixedUniform(this.random, 11, 21),
                         new HashSet<>(Arrays.asList(squareValueOwner, squareValueValue))
                 )
         );
 
         // assign circles values that don't have values
-        RolePlayerTypeStrategy circleValueOwner = new RolePlayerTypeStrategy("@has-square-value-owner",
+        RolePlayerTypeStrategy circleValueOwner = new RolePlayerTypeStrategy("@has-circle-value-owner",
                 new FixedConstant(1),
-                new CentralConceptProvider(
-                        // TODO
-                        null,
-                        new NotInRelationshipConceptIdProvider(random, storage, "circle", "@has-circle-value", "@has-square-value-owner")
-                )
+                new NotInRelationshipConceptIdProvider(random, storage, "circle", "@has-circle-value", "@has-circle-value-owner")
         );
-        RolePlayerTypeStrategy circleValueValue = new RolePlayerTypeStrategy("@has-value-value",
+        RolePlayerTypeStrategy circleValueValue = new RolePlayerTypeStrategy("@has-circle-value-value",
                 new FixedConstant(1),
                 new CentralConceptProvider(
-                        // TODO
-                        null,
+                        new FixedDiscreteGaussian(random, 2, 0.5),
                         new NotInRelationshipConceptIdProvider(random, storage, "circle-value", "@has-circle-value", "@has-circle-value-value")
                 )
         );
-        this.relationshipStrategies.add(1.0,
+        implicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("@has-circle-value",
-                        new FixedUniform(random, 25, 70),
+                        new FixedUniform(random, 16, 26),
                         new HashSet<>(Arrays.asList(circleValueOwner, circleValueValue))
                 )
         );
@@ -450,48 +432,82 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         // assign interactions interaction-value that don't have a value
         RolePlayerTypeStrategy interactionValueOwner = new RolePlayerTypeStrategy("@has-interaction-value-owner",
                 new FixedConstant(1),
-                new CentralConceptProvider(
-                        // TODO
-                        null,
-                        new NotInRelationshipConceptIdProvider(random, storage, "interaction", "@has-interaction-value", "@has-interaction-value-owner")
-                )
+                new NotInRelationshipConceptIdProvider(random, storage, "interaction", "@has-interaction-value", "@has-interaction-value-owner")
         );
         RolePlayerTypeStrategy interactionValueValue = new RolePlayerTypeStrategy("@has-interaction-value-value",
                 new FixedConstant(1),
                 new CentralConceptProvider(
-                        // TODO
-                        null,
+                        new FixedDiscreteGaussian(random, 10, 4),
                         new NotInRelationshipConceptIdProvider(random, storage, "interaction-value", "@has-interaction-value", "@has-interaction-value-value")
                 )
         );
-        this.relationshipStrategies.add(1.0,
+        implicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("@has-interaction-value",
-                        new FixedDiscreteGaussian(random, 7, 3),
+                        new FixedDiscreteGaussian(random, 40, 15),
                         new HashSet<>(Arrays.asList(interactionValueOwner, interactionValueValue))
                 )
         );
 
-        // assign a cost to an ownership-cost
-        RolePlayerTypeStrategy ownershipCostOwner = new RolePlayerTypeStrategy("@has-ownership-cost-owner",
+
+
+        /* --- Ownership cost --- */
+        RolePlayerTypeStrategy blobOwnershipCostOwner = new RolePlayerTypeStrategy("@has-ownership-cost-owner",
                 new FixedConstant(1),
-                new CentralConceptProvider(
-                        // TODO
-                        null,
-                        new NotInRelationshipConceptIdProvider(random, storage, "ownership", "@has-ownership-cost", "@has-ownership-cost-owner")
-                )
+                new ConceptIdStorageProvider(random, storage, "ownership-of-blob")
         );
-        RolePlayerTypeStrategy ownershipCostValue = new RolePlayerTypeStrategy("@has-ownership-cost-value",
+        RolePlayerTypeStrategy blobOwnershipCostValue = new RolePlayerTypeStrategy("@has-ownership-cost-value",
                 new FixedConstant(1),
                 new CentralConceptProvider(
-                        // TODO
-                        null,
+                        new FixedDiscreteGaussian(random, 9, 3),
                         new NotInRelationshipConceptIdProvider(random, storage, "ownership-cost", "@has-ownership-cost", "@has-ownership-cost-value")
                 )
         );
-        this.relationshipStrategies.add(1.0,
+        implicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("@has-ownership-cost",
-                        new FixedDiscreteGaussian(random, 5, 1),
-                        new HashSet<>(Arrays.asList(ownershipCostOwner, ownershipCostValue))
+                        new FixedDiscreteGaussian(random, 31, 10),
+                        new HashSet<>(Arrays.asList(blobOwnershipCostValue, blobOwnershipCostOwner))
+                )
+        );
+
+
+        RolePlayerTypeStrategy circleOwnershipCostOwner = new RolePlayerTypeStrategy("@has-ownership-cost-owner",
+                new FixedConstant(1),
+                new ConceptIdStorageProvider(random, storage, "ownership-of-circle")
+        );
+        RolePlayerTypeStrategy circleOwnershipCostValue = new RolePlayerTypeStrategy("@has-ownership-cost-value",
+                new FixedConstant(1),
+                new CentralConceptProvider(
+                        new FixedDiscreteGaussian(random, 9, 3),
+                        new NotInRelationshipConceptIdProvider(random, storage, "ownership-cost", "@has-ownership-cost", "@has-ownership-cost-value")
+                )
+        );
+        implicitRelationshipStrategies.add(1.0,
+                new RelationStrategy("@has-ownership-cost",
+                        new FixedDiscreteGaussian(random, 32.5, 15),
+                        new HashSet<>(Arrays.asList(circleOwnershipCostOwner, circleOwnershipCostValue))
+                )
+        );
+
+
+        /*
+        NOTE this one has double weight - so we can halve the number of central role players and relationships added at a time
+         */
+
+        RolePlayerTypeStrategy squareOwnershipCostOwner = new RolePlayerTypeStrategy("@has-ownership-cost-owner",
+                new FixedConstant(1),
+                new ConceptIdStorageProvider(random, storage, "ownership-of-square")
+        );
+        RolePlayerTypeStrategy squareOwnershipCostValue = new RolePlayerTypeStrategy("@has-ownership-cost-value",
+                new FixedConstant(1),
+                new CentralConceptProvider(
+                        new FixedDiscreteGaussian(random, 4, 1),
+                        new NotInRelationshipConceptIdProvider(random, storage, "ownership-cost", "@has-ownership-cost", "@has-ownership-cost-value")
+                )
+        );
+        implicitRelationshipStrategies.add(2.0,
+                new RelationStrategy("@has-ownership-cost",
+                        new FixedDiscreteGaussian(random, 8, 2),
+                        new HashSet<>(Arrays.asList(squareOwnershipCostOwner, squareOwnershipCostValue))
                 )
         );
     }

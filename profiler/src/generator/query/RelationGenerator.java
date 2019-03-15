@@ -81,19 +81,35 @@ public class RelationGenerator implements QueryGenerator {
             int queriesGenerated = 0;
 
             private boolean haveRequiredRolePlayers() {
-                /*
-                Require that each PDF requires at least 1 role player, else hasNext() may be true but not generate any queries
-                AND that the provider has actually got this many role players
-                 */
                 return strategy.getRolePlayerTypeStrategies().stream()
-                        .map(s -> s.getNumInstancesPDF().peek() > 0 && s.getConceptProvider().hasNextN(s.getNumInstancesPDF().peek()))
+                        .map(s -> s.getConceptProvider().hasNextN(s.getNumInstancesPDF().peek()))
                         .allMatch(b -> b);
+            }
+
+            private boolean ensureAtLeastOneRolePlayer() {
+                // we'll build some safety in here:
+                //  we can hit a situation where a relationship is NEVER generated if the `.peek()` method of all the roles is 0
+                //  to avoid this, if detected we sample each PDF once to hopefully skip out of the situation of only 0 roles
+                boolean haveOneRolePlayer = strategy.getRolePlayerTypeStrategies().stream()
+                        .map(s -> s.getNumInstancesPDF().peek() > 0)
+                        .anyMatch(b -> b);
+                while (!haveOneRolePlayer) {
+                    LOG.warn("Found situation where all roles are required 0 times - sampling PDFs again to try to break out");
+                    for (RolePlayerTypeStrategy rolePlayerTypeStrategy : strategy.getRolePlayerTypeStrategies()) {
+                        rolePlayerTypeStrategy.getNumInstancesPDF().sample();
+                    }
+                    haveOneRolePlayer = strategy.getRolePlayerTypeStrategies().stream()
+                            .map(s -> s.getNumInstancesPDF().peek() > 0)
+                            .anyMatch(b -> b);
+                }
+                return true;
             }
 
             @Override
             public boolean hasNext() {
-                return (queriesGenerated < queriesToGenerate) && haveRequiredRolePlayers();
+                return (queriesGenerated < queriesToGenerate) && ensureAtLeastOneRolePlayer() && haveRequiredRolePlayers();
             }
+
 
             @Override
             public GraqlInsert next() {

@@ -18,8 +18,11 @@
 
 package grakn.benchmark.profiler.generator.provider.concept;
 
+import grakn.benchmark.profiler.generator.DataGenerator;
 import grakn.benchmark.profiler.generator.probdensity.ProbabilityDensityFunction;
 import grakn.core.concept.ConceptId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,21 +36,23 @@ import java.util.Iterator;
  * will connect to that same Concept in this iteration.
  */
 public class CentralConceptProvider implements ConceptIdProvider {
+    private static final Logger LOG = LoggerFactory.getLogger(CentralConceptProvider.class);
 
-    private Iterator<ConceptId> iterator;
+    private ConceptIdProvider conceptIdProvider;
     private Boolean isReset;
     private ArrayList<ConceptId> uniqueConceptIdsList;
     private int consumeFrom = 0;
     private ProbabilityDensityFunction centralConceptsPdf;
 
-    public CentralConceptProvider(ProbabilityDensityFunction centralConceptsPdf, Iterator<ConceptId> iterator) {
-        this.iterator = iterator;
+    public CentralConceptProvider(ProbabilityDensityFunction centralConceptsPdf, ConceptIdProvider conceptIdProvider) {
+        this.conceptIdProvider = conceptIdProvider;
         this.isReset = true;
         this.uniqueConceptIdsList = new ArrayList<>();
         this.centralConceptsPdf = centralConceptsPdf;
     }
 
     public void resetUniqueness() {
+        LOG.trace("Resetting central concept provider");
         isReset = true;
     }
 
@@ -63,7 +68,7 @@ public class CentralConceptProvider implements ConceptIdProvider {
     @Override
     public boolean hasNextN(int n) {
         // because we use this as a circular buffer
-        // we always have more unless the buffer is empty
+        // we always have the required number of values if we have any
         return hasNext();
     }
 
@@ -85,15 +90,22 @@ public class CentralConceptProvider implements ConceptIdProvider {
 
     private void refillBuffer() {
         // re-fill the internal buffer of conceptIds to be repeated (the centrality aspect)
-        int uniqueness = centralConceptsPdf.sample();
-
+        int requiredCentralConcepts = centralConceptsPdf.sample();
         this.uniqueConceptIdsList.clear();
+        LOG.trace("Trying to refill central concept provider with numebr of concepts: " + requiredCentralConcepts);
 
-        int i = 0;
-        while (iterator.hasNext() && i < uniqueness) {
-            uniqueConceptIdsList.add(iterator.next());
-            i++;
+        // only if the provider can provide the required number of values
+        // do we fill our circular buffer
+        if (conceptIdProvider.hasNextN(requiredCentralConcepts)) {
+            LOG.trace("Refilling central concept provider with number of concepts: " + requiredCentralConcepts);
+            int count = 0;
+            while (conceptIdProvider.hasNext() && count < requiredCentralConcepts) {
+                uniqueConceptIdsList.add(conceptIdProvider.next());
+                count++;
+            }
         }
+        // otherwise, don't fill at all
+
         this.consumeFrom = 0;
     }
 }
