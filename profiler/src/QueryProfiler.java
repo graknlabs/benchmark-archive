@@ -107,7 +107,7 @@ public class QueryProfiler {
                 future.get();
             }
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            throw new ProfilerException("Error in execution of profiled queries", e);
         }
 
         long length = System.currentTimeMillis() - start;

@@ -386,7 +386,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         );
         implicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("@has-blob-value",
-                        new FixedUniform(random, 7, 19),
+                        new FixedUniform(random, 7, 18),
                         new HashSet<>(Arrays.asList(blobValueOwner, blobValueValue))
                 )
         );
@@ -405,7 +405,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         );
         implicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("@has-square-value",
-                        new FixedUniform(this.random, 11, 21),
+                        new FixedUniform(this.random, 11, 20),
                         new HashSet<>(Arrays.asList(squareValueOwner, squareValueValue))
                 )
         );
@@ -424,7 +424,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         );
         implicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("@has-circle-value",
-                        new FixedUniform(random, 16, 26),
+                        new FixedUniform(random, 16, 25),
                         new HashSet<>(Arrays.asList(circleValueOwner, circleValueValue))
                 )
         );

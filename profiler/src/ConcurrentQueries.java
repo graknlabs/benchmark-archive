@@ -92,6 +92,12 @@ class ConcurrentQueries implements Runnable {
                                         .collect(Collectors.toSet());
                         }
                         tx.commit();
+                    } catch (Exception e) {
+                        LOG.error(
+                                "Exception in a concurrent query executor, query: " + query +
+                                ". Ensure every query is valid and each inserted concept is associated with an explicit variable",
+                                e);
+                        throw e;
                     } finally {
                         querySpan.finish();
                     }
