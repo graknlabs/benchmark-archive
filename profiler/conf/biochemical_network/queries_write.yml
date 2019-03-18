@@ -1,5 +1,0 @@
-queries:
-  # NOTE: all pure insert queries must provide variables for each inserted concept or they won't be deleted
-  - "insert $x isa chemical;"
-  - "insert $x isa biochem-id; $x -100;" # insert an attr value that doesn't exist
-  - "insert $x isa chemical; $y isa chemical; $r (agent: $x, catalyst: $y) isa interaction;"

@@ -18,14 +18,12 @@
 
 package grakn.benchmark.profiler.generator.provider.concept;
 
-import grakn.benchmark.profiler.generator.DataGenerator;
 import grakn.benchmark.profiler.generator.probdensity.ProbabilityDensityFunction;
 import grakn.core.concept.ConceptId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * The idea of a _central_ concept is that one or several concepts

@@ -2,12 +2,12 @@ define
 
     # fixed increments
     quantity sub attribute, datatype long;
-    # name sub attribute datatype string;
+    name sub attribute, datatype string;
 
     # don't instantiate this
     trader sub entity,
-        plays transactor;
-#        has name;
+        plays transactor,
+        has name;
 
     #government sub entity,
     #    plays taxor,

@@ -2,15 +2,15 @@ graphName: "generic_uniform_network"
 schema: "schema.gql"
 scales:
   - 2000
-  - 4000
-  - 6000
   - 8000
+  - 16000
+  - 32000
 
 repeatsPerQuery: 3
 
 queries: "queries_complex_write.yml"
 deleteInsertedConcepts: true
-traceDeleteInsertedConcepts: false
+traceDeleteInsertedConcepts: true
 
 concurrency:
   clients: 1

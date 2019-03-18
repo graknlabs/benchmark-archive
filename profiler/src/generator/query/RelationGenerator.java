@@ -93,16 +93,20 @@ public class RelationGenerator implements QueryGenerator {
                 boolean haveOneRolePlayer = strategy.getRolePlayerTypeStrategies().stream()
                         .map(s -> s.getNumInstancesPDF().peek() > 0)
                         .anyMatch(b -> b);
-                while (!haveOneRolePlayer) {
+
+                if (!haveOneRolePlayer) {
                     LOG.warn("Found situation where all roles are required 0 times - sampling PDFs again to try to break out");
                     for (RolePlayerTypeStrategy rolePlayerTypeStrategy : strategy.getRolePlayerTypeStrategies()) {
                         rolePlayerTypeStrategy.getNumInstancesPDF().sample();
                     }
-                    haveOneRolePlayer = strategy.getRolePlayerTypeStrategies().stream()
+
+                    // only 1 re-try allowed per iteration
+                    return strategy.getRolePlayerTypeStrategies().stream()
                             .map(s -> s.getNumInstancesPDF().peek() > 0)
                             .anyMatch(b -> b);
+                } else {
+                    return true;
                 }
-                return true;
             }
 
             @Override
