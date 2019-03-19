@@ -1,4 +1,6 @@
-graphName: "social_network"
+name: "Social Network - Read"
+description: "Social network reads with: Increasing C_in, Constant R_out, Scaling A_out"
+dataGenerator: "social_network"
 schema: "social_network.gql"
 scales:
   - 400

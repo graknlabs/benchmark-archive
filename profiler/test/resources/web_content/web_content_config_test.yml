@@ -1,4 +1,6 @@
-graphName: "web_content"
+name: ""
+description: ""
+dataGenerator: "web_content"
 schema: "web_content_schema.gql"
 scales:
   - 2000

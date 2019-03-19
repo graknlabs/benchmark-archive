@@ -45,24 +45,19 @@ public class QueryProfiler {
 
     private static final Logger LOG = LoggerFactory.getLogger(QueryProfiler.class);
 
-    private final String executionName;
-    private final String graphName;
+    private final BenchmarkConfiguration config;
+
     private final List<GraqlQuery> queries;
     private final GraknClient client;
     private final List<String> keyspaces;
     private final int concurrentClients;
-    private boolean deleteInsertedConcepts;
-    private boolean traceDeleteInsertedConcepts;
     private ExecutorService executorService;
 
     public QueryProfiler(GraknClient client, List<String> keyspaces, BenchmarkConfiguration config) {
+        this.config = config;
         this.client = client;
         this.keyspaces = keyspaces;
         this.concurrentClients = config.concurrentClients();
-        this.executionName = config.executionName();
-        this.graphName = config.graphName();
-        this.deleteInsertedConcepts = config.deleteInsertedConcepts();
-        this.traceDeleteInsertedConcepts = config.traceDeleteInsertedConcepts();
 
 
         // convert Graql strings into GraqlQuery types
@@ -97,7 +92,7 @@ public class QueryProfiler {
             // TODO: this can probably be optimised (keeping sessions open)
             String keyspace = (keyspaces.size() > 1) ? keyspaces.get(i) : keyspaces.get(0);
             GraknClient.Session session = client.session(keyspace);
-            ConcurrentQueries processor = new ConcurrentQueries(executionName, i, graphName, Tracing.currentTracer(), queries, repetitions, numConcepts, session, deleteInsertedConcepts, traceDeleteInsertedConcepts);
+            ConcurrentQueries processor = new ConcurrentQueries(config, i, Tracing.currentTracer(), queries, repetitions, numConcepts, session);
             runningConcurrentQueries.add(executorService.submit(processor));
         }
 

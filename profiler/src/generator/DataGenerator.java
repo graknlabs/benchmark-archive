@@ -45,17 +45,17 @@ public class DataGenerator {
 
     private final GraknClient client;
     private final String keyspace;
-    private final String graphName;
+    private final String dataGenerator;
     private final QueryProvider queryProvider;
     private final ConceptStorage storage;
 
     private int iteration;
 
 
-    public DataGenerator(GraknClient client, String keyspace, ConceptStorage storage, String graphName, QueryProvider queryProvider) {
+    public DataGenerator(GraknClient client, String keyspace, ConceptStorage storage, String dataGenerator, QueryProvider queryProvider) {
         this.client = client;
         this.keyspace = keyspace;
-        this.graphName = graphName;
+        this.dataGenerator = dataGenerator;
         this.queryProvider = queryProvider;
         this.iteration = 0;
         this.storage = storage;
@@ -154,12 +154,12 @@ public class DataGenerator {
         // print info to console on one self-erasing line
         System.out.print("\r");
         System.out.print(String.format("[%d] %s Scale: %d\t(%f Deg_Cin, %f Deg_Rout, %f Deg_Aout)\t(%d, %d, %d, %d) Entity/Expl Rel/Impl Rel/Attr \t (%d EO, %d AO) \t %f density",
-                this.iteration, this.graphName, graphScale, meanInDegree, meanRolePlayersPerRelationship, meanAttributeOwners,
+                this.iteration, this.dataGenerator, graphScale, meanInDegree, meanRolePlayersPerRelationship, meanAttributeOwners,
                 entities, explicitRelationships, implicitRelationships, attributes,
                 orphanEntities, orphanAttrs, density));
 
         // write to log verbosely in DEBUG that it doesn't overwrite
-        LOG.debug(String.format("----- Iteration %d [%s] ----- ", this.iteration, this.graphName));
+        LOG.debug(String.format("----- Iteration %d [%s] ----- ", this.iteration, this.dataGenerator));
 //        LOG.debug(String.format(">> Generating instances of concept type \"%s\"", generatedTypeLabel));
         LOG.debug(String.format(">> %d - Scale", graphScale));
         LOG.debug(String.format(">> %d, %d, %d, %d - entity, explicit rels, implicit rels, attributes", entities, explicitRelationships, implicitRelationships, attributes));

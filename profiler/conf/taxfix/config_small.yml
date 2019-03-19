@@ -1,4 +1,6 @@
-graphName: "taxfix"
+name: "Taxfix small - read & write with commits"
+description: "Small sample of taxfix queries without data generation"
+dataGenerator: "taxfix"
 schema: "taxfix_schema.gql"
 repeatsPerQuery: 2
 

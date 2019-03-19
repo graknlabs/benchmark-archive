@@ -25,7 +25,9 @@ import java.util.List;
  */
 
 public class BenchmarkConfigurationFile {
-    private String graphName;
+    private String name;
+    private String description;
+    private String dataGenerator;
     private String schema;
     private String queries;
     private List<Integer> scalesToProfile;
@@ -35,11 +37,25 @@ public class BenchmarkConfigurationFile {
     private boolean traceDeleteInsertedConcepts;
     private Concurrency concurrency;
 
-    public void setGraphName(String graphName) {
-        this.graphName = graphName;
+    public void setName(String name) {
+        this.name= name;
     }
-    public String getGraphName() {
-        return this.graphName;
+    public String getName() {
+        return this.name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    public String getDescription() {
+        return this.description;
+    }
+
+    public void setDataGenerator(String dataGenerator) {
+        this.dataGenerator = dataGenerator;
+    }
+    public String getDataGenerator() {
+        return this.dataGenerator;
     }
 
     public void setSchema(String schemaFile) {

@@ -4,6 +4,7 @@ package grakn.benchmark.profiler;
 import brave.Span;
 import brave.Tracer;
 import grakn.benchmark.profiler.analysis.InsertQueryAnalyser;
+import grakn.benchmark.profiler.util.BenchmarkConfiguration;
 import grakn.core.client.GraknClient;
 import grakn.core.concept.answer.Answer;
 import grakn.core.concept.answer.ConceptMap;
@@ -24,7 +25,9 @@ class ConcurrentQueries implements Runnable {
     private static final Logger LOG = LoggerFactory.getLogger(ConcurrentQueries.class);
 
     private int concurrentId;
-    private String graphName;
+    private String configName;
+    private String description;
+    private String dataGenerator;
     private Tracer tracer;
     private final List<GraqlQuery> queries;
     private final int repetitions;
@@ -34,28 +37,32 @@ class ConcurrentQueries implements Runnable {
     private final boolean traceDeleteInsertedConcepts;
     private String executionName;
 
-    public ConcurrentQueries(String executionName, int concurrentId, String graphName, Tracer tracer, List<GraqlQuery> queries, int repetitions, int numConcepts, GraknClient.Session session, boolean deleteInsertedConcepts, boolean traceDeleteInsertedConcepts) {
-        this.executionName = executionName;
+    public ConcurrentQueries(BenchmarkConfiguration config, int concurrentId, Tracer tracer, List<GraqlQuery> queries, int repetitions, int numConcepts, GraknClient.Session session) {
+        configName = config.configName();
+        description = config.configDescription();
+        executionName = config.executionName();
+        deleteInsertedConcepts = config.deleteInsertedConcepts();
+        traceDeleteInsertedConcepts = config.traceDeleteInsertedConcepts();
+        dataGenerator = config.dataGenerator();
         this.concurrentId = concurrentId;
-        this.graphName = graphName;
         this.tracer = tracer;
         this.queries = queries;
         this.repetitions = repetitions;
         this.numConcepts = numConcepts;
         this.session = session;
-        this.deleteInsertedConcepts = deleteInsertedConcepts;
-        this.traceDeleteInsertedConcepts = traceDeleteInsertedConcepts;
     }
 
     @Override
     public void run() {
         try {
             Span concurrentExecutionSpan = tracer.newTrace().name("concurrent-execution");
-            concurrentExecutionSpan.tag("executionName", executionName);
-            concurrentExecutionSpan.tag("concurrentClient", Integer.toString(concurrentId));
-            concurrentExecutionSpan.tag("graphName", this.graphName);
-            concurrentExecutionSpan.tag("repetitions", Integer.toString(repetitions));
-            concurrentExecutionSpan.tag("scale", Integer.toString(numConcepts));
+            concurrentExecutionSpan.tag("configuration name", configName);
+            concurrentExecutionSpan.tag("description", description);
+            concurrentExecutionSpan.tag("execution name", executionName);
+            concurrentExecutionSpan.tag("concurrent client #", Integer.toString(concurrentId));
+            concurrentExecutionSpan.tag("data generator", this.dataGenerator);
+            concurrentExecutionSpan.tag("query repetitions", Integer.toString(repetitions));
+            concurrentExecutionSpan.tag("graph scale", Integer.toString(numConcepts));
             concurrentExecutionSpan.start();
 
             int counter = 0;
@@ -75,7 +82,7 @@ class ConcurrentQueries implements Runnable {
                     else { querySpan.name("query"); }
 
                     querySpan.tag("query", query.toString());
-                    querySpan.tag("repetitions", Integer.toString(repetitions));
+                    querySpan.tag("total repetitions", Integer.toString(repetitions));
                     querySpan.tag("repetition", Integer.toString(rep));
                     querySpan.start();
 

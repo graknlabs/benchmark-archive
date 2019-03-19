@@ -1,4 +1,6 @@
-graphName: "road_network"
+name: "Road Network - Read"
+description: "Road network reads with: Constant C_in, Constant R_out, Constant A_out"
+dataGenerator: "road_network"
 schema: "road_network.gql"
 scales:
 - 1000

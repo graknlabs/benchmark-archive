@@ -1,4 +1,6 @@
-graphName: "generic_uniform_network"
+name: "Complex Graph - Read"
+description: "Complex graph reads with: Constant C_in, Constant R_out, Constant A_out"
+dataGenerator: "generic_uniform_network"
 schema: "schema.gql"
 scales:
   - 200

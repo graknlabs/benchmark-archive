@@ -45,21 +45,15 @@ distribution_zip(
         "//profiler:conf/road_network/road_network.gql": "conf/road_network/road_network.gql",
 
         "//profiler:conf/social_network/queries_read.yml": "conf/social_network/queries_read.yml",
-        "//profiler:conf/social_network/queries_write.yml": "conf/social_network/queries_write.yml",
         "//profiler:conf/social_network/social_network_config_read.yml": "conf/social_network/social_network_config_read.yml",
-        "//profiler:conf/social_network/social_network_config_write.yml": "conf/social_network/social_network_config_write.yml",
         "//profiler:conf/social_network/social_network.gql": "conf/social_network/social_network.gql",
 
         "//profiler:conf/financial_transactions/queries_read.yml": "conf/financial_transactions/queries_read.yml",
-        "//profiler:conf/financial_transactions/queries_write.yml": "conf/financial_transactions/queries_write.yml",
         "//profiler:conf/financial_transactions/financial_config_read.yml": "conf/financial_transactions/financial_config_read.yml",
-        "//profiler:conf/financial_transactions/financial_config_write.yml": "conf/financial_transactions/financial_config_write.yml",
         "//profiler:conf/financial_transactions/financial.gql": "conf/financial_transactions/financial.gql",
 
         "//profiler:conf/biochemical_network/queries_read.yml": "conf/biochemical_network/queries_read.yml",
-        "//profiler:conf/biochemical_network/queries_write.yml": "conf/biochemical_network/queries_write.yml",
         "//profiler:conf/biochemical_network/biochemical_config_read.yml": "conf/biochemical_network/biochemical_config_read.yml",
-        "//profiler:conf/biochemical_network/biochemical_config_write.yml": "conf/biochemical_network/biochemical_config_write.yml",
         "//profiler:conf/biochemical_network/biochemical_network.gql": "conf/biochemical_network/biochemical_network.gql",
 
         "//profiler:conf/generic/queries_complex_read.yml": "conf/generic/queries_complex_read.yml",
