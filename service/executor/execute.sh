@@ -67,10 +67,17 @@ curl --header "Content-Type: application/json" \
     http://$SERVICE_IP:4567/execution/start
 
 # --- run benchmark ---
-./benchmark --config ./conf/road_network/road_config.yml --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200
-./benchmark --config ./conf/financial_transactions/financial_config.yml --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200
-./benchmark --config ./conf/social_network/social_network_config.yml --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200
-./benchmark --config ./conf/biochem_network/biochem_config.yml --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200
+
+# -- write queries --
+./benchmark --config ./conf/road_network/road_config_write.yml --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200
+./benchmark --config ./conf/generic/config_write.yml --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200
+
+# -- read queries --
+./benchmark --config ./conf/road_network/road_config_read.yml --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200
+./benchmark --config ./conf/financial_transactions/financial_config_read.yml --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200
+./benchmark --config ./conf/social_network/social_network_config_read.yml --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200
+./benchmark --config ./conf/biochem_network/biochem_config_read.yml --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200
+./benchmark --config ./conf/generic/config_read.yml --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200
 
 # TODO report log files
 
