@@ -66,8 +66,6 @@ curl --header "Content-Type: application/json" \
     --data "{\"executionId\":\"$EXECUTION_ID\" }" \
     http://$SERVICE_IP:4567/execution/start
 
-# --- run benchmark ---
-
 # -- write queries --
 ./benchmark --config ./conf/road_network/road_config_write.yml --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200
 ./benchmark --config ./conf/generic/config_write.yml --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200
