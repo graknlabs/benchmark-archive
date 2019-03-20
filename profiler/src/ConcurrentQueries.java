@@ -56,13 +56,13 @@ class ConcurrentQueries implements Runnable {
     public void run() {
         try {
             Span concurrentExecutionSpan = tracer.newTrace().name("concurrent-execution");
-            concurrentExecutionSpan.tag("configuration name", configName);
+            concurrentExecutionSpan.tag("configurationName", configName);
             concurrentExecutionSpan.tag("description", description);
-            concurrentExecutionSpan.tag("execution name", executionName);
-            concurrentExecutionSpan.tag("concurrent client #", Integer.toString(concurrentId));
-            concurrentExecutionSpan.tag("data generator", dataGenerator);
-            concurrentExecutionSpan.tag("query repetitions", Integer.toString(repetitions));
-            concurrentExecutionSpan.tag("graph scale", Integer.toString(numConcepts));
+            concurrentExecutionSpan.tag("executionName", executionName);
+            concurrentExecutionSpan.tag("concurrentClient", Integer.toString(concurrentId));
+            concurrentExecutionSpan.tag("graphGeneratorDefinition", dataGenerator);
+            concurrentExecutionSpan.tag("queryRepetitions", Integer.toString(repetitions));
+            concurrentExecutionSpan.tag("graphScale", Integer.toString(numConcepts));
             concurrentExecutionSpan.start();
 
             int counter = 0;
@@ -82,7 +82,7 @@ class ConcurrentQueries implements Runnable {
                     else { querySpan.name("query"); }
 
                     querySpan.tag("query", query.toString());
-                    querySpan.tag("total repetitions", Integer.toString(repetitions));
+                    querySpan.tag("repetitions", Integer.toString(repetitions));
                     querySpan.tag("repetition", Integer.toString(rep));
                     querySpan.start();
 
