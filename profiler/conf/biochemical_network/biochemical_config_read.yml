@@ -3,9 +3,9 @@ description: "Benchmark simple biochem network with: Increasing C_in, Increasing
 dataGenerator: "biochemical_network"
 schema: "biochemical_network.gql"
 scales:
-  - 500
-  - 1000
   - 2000
+  - 4000
+  - 8000
 repeatsPerQuery: 5
 
 queries: "queries_read.yml"

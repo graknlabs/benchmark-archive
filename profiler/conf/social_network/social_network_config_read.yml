@@ -3,10 +3,10 @@ description: "Social network reads with: Increasing C_in, Constant R_out, Scalin
 dataGenerator: "social_network"
 schema: "social_network.gql"
 scales:
-  - 400
-  - 1000
   - 2000
-repeatsPerQuery: 10
+  - 4000
+  - 8000
+repeatsPerQuery: 5
 
 queries: "queries_read.yml"
 deleteInsertedConcepts: true

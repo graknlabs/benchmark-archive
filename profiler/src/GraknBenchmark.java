@@ -85,7 +85,7 @@ public class GraknBenchmark {
     }
 
     public GraknBenchmark(CommandLine arguments) {
-        this.config = new BenchmarkConfiguration(arguments);
+        config = new BenchmarkConfiguration(arguments);
     }
 
 
