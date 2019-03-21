@@ -1,8 +1,7 @@
 package grakn.benchmark.profiler;
 
-import grakn.benchmark.profiler.BootupException;
-import grakn.benchmark.profiler.GraknBenchmark;
-import grakn.benchmark.profiler.util.BenchmarkArguments;
+import grakn.benchmark.common.configuration.BenchmarkArguments;
+import grakn.benchmark.profiler.util.BootupException;
 import grakn.core.client.GraknClient;
 import grakn.core.concept.answer.ConceptMap;
 import graql.lang.Graql;
@@ -43,6 +42,21 @@ public class ProfilerBootupTestIntegration {
     public void tearDown() {
         client.keyspaces().delete(keyspace);
         session.close();
+    }
+
+    @Test
+    public void whenProvidingAbsolutePathToExistingConfig_benchmarkShouldStart() {
+        String[] args = new String[]{"--config", WEB_CONTENT_CONFIG_PATH.toAbsolutePath().toString(), "--execution-name", "grakn-benchmark-test"};
+        CommandLine commandLine = BenchmarkArguments.parse(args);
+        GraknBenchmark graknBenchmark = new GraknBenchmark(commandLine);
+    }
+
+    @Test
+    public void whenProvidingRelativePathToExistingConfig_benchmarkShouldStart() {
+        String[] args = new String[]{"--config", "web_content_config_test.yml", "--execution-name", "grakn-benchmark-test"};
+        System.setProperty("working.dir", WEB_CONTENT_CONFIG_PATH.getParent().toString());
+        CommandLine commandLine = BenchmarkArguments.parse(args);
+        GraknBenchmark graknBenchmark = new GraknBenchmark(commandLine);
     }
 
     @Test

@@ -1,4 +1,4 @@
-package grakn.benchmark.profiler;
+package grakn.benchmark.profiler.util;
 
 public class ProfilerException extends RuntimeException {
     public ProfilerException(String message, Throwable cause) {

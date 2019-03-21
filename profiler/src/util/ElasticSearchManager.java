@@ -10,7 +10,7 @@ import org.elasticsearch.client.RestClient;
 
 import java.io.IOException;
 
-import static grakn.benchmark.profiler.util.BenchmarkArguments.ELASTIC_URI;
+import static grakn.benchmark.common.configuration.BenchmarkArguments.ELASTIC_URI;
 
 /**
  * Elastic Search manager used to override the default Zipkin index template which excludes the tags object.

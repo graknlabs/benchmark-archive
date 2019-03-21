@@ -21,7 +21,8 @@ java_library(
     srcs = glob(["*.java", "util/*.java"]),
     deps = [
         "//lib:lib",
-        "//profiler/src/analysis:insert-query-analyser",
+        "//common/analysis:insert-query-analyser",
+        "//common/configuration:benchmark-configuration",
         "//generator:data-generator",
 
         "@graknlabs_client_java//:client-java",
@@ -31,13 +32,8 @@ java_library(
         "@graknlabs_graql//java:graql",
         "@graknlabs_grakn_core//concept:concept",
 
-
         # TODO should this be via grakn-core's deps?
         "//dependencies/maven/artifacts/io/grpc:grpc-core",
-
-        "//dependencies/maven/artifacts/com/fasterxml/jackson/core:jackson-core",
-        "//dependencies/maven/artifacts/com/fasterxml/jackson/core:jackson-databind",
-        "//dependencies/maven/artifacts/com/fasterxml/jackson/dataformat:jackson-dataformat-yaml",
 
         "//dependencies/maven/artifacts/io/zipkin/brave:brave",
 
@@ -46,10 +42,9 @@ java_library(
         "//dependencies/maven/artifacts/org/apache/httpcomponents:httpcore",
         "//dependencies/maven/artifacts/org/apache/httpcomponents:httpclient",
 
-        "//dependencies/maven/artifacts/commons-cli",
-
         "//dependencies/maven/artifacts/org/apache/ignite:ignite-core",
 
+        "//dependencies/maven/artifacts/commons-cli",
     ],
     runtime_deps = [
         "//dependencies/maven/artifacts/io/grpc:grpc-netty-shaded",

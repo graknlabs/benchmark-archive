@@ -1,6 +1,5 @@
-package grakn.benchmark.profiler.util;
+package grakn.benchmark.common.configuration;
 
-import grakn.benchmark.profiler.BootupException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -28,7 +27,7 @@ public class BenchmarkArguments {
             CommandLine arguments = parser.parse(options, args);
             return arguments;
         } catch (ParseException e) {
-            throw new BootupException(e.getMessage(), e.getCause());
+            throw new ConfigurationException(e.getMessage(), e.getCause());
         }
     }
 

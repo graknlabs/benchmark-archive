@@ -9,7 +9,7 @@ java_library(
         "@graknlabs_grakn_core//concept:concept",
         "@graknlabs_graql//java:graql",
 
-        "//profiler/src/analysis:insert-query-analyser",
+        "//common/analysis:insert-query-analyser",
 
         "//dependencies/maven/artifacts/org/slf4j:slf4j-api",
         "//dependencies/maven/artifacts/org/apache/commons:commons-math3",

@@ -1,9 +1,9 @@
 java_test(
     name = "insert-query-analysis-unit-test",
-    test_class = "grakn.benchmark.profiler.analysis.InsertQueryAnalyserTest",
+    test_class = "grakn.benchmark.common.analysis.InsertQueryAnalyserTest",
     srcs = ["InsertQueryAnalyserTest.java"],
     deps = [
-        "//profiler/src/analysis:insert-query-analyser",
+        "//common/analysis:insert-query-analyser",
 
         "@graknlabs_graql//java:graql",
         "@graknlabs_grakn_core//concept:concept",

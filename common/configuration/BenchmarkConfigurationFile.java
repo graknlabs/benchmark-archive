@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.profiler.util;
+package grakn.benchmark.common.configuration;
 
 import java.util.List;
 

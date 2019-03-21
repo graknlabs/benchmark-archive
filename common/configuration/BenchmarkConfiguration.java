@@ -16,12 +16,11 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.profiler.util;
+package grakn.benchmark.common.configuration;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import grakn.benchmark.profiler.BootupException;
 import org.apache.commons.cli.CommandLine;
 
 import java.io.IOException;
@@ -149,7 +148,7 @@ public class BenchmarkConfiguration {
             configFilePath = Paths.get(workingDirectory).resolve(configFilePath);
         }
         if (!Files.exists(configFilePath)) {
-            throw new BootupException("The provided config file [" + configFilePath + "] does not exist.");
+            throw new ConfigurationException("The provided config file [" + configFilePath + "] does not exist.");
         }
         return configFilePath;
     }
@@ -165,7 +164,7 @@ public class BenchmarkConfiguration {
         try {
             return benchmarkConfigMapper.readValue(configFilePath.toFile(), BenchmarkConfigurationFile.class);
         } catch (IOException e) {
-            throw new BootupException("Exception parsing Benchmark configuration file", e);
+            throw new ConfigurationException("Exception parsing Benchmark configuration file", e);
         }
     }
 
@@ -181,7 +180,7 @@ public class BenchmarkConfiguration {
         try {
             return mapper.readValue(queryFilePath.toFile(), QueriesConfigurationFile.class);
         } catch (IOException e) {
-            throw new BootupException("Exception parsing queries file", e);
+            throw new ConfigurationException("Exception parsing queries file", e);
         }
     }
 
@@ -196,7 +195,7 @@ public class BenchmarkConfiguration {
         try {
             return Files.readAllLines(schemaFilePath, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new BootupException("Exception parsing Graql schema file", e);
+            throw new ConfigurationException("Exception parsing Graql schema file", e);
         }
     }
 }

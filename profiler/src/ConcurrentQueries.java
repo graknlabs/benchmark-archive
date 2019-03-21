@@ -3,8 +3,8 @@ package grakn.benchmark.profiler;
 
 import brave.Span;
 import brave.Tracer;
-import grakn.benchmark.profiler.analysis.InsertQueryAnalyser;
-import grakn.benchmark.profiler.util.BenchmarkConfiguration;
+import grakn.benchmark.common.analysis.InsertQueryAnalyser;
+import grakn.benchmark.common.configuration.BenchmarkConfiguration;
 import grakn.core.client.GraknClient;
 import grakn.core.concept.answer.Answer;
 import grakn.core.concept.answer.ConceptMap;

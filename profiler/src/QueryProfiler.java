@@ -19,7 +19,8 @@
 package grakn.benchmark.profiler;
 
 import brave.Tracing;
-import grakn.benchmark.profiler.util.BenchmarkConfiguration;
+import grakn.benchmark.common.configuration.BenchmarkConfiguration;
+import grakn.benchmark.profiler.util.ProfilerException;
 import grakn.core.client.GraknClient;
 import grakn.core.concept.answer.Numeric;
 import graql.lang.Graql;

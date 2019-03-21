@@ -18,7 +18,6 @@
 
 package grakn.benchmark.profiler.util;
 
-import grakn.benchmark.profiler.BootupException;
 import grakn.core.client.GraknClient;
 import grakn.core.concept.answer.ConceptMap;
 import grakn.core.concept.type.AttributeType;
