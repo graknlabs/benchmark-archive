@@ -18,6 +18,9 @@ public class ConfigurationTest {
 
     @Test
     public void whenProvidingAbsolutePathToNonExistingConfig_throwException() {
+        /*
+        When providing an invalid configuration cmd flag, benchmark should throw an exception
+         */
         String[] args = new String[]{"--config", "nonexistingpath", "--execution-name", "grakn-benchmark-test"};
         CommandLine commandLine = BenchmarkArguments.parse(args);
         expectedException.expect(ConfigurationException.class);

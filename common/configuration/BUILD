@@ -1,12 +1,6 @@
 java_library(
     name = "benchmark-configuration",
-    srcs = [
-        "BenchmarkArguments.java",
-        "BenchmarkConfiguration.java",
-        "BenchmarkConfigurationFile.java",
-        "ConfigurationException.java",
-        "QueriesConfigurationFile.java"
-    ],
+    srcs = glob(["*.java"]),
     deps = [
         "//dependencies/maven/artifacts/com/fasterxml/jackson/core:jackson-core",
         "//dependencies/maven/artifacts/com/fasterxml/jackson/core:jackson-databind",
