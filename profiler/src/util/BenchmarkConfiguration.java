@@ -65,7 +65,7 @@ public class BenchmarkConfiguration {
         this.graqlSchema = parseGraqlSchema(configFilePath);
 
         // use given keyspace string if exists, otherwise use yaml file `name` tag
-        this.keyspace = arguments.hasOption(BenchmarkArguments.KEYSPACE_ARGUMENT) ? arguments.getOptionValue(BenchmarkArguments.KEYSPACE_ARGUMENT) : this.graphName();
+        this.keyspace = arguments.hasOption(BenchmarkArguments.KEYSPACE_ARGUMENT) ? arguments.getOptionValue(BenchmarkArguments.KEYSPACE_ARGUMENT) : this.dataGenerator();
 
         this.graknUri = (arguments.hasOption(BenchmarkArguments.GRAKN_URI)) ? arguments.getOptionValue(BenchmarkArguments.GRAKN_URI) : DEFAULT_GRAKN_URI;
 
@@ -84,24 +84,27 @@ public class BenchmarkConfiguration {
         return executionName;
     }
 
-    public String graphName() {
-        return this.benchmarkConfigFile.getGraphName();
+    public String configName() { return benchmarkConfigFile.getName(); }
+    public String configDescription() { return benchmarkConfigFile.getDescription(); }
+
+    public String dataGenerator() {
+        return benchmarkConfigFile.getDataGenerator();
     }
 
     public String getKeyspace() {
-        return this.keyspace;
+        return keyspace;
     }
 
     public List<String> getGraqlSchema() {
-        return this.graqlSchema;
+        return graqlSchema;
     }
 
     public List<String> getQueries() {
-        return this.queries;
+        return queries;
     }
 
     public List<Integer> scalesToProfile() {
-        return this.benchmarkConfigFile.scalesToProfile();
+        return benchmarkConfigFile.scalesToProfile();
     }
 
     public boolean generateData() {
@@ -111,11 +114,15 @@ public class BenchmarkConfiguration {
     public boolean loadSchema() { return loadSchema; }
 
     public int numQueryRepetitions() {
-        return this.benchmarkConfigFile.getRepeatsPerQuery();
+        return benchmarkConfigFile.getRepeatsPerQuery();
     }
 
-    public boolean commitQueries() {
-        return benchmarkConfigFile.commitQueries();
+    public boolean deleteInsertedConcepts() {
+        return benchmarkConfigFile.deleteInsertedConcepts();
+    }
+
+    public boolean traceDeleteInsertedConcepts() {
+        return benchmarkConfigFile.traceDeleteInsertedConcepts();
     }
 
     public int concurrentClients() {

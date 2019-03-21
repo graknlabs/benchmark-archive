@@ -28,4 +28,3 @@ java_test(
         "//profiler/test/resources:web-content-config"
     ]
 )
-

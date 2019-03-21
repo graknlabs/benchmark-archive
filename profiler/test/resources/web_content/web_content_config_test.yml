@@ -1,11 +1,15 @@
-graphName: "web_content"
+name: ""
+description: ""
+dataGenerator: "web_content"
 schema: "web_content_schema.gql"
-queries: "queries.yml"
 scales:
   - 2000
 repeatsPerQuery: 0
 
-commitQueries: false
+queries: "queries_read.yml"
+deleteInsertedConcepts: true
+traceDeleteInsertedConcepts: false
+
 concurrency:
   clients: 1
   uniqueKeyspaces: false

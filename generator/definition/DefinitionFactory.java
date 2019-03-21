@@ -16,6 +16,8 @@ public class DefinitionFactory {
                 return new BiochemicalNetworkDefinition(random, storage);
             case "financial":
                 return new FinancialTransactionsDefinition(random, storage);
+            case "generic_uniform_network":
+                return new GenericUniformNetworkDefinition(random, storage);
             default:
                 throw new RuntimeException("Unknown specific schema generation strategy name: " + name);
         }

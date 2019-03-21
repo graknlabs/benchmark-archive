@@ -24,6 +24,8 @@ import graql.lang.Graql;
 import graql.lang.query.GraqlInsert;
 import graql.lang.statement.Statement;
 import graql.lang.statement.Variable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 
@@ -34,6 +36,7 @@ import static graql.lang.Graql.var;
  * Generates queries for inserting attribute values
  */
 public class AttributeGenerator<Datatype> implements QueryGenerator {
+    private static final Logger LOG = LoggerFactory.getLogger(AttributeGenerator.class);
     private final AttributeStrategy<Datatype> strategy;
 
     public AttributeGenerator(AttributeStrategy<Datatype> strategy) {
@@ -42,6 +45,8 @@ public class AttributeGenerator<Datatype> implements QueryGenerator {
 
     @Override
     public Iterator<GraqlInsert> generate() {
+        LOG.trace("Generating Attr " + strategy.getTypeLabel() + ", target quantity: " + strategy.getNumInstancesPDF().peek());
+
         return new Iterator<GraqlInsert>() {
             String attributeTypeLabel = strategy.getTypeLabel();
             Iterator<Datatype> valueProvider = strategy.getValueProvider();
@@ -61,9 +66,9 @@ public class AttributeGenerator<Datatype> implements QueryGenerator {
 
                 Statement attributeValue = var(attr);
                 if (value instanceof Integer) {
-                    attributeValue = attributeValue.val((Integer)value);
+                    attributeValue = attributeValue.val((Integer) value);
                 } else if (value instanceof String) {
-                    attributeValue = attributeValue.val((String)value);
+                    attributeValue = attributeValue.val((String) value);
                 } else {
                     throw new DataGeneratorException("Unimplemented data type " + value.getClass());
                 }

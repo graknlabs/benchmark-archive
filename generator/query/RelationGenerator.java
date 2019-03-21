@@ -27,6 +27,8 @@ import graql.lang.pattern.Pattern;
 import graql.lang.query.GraqlInsert;
 import graql.lang.statement.Statement;
 import graql.lang.statement.Variable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -42,6 +44,8 @@ import static graql.lang.Graql.var;
  * If a role cannot be filled no relationship will be generated.
  */
 public class RelationGenerator implements QueryGenerator {
+    private static final Logger LOG = LoggerFactory.getLogger(RelationGenerator.class);
+
     private final RelationStrategy strategy;
 
     public RelationGenerator(RelationStrategy strategy) {
@@ -50,6 +54,14 @@ public class RelationGenerator implements QueryGenerator {
 
     @Override
     public Iterator<GraqlInsert> generate() {
+
+        String roles = "(";
+        for (RolePlayerTypeStrategy rolePlayerTypeStrategy : this.strategy.getRolePlayerTypeStrategies()) {
+            String role = rolePlayerTypeStrategy.getTypeLabel();
+            roles += role;
+            roles += ",";
+        }
+        LOG.trace("Generating Rel " + strategy.getTypeLabel() + roles + "), target quantity: " + strategy.getNumInstancesPDF().peek());
 
         Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies = this.strategy.getRolePlayerTypeStrategies();
         for (RolePlayerTypeStrategy rolePlayerTypeStrategy : rolePlayerTypeStrategies) {
@@ -69,19 +81,39 @@ public class RelationGenerator implements QueryGenerator {
             int queriesGenerated = 0;
 
             private boolean haveRequiredRolePlayers() {
-                /*
-                Require that each PDF requires at least 1 role player, else hasNext() may be true but not generate any queries
-                AND that the provider has actually got this many role players
-                 */
                 return strategy.getRolePlayerTypeStrategies().stream()
-                        .map(s -> s.getNumInstancesPDF().peek() > 0 && s.getConceptProvider().hasNextN(s.getNumInstancesPDF().peek()))
+                        .map(s -> s.getConceptProvider().hasNextN(s.getNumInstancesPDF().peek()))
                         .allMatch(b -> b);
+            }
+
+            private boolean ensureAtLeastOneRolePlayer() {
+                // we'll build some safety in here:
+                //  we can hit a situation where a relationship is NEVER generated if the `.peek()` method of all the roles is 0
+                //  to avoid this, if detected we sample each PDF once to hopefully skip out of the situation of only 0 roles
+                boolean haveOneRolePlayer = strategy.getRolePlayerTypeStrategies().stream()
+                        .map(s -> s.getNumInstancesPDF().peek() > 0)
+                        .anyMatch(b -> b);
+
+                if (!haveOneRolePlayer) {
+                    LOG.warn("Found situation where all roles are required 0 times - sampling PDFs again to try to break out");
+                    for (RolePlayerTypeStrategy rolePlayerTypeStrategy : strategy.getRolePlayerTypeStrategies()) {
+                        rolePlayerTypeStrategy.getNumInstancesPDF().sample();
+                    }
+
+                    // only 1 re-try allowed per iteration
+                    return strategy.getRolePlayerTypeStrategies().stream()
+                            .map(s -> s.getNumInstancesPDF().peek() > 0)
+                            .anyMatch(b -> b);
+                } else {
+                    return true;
+                }
             }
 
             @Override
             public boolean hasNext() {
-                return (queriesGenerated < queriesToGenerate) && haveRequiredRolePlayers();
+                return (queriesGenerated < queriesToGenerate) && ensureAtLeastOneRolePlayer() && haveRequiredRolePlayers();
             }
+
 
             @Override
             public GraqlInsert next() {

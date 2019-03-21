@@ -1,9 +1,13 @@
-graphName: "taxfix"
+name: "Taxfix - read & write with commits"
+description: "Large sample of taxfix queries without data generation"
+dataGenerator: "taxfix"
 schema: "taxfix_schema.gql"
-queries: "queries_all.yml"
 repeatsPerQuery: 1
 
-commitQueries: true
+queries: "queries_read.yml"
+deleteInsertedConcepts: false
+traceDeleteInsertedConcepts: false
+
 concurrency:
   clients: 2
   uniqueKeyspaces: true

@@ -44,17 +44,12 @@ function deleteExecution(execution) {
       });
 }
 
-function updateExecutionStatus(execution, status) {
+function updateExecutionStatus(execution, doc) {
   return this.client.update({
       index: GRAKN_BENCHMARK_INDEX,
       type: BENCHMARK_EXECUTION_TYPE,
       id: execution.executionId || execution.id,
-      body: {
-        doc: {
-          status,
-          executionCompletedAt: new Date().toISOString()
-        }
-      }
+      body: { doc }
     });
 }
 

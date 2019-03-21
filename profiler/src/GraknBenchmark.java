@@ -85,7 +85,7 @@ public class GraknBenchmark {
     }
 
     public GraknBenchmark(CommandLine arguments) {
-        this.config = new BenchmarkConfiguration(arguments);
+        config = new BenchmarkConfiguration(arguments);
     }
 
 
@@ -220,7 +220,7 @@ public class GraknBenchmark {
      */
     private DataGenerator initDataGenerator(GraknClient client, String keyspace) {
         int randomSeed = 0;
-        String graphName = config.graphName();
+        String dataGenerator= config.dataGenerator();
         GraknClient.Session session = client.session(keyspace);
         SchemaManager schemaManager = new SchemaManager(session, config.getGraqlSchema());
         HashSet<String> entityTypeLabels = schemaManager.getEntityTypes();
@@ -229,11 +229,11 @@ public class GraknBenchmark {
 
         ConceptStorage storage = new IgniteConceptStorage(entityTypeLabels, relationshipTypeLabels, attributeTypeLabels);
 
-        DataGeneratorDefinition dataGeneratorDefinition = DefinitionFactory.getDefinition(graphName, new Random(randomSeed), storage);
+        DataGeneratorDefinition dataGeneratorDefinition = DefinitionFactory.getDefinition(dataGenerator, new Random(randomSeed), storage);
 
         QueryProvider queryProvider = new QueryProvider(dataGeneratorDefinition);
 
-        return new DataGenerator(client, keyspace, storage, graphName, queryProvider);
+        return new DataGenerator(client, keyspace, storage, dataGenerator, queryProvider);
     }
 
     private static void printAscii() {

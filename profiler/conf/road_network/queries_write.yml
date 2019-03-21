@@ -1,0 +1,109 @@
+queries:
+
+  # --- single vertex or 1 hop write queries ---
+  # insert 1 concept
+  - "insert $x isa road;"
+  # insert 1 concept
+  - "insert $x isa region-code; $x -100;"
+  # insert 1 concept
+  - "insert $x isa name; $x \"helloworld\";"
+  # insert 3 concepts, 2 role players
+  - "insert
+          $r (endpoint: $road1, endpoint: $road2) isa intersection;
+          $road1 isa road;
+          $road2 isa road;"
+
+
+  # --- more complex write queries ---
+  # 8 role players
+  - "insert
+      $intersection8 (
+        endpoint: $r1, endpoint: $r2, endpoint: $r3, endpoint: $r4,
+        endpoint: $r5, endpoint: $r6, endpoint: $r7, endpoint: $r8
+      ) isa intersection;
+      $r1 isa road; $r2 isa road; $r3 isa road; $r4 isa road;
+      $r5 isa road; $r6 isa road; $r7 isa road; $r8 isa road; "
+
+  # 16 role players
+  - " insert
+      $intersection16 (
+        endpoint: $r1, endpoint: $r2, endpoint: $r3, endpoint: $r4,
+        endpoint: $r5, endpoint: $r6, endpoint: $r7, endpoint: $r8,
+        endpoint: $r9, endpoint: $r10, endpoint: $r11, endpoint: $r12,
+        endpoint: $r13, endpoint: $r14, endpoint: $r15, endpoint: $r16
+      ) isa intersection;
+      $r1 isa road; $r2 isa road; $r3 isa road; $r4 isa road;
+      $r5 isa road; $r6 isa road; $r7 isa road; $r8 isa road;
+      $r9 isa road; $r10 isa road; $r11 isa road; $r12 isa road;
+      $r13 isa road; $r14 isa road; $r15 isa road; $r16 isa road;"
+
+
+  # 32 role players
+  - " insert
+      $intersection32 (
+        endpoint: $r1, endpoint: $r2, endpoint: $r3, endpoint: $r4,
+        endpoint: $r5, endpoint: $r6, endpoint: $r7, endpoint: $r8,
+        endpoint: $r9, endpoint: $r10,  endpoint: $r11, endpoint: $r12,
+        endpoint: $r13, endpoint: $r14, endpoint: $r15, endpoint: $r16,
+        endpoint: $r17, endpoint: $r18, endpoint: $r19, endpoint: $r20,
+        endpoint: $r21, endpoint: $r22, endpoint: $r23, endpoint: $r24,
+        endpoint: $r25, endpoint: $r26, endpoint: $r27, endpoint: $r28,
+        endpoint: $r29, endpoint: $r30, endpoint: $r31, endpoint: $r32
+      ) isa intersection;
+      $r1 isa road; $r2 isa road; $r3 isa road; $r4 isa road;
+      $r5 isa road; $r6 isa road; $r7 isa road; $r8 isa road;
+      $r9 isa road; $r10 isa road; $r11 isa road; $r12 isa road;
+      $r13 isa road; $r14 isa road; $r15 isa road; $r16 isa road;
+      $r17 isa road; $r18 isa road; $r19 isa road; $r20 isa road;
+      $r21 isa road; $r22 isa road; $r23 isa road; $r24 isa road;
+      $r25 isa road; $r26 isa road; $r27 isa road; $r28 isa road;
+      $r29 isa road; $r30 isa road; $r31 isa road; $r32 isa road;"
+
+  # 64 role players
+  - "insert
+      $intersection64 (
+        endpoint: $road1, endpoint: $road2, endpoint: $road3, endpoint: $road4,
+        endpoint: $road5, endpoint: $road6, endpoint: $road7, endpoint: $road8,
+        endpoint: $road9, endpoint: $road10, endpoint: $road11, endpoint: $road12,
+        endpoint: $road13, endpoint: $road14, endpoint: $road15, endpoint: $road16,
+        endpoint: $road17, endpoint: $road18, endpoint: $road19, endpoint: $road20,
+        endpoint: $road21, endpoint: $road22, endpoint: $road23, endpoint: $road24,
+        endpoint: $road25, endpoint: $road26, endpoint: $road27, endpoint: $road28,
+        endpoint: $road29, endpoint: $road30, endpoint: $road31, endpoint: $road32,
+        endpoint: $road33, endpoint: $road34, endpoint: $road35, endpoint: $road36,
+        endpoint: $road37, endpoint: $road38, endpoint: $road39, endpoint: $road40,
+        endpoint: $road41, endpoint: $road42, endpoint: $road43, endpoint: $road44,
+        endpoint: $road45, endpoint: $road46, endpoint: $road47, endpoint: $road48,
+        endpoint: $road49, endpoint: $road50, endpoint: $road51, endpoint: $road52,
+        endpoint: $road53, endpoint: $road54, endpoint: $road55, endpoint: $road56,
+        endpoint: $road57, endpoint: $road58, endpoint: $road59, endpoint: $road60,
+        endpoint: $road61, endpoint: $road62, endpoint: $road63, endpoint: $road64
+      ) isa intersection;
+      $road1 isa road; $road2 isa road; $road3 isa road; $road4 isa road;
+      $road5 isa road; $road6 isa road; $road7 isa road; $road8 isa road;
+      $road9 isa road; $road10 isa road; $road11 isa road; $road12 isa road;
+      $road13 isa road; $road14 isa road; $road15 isa road; $road16 isa road;
+      $road17 isa road; $road18 isa road; $road19 isa road; $road20 isa road;
+      $road21 isa road; $road22 isa road; $road23 isa road; $road24 isa road;
+      $road25 isa road; $road26 isa road; $road27 isa road; $road28 isa road;
+      $road29 isa road; $road30 isa road; $road31 isa road; $road32 isa road;
+      $road33 isa road; $road34 isa road; $road35 isa road; $road36 isa road;
+      $road37 isa road; $road38 isa road; $road39 isa road; $road40 isa road;
+      $road41 isa road; $road42 isa road; $road43 isa road; $road44 isa road;
+      $road45 isa road; $road46 isa road; $road47 isa road; $road48 isa road;
+      $road49 isa road; $road50 isa road; $road51 isa road; $road52 isa road;
+      $road53 isa road; $road54 isa road; $road55 isa road; $road56 isa road;
+      $road57 isa road; $road58 isa road; $road59 isa road; $road60 isa road;
+      $road61 isa road; $road62 isa road; $road63 isa road; $road64 isa road;"
+
+  # insert 12 explicit concepts including two relationships, four entities and six attributes,
+  # plus six implicit attribute relationships
+  - "insert
+      $intersection1 (endpoint: $r1, endpoint: $r2, endpoint: $r3) isa intersection, has region-code $rc;
+      $rc -1000;
+      $r1 isa road, has name $n1; $n1 \"Street\";
+      $r2 isa road, has name $n2; $n2 \"Avenue\";
+      $r3 isa road, has name $n3; $n3 \"Boulevard\";
+      $intersection2 (endpoint: $r1, endpoint: $r4) isa intersection, has region-code $rc2;
+      $rc2 -2000;
+      $r4 isa road, has name $n4; $n4 \"Alice\";"

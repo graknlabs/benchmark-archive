@@ -1,0 +1,68 @@
+queries:
+  - "insert
+      $x isa blob;
+      $interaction1 (blobber: $x, squarer: $y) isa interaction;
+      $y isa square;
+      $ownership1 (owner: $y, owned: $z) isa ownership;
+      $z isa circle;"
+
+  # branching from one entity, width 3, depth 1
+  - "insert
+      $b1 isa blob, has blob-value $bv1; $bv1 -100;
+      $b2 isa blob, has blob-value $bv2; $bv2 -300;
+      $ownership1 (owner: $b1, owned: $b2) isa ownership;
+
+      $c isa circle;
+      $interaction1 (blobber: $b1, circler: $c) isa interaction, has interaction-value $v1; $v1 -3;
+
+      $s isa square;
+      $interaction2 (blobber: $b1, squarer: $s) isa interaction, has interaction-value $v2; $v2 -1;"
+
+  # branching from one entity, width 3, depth 3
+  # -
+
+  # star, 6 role players, with some attribute values
+  - "insert
+      $i1 (blobber: $b1, blobber: $b2, circler: $c1, circler: $c2, squarer: $s1, squarer: $s2) isa interaction;
+      $b1 isa blob, has blob-value $bv1; $bv1 -1;
+      $b2 isa blob;
+      $c1 isa circle, has circle-value $cv1; $cv1 -98;
+      $c2 isa circle;
+      $s1 isa square, has square-value $sv1; $sv1 -3;
+      $s2 isa square, has square-value $cv2; $cv2 -99;"
+
+  # circle (ie. pentagon)
+  - "insert
+      $b isa blob;
+      $c1 isa circle;
+      $c2 isa circle;
+      $s1 isa square;
+      $s2 isa square;
+
+      $sizing1 (bigger: $b, smaller: $c1) isa sizing-circle;
+      $ownership1 (owned: $c1, owner: $s1) isa ownership;
+      $sizing2 (smaller: $s1, bigger: $c2) isa sizing;
+      $inter1 (circler: $c2, squarer: $s2) isa interaction;
+      $ownership2 (owner: $c2, owned: $b) isa ownership;"
+
+  # highly connected square - edges, diagonals, ternary relation and quaternary relations
+  - "insert
+      $b1 isa blob;
+      $b2 isa blob;
+      $c isa circle;
+      $s isa square;
+
+      $ownership1 (owner: $b1, owned: $b2) isa ownership-of-blob;
+      $ownership2 (owner: $b2, owned: $c) isa ownership;
+      $ownership3 (owned: $c, owner: $s) isa ownership-of-circle;
+      $ownership4 (owner: $s, owned: $b1) isa ownership;
+
+      $sizing1 (bigger: $b1, smaller: $c) isa sizing-circle;
+      $sizing2 (bigger: $b2, smaller: $s) isa sizing-square;
+
+      $interaction1 (blobber: $b1, blobber: $b2, circler: $c) isa interaction;
+      $interaction2 (blobber: $b1, blobber: $b2, squarer: $s) isa interaction;
+      $interaction3 (blobber: $b2, circler: $c, squarer:  $s) isa interaction;
+      $interaction4 (blobber: $b1, circler: $c, squarer: $s) isa interaction;
+
+      $interaction5 (blobber: $b1, blobber: $b2, circler: $c, squarer: $s) isa interaction;"

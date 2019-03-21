@@ -2,7 +2,7 @@ define
 
     # fixed increments
     name sub attribute, datatype string;
-    # region-code sub attribute datatype long;
+    region-code sub attribute, datatype long;
 
     # fixed increments
     road sub entity,
@@ -11,4 +11,5 @@ define
 
     # fixed increments
     intersection sub relation,
-        relates endpoint; # fixed upper bound on RPs
+        relates endpoint, # fixed upperbound on number of endpoints
+        has region-code;

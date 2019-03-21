@@ -25,20 +25,37 @@ import java.util.List;
  */
 
 public class BenchmarkConfigurationFile {
-    private String graphName;
+    private String name;
+    private String description;
+    private String dataGenerator;
     private String schema;
     private String queries;
     private List<Integer> scalesToProfile;
     private Integer repeatsPerQuery;
 
-    private boolean commitQueries;
+    private boolean deleteInsertedConcepts;
+    private boolean traceDeleteInsertedConcepts;
     private Concurrency concurrency;
 
-    public void setGraphName(String graphName) {
-        this.graphName = graphName;
+    public void setName(String name) {
+        this.name= name;
     }
-    public String getGraphName() {
-        return this.graphName;
+    public String getName() {
+        return this.name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    public String getDescription() {
+        return this.description;
+    }
+
+    public void setDataGenerator(String dataGenerator) {
+        this.dataGenerator = dataGenerator;
+    }
+    public String getDataGenerator() {
+        return this.dataGenerator;
     }
 
     public void setSchema(String schemaFile) {
@@ -55,12 +72,15 @@ public class BenchmarkConfigurationFile {
         return this.queries;
     }
 
-    public void setCommitQueries(Boolean commitQueries) {
-        this.commitQueries = commitQueries;
+    public void setDeleteInsertedConcepts(Boolean deleteInsertedConcepts) {
+        this.deleteInsertedConcepts = deleteInsertedConcepts;
     }
-    public Boolean commitQueries() {
-        return commitQueries;
+    public boolean deleteInsertedConcepts() { return deleteInsertedConcepts; }
+
+    public void setTraceDeleteInsertedConcepts(Boolean traceDeleteInsertedConcepts) {
+        this.traceDeleteInsertedConcepts = traceDeleteInsertedConcepts;
     }
+    public boolean traceDeleteInsertedConcepts() { return traceDeleteInsertedConcepts; }
 
     public void setScales(List<Integer> scales) {
         this.scalesToProfile = scales;
@@ -89,6 +109,9 @@ public class BenchmarkConfigurationFile {
 }
 
 
+/**
+ * Sub-object in yaml file that indicates concurrency configuration options
+ */
 class Concurrency {
     private Integer clients;
     private Boolean separateKeyspaces;

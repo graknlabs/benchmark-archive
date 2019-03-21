@@ -24,9 +24,6 @@ import grakn.core.concept.ConceptId;
 import grakn.core.concept.Label;
 import grakn.core.concept.thing.Attribute;
 import grakn.core.concept.type.AttributeType;
-import grakn.core.concept.type.EntityType;
-import grakn.core.concept.type.RelationType;
-import grakn.core.concept.type.SchemaConcept;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +61,7 @@ public class IgniteConceptStorage implements ConceptStorage {
     private HashSet<String> relationshipTypeLabels;
     private HashSet<String> explicitRelationshipTypeLabels;
     private Map<String, AttributeType.DataType<?>> attributeTypeLabels; // typeLabel, datatype
-    private HashMap<String, String> labelToSqlName;
+    private HashMap<String, String> labelToSqlNameMap;
 
     private Connection conn;
     private final String cachingMethod = "REPLICATED";
@@ -94,7 +91,7 @@ public class IgniteConceptStorage implements ConceptStorage {
         LOG.info("Initialising ignite...");
         // Read schema concepts and create ignite tables
         this.entityTypeLabels = entityTypeLabels;
-        this.explicitRelationshipTypeLabels = relationshipTypeLabels;
+        this.explicitRelationshipTypeLabels = new HashSet<>(relationshipTypeLabels);
         this.attributeTypeLabels = attributeTypeLabels;
 
         this.relationshipTypeLabels = relationshipTypeLabels;
@@ -105,7 +102,7 @@ public class IgniteConceptStorage implements ConceptStorage {
         }
 
 
-        labelToSqlName = mapLabelToSqlName(entityTypeLabels, relationshipTypeLabels, attributeTypeLabels.keySet());
+        labelToSqlNameMap = mapLabelToSqlName(entityTypeLabels, relationshipTypeLabels, attributeTypeLabels.keySet());
         cleanTables();
         initializeSqlDriver();
         createTables();
@@ -179,6 +176,13 @@ public class IgniteConceptStorage implements ConceptStorage {
 
     }
 
+    private String labelToSqlName(String label) {
+        if (!labelToSqlNameMap.containsKey(label)){
+            LOG.error("No SQL-safe conversion for label: " + label);
+        }
+        return labelToSqlNameMap.get(label);
+    }
+
     private HashSet<String> getAllTypeLabels() {
         HashSet<String> allLabels = new HashSet<>();
         allLabels.addAll(this.entityTypeLabels);
@@ -193,9 +197,9 @@ public class IgniteConceptStorage implements ConceptStorage {
      * @param typeLabel
      */
     private void createTypeIdsTable(String typeLabel, Set<String> relationshipLabels) {
-        String sqlTypeLabel = this.labelToSqlName.get(typeLabel);
+        String sqlTypeLabel = labelToSqlName(typeLabel);
         List<String> relationshipColumnNames = relationshipLabels.stream()
-                .map(label -> this.labelToSqlName.get(label))
+                .map(label -> labelToSqlName(label))
                 .collect(Collectors.toList());
         createTable(sqlTypeLabel, "VARCHAR", relationshipColumnNames);
     }
@@ -212,10 +216,10 @@ public class IgniteConceptStorage implements ConceptStorage {
                                            Set<String> relationshipLabels) {
 
         List<String> relationshipColumnNames = relationshipLabels.stream()
-                .map(label -> this.labelToSqlName.get(label))
+                .map(label -> labelToSqlName(label))
                 .collect(Collectors.toList());
 
-        String sqlTypeLabel = this.labelToSqlName.get(typeLabel);
+        String sqlTypeLabel = labelToSqlName(typeLabel);
         try (Statement stmt = conn.createStatement()) {
             stmt.executeUpdate("CREATE TABLE " + sqlTypeLabel + " (" +
                     " id VARCHAR PRIMARY KEY, " +
@@ -268,7 +272,7 @@ public class IgniteConceptStorage implements ConceptStorage {
     public void addConcept(Concept concept) {
 
         Label conceptTypeLabel = concept.asThing().type().label();
-        String tableName = this.labelToSqlName.get(conceptTypeLabel.toString());
+        String tableName = labelToSqlName(conceptTypeLabel.toString());
         String conceptId = concept.asThing().id().toString(); // TODO use the value instead for attributes
 
         if (concept.isAttribute()) {
@@ -357,8 +361,8 @@ public class IgniteConceptStorage implements ConceptStorage {
         }
 
         // add the role to this concept ID's row/column for this relationship
-        String sqlTypeTable = this.labelToSqlName.get(conceptType);
-        String sqlRelationship = this.labelToSqlName.get(relationshipType);
+        String sqlTypeTable = labelToSqlName(conceptType);
+        String sqlRelationship = labelToSqlName(relationshipType);
         String sqlRole = sanitizeString(role);
 
         try (Statement stmt = conn.createStatement()) {
@@ -405,8 +409,8 @@ public class IgniteConceptStorage implements ConceptStorage {
      * String stuffing all the roles played by a concept of a given type in a specific relationship into one
      */
     public List<ConceptId> getIdsNotPlayingRole(String typeLabel, String relationshipType, String role) {
-        String tableName = this.labelToSqlName.get(typeLabel);
-        String columnName = this.labelToSqlName.get(relationshipType);
+        String tableName = labelToSqlName(typeLabel);
+        String columnName = labelToSqlName(relationshipType);
         String roleName = sanitizeString(role);
 
         String sql = "SELECT ID, " + columnName + " FROM " + tableName +
@@ -429,8 +433,8 @@ public class IgniteConceptStorage implements ConceptStorage {
     }
 
     public Integer numIdsNotPlayingRole(String typeLabel, String relationshipType, String role) {
-        String tableName = this.labelToSqlName.get(typeLabel);
-        String columnName = this.labelToSqlName.get(relationshipType);
+        String tableName = labelToSqlName(typeLabel);
+        String columnName = labelToSqlName(relationshipType);
         String roleName = sanitizeString(role);
 
         String sql = "SELECT COUNT(ID) FROM " + tableName +
@@ -456,14 +460,14 @@ public class IgniteConceptStorage implements ConceptStorage {
      */
 
     private String sqlGetId(String typeLabel, int offset) {
-        String sql = "SELECT id FROM " + labelToSqlName.get(typeLabel) +
+        String sql = "SELECT id FROM " + labelToSqlName(typeLabel) +
                 " OFFSET " + offset +
                 " FETCH FIRST ROW ONLY";
         return sql;
     }
 
     private String sqlGetAttrValue(String typeLabel, int offset) {
-        String sql = "SELECT value FROM " + labelToSqlName.get(typeLabel) +
+        String sql = "SELECT value FROM " + labelToSqlName(typeLabel) +
                 " OFFSET " + offset +
                 " FETCH FIRST ROW ONLY";
         return sql;
@@ -500,7 +504,7 @@ public class IgniteConceptStorage implements ConceptStorage {
     }
 
     public int getConceptCount(String typeLabel) {
-        String tableName = labelToSqlName.get(typeLabel);
+        String tableName = labelToSqlName(typeLabel);
         return getCountInTable(tableName);
     }
 
@@ -533,6 +537,15 @@ public class IgniteConceptStorage implements ConceptStorage {
             total += getConceptCount(relationshipType);
         }
         return total;
+    }
+
+    @Override
+    public int totalImplicitRelationships() {
+        int totalRelationships = 0;
+        for (String relationshipType : this.relationshipTypeLabels) {
+            totalRelationships += getConceptCount(relationshipType);
+        }
+        return totalRelationships - totalExplicitRelationships();
     }
 
     @Override
@@ -586,7 +599,7 @@ public class IgniteConceptStorage implements ConceptStorage {
         Set<String> rolePlayerIds = getIds("roleplayers");
         Set<String> entityIds = new HashSet<>();
         for (String typeLabel : this.entityTypeLabels) {
-            Set<String> ids = getIds(this.labelToSqlName.get(typeLabel));
+            Set<String> ids = getIds(labelToSqlName(typeLabel));
             entityIds.addAll(ids);
         }
         entityIds.removeAll(rolePlayerIds);
@@ -603,7 +616,7 @@ public class IgniteConceptStorage implements ConceptStorage {
         Set<String> rolePlayerIds = getIds("roleplayers");
         Set<String> attributeIds = new HashSet<>();
         for (String typeLabel : this.attributeTypeLabels.keySet()) {
-            Set<String> ids = getIds(this.labelToSqlName.get(typeLabel));
+            Set<String> ids = getIds(labelToSqlName(typeLabel));
             attributeIds.addAll(ids);
         }
         attributeIds.removeAll(rolePlayerIds);
@@ -621,7 +634,7 @@ public class IgniteConceptStorage implements ConceptStorage {
         Set<String> rolePlayerIds = getIds("roleplayers");
         Set<String> relationshipIds = new HashSet<>();
         for (String typeLabel : this.relationshipTypeLabels) {
-            Set<String> ids = getIds(this.labelToSqlName.get(typeLabel));
+            Set<String> ids = getIds(labelToSqlName(typeLabel));
             relationshipIds.addAll(ids);
         }
         relationshipIds.retainAll(rolePlayerIds);
@@ -659,7 +672,7 @@ public class IgniteConceptStorage implements ConceptStorage {
      */
     public void clean(Set<String> typeLabels) throws SQLException {
         for (String typeLabel : typeLabels) {
-            dropTable(this.labelToSqlName.get(typeLabel));
+            dropTable(labelToSqlName(typeLabel));
         }
     }
 
