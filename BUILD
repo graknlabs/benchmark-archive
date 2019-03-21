@@ -38,29 +38,29 @@ distribution_zip(
     additional_files = {
         "//profiler:benchmark": "benchmark",
 
-        "//profiler:conf/road_network/queries_read.yml": "conf/road_network/queries_read.yml",
-        "//profiler:conf/road_network/queries_write.yml": "conf/road_network/queries_write.yml",
-        "//profiler:conf/road_network/road_config_read.yml": "conf/road_network/road_config_read.yml",
-        "//profiler:conf/road_network/road_config_write.yml": "conf/road_network/road_config_write.yml",
-        "//profiler:conf/road_network/road_network.gql": "conf/road_network/road_network.gql",
+        "//common/conf:road-queries-read": "conf/road_network/queries_read.yml",
+        "//common/conf:road-queries-write": "conf/road_network/queries_write.yml",
+        "//common/conf:road-conf-read": "conf/road_network/road_config_read.yml",
+        "//common/conf:road-conf-write": "conf/road_network/road_config_write.yml",
+        "//common/conf:road-schema": "conf/road_network/road_network.gql",
 
-        "//profiler:conf/social_network/queries_read.yml": "conf/social_network/queries_read.yml",
-        "//profiler:conf/social_network/social_network_config_read.yml": "conf/social_network/social_network_config_read.yml",
-        "//profiler:conf/social_network/social_network.gql": "conf/social_network/social_network.gql",
+        "//common/conf:social-conf": "conf/social_network/social_network_config_read.yml",
+        "//common/conf:social-queries": "conf/social_network/social_network.gql",
+        "//common/conf:social-schema": "conf/social_network/social_network.gql",
 
-        "//profiler:conf/financial_transactions/queries_read.yml": "conf/financial_transactions/queries_read.yml",
-        "//profiler:conf/financial_transactions/financial_config_read.yml": "conf/financial_transactions/financial_config_read.yml",
-        "//profiler:conf/financial_transactions/financial.gql": "conf/financial_transactions/financial.gql",
+        "//common/conf:financial-queries": "conf/financial_transactions/queries_read.yml",
+        "//common/conf:financial-conf": "conf/financial_transactions/financial_config_read.yml",
+        "//common/conf:financial-schema": "conf/financial_transactions/financial.gql",
 
-        "//profiler:conf/biochemical_network/queries_read.yml": "conf/biochemical_network/queries_read.yml",
-        "//profiler:conf/biochemical_network/biochemical_config_read.yml": "conf/biochemical_network/biochemical_config_read.yml",
-        "//profiler:conf/biochemical_network/biochemical_network.gql": "conf/biochemical_network/biochemical_network.gql",
+        "//common/conf:biochemical-queries": "conf/biochemical_network/queries_read.yml",
+        "//common/conf:biochemical-conf": "conf/biochemical_network/biochemical_config_read.yml",
+        "//common/conf:biochemical-schema": "conf/biochemical_network/biochemical_network.gql",
 
-        "//profiler:conf/generic/queries_complex_read.yml": "conf/generic/queries_complex_read.yml",
-        "//profiler:conf/generic/queries_complex_write.yml": "conf/generic/queries_complex_write.yml",
-        "//profiler:conf/generic/config_read.yml": "conf/generic/config_read.yml",
-        "//profiler:conf/generic/config_write.yml": "conf/generic/config_write.yml",
-        "//profiler:conf/generic/schema.gql" : "conf/generic/schema.gql",
+        "//common/conf:complex-queries-read": "conf/complex/queries_complex_read.yml",
+        "//common/conf:complex-queries-write": "conf/complex/queries_complex_write.yml",
+        "//common/conf:complex-conf-read": "conf/complex/config_read.yml",
+        "//common/conf:complex-conf-write": "conf/complex/config_write.yml",
+        "//common/conf:complex-schema" : "conf/complex/schema.gql",
 
         # External dependencies: Elasticsearch and Zipkin
         "//profiler:setup.sh": "external-dependencies/setup.sh",

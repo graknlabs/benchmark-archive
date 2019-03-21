@@ -27,4 +27,3 @@ java_binary(
     classpath_resources = ["//profiler/src:logback"],
     visibility = ["//visibility:public"]
 )
-

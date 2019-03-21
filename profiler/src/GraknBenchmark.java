@@ -53,7 +53,7 @@ import java.util.Random;
  * Class in charge of
  * - initialising Benchmark dependencies and BenchmarkConfiguration
  * - run data generation (populate empty keyspace) (DataGenerator)
- * - run benchmark on queries (QueryProfiler)
+ * - run benchmark on queries (ThreadedProfiler + QueryProfiler)
  */
 public class GraknBenchmark {
     private static final Logger LOG = LoggerFactory.getLogger(GraknBenchmark.class);
@@ -107,7 +107,7 @@ public class GraknBenchmark {
 
             GraknClient tracingClient = TracingGraknClient.get(config.graknUri());
             traceKeyspaceCreation(tracingClient);
-            QueryProfiler queryProfiler = new QueryProfiler(tracingClient, Collections.singletonList(config.getKeyspace()), config);
+            ThreadedProfiler threadedProfiler = new ThreadedProfiler(tracingClient, Collections.singletonList(config.getKeyspace()), config);
 
             Ignite ignite = IgniteManager.initIgnite();
             GraknClient client = new GraknClient(config.graknUri());
@@ -115,16 +115,15 @@ public class GraknBenchmark {
             List<Integer> numConceptsInRun = config.scalesToProfile();
 
             try {
-
                 for (int numConcepts : numConceptsInRun) {
                     LOG.info("Generating graph to scale... " + numConcepts);
                     dataGenerator.generate(numConcepts);
-                    queryProfiler.processStaticQueries(config.numQueryRepetitions(), numConcepts);
+                    threadedProfiler.processStaticQueries(config.numQueryRepetitions(), numConcepts);
                 }
             } catch (Exception e) {
                 throw e;
             } finally {
-                queryProfiler.cleanup();
+                threadedProfiler.cleanup();
                 tracingClient.close();
                 client.close();
                 ignite.close();
@@ -143,10 +142,10 @@ public class GraknBenchmark {
                 keyspaces = Collections.singletonList(config.getKeyspace());
             }
 
-            QueryProfiler queryProfiler = new QueryProfiler(tracingClient, keyspaces, config);
+            ThreadedProfiler threadedProfiler = new ThreadedProfiler(tracingClient, keyspaces, config);
             int numConcepts = 0;
-            queryProfiler.processStaticQueries(config.numQueryRepetitions(), numConcepts);
-            queryProfiler.cleanup();
+            threadedProfiler.processStaticQueries(config.numQueryRepetitions(), numConcepts);
+            threadedProfiler.cleanup();
             tracingClient.close();
 
         } else {  // USECASE:  Profile an existing keyspace using queries from config file.
@@ -157,12 +156,12 @@ public class GraknBenchmark {
             }
 
             GraknClient client = new GraknClient(config.graknUri());
-            QueryProfiler queryProfiler = new QueryProfiler(client, Collections.singletonList(config.getKeyspace()), config);
+            ThreadedProfiler threadedProfiler = new ThreadedProfiler(client, Collections.singletonList(config.getKeyspace()), config);
 
-//            int numConcepts = queryProfiler.aggregateCount();
+//            int numConcepts = threadedProfiler.aggregateCount();
             int numConcepts = 0; // TODO re-add this properly for concurrent clients
-            queryProfiler.processStaticQueries(config.numQueryRepetitions(), numConcepts);
-            queryProfiler.cleanup();
+            threadedProfiler.processStaticQueries(config.numQueryRepetitions(), numConcepts);
+            threadedProfiler.cleanup();
             client.close();
         }
     }
