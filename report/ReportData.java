@@ -17,21 +17,30 @@ import java.util.Map;
 class ReportData {
 
     // each MultiScaleQueryExecutionResults represents ONE query executed across different scales
-    private Map<String, List<MultiScaleResults>> data;
+    private Map<String, List<MultiScaleResults>> queryExecutionData;
     // use a lookup to find out which queries are already represented in the report
     private Map<GraqlQuery, MultiScaleResults> multiScaleQueryExecutionResultsLookup;
 
-    public ReportData() {
-        data = new HashMap<>();
+    // metadata
+    private int concurrentClients;
+    private String configName;
+    private String description;
+
+
+    public ReportData(String configName, int concurrentClients, String description) {
+        queryExecutionData = new HashMap<>();
         multiScaleQueryExecutionResultsLookup = new HashMap<>();
+        this.configName = configName;
+        this.concurrentClients = concurrentClients;
+        this.description = description;
     }
 
     public void recordQueryTimes(String type, GraqlQuery query, QueryExecutionResults queryData) {
         if (!multiScaleQueryExecutionResultsLookup.containsKey(query)) {
             MultiScaleResults results = new MultiScaleResults(query);
             multiScaleQueryExecutionResultsLookup.put(query, results);
-            data.putIfAbsent(type, new LinkedList<>());
-            data.get(type).add(results);
+            queryExecutionData.putIfAbsent(type, new LinkedList<>());
+            queryExecutionData.get(type).add(results);
         }
 
         // add this specific queryData to the MultiScaleQueryExecutionResults
@@ -42,20 +51,37 @@ class ReportData {
         // register a serialiser for the QueryExecutionResults
         QueryExecutionResultsSerializer serializer = new QueryExecutionResultsSerializer(QueryExecutionResults.class);
         MultiScaleResultsSerializer containerSerialiser = new MultiScaleResultsSerializer(MultiScaleResults.class);
-        SimpleModule module = new SimpleModule("QueryExecutionResultsSerializer");
+        ReportDataSerializer reportDataSerializer = new ReportDataSerializer(ReportData.class);
+        SimpleModule module = new SimpleModule("serializers");
         module.addSerializer(serializer);
         module.addSerializer(containerSerialiser);
+        module.addSerializer(reportDataSerializer);
 
-        // register a serialiser for the MultiScaleQueryExecutionResults
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(module);
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        mapper.enable(SerializationFeature.INDENT_OUTPUT); // enable indentation for readability
 
         try {
-            return mapper.writeValueAsString(data);
+            return mapper.writeValueAsString(this);
         } catch (JsonProcessingException e) {
             // wrap in a custom runtime exception
             throw new ReportGeneratorException("Error serializing data to JSON", e);
         }
+    }
+
+    public int concurrentClients() {
+        return concurrentClients;
+    }
+
+    public String configName() {
+        return configName;
+    }
+
+    public String description() {
+        return description;
+    }
+
+    public Map<String, List<MultiScaleResults>> queryExecutionData() {
+        return queryExecutionData;
     }
 }

@@ -101,7 +101,7 @@ public class ReportGenerator {
 
         // alternate between generating data and profiling a queries
         List<GraqlQuery> queries = toGraqlQueries(config.getQueries());
-        ReportData reportData = new ReportData();
+        ReportData reportData = new ReportData(config.configName(), config.concurrentClients(), config.configDescription());
         try {
             for (int graphScale : config.scalesToProfile()) {
                 LOG.info("Generating graph to scale... " + graphScale);
