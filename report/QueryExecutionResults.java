@@ -4,19 +4,26 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class QueryExecutionResults {
-    private List<Long> queryExecutionTimes = new LinkedList<>();
+    private List<Long> queryExecutionTimes;
     private Integer conceptsInvolved = null;
-    private String type = null;
+    private String queryType = null;
     private Integer roundTrips = null;
+    private Integer scale = null;
 
     public QueryExecutionResults() {
+        queryExecutionTimes = new LinkedList<>();
     }
 
-    public void record(Long milliseconds, Integer conceptsInvolved, String type, Integer roundTrips) {
+    public void record(Long milliseconds, Integer conceptsInvolved, String queryType, Integer roundTrips, Integer scale) {
         queryExecutionTimes.add(milliseconds);
         this.conceptsInvolved = conceptsInvolved;
-        this.type = type;
+        this.queryType = queryType;
         this.roundTrips = roundTrips;
+        this.scale = scale;
+    }
+
+    public void setScale(Integer scale) {
+        this.scale = scale;
     }
 
     public List<Long> times() {
@@ -27,34 +34,13 @@ public class QueryExecutionResults {
         return conceptsInvolved;
     }
 
-    public String type() {
-        return type;
+    public String queryType() {
+        return queryType;
     }
 
     public Integer roundTrips() {
         return roundTrips;
     }
 
-    /**
-     * Merge two Results together into one object
-     */
-    public QueryExecutionResults merge(QueryExecutionResults queryExecutionsResult) {
-        QueryExecutionResults result = new QueryExecutionResults();
-
-        if (times().size() > 0) {
-            // check if the merged item has any data, otherwise will be all nulls
-            for (Long t : times()) {
-                result.record(t, conceptsInvolved, type, roundTrips);
-            }
-        }
-
-        if (queryExecutionsResult.times().size() > 0) {
-            // check if the merged item has any data, otherwise will be all nulls
-            for (Long t : queryExecutionsResult.times()) {
-                result.record(t, queryExecutionsResult.concepts(), queryExecutionsResult.type(), queryExecutionsResult.roundTrips());
-            }
-        }
-
-        return result;
-    }
+    public Integer scale() { return scale; }
 }

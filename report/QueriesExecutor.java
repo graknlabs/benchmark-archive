@@ -56,7 +56,7 @@ class QueriesExecutor implements Callable<Map<GraqlQuery, QueryExecutionResults>
                 }
 
                 // TODO collect data about this answer - eg how many were inserted/deleted/matched, how many round trips
-                result.get(query).record( endTime - startTime, -1, type, -1);
+                result.get(query).record( endTime - startTime, -1, type, -1, null);
 
                 // TODO delete inserted concepts
             }

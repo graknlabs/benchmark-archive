@@ -17,20 +17,15 @@ public class QueryExecutionResultsSerializer extends StdSerializer<QueryExecutio
     public void serialize(QueryExecutionResults value, JsonGenerator gen, SerializerProvider provider) throws IOException {
         gen.writeStartObject();
 
-        int concepts = value.concepts();
-        int roundTrips = value.roundTrips();
         List<Long> times = value.times();
         long[] timesArray = times.stream().mapToLong(Long::longValue).toArray();
-        String type = value.type();
 
+        gen.writeStringField("queryType", value.queryType());
+        gen.writeNumberField("conceptsInvolved", value.concepts());
+        gen.writeNumberField("roundTrips", value.roundTrips());
+        gen.writeNumberField("scale", value.scale());
 
-        gen.writeStringField("queryType", type);
-        gen.writeNumberField("conceptsInvolved", concepts);
-        gen.writeNumberField("roundTrips", roundTrips);
-
-        gen.writeArrayFieldStart("time");
-        gen.writeArray(timesArray, 0, timesArray.length);
-        gen.writeEndArray();
+        gen.writeObjectField("duration", timesArray);
 
         gen.writeEndObject();
     }

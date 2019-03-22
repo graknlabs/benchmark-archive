@@ -40,7 +40,6 @@ import org.apache.ignite.Ignite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -125,7 +124,9 @@ public class ReportGenerator {
     private void recordDataForScale(ReportData reportData, int scale, Map<GraqlQuery, QueryExecutionResults> singleScaleResults) {
         for (GraqlQuery query : singleScaleResults.keySet()) {
             QueryExecutionResults queryExecutionResults = singleScaleResults.get(query);
-            reportData.record(queryExecutionResults.type(), query, scale, queryExecutionResults);
+            // inject the scale into the container
+            queryExecutionResults.setScale(scale);
+            reportData.recordQueryTimes(queryExecutionResults.queryType(), query, queryExecutionResults);
         }
     }
 
@@ -155,14 +156,15 @@ public class ReportGenerator {
             openSessions.forEach(GraknClient.Session::close);
         }
 
-        // aggregate concurrent results
-        Map<GraqlQuery, QueryExecutionResults> combinedResults = new HashMap<>();
+        // aggregate concurrent results, starting with first result
+        Map<GraqlQuery, QueryExecutionResults> combinedResults = concurrentResults.get(0);
 
-        for (Map<GraqlQuery, QueryExecutionResults> result : concurrentResults) {
+        for (Map<GraqlQuery, QueryExecutionResults> result : concurrentResults.subList(1, concurrentResults.size())) {
             for (GraqlQuery query : result.keySet()) {
-                combinedResults.putIfAbsent(query, new QueryExecutionResults());
-                // merge results for each query into the combined map
-                combinedResults.put(query, combinedResults.get(query).merge(result.get(query)));
+                // do an in-place modification to aggregate all the times into one list
+                List<Long> times = combinedResults.get(query).times();
+                List<Long> otherTimes = result.get(query).times();
+                times.addAll(otherTimes);
             }
         }
 
