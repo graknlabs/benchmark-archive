@@ -5,6 +5,7 @@ java_test(
     deps = [
         "//profiler/src:benchmark-profiler",
         "//common/configuration:benchmark-configuration",
+        "//common/exception:benchmark-exception",
         "@graknlabs_client_java//:client-java",
         "@graknlabs_grakn_core//concept:concept",
         "@graknlabs_graql//java:graql",

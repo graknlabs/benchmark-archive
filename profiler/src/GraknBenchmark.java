@@ -239,7 +239,7 @@ public class GraknBenchmark {
         int randomSeed = 0;
         String dataGenerator= config.dataGenerator();
         GraknClient.Session session = client.session(keyspace);
-        SchemaManager schemaManager = new SchemaManager(session, config.getGraqlSchema());
+        SchemaManager schemaManager = new SchemaManager(session);
         HashSet<String> entityTypeLabels = schemaManager.getEntityTypes();
         HashSet<String> relationshipTypeLabels = schemaManager.getRelationTypes();
         Map<String, AttributeType.DataType<?>> attributeTypeLabels = schemaManager.getAttributeTypes();

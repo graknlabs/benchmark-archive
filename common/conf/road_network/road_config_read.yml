@@ -3,9 +3,10 @@ description: "Road network reads with: Constant C_in, Constant R_out, Constant A
 dataGenerator: "road_network"
 schema: "road_network.gql"
 scales:
-- 2000
-- 4000
-- 8000
+  - 1000
+#- 2000
+#- 4000
+#- 8000
 
 repeatsPerQuery: 5
 
