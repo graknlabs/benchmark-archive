@@ -1,7 +1,7 @@
 package grakn.benchmark.profiler;
 
 import grakn.benchmark.common.configuration.BenchmarkArguments;
-import grakn.benchmark.profiler.util.BootupException;
+import grakn.benchmark.common.exception.BootupException;
 import grakn.core.client.GraknClient;
 import grakn.core.concept.answer.ConceptMap;
 import graql.lang.Graql;

@@ -1,4 +1,4 @@
-package grakn.benchmark.profiler.util;
+package grakn.benchmark.common.exception;
 
 public class BootupException extends RuntimeException {
     public BootupException(String message, Throwable cause) {

@@ -31,12 +31,13 @@ import grakn.benchmark.generator.storage.IgniteConceptStorage;
 import grakn.benchmark.generator.util.IgniteManager;
 import grakn.benchmark.common.configuration.BenchmarkArguments;
 import grakn.benchmark.common.configuration.BenchmarkConfiguration;
-import grakn.benchmark.profiler.util.BootupException;
+import grakn.benchmark.common.exception.BootupException;
 import grakn.benchmark.profiler.util.ElasticSearchManager;
-import grakn.benchmark.profiler.util.SchemaManager;
+import grakn.benchmark.generator.util.SchemaManager;
 import grakn.benchmark.profiler.util.TracingGraknClient;
 import grakn.core.client.GraknClient;
 import grakn.core.concept.type.AttributeType;
+import graql.lang.query.GraqlQuery;
 import org.apache.commons.cli.CommandLine;
 import org.apache.ignite.Ignite;
 import org.slf4j.Logger;
@@ -48,6 +49,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static graql.lang.Graql.parseList;
 
 /**
  * Class in charge of
@@ -203,15 +208,27 @@ public class GraknBenchmark {
         try (Tracer.SpanInScope ws = Tracing.currentTracer().withSpanInScope(span)) {
             span.annotate("Opening new session");
             session = client.session(keyspace);
-            SchemaManager manager = new SchemaManager(session, config.getGraqlSchema());
+            SchemaManager manager = new SchemaManager(session);
             span.annotate("Verifying keyspace is empty");
-            manager.verifyEmptyKeyspace();
+            if (!manager.verifyEmptyKeyspace()) {
+                throw new BootupException("Keyspace " + keyspace + " is not empty");
+            }
             span.annotate("Loading qraql schema");
-            manager.loadSchema();
+            loadSchema(session, config.getGraqlSchema());
         }
 
         span.finish();
         return session;
+    }
+
+    private void loadSchema(GraknClient.Session session, List<String> schemaQueries) {
+        // load schema
+        LOG.info("Initialising keyspace `" + session.keyspace() + "`...");
+        try (GraknClient.Transaction tx = session.transaction().write()) {
+            Stream<GraqlQuery> query = parseList(schemaQueries.stream().collect(Collectors.joining("\n")));
+            query.forEach(q -> tx.execute(q));
+            tx.commit();
+        }
     }
 
 

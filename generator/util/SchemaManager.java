@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.profiler.util;
+package grakn.benchmark.generator.util;
 
 import grakn.core.client.GraknClient;
 import grakn.core.concept.answer.ConceptMap;
@@ -24,7 +24,6 @@ import grakn.core.concept.type.AttributeType;
 import grakn.core.concept.type.Type;
 import graql.lang.Graql;
 import graql.lang.query.GraqlGet;
-import graql.lang.query.GraqlQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,9 +33,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import static graql.lang.Graql.parseList;
 import static graql.lang.Graql.var;
 
 
@@ -51,38 +48,24 @@ public class SchemaManager {
     private static final Set<String> META_CONCEPT_LABELS = new HashSet<>(Arrays.asList("thing", "entity", "role", "attribute", "relation", "rule"));
 
     private GraknClient.Session session;
-    private List<String> schemaQueries;
 
-    public SchemaManager(GraknClient.Session session, List<String> graqlSchemaQueries) {
+    public SchemaManager(GraknClient.Session session) {
         this.session = session;
-        this.schemaQueries = graqlSchemaQueries;
     }
 
-    public void verifyEmptyKeyspace() {
+    public boolean verifyEmptyKeyspace() {
         try (GraknClient.Transaction tx = session.transaction().read()) {
             // check for concept instances
-            boolean existingConcepts = tx.stream(Graql.match(var("x").isa("thing")).get()).findFirst().isPresent();
-            if (existingConcepts) {
-                throw new BootupException("Keyspace [" + session.keyspace() + "] not empty, contains concept instances");
-            }
+            boolean instancesExist = tx.stream(Graql.match(var("x").isa("thing")).get()).findFirst().isPresent();
 
             // check for schema
             List<ConceptMap> existingSchemaConcepts = tx.execute(Graql.match(var("x").sub("thing")).get());
-            if (existingSchemaConcepts.size() != 4) {
-                throw new BootupException("Keyspace [" + session.keyspace() + "] not empty, contains a schema");
-            }
+
+            // keyspace is "empty" is we have no instances and exactly four meta-concepts (thing, relation, entity, attribute)
+            return !instancesExist && existingSchemaConcepts.size() == 4;
         }
     }
 
-    public void loadSchema() {
-        // load schema
-        LOG.info("Initialising keyspace `" + session.keyspace() + "`...");
-        try (GraknClient.Transaction tx = session.transaction().write()) {
-            Stream<GraqlQuery> query = parseList(schemaQueries.stream().collect(Collectors.joining("\n")));
-            query.forEach(q -> tx.execute(q));
-            tx.commit();
-        }
-    }
 
     private HashSet<String> getLabelsOfMetaType(String metaTypeName) {
         HashSet<Type> types;

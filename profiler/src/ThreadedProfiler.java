@@ -77,6 +77,7 @@ public class ThreadedProfiler {
 
     void processQueries(List<GraqlQuery> queries, int repetitions, int numConcepts) {
         List<Future> runningConcurrentQueries = new LinkedList<>();
+        List<GraknClient.Session> openSessions = new LinkedList<>();
 
         long start = System.currentTimeMillis();
 
@@ -84,6 +85,7 @@ public class ThreadedProfiler {
             // TODO: this can probably be optimised (keeping sessions open)
             String keyspace = (keyspaces.size() > 1) ? keyspaces.get(i) : keyspaces.get(0);
             GraknClient.Session session = client.session(keyspace);
+            openSessions.add(session);
             QueryProfiler processor = new QueryProfiler(config, i, Tracing.currentTracer(), queries, repetitions, numConcepts, session);
             runningConcurrentQueries.add(executorService.submit(processor));
         }
@@ -95,6 +97,8 @@ public class ThreadedProfiler {
             }
         } catch (InterruptedException | ExecutionException e) {
             throw new ProfilerException("Error in execution of profiled queries", e);
+        } finally {
+            openSessions.forEach(GraknClient.Session::close);
         }
 
         long length = System.currentTimeMillis() - start;

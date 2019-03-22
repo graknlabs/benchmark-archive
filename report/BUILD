@@ -4,6 +4,7 @@ java_library(
     deps = [
         "//generator:data-generator",
         "//common/configuration:benchmark-configuration",
+        "//common/exception:benchmark-exception",
         "@graknlabs_client_java//:client-java",
         "@graknlabs_grakn_core//api:api",
 
