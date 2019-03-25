@@ -39,12 +39,6 @@ tools_dependencies()
 load("//dependencies/maven:dependencies.bzl", "maven_dependencies")
 maven_dependencies()
 
-# TODO remove this when graknlabs/benchmark issue #58 is resolved
-git_repository(
-    name = "bazel_skylib",
-    remote = "https://github.com/bazelbuild/bazel-skylib.git",
-    tag = "0.1.0",  # change this to use a different release
-)
 
 ##############################################
 # Load External Dependencies - ES and Zipkin #

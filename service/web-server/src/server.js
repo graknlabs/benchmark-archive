@@ -63,7 +63,7 @@ app.post('/execution/start', (req, res) => {
 });
 
 app.post('/execution/completed', (req, res) => {
-    executionsController.updateExecutionStatus(req.body, { status : 'RUNNING', executionCompletedAt: new Date().toISOString()})
+    executionsController.updateExecutionStatus(req.body, { status : 'COMPLETED', executionCompletedAt: new Date().toISOString()})
         .then(()=> { console.log("Execution marked as COMPLETED."); })
         .catch((err) => { console.error(err); })
     utils.deleteInstance(DELETE_INSTANCE_SCRIPT_PATH, req.body.vmName);

@@ -23,16 +23,17 @@ import grakn.core.client.GraknClient;
 import grakn.core.concept.answer.ConceptMap;
 import grakn.core.concept.type.AttributeType;
 import grakn.core.concept.type.Type;
-import grakn.core.server.kb.Schema;
 import graql.lang.Graql;
 import graql.lang.query.GraqlGet;
 import graql.lang.query.GraqlQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,11 +44,12 @@ import static graql.lang.Graql.var;
 /**
  * This class performs basic operations and checks on a given keyspace.
  * <p>
- * This will be replaced by GraknClient Client when all features will be implemented in it.
+ * This will be replaced by Client when all features will be implemented in it.
  */
 @SuppressWarnings("CheckReturnValue")
 public class SchemaManager {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaManager.class);
+    private static final Set<String> META_CONCEPT_LABELS = new HashSet<>(Arrays.asList("thing", "entity", "role", "attribute", "relation", "rule"));
 
     private GraknClient.Session session;
     private List<String> schemaQueries;
@@ -94,7 +96,7 @@ public class SchemaManager {
             types = result.stream()
                     .map(answer -> answer.get("x").asType())
                     .filter(type -> !type.isImplicit())
-                    .filter(type -> !Schema.MetaSchema.isMetaLabel(type.label()))
+                    .filter(type -> !META_CONCEPT_LABELS.contains(type.label().getValue()))
                     .collect(Collectors.toCollection(HashSet::new));
 
 
@@ -116,7 +118,7 @@ public class SchemaManager {
             types = result.stream()
                     .map(answer -> answer.get("x").asAttributeType())
                     .filter(type -> !type.isImplicit())
-                    .filter(type -> !Schema.MetaSchema.isMetaLabel(type.label()))
+                    .filter(type -> !META_CONCEPT_LABELS.contains(type.label().getValue()))
                     .collect(Collectors.toCollection(HashSet::new));
 
 

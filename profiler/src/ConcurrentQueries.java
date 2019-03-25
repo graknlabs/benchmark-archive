@@ -75,11 +75,12 @@ class ConcurrentQueries implements Runnable {
                     }
                     Span querySpan = tracer.newChild(concurrentExecutionSpan.context());
 
-                    if (query instanceof GraqlInsert) { querySpan.name("insert-query"); }
-                    else if (query instanceof GraqlGet) { querySpan.name("get-query"); }
-                    else if (query instanceof GraqlDelete) { querySpan.name("delete-query"); }
-                    else if (query instanceof GraqlCompute) { querySpan.name("compute-query"); }
-                    else { querySpan.name("query"); }
+
+                    querySpan.name("query");
+                    if (query instanceof GraqlInsert) { querySpan.tag("type", "insert"); }
+                    else if (query instanceof GraqlGet) { querySpan.tag("type", "get"); }
+                    else if (query instanceof GraqlDelete) { querySpan.tag("type", "delete"); }
+                    else if (query instanceof GraqlCompute) { querySpan.tag("type", "compute"); }
 
                     querySpan.tag("query", query.toString());
                     querySpan.tag("repetitions", Integer.toString(repetitions));
