@@ -32,7 +32,8 @@ java_library(
         "@graknlabs_graql//java:graql",
         "@graknlabs_grakn_core//concept:concept",
 
-        # TODO should this be via grakn-core's deps?
+        # together these can be used to create clients with tracing enabled
+        "//lib:client-instrumentation",
         "//dependencies/maven/artifacts/io/grpc:grpc-core",
 
         "//dependencies/maven/artifacts/io/zipkin/brave:brave",

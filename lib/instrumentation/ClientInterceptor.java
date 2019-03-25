@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.lib.clientinstrumentation;
+package grakn.benchmark.lib.instrumentation;
 
 import grakn.core.protocol.SessionProto;
 import brave.Span;
@@ -26,7 +26,6 @@ import brave.propagation.TraceContext;
 import io.grpc.CallOptions;
 import io.grpc.Channel;
 import io.grpc.ClientCall;
-import io.grpc.ClientInterceptor;
 import io.grpc.ForwardingClientCall;
 import io.grpc.ForwardingClientCallListener;
 import io.grpc.Metadata;
@@ -52,11 +51,11 @@ import static grakn.benchmark.lib.util.HexCodec.toLowerHex;
  * recall that AsyncReporters report traces to Zipkin out of band (ie. async and independently)
  *
  */
-public class ClientTracingInstrumentationInterceptor implements ClientInterceptor {
-    private static final Logger LOG = LoggerFactory.getLogger(ClientTracingInstrumentationInterceptor.class);
+public class ClientInterceptor implements io.grpc.ClientInterceptor {
+    private static final Logger LOG = LoggerFactory.getLogger(ClientInterceptor.class);
     private Tracer tracer;
 
-    public ClientTracingInstrumentationInterceptor(String tracingServiceName) {
+    public ClientInterceptor(String tracingServiceName) {
 
         // create a Zipkin reporter for the client
         AsyncReporter<zipkin2.Span> reporter = AsyncReporter.create(URLConnectionSender.create("http://localhost:9411/api/v2/spans"));

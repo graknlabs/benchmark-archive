@@ -1,6 +1,6 @@
 package grakn.benchmark.profiler.util;
 
-import grakn.benchmark.lib.clientinstrumentation.ClientTracingInstrumentationInterceptor;
+import grakn.benchmark.lib.instrumentation.ClientInterceptor;
 import grakn.core.client.GraknClient;
 import grakn.core.common.http.SimpleURI;
 import io.grpc.ManagedChannel;
@@ -14,7 +14,7 @@ public class TracingGraknClient {
 
         ManagedChannel channel = ManagedChannelBuilder
                 .forAddress(parsedURI.getHost(), parsedURI.getPort())
-                .intercept(new ClientTracingInstrumentationInterceptor("client-java-instrumentation"))
+                .intercept(new ClientInterceptor("client-java-instrumentation"))
                 .usePlaintext().build();
 
         client.overrideChannel(channel);
