@@ -47,12 +47,5 @@ java_binary(
         "//report:report-generator",
     ],
     classpath_resources = ["//profiler/test/resources:logback-test"],
-    data = [
-        "//common/conf:biochemical-network",
-        "//common/conf:financial-transactions",
-        "//common/conf:road-network",
-        "//common/conf:social-network",
-        "//common/conf:complex-network",
-    ],
     visibility = ["//visibility:public"]
 )
