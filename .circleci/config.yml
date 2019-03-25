@@ -79,11 +79,11 @@ jobs:
       - bazel_add_rbe_credential
       # run unit tests
       - bazel:
-          command: bazel test //profiler/src/generator/test:data-generator-unit-tests --test_output=streamed
+          command: bazel test //generator/test:data-generator-unit-tests --test_output=streamed
       - bazel:
-          command: bazel test //profiler/src/analysis/test:insert-query-analysis-unit-test --test_output=streamed
+          command: bazel test //common/analysis/test:insert-query-analysis-unit-test --test_output=streamed
       - bazel:
-          command: bazel test //profiler/test:profiler-bootup-test --test_output=streamed
+          command: bazel test //common/configuration/test:configuration-test --test_output=streamed
       # run integration tests
       - run: bazel build @graknlabs_grakn_core//:distribution
       - run: unzip bazel-genfiles/external/graknlabs_grakn_core/grakn-core-all.zip -d bazel-genfiles/dist/

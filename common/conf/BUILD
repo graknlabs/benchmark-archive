@@ -16,7 +16,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-# ----- For writing a distribution ZIP -----
+# ----- used for distribution ZIP -----
 filegroup(name="biochemical-conf", srcs=["biochemical_network/biochemical_config_read.yml"], visibility = ["//visibility:public"])
 filegroup(name="biochemical-queries", srcs=["biochemical_network/queries_read.yml"], visibility = ["//visibility:public"])
 filegroup(name="biochemical-schema", srcs=["biochemical_network/biochemical_network.gql"], visibility = ["//visibility:public"])
