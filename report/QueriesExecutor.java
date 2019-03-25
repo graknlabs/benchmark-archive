@@ -1,8 +1,25 @@
+/*
+ *  GRAKN.AI - THE KNOWLEDGE GRAPH
+ *  Copyright (C) 2018 GraknClient Labs Ltd
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as
+ *  published by the Free Software Foundation, either version 3 of the
+ *  License, or (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package grakn.benchmark.report;
 
+import grakn.benchmark.report.data.QueryExecutionResults;
 import grakn.core.client.GraknClient;
-import grakn.core.concept.answer.Answer;
-import grakn.core.concept.answer.ConceptList;
 import grakn.core.concept.answer.ConceptMap;
 import grakn.core.concept.answer.ConceptSet;
 import graql.lang.query.GraqlCompute;
@@ -39,8 +56,6 @@ class QueriesExecutor implements Callable<Map<GraqlQuery, QueryExecutionResults>
                 // open a new write transaction and record execution time
                 GraknClient.Transaction tx = session.transaction().write();
 
-                // TODO record commit duration?
-                tx.commit();
 
                 String type;
                 int roundTrips = -1;
@@ -63,10 +78,13 @@ class QueriesExecutor implements Callable<Map<GraqlQuery, QueryExecutionResults>
 
                     startTime = System.currentTimeMillis();
                     ConceptMap answer = tx.stream(query.asInsert()).findFirst().get();
+                    // TODO record commit duration?
+                    tx.commit();
                     endTime = System.currentTimeMillis();
 
                     roundTrips = AnswerAnalysis.roundTripsCompleted(query.asInsert(), answer);
                     conceptsHandled = AnswerAnalysis.insertedConcepts(query.asInsert(), answer);
+
 
                 } else if (query instanceof GraqlDelete) {
                     type = "delete";
@@ -80,12 +98,17 @@ class QueriesExecutor implements Callable<Map<GraqlQuery, QueryExecutionResults>
 
                 } else if (query instanceof GraqlCompute) {
                     type = "compute";
+
+                    // TODO handle compute queries
+
                 } else {
                     type = "UNKNOWN";
                 }
 
-                // TODO collect data about this answer - eg how many were inserted/deleted/matched, how many round trips
-                result.get(query).record( endTime - startTime, conceptsHandled, type, roundTrips, null);
+                tx.close();
+
+                // TODO - add the current scale
+                result.get(query).record(endTime - startTime, conceptsHandled, type, roundTrips);
 
                 // TODO delete inserted concepts
             }

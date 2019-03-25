@@ -20,7 +20,6 @@ java_library(
     name = "benchmark-profiler",
     srcs = glob(["*.java", "util/*.java"]),
     deps = [
-        "//lib:lib",
         "//common/analysis:insert-query-analyser",
         "//common/configuration:benchmark-configuration",
         "//common/exception:benchmark-exception",

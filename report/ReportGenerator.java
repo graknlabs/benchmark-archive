@@ -31,6 +31,8 @@ import grakn.benchmark.generator.storage.ConceptStorage;
 import grakn.benchmark.generator.storage.IgniteConceptStorage;
 import grakn.benchmark.generator.util.IgniteManager;
 import grakn.benchmark.generator.util.SchemaManager;
+import grakn.benchmark.report.data.QueryExecutionResults;
+import grakn.benchmark.report.data.ReportData;
 import grakn.core.client.GraknClient;
 import grakn.core.concept.type.AttributeType;
 import graql.lang.Graql;
@@ -161,10 +163,20 @@ public class ReportGenerator {
 
         for (Map<GraqlQuery, QueryExecutionResults> result : concurrentResults.subList(1, concurrentResults.size())) {
             for (GraqlQuery query : result.keySet()) {
+
+                QueryExecutionResults combinedQueryResults = combinedResults.get(query);
+
                 // do an in-place modification to aggregate all the times into one list
-                List<Long> times = combinedResults.get(query).times();
+                List<Long> times = combinedQueryResults.times();
                 List<Long> otherTimes = result.get(query).times();
                 times.addAll(otherTimes);
+
+
+                // add up the round trips completed
+                combinedQueryResults.setRoundTrips(combinedQueryResults.roundTrips() + result.get(query).roundTrips());
+
+                // add up the concepts retrieved
+                combinedQueryResults.setConcepts(combinedQueryResults.concepts() + result.get(query).concepts());
             }
         }
 
