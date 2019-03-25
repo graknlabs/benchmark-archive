@@ -1,4 +1,4 @@
-package grakn.benchmark.lib.serverinstrumentation;
+package grakn.benchmark.lib.instrumentation;
 
 import grakn.benchmark.lib.util.GrpcMessageConversion;
 import brave.ScopedSpan;
@@ -16,7 +16,7 @@ import grakn.core.protocol.SessionProto;
  * This component is stateless, as parts of it (eg initInstrumentation) is only called once
  * whereas the others may be used my multiple threads in the case of concurrent transactions
  */
-public class ServerTracingInstrumentation {
+public class ServerTracing {
 
     public static void initInstrumentation(String tracingServiceName) {
         // create a Zipkin reporter for the whole server
