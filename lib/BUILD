@@ -19,7 +19,7 @@
 
 java_library(
     name = "server-instrumentation",
-    srcs = glob(["instrumentation/ServerTracingInstrumentation.java", "util/*.java"]),
+    srcs = glob(["instrumentation/ServerTracing.java", "util/*.java"]),
     deps = [
         "@graknlabs_grakn_core//protocol:protocol-java",
         "//dependencies/maven/artifacts/io/zipkin/brave:brave",
@@ -33,7 +33,7 @@ java_library(
 
 java_library(
     name = "client-instrumentation",
-    srcs = glob(["instrumentation/ClientTracingInstrumentationInterceptor.java", "util/*.java"]),
+    srcs = glob(["instrumentation/ClientInterceptor.java", "util/*.java"]),
     deps = [
         "@graknlabs_grakn_core//protocol:protocol-java",
         "//dependencies/maven/artifacts/io/grpc:grpc-core",
