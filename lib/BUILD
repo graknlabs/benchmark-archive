@@ -17,11 +17,25 @@
 #
 
 
-load("//dependencies/maven:rules.bzl", "deploy_maven_jar")
+java_library(
+    name = "server-instrumentation",
+    srcs = glob(["serverinstrumentation/*.java", "util/*.java"]),
+    deps = [
+        "@graknlabs_grakn_core//protocol:protocol-java",
+#        "//dependencies/maven/artifacts/io/grpc:grpc-core",
+#        "//dependencies/maven/artifacts/com/google/protobuf:protobuf-java",
+        "//dependencies/maven/artifacts/io/zipkin/brave:brave",
+        "//dependencies/maven/artifacts/io/zipkin/zipkin2:zipkin",
+        "//dependencies/maven/artifacts/io/zipkin/reporter2:zipkin-reporter",
+        "//dependencies/maven/artifacts/io/zipkin/reporter2:zipkin-sender-urlconnection",
+    ],
+    visibility = ["//visibility:public"]
+)
+
 
 java_library(
-    name = "lib",
-    srcs = glob(["**/*.java"]),
+    name = "client-instrumentation",
+    srcs = glob(["clientinstrumentation/*.java", "util/*.java"]),
     deps = [
         "@graknlabs_grakn_core//protocol:protocol-java",
         "//dependencies/maven/artifacts/io/grpc:grpc-core",
@@ -32,12 +46,5 @@ java_library(
         "//dependencies/maven/artifacts/io/zipkin/reporter2:zipkin-sender-urlconnection",
         "//dependencies/maven/artifacts/org/slf4j:slf4j-api",
     ],
-    tags = ["maven_coordinates=grakn.benchmark:lib:{pom_version}"],
     visibility = ["//visibility:public"]
-)
-
-deploy_maven_jar(
-    name = "deploy-maven-jar",
-    target = ":lib",
-    package = "lib"
 )
