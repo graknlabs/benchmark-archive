@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.lib.clientinstrumentation;
+package grakn.benchmark.lib.instrumentation;
 
 import grakn.core.protocol.SessionProto;
 import brave.Span;

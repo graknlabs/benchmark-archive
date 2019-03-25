@@ -1,6 +1,6 @@
 package grakn.benchmark.profiler.util;
 
-import grakn.benchmark.lib.clientinstrumentation.ClientTracingInstrumentationInterceptor;
+import grakn.benchmark.lib.instrumentation.ClientTracingInstrumentationInterceptor;
 import grakn.core.client.GraknClient;
 import grakn.core.common.http.SimpleURI;
 import io.grpc.ManagedChannel;

@@ -1,4 +1,4 @@
-package grakn.benchmark.lib.serverinstrumentation;
+package grakn.benchmark.lib.instrumentation;
 
 import grakn.benchmark.lib.util.GrpcMessageConversion;
 import brave.ScopedSpan;
