@@ -18,7 +18,7 @@
 
 package grakn.benchmark.report;
 
-import grakn.benchmark.report.data.QueryExecutionResults;
+import grakn.benchmark.report.serialise.QueryExecutionResults;
 import grakn.core.client.GraknClient;
 import grakn.core.concept.answer.ConceptMap;
 import grakn.core.concept.answer.ConceptSet;

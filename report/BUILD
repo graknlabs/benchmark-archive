@@ -18,7 +18,7 @@
 
 java_library(
     name = "report-generator",
-    srcs = glob(["*.java", "data/*.java"]),
+    srcs = glob(["*.java", "serialise/*.java"]),
     deps = [
         "//generator:data-generator",
         "//common/configuration:benchmark-configuration",
