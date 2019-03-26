@@ -21,7 +21,7 @@ package grakn.benchmark.profiler;
 import brave.Span;
 import brave.Tracer;
 import brave.Tracing;
-import grakn.benchmark.common.configuration.BenchmarkArguments;
+import grakn.benchmark.common.configuration.parse.BenchmarkArguments;
 import grakn.benchmark.common.configuration.BenchmarkConfiguration;
 import grakn.benchmark.common.exception.BootupException;
 import grakn.benchmark.generator.DataGenerator;

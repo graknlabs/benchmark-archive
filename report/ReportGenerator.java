@@ -19,7 +19,7 @@
 package grakn.benchmark.report;
 
 
-import grakn.benchmark.common.configuration.BenchmarkArguments;
+import grakn.benchmark.common.configuration.parse.BenchmarkArguments;
 import grakn.benchmark.common.configuration.BenchmarkConfiguration;
 import grakn.benchmark.common.exception.BootupException;
 import grakn.benchmark.generator.DataGenerator;

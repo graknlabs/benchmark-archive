@@ -21,6 +21,9 @@ package grakn.benchmark.common.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import grakn.benchmark.common.configuration.parse.BenchmarkArguments;
+import grakn.benchmark.common.configuration.parse.BenchmarkConfigurationFile;
+import grakn.benchmark.common.configuration.parse.QueriesConfigurationFile;
 import org.apache.commons.cli.CommandLine;
 
 import java.io.IOException;

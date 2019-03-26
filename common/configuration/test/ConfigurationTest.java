@@ -18,6 +18,7 @@
 
 package grakn.benchmark.common.configuration;
 
+import grakn.benchmark.common.configuration.parse.BenchmarkArguments;
 import grakn.benchmark.profiler.GraknBenchmark;
 import org.apache.commons.cli.CommandLine;
 import org.junit.Rule;

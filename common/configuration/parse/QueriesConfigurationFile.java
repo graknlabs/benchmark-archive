@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.common.configuration;
+package grakn.benchmark.common.configuration.parse;
 
 import java.util.List;
 
