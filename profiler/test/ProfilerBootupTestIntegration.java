@@ -86,7 +86,7 @@ public class ProfilerBootupTestIntegration {
         }
 
         expectedException.expect(BootupException.class);
-        expectedException.expectMessage("not empty, contains a schema");
+        expectedException.expectMessage("is not empty");
         String[] args = new String[]{"--config", WEB_CONTENT_CONFIG_PATH.toAbsolutePath().toString(), "--keyspace", keyspace, "--execution-name", "testing"};
         CommandLine commandLine = BenchmarkArguments.parse(args);
         GraknBenchmark graknBenchmark = new GraknBenchmark(commandLine);
@@ -103,7 +103,7 @@ public class ProfilerBootupTestIntegration {
         }
 
         expectedException.expect(BootupException.class);
-        expectedException.expectMessage("not empty, contains concept instances");
+        expectedException.expectMessage("is not empty");
         String[] args = new String[] {"--config", WEB_CONTENT_CONFIG_PATH.toAbsolutePath().toString(), "--keyspace", keyspace, "--execution-name", "testing"};
         CommandLine commandLine = BenchmarkArguments.parse(args);
         GraknBenchmark graknBenchmark = new GraknBenchmark(commandLine);
