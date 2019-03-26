@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.report.serialise;
+package grakn.benchmark.report.container;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -33,15 +33,19 @@ public class QueryExecutionResults {
     private Integer roundTrips = null;
     private Integer scale = null;
 
-    public QueryExecutionResults() {
+    public QueryExecutionResults(String queryType, int conceptsInvolved, int roundTrips) {
         queryExecutionTimes = new LinkedList<>();
-    }
-
-    public void record(Long milliseconds, Integer conceptsInvolved, String queryType, Integer roundTrips) {
-        queryExecutionTimes.add(milliseconds);
         this.conceptsInvolved = conceptsInvolved;
         this.queryType = queryType;
         this.roundTrips = roundTrips;
+    }
+
+    public void addExecutionTime(Long milliseconds) {
+        queryExecutionTimes.add(milliseconds);
+    }
+
+    public void addExecutionTimes(List<Long> milliseconds) {
+        queryExecutionTimes.addAll(milliseconds);
     }
 
     // setScale() is called once externally, after data has been recorded

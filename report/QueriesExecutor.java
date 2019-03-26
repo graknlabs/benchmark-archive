@@ -18,7 +18,7 @@
 
 package grakn.benchmark.report;
 
-import grakn.benchmark.report.serialise.QueryExecutionResults;
+import grakn.benchmark.report.container.QueryExecutionResults;
 import grakn.core.client.GraknClient;
 import grakn.core.concept.answer.ConceptMap;
 import grakn.core.concept.answer.ConceptSet;
@@ -50,21 +50,18 @@ class QueriesExecutor implements Callable<Map<GraqlQuery, QueryExecutionResults>
         Map<GraqlQuery, QueryExecutionResults> result = new HashMap<>();
         for (int rep = 0; rep < repetitions; rep++) {
             for (GraqlQuery query : queries) {
-                // initialise results holder
-                result.putIfAbsent(query, new QueryExecutionResults());
 
                 // open a new write transaction and record execution time
                 GraknClient.Transaction tx = session.transaction().write();
 
-
-                String type;
+                String queryType;
                 int roundTrips = -1;
                 int conceptsHandled = -1;
                 long startTime = 0;
                 long endTime = -1; // set before start time so if not set properly, see negative time as a warning
 
                 if (query instanceof GraqlGet) {
-                    type = "get";
+                    queryType = "get";
 
                     startTime = System.currentTimeMillis();
                     List<ConceptMap> answer = tx.execute(query.asGet());
@@ -74,20 +71,20 @@ class QueriesExecutor implements Callable<Map<GraqlQuery, QueryExecutionResults>
                     conceptsHandled = AnswerAnalysis.retrievedConcepts(query.asGet(), answer);
 
                 } else if (query instanceof GraqlInsert) {
-                    type = "insert";
+                    queryType = "insert";
 
                     startTime = System.currentTimeMillis();
                     ConceptMap answer = tx.stream(query.asInsert()).findFirst().get();
-                    // TODO record commit duration?
                     tx.commit();
                     endTime = System.currentTimeMillis();
 
                     roundTrips = AnswerAnalysis.roundTripsCompleted(query.asInsert(), answer);
                     conceptsHandled = AnswerAnalysis.insertedConcepts(query.asInsert(), answer);
 
+                    // TODO delete inserted concepts
 
                 } else if (query instanceof GraqlDelete) {
-                    type = "delete";
+                    queryType = "delete";
 
                     startTime = System.currentTimeMillis();
                     ConceptSet answer = tx.stream(query.asDelete()).findFirst().get();
@@ -97,20 +94,20 @@ class QueriesExecutor implements Callable<Map<GraqlQuery, QueryExecutionResults>
                     conceptsHandled = AnswerAnalysis.deletedConcepts(query.asDelete(), answer);
 
                 } else if (query instanceof GraqlCompute) {
-                    type = "compute";
+                    queryType = "compute";
 
                     // TODO handle compute queries
 
                 } else {
-                    type = "UNKNOWN";
+                    queryType = "UNKNOWN";
                 }
 
                 tx.close();
 
-                // TODO - add the current scale
-                result.get(query).record(endTime - startTime, conceptsHandled, type, roundTrips);
+                // initialise data container if needed
+                result.putIfAbsent(query, new QueryExecutionResults(queryType, conceptsHandled, roundTrips));
+                result.get(query).addExecutionTime(endTime - startTime);
 
-                // TODO delete inserted concepts
             }
         }
         return result;

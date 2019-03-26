@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.report.serialise;
+package grakn.benchmark.report.container;
 
 import graql.lang.query.GraqlQuery;
 

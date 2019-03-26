@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.report.serialise;
+package grakn.benchmark.report.container;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -24,21 +24,17 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 import java.io.IOException;
 
-public class ReportDataSerializer extends StdSerializer<ReportData> {
+public class MultiScaleResultsSerializer extends StdSerializer<MultiScaleResults> {
 
-    protected ReportDataSerializer(Class<ReportData> t) {
+    protected MultiScaleResultsSerializer(Class<MultiScaleResults> t) {
         super(t);
     }
 
     @Override
-    public void serialize(ReportData value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+    public void serialize(MultiScaleResults value, JsonGenerator gen, SerializerProvider provider) throws IOException {
         gen.writeStartObject();
-        gen.writeObjectFieldStart("metadata");
-        gen.writeStringField("configName", value.configName());
-        gen.writeNumberField("concurrentClients", value.concurrentClients());
-        gen.writeStringField("configDescription", value.description());
-        gen.writeEndObject();
-        gen.writeObjectField("queryExecutionData", value.queryExecutionData());
+        gen.writeStringField("query", value.query().toString());
+        gen.writeObjectField("dataPerScale", value.resultsPerScale());
         gen.writeEndObject();
     }
 }

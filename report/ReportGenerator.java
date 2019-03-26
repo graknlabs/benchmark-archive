@@ -31,8 +31,8 @@ import grakn.benchmark.generator.storage.ConceptStorage;
 import grakn.benchmark.generator.storage.IgniteConceptStorage;
 import grakn.benchmark.generator.util.IgniteManager;
 import grakn.benchmark.generator.util.SchemaManager;
-import grakn.benchmark.report.serialise.QueryExecutionResults;
-import grakn.benchmark.report.serialise.ReportData;
+import grakn.benchmark.report.container.QueryExecutionResults;
+import grakn.benchmark.report.container.ReportData;
 import grakn.core.client.GraknClient;
 import grakn.core.concept.type.AttributeType;
 import graql.lang.Graql;
@@ -60,6 +60,7 @@ public class ReportGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(ReportGenerator.class);
 
     private final BenchmarkConfiguration config;
+    private final ReportData reportData;
 
     public static void main(String[] args) {
         printAscii();
@@ -84,6 +85,7 @@ public class ReportGenerator {
 
     public ReportGenerator(CommandLine arguments) {
         config = new BenchmarkConfiguration(arguments);
+        reportData = new ReportData();
     }
 
 
@@ -101,9 +103,11 @@ public class ReportGenerator {
         // create the data generator
         DataGenerator dataGenerator = initDataGenerator(client, keyspace);
 
+        // write the relevant config metadata to the report
+        reportData.addMetadata(config.configName(), config.concurrentClients(), config.configDescription());
+
         // alternate between generating data and profiling a queries
         List<GraqlQuery> queries = toGraqlQueries(config.getQueries());
-        ReportData reportData = new ReportData(config.configName(), config.concurrentClients(), config.configDescription());
         try {
             for (int graphScale : config.scalesToProfile()) {
                 LOG.info("Generating graph to scale... " + graphScale);
@@ -111,8 +115,7 @@ public class ReportGenerator {
                 dataGenerator.generate(graphScale);
 
                 // collect and aggregate results
-                Map<GraqlQuery, QueryExecutionResults> result = executeQueries(client, queries);
-                recordDataForScale(reportData, graphScale, result);
+                executeAndRecord(client, queries, graphScale);
             }
         } finally {
             client.close();
@@ -123,17 +126,8 @@ public class ReportGenerator {
         System.out.println(reportData.asJson());
     }
 
-    private void recordDataForScale(ReportData reportData, int scale, Map<GraqlQuery, QueryExecutionResults> singleScaleResults) {
-        for (GraqlQuery query : singleScaleResults.keySet()) {
-            QueryExecutionResults queryExecutionResults = singleScaleResults.get(query);
-            // inject the scale into the container
-            queryExecutionResults.setScale(scale);
-            reportData.recordQueryTimes(queryExecutionResults.queryType(), query, queryExecutionResults);
-        }
-    }
 
-
-    private Map<GraqlQuery, QueryExecutionResults> executeQueries(GraknClient client, List<GraqlQuery> queries) {
+    private void executeAndRecord(GraknClient client, List<GraqlQuery> queries, int scale) {
 
         ExecutorService executorService = Executors.newFixedThreadPool(config.concurrentClients());
         List<Future<Map<GraqlQuery, QueryExecutionResults>>> runningQueries = new LinkedList<>();
@@ -147,40 +141,19 @@ public class ReportGenerator {
         }
 
         // Collect N concurrent executors' data
-        List<Map<GraqlQuery, QueryExecutionResults>> concurrentResults = new LinkedList<>();
         try {
+            List<Map<GraqlQuery, QueryExecutionResults>> concurrentResults = new LinkedList<>();
             for (Future<Map<GraqlQuery, QueryExecutionResults>> futureResult : runningQueries) {
                 concurrentResults.add(futureResult.get());
             }
+
+            // record the data to the report data container
+            reportData.recordTimesAtScale(scale, concurrentResults);
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException("Error in execution of queries", e);
         } finally {
             openSessions.forEach(GraknClient.Session::close);
         }
-
-        // aggregate concurrent results, starting with first result
-        Map<GraqlQuery, QueryExecutionResults> combinedResults = concurrentResults.get(0);
-
-        for (Map<GraqlQuery, QueryExecutionResults> result : concurrentResults.subList(1, concurrentResults.size())) {
-            for (GraqlQuery query : result.keySet()) {
-
-                QueryExecutionResults combinedQueryResults = combinedResults.get(query);
-
-                // do an in-place modification to aggregate all the times into one list
-                List<Long> times = combinedQueryResults.times();
-                List<Long> otherTimes = result.get(query).times();
-                times.addAll(otherTimes);
-
-
-                // add up the round trips completed
-                combinedQueryResults.setRoundTrips(combinedQueryResults.roundTrips() + result.get(query).roundTrips());
-
-                // add up the concepts retrieved
-                combinedQueryResults.setConcepts(combinedQueryResults.concepts() + result.get(query).concepts());
-            }
-        }
-
-        return combinedResults;
     }
 
 
