@@ -38,29 +38,29 @@ distribution_zip(
     additional_files = {
         "//profiler:benchmark": "benchmark",
 
-        "//common/configuration/scenario:road-queries-read": "scenario/road_network/queries_read.yml",
-        "//common/configuration/scenario:road-queries-write": "scenario/road_network/queries_write.yml",
-        "//common/configuration/scenario:road-scenario-read": "scenario/road_network/road_scenario_read.yml",
-        "//common/configuration/scenario:road-scenario-write": "scenario/road_network/road_scenario_write.yml",
-        "//common/configuration/scenario:road-schema": "scenario/road_network/road_network.gql",
+        "//common/configuration/scenario:road_network/queries_read.yml": "scenario/road_network/queries_read.yml",
+        "//common/configuration/scenario:road_network/queries_write.yml": "scenario/road_network/queries_write.yml",
+        "//common/configuration/scenario:road_network/road_config_read.yml": "scenario/road_network/road_config_read.yml",
+        "//common/configuration/scenario:road_network/road_config_write.yml": "scenario/road_network/road_config_write.yml",
+        "//common/configuration/scenario:road_network/road_network.gql": "scenario/road_network/road_network.gql",
 
-        "//common/configuration/scenario:social-scenario": "scenario/social_network/social_network_scenario_read.yml",
-        "//common/configuration/scenario:social-queries": "scenario/social_network/social_network.gql",
-        "//common/configuration/scenario:social-schema": "scenario/social_network/social_network.gql",
+        "//common/configuration/scenario:social_network/social_network_config_read.yml": "scenario/social_network/social_network_config_read.yml",
+        "//common/configuration/scenario:social_network/queries_read.yml": "scenario/social_network/queries_read.yml",
+        "//common/configuration/scenario:social_network/social_network.gql": "scenario/social_network/social_network.gql",
 
-        "//common/configuration/scenario:financial-queries": "scenario/financial_transactions/queries_read.yml",
-        "//common/configuration/scenario:financial-scenario": "scenario/financial_transactions/financial_scenario_read.yml",
-        "//common/configuration/scenario:financial-schema": "scenario/financial_transactions/financial.gql",
+        "//common/configuration/scenario:financial_transactions/queries_read.yml": "scenario/financial_transactions/queries_read.yml",
+        "//common/configuration/scenario:financial_transactions/financial_config_read.yml": "scenario/financial_transactions/financial_config_read.yml",
+        "//common/configuration/scenario:financial_transactions/financial.gql": "scenario/financial_transactions/financial.gql",
 
-        "//common/configuration/scenario:biochemical-queries": "scenario/biochemical_network/queries_read.yml",
-        "//common/configuration/scenario:biochemical-scenario": "scenario/biochemical_network/biochemical_scenario_read.yml",
-        "//common/configuration/scenario:biochemical-schema": "scenario/biochemical_network/biochemical_network.gql",
+        "//common/configuration/scenario:biochemical_network/queries_read.yml": "scenario/biochemical_network/queries_read.yml",
+        "//common/configuration/scenario:biochemical_network/biochemical_config_read.yml": "scenario/biochemical_network/biochemical_config_read.yml",
+        "//common/configuration/scenario:biochemical_network/biochemical_network.gql": "scenario/biochemical_network/biochemical_network.gql",
 
-        "//common/configuration/scenario:complex-queries-read": "scenario/complex/queries_complex_read.yml",
-        "//common/configuration/scenario:complex-queries-write": "scenario/complex/queries_complex_write.yml",
-        "//common/configuration/scenario:complex-scenario-read": "scenario/complex/scenario_read.yml",
-        "//common/configuration/scenario:complex-scenario-write": "scenario/complex/scenario_write.yml",
-        "//common/configuration/scenario:complex-schema" : "scenario/complex/schema.gql",
+        "//common/configuration/scenario:complex/queries_complex_read.yml": "scenario/complex/queries_complex_read.yml",
+        "//common/configuration/scenario:complex/queries_complex_write.yml": "scenario/complex/queries_complex_write.yml",
+        "//common/configuration/scenario:complex/config_read.yml": "scenario/complex/config_read.yml",
+        "//common/configuration/scenario:complex/config_write.yml": "scenario/complex/config_write.yml",
+        "//common/configuration/scenario:complex/schema.gql" : "scenario/complex/schema.gql",
 
         # External dependencies: Elasticsearch and Zipkin
         "//profiler:setup.sh": "external-dependencies/setup.sh",
