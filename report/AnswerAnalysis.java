@@ -38,7 +38,7 @@ public class AnswerAnalysis {
         return answer.stream()
                 .map(conceptMap -> conceptMap.map().size())
                 .reduce((a,b) -> a+b)
-                .get();
+                .orElse(0);
     }
 
     public static int deletedConcepts(GraqlDelete deleteQuery, ConceptSet answer) {
