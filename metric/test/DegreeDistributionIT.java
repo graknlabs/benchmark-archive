@@ -21,7 +21,7 @@ package grakn.benchmark.metric.test;
 import grakn.benchmark.metric.DegreeDistribution;
 import grakn.benchmark.metric.GraknGraphProperties;
 import grakn.benchmark.metric.StandardGraphProperties;
-import grakn.core.client.GraknClient;
+import grakn.client.GraknClient;
 import graql.lang.Graql;
 import graql.lang.query.GraqlInsert;
 import org.junit.Test;

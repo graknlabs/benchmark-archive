@@ -23,10 +23,10 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.elasticsearch.client.Request;
 import org.elasticsearch.client.RestClient;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import static grakn.benchmark.common.configuration.parse.BenchmarkArguments.ELASTIC_URI;
 
@@ -53,11 +53,11 @@ public class ElasticSearchManager {
         String serverURI =  (arguments.hasOption(ELASTIC_URI)) ? arguments.getOptionValue(ELASTIC_URI) : DEFAULT_ES_SERVER_URI;
         RestClient restClient = RestClient.builder(HttpHost.create(serverURI)).build();
 
-        Request putTemplateRequest = new Request("PUT", "/_template/" + ES_INDEX_TEMPLATE_NAME);
+//        Request putTemplateRequest = new Request("PUT", "/_template/" + ES_INDEX_TEMPLATE_NAME);
         HttpEntity entity = new StringEntity(INDEX_TEMPLATE, ContentType.APPLICATION_JSON);
-        putTemplateRequest.setEntity(entity);
+//        putTemplateRequest.setEntity(entity);
 
-        restClient.performRequest(putTemplateRequest);
+        restClient.performRequest("PUT", "/_template/" + ES_INDEX_TEMPLATE_NAME, new HashMap<>(), entity );
         restClient.close();
     }
 

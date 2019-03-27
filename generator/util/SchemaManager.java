@@ -18,7 +18,7 @@
 
 package grakn.benchmark.generator.util;
 
-import grakn.core.client.GraknClient;
+import grakn.client.GraknClient;
 import grakn.core.concept.answer.ConceptMap;
 import grakn.core.concept.type.AttributeType;
 import grakn.core.concept.type.Type;

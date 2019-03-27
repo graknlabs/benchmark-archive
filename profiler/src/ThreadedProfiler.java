@@ -21,7 +21,7 @@ package grakn.benchmark.profiler;
 import brave.Tracing;
 import grakn.benchmark.common.configuration.BenchmarkConfiguration;
 import grakn.benchmark.profiler.util.ProfilerException;
-import grakn.core.client.GraknClient;
+import grakn.client.GraknClient;
 import graql.lang.Graql;
 import graql.lang.query.GraqlQuery;
 import org.slf4j.Logger;

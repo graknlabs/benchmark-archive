@@ -21,7 +21,7 @@ package grakn.benchmark.metric.test;
 import grakn.benchmark.metric.GlobalTransitivity;
 import grakn.benchmark.metric.GraknGraphProperties;
 import grakn.benchmark.metric.StandardGraphProperties;
-import grakn.core.client.GraknClient;
+import grakn.client.GraknClient;
 import graql.lang.Graql;
 import graql.lang.query.GraqlDefine;
 import graql.lang.query.GraqlInsert;

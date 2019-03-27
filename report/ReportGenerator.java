@@ -33,7 +33,7 @@ import grakn.benchmark.generator.util.IgniteManager;
 import grakn.benchmark.generator.util.SchemaManager;
 import grakn.benchmark.report.container.QueryExecutionResults;
 import grakn.benchmark.report.container.ReportData;
-import grakn.core.client.GraknClient;
+import grakn.client.GraknClient;
 import grakn.core.concept.type.AttributeType;
 import graql.lang.Graql;
 import graql.lang.query.GraqlQuery;

@@ -20,7 +20,7 @@ package grakn.benchmark.profiler.util;
 
 
 import grakn.benchmark.lib.instrumentation.ClientInterceptor;
-import grakn.core.client.GraknClient;
+import grakn.client.GraknClient;
 import grakn.core.common.http.SimpleURI;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;

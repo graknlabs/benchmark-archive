@@ -23,7 +23,7 @@ import brave.Span;
 import brave.Tracer;
 import grakn.benchmark.common.analysis.InsertQueryAnalyser;
 import grakn.benchmark.common.configuration.BenchmarkConfiguration;
-import grakn.core.client.GraknClient;
+import grakn.client.GraknClient;
 import grakn.core.concept.answer.Answer;
 import grakn.core.concept.answer.ConceptMap;
 import graql.lang.Graql;

@@ -35,7 +35,7 @@ import grakn.benchmark.generator.util.IgniteManager;
 import grakn.benchmark.generator.util.SchemaManager;
 import grakn.benchmark.profiler.util.ElasticSearchManager;
 import grakn.benchmark.profiler.util.TracingGraknClient;
-import grakn.core.client.GraknClient;
+import grakn.client.GraknClient;
 import grakn.core.concept.type.AttributeType;
 import graql.lang.query.GraqlQuery;
 import org.apache.commons.cli.CommandLine;

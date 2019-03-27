@@ -20,7 +20,7 @@ package grakn.benchmark.profiler;
 
 import grakn.benchmark.common.configuration.parse.BenchmarkArguments;
 import grakn.benchmark.common.exception.BootupException;
-import grakn.core.client.GraknClient;
+import grakn.client.GraknClient;
 import grakn.core.concept.answer.ConceptMap;
 import graql.lang.Graql;
 import org.apache.commons.cli.CommandLine;

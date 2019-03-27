@@ -19,23 +19,22 @@
 exports_files(["VERSION", "deployment.properties"], visibility = ["//visibility:public"])
 
 # TODO: Need to add 'benchmark-dashboard' as a distribution.
-load("@graknlabs_bazel_distribution//distribution:rules.bzl", "distribution_structure", "distribution_zip")
+# load("@graknlabs_bazel_distribution//distribution:rules.bzl", "distribution_structure", "distribution_zip")
+load("@graknlabs_bazel_distribution//common:rules.bzl", "java_deps", "assemble_targz", "assemble_zip")
 
-
-distribution_structure(
-    name="profiler-binary",
-#    targets = {
-#        "//profiler:benchmark-profiler-binary": "lib/"
-#    },
+java_deps(
+    name = "profiler-deps",
+    target = "//profiler:benchmark-profiler-binary",
+    java_deps_root = "lib/",
+    version_file = "//:VERSION",
     visibility = ["//:__pkg__"]
 )
 
+assemble_zip(
+    name = "profiler-binary",
+    targets = [":profiler-deps"],
+    output_filename = "profiler",
 
-distribution_zip(
-    name = "profiler-distribution",
-    distribution_structures = [
-        "//:profiler-binary"
-    ],
     additional_files = {
         "//profiler:benchmark": "benchmark",
 
@@ -68,23 +67,25 @@ distribution_zip(
         "@external-dependencies-zipkin//file": "external-dependencies/zipkin.jar",
         "@external-dependencies-elasticsearch//file": "external-dependencies/elasticsearch.zip"
     },
-    output_filename = "benchmark",
+#    permissions = {
+#        "server/services/cassandra/cassandra.yaml": "0777",
+#        "server/db/cassandra": "0777",
+#    },
+    visibility = ["//visibility:public"]
 )
 
 
-distribution_structure(
-    name = "report-generator-binary",
-    targets = {
-        "//report:report-generator-binary": "lib/"
-    },
+java_deps(
+    name = "profiler-deps",
+    target = "//profiler:benchmark-profiler-binary",
+    java_deps_root = "lib/",
+    version_file = "//:VERSION",
     visibility = ["//:__pkg__"]
 )
 
-distribution_zip(
-    name = "report-generator-distribution",
-    distribution_structures = [
-        "//:report-generator-binary"
-    ],
+assemble_zip(
+    name = "report-generator-binary",
+    targets = ["//report:report-generator-binary"],
     additional_files = {
         "//report:report_generator": "report_generator",
 
@@ -100,8 +101,15 @@ distribution_zip(
         "//common/configuration/scenario:complex/config_write.yml": "scenario/complex/config_write.yml",
         "//common/configuration/scenario:complex/schema.gql" : "scenario/complex/schema.gql",
     },
+#    permissions = {
+#        "server/services/cassandra/cassandra.yaml": "0777",
+#        "server/db/cassandra": "0777",
+#    },
     output_filename = "report-generator",
+    visibility = ["//visibility:public"]
+
 )
+
 
 
 # When a Bazel build or test is executed with RBE, it will be executed using the following platform.
