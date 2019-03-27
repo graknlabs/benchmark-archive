@@ -1,4 +1,5 @@
 #!/bin/bash
+JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
 
 echo "Cloning Grakn"
 git clone https://github.com/graknlabs/grakn.git

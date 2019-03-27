@@ -75,7 +75,7 @@ distribution_zip(
 distribution_structure(
     name = "report-generator-binary",
     targets = {
-        "//report:report-generator-binary": "testlib/"
+        "//report:report-generator-binary": "lib/"
     },
     visibility = ["//:__pkg__"]
 )
