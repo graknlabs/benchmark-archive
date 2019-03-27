@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # GRAKN.AI - THE KNOWLEDGE GRAPH
-# Copyright (C) 2018 Grakn Labs Ltd
+# Copyright (C) 2019 Grakn Labs Ltd
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -20,18 +20,18 @@
 # NOTE: use set -ex for debugging
 set -e
 
-# Benchmark global variables
+# Report Generator global variables
 JAVA_BIN=java
 [[ $(readlink $0) ]] && path=$(readlink $0) || path=$0
 WORKING_DIR=$(cd "$(dirname "${path}")" && pwd -P)
-BENCHMARK_RUNNER_SERVICE_LIB_CP="lib/*"
+REPORT_RUNNER_SERVICE_LIB_CP="lib/*"
 
 exit_if_java_not_found() {
   which "${JAVA_BIN}" > /dev/null
   exit_code=$?
 
   if [[ $exit_code -ne 0 ]]; then
-    echo "Java is not installed on this machine. Benchmark needs Java 1.8 in order to run."
+    echo "Java is not installed on this machine. Report Generator needs Java 1.8 in order to run."
     exit 1
   fi
 }
@@ -44,8 +44,8 @@ exit_code=0
 pushd "$WORKING_DIR" > /dev/null
 exit_if_java_not_found
 
-CLASSPATH="${WORKING_DIR}/${BENCHMARK_RUNNER_SERVICE_LIB_CP}:${WORKING_DIR}"
-java -cp "${CLASSPATH}" -Dworking.dir="${WORKING_DIR}" -Xms512m -Xmx512m grakn.benchmark.profiler.GraknBenchmark $@
+CLASSPATH="${WORKING_DIR}/${REPORT_RUNNER_SERVICE_LIB_CP}:${WORKING_DIR}"
+java -cp "${CLASSPATH}" -Dworking.dir="${WORKING_DIR}" -Xms512m -Xmx512m grakn.benchmark.report.ReportGenerator $@
 
 exit_code=$?
 

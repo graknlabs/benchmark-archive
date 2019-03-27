@@ -16,6 +16,8 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+exports_files(["report_generator"], visibility = ["//visibility:public"])
+
 java_library(
     name = "report-generator",
     srcs = glob(["*.java", "container/*.java"]),

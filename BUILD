@@ -18,22 +18,23 @@
 
 exports_files(["VERSION", "deployment.properties"], visibility = ["//visibility:public"])
 
-# TODO: the distribution only includes 'benchmark-profiler'. Need to add 'benchmark-dashboard'.
+# TODO: Need to add 'benchmark-dashboard' as a distribution.
 load("@graknlabs_bazel_distribution//distribution:rules.bzl", "distribution_structure", "distribution_zip")
 
 
 distribution_structure(
-    name="benchmark-binary",
+    name="profiler-binary",
     targets = {
         "//profiler:benchmark-profiler-binary": "lib/"
     },
     visibility = ["//:__pkg__"]
 )
 
+
 distribution_zip(
-    name = "distribution",
+    name = "profiler-distribution",
     distribution_structures = [
-        "//:benchmark-binary"
+        "//:profiler-binary"
     ],
     additional_files = {
         "//profiler:benchmark": "benchmark",
@@ -71,6 +72,36 @@ distribution_zip(
 )
 
 
+distribution_structure(
+    name = "report-generator-binary",
+    targets = {
+        "//report:report-generator-binary": "lib/"
+    },
+    visibility = ["//:__pkg__"]
+)
+
+distribution_zip(
+    name = "report-generator-distribution",
+    distribution_structures = [
+        "//:report-generator-binary"
+    ],
+    additional_files = {
+        "//report:report_generator": "report_generator",
+
+        "//common/configuration/scenario:road_network/queries_read.yml": "scenario/road_network/queries_read.yml",
+        "//common/configuration/scenario:road_network/queries_write.yml": "scenario/road_network/queries_write.yml",
+        "//common/configuration/scenario:road_network/road_config_read.yml": "scenario/road_network/road_config_read.yml",
+        "//common/configuration/scenario:road_network/road_config_write.yml": "scenario/road_network/road_config_write.yml",
+        "//common/configuration/scenario:road_network/road_network.gql": "scenario/road_network/road_network.gql",
+
+        "//common/configuration/scenario:complex/queries_complex_read.yml": "scenario/complex/queries_complex_read.yml",
+        "//common/configuration/scenario:complex/queries_complex_write.yml": "scenario/complex/queries_complex_write.yml",
+        "//common/configuration/scenario:complex/config_read.yml": "scenario/complex/config_read.yml",
+        "//common/configuration/scenario:complex/config_write.yml": "scenario/complex/config_write.yml",
+        "//common/configuration/scenario:complex/schema.gql" : "scenario/complex/schema.gql",
+    },
+    output_filename = "report-generator",
+)
 
 
 # When a Bazel build or test is executed with RBE, it will be executed using the following platform.

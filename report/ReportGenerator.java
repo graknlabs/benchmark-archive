@@ -42,6 +42,12 @@ import org.apache.ignite.Ignite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -89,7 +95,7 @@ public class ReportGenerator {
     }
 
 
-    public void start() {
+    public void start() throws IOException {
         Ignite ignite = IgniteManager.initIgnite();
         GraknClient client = new GraknClient(config.graknUri());
         String keyspace = config.getKeyspace();
@@ -123,7 +129,8 @@ public class ReportGenerator {
         }
 
         // serialize data to JSON
-        System.out.println(reportData.asJson());
+        Path file = Paths.get(config.configName() + "_report.json");
+        Files.write(file, Arrays.asList(reportData.asJson()), Charset.defaultCharset());
     }
 
 
