@@ -48,6 +48,12 @@ java_binary(
     runtime_deps = [
         "//report:report-generator",
     ],
-    classpath_resources = ["//profiler/test/resources:logback-test"],
+    classpath_resources = [":logback"],
+    visibility = ["//visibility:public"]
+)
+
+filegroup(
+    name = "logback",
+    srcs = ["//report:logback.xml"],
     visibility = ["//visibility:public"]
 )

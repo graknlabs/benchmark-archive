@@ -16,7 +16,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-exports_files(glob(["scenario/**/*"]) + ["benchmark"] + ["setup.sh"], visibility = ["//visibility:public"])
+exports_files(["benchmark", "setup.sh"], visibility = ["//visibility:public"])
 
 java_binary(
     name = "benchmark-profiler-binary",
