@@ -71,37 +71,37 @@ distribution_zip(
     output_filename = "benchmark",
 )
 
-
-distribution_structure(
-    name = "report-generator-binary",
-    targets = {
-        "//report:report-generator-binary": "lib/"
-    },
-    visibility = ["//:__pkg__"]
-)
-
-distribution_zip(
-    name = "report-generator-distribution",
-    distribution_structures = [
-        "//:report-generator-binary"
-    ],
-    additional_files = {
-        "//report:report_generator": "report_generator",
-
-        "//common/configuration/scenario:road_network/queries_read.yml": "scenario/road_network/queries_read.yml",
-        "//common/configuration/scenario:road_network/queries_write.yml": "scenario/road_network/queries_write.yml",
-        "//common/configuration/scenario:road_network/road_config_read.yml": "scenario/road_network/road_config_read.yml",
-        "//common/configuration/scenario:road_network/road_config_write.yml": "scenario/road_network/road_config_write.yml",
-        "//common/configuration/scenario:road_network/road_network.gql": "scenario/road_network/road_network.gql",
-
-        "//common/configuration/scenario:complex/queries_complex_read.yml": "scenario/complex/queries_complex_read.yml",
-        "//common/configuration/scenario:complex/queries_complex_write.yml": "scenario/complex/queries_complex_write.yml",
-        "//common/configuration/scenario:complex/config_read.yml": "scenario/complex/config_read.yml",
-        "//common/configuration/scenario:complex/config_write.yml": "scenario/complex/config_write.yml",
-        "//common/configuration/scenario:complex/schema.gql" : "scenario/complex/schema.gql",
-    },
-    output_filename = "report-generator",
-)
+#
+#distribution_structure(
+#    name = "report-generator-binary",
+#    targets = {
+#        "//report:report-generator-binary": "lib/"
+#    },
+#    visibility = ["//:__pkg__"]
+#)
+#
+#distribution_zip(
+#    name = "report-generator-distribution",
+#    distribution_structures = [
+#        "//:report-generator-binary"
+#    ],
+#    additional_files = {
+#        "//report:report_generator": "report_generator",
+#
+#        "//common/configuration/scenario:road_network/queries_read.yml": "scenario/road_network/queries_read.yml",
+#        "//common/configuration/scenario:road_network/queries_write.yml": "scenario/road_network/queries_write.yml",
+#        "//common/configuration/scenario:road_network/road_config_read.yml": "scenario/road_network/road_config_read.yml",
+#        "//common/configuration/scenario:road_network/road_config_write.yml": "scenario/road_network/road_config_write.yml",
+#        "//common/configuration/scenario:road_network/road_network.gql": "scenario/road_network/road_network.gql",
+#
+#        "//common/configuration/scenario:complex/queries_complex_read.yml": "scenario/complex/queries_complex_read.yml",
+#        "//common/configuration/scenario:complex/queries_complex_write.yml": "scenario/complex/queries_complex_write.yml",
+#        "//common/configuration/scenario:complex/config_read.yml": "scenario/complex/config_read.yml",
+#        "//common/configuration/scenario:complex/config_write.yml": "scenario/complex/config_write.yml",
+#        "//common/configuration/scenario:complex/schema.gql" : "scenario/complex/schema.gql",
+#    },
+#    output_filename = "report-generator",
+#)
 
 
 # When a Bazel build or test is executed with RBE, it will be executed using the following platform.

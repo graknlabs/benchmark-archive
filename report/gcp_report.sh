@@ -2,7 +2,7 @@
 
 if [ -z "$1" ]
 then
-    SERVER_INSTANCE=performance-report-server
+    SERVER_INSTANCE=performance-report-server2
 else
     SERVER_INSTANCE=$1
 fi
@@ -21,7 +21,7 @@ gcloud compute instances create $SERVER_INSTANCE          \
     --service-account grakn-benchmark-189@grakn-dev.iam.gserviceaccount.com \
     --scopes https://www.googleapis.com/auth/cloud-platform
 
-CLIENT_INSTANCE=performance-report-client
+CLIENT_INSTANCE=performance-report-client2
 echo "Creating report generator client-machine google cloud instance: $CLIENT_INSTANCE..."
 # TODO set instance size
 gcloud compute instances create $CLIENT_INSTANCE          \
@@ -46,9 +46,9 @@ done
 echo "Setting up Grakn Server on $SERVER_INSTANCE..."
 
 # copy script to clone and build Grakn, then execute
-gcloud compute scp report_grakn_server.sh ubuntu@$SERVER_INSTANCE:~ --zone=$ZONE
-gcloud compute ssh ubuntu@$SERVER_INSTANCE --zone=$ZONE --command='chmod +x ~/report_grakn_server.sh'
-gcloud compute ssh ubuntu@$SERVER_INSTANCE --zone=$ZONE --command='nohup ~/report_grakn_server.sh & '
+gcloud compute scp gcp_grakn_server.sh ubuntu@$SERVER_INSTANCE:~ --zone=$ZONE
+gcloud compute ssh ubuntu@$SERVER_INSTANCE --zone=$ZONE --command="chmod +x ~/gcp_grakn_server.sh"
+gcloud compute ssh ubuntu@$SERVER_INSTANCE --zone=$ZONE --command="tmux new -d -s grakn_server \"~/gcp_grakn_server.sh 2>&1 | tee -a log.txt  \" "
 
 
 # Wait until client machine is up and running
@@ -62,9 +62,9 @@ done
 
 echo "Setting up Report Client on $CLIENT_INSTANCE..."
 # copy script to clone and build benchmark, then execute
-gcloud compute scp launch_client.sh ubuntu@$CLIENT_INSTANCE:~ --zone=$ZONE
-gcloud compute ssh ubuntu@$CLIENT_INSTANCE --zone=$ZONE --command='chmod +x ~/launch_client.sh'
-gcloud compute ssh ubuntu@$CLIENT_INSTANCE --zone=$ZONE --command='tmux new -d -s report_client "~/launch_client.sh $SERVER_INSTANCE > log.txt" '
+gcloud compute scp gcp_client_server.sh ubuntu@$CLIENT_INSTANCE:~ --zone=$ZONE
+gcloud compute ssh ubuntu@$CLIENT_INSTANCE --zone=$ZONE --command="chmod +x ~/gcp_client_server.sh"
+gcloud compute ssh ubuntu@$CLIENT_INSTANCE --zone=$ZONE --command="tmux new -d -s report_client \"~/gcp_client_server.sh $SERVER_INSTANCE 2>&1 | tee -a log.tx \" "
 
 
 # TODO poll on the client server via SCP to wait on the final JSON blob being produced
