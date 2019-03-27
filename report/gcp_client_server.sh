@@ -9,8 +9,10 @@ fi
 
 GRAKN_URI=$1
 
-git clone https://github.com/graknlabs/benchmark.git
+# TODO replace this with `graknlabs` url
+git clone https://github.com/flyingsilverfin/benchmark.git
 cd benchmark
+git checkout report-generator-scripts
 
 bazel build //:report-generator-distribution
 cd bazel-genfiles
