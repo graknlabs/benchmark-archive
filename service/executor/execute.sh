@@ -53,7 +53,7 @@ git clone https://github.com/graknlabs/benchmark.git
 cd benchmark
 
 ./dependencies/maven/update.sh
-bazel build //:distribution
+bazel build //:profiler-distribution
 
 # unzip benchmark
 cd bazel-genfiles

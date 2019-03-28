@@ -17,6 +17,7 @@
 #
 
 exports_files(["report_generator"], visibility = ["//visibility:public"])
+load("@graknlabs_bazel_distribution//common:rules.bzl", "java_deps")
 
 java_library(
     name = "report-generator",
@@ -49,6 +50,14 @@ java_binary(
         "//report:report-generator",
     ],
     classpath_resources = [":logback"],
+    visibility = ["//visibility:public"]
+)
+
+java_deps(
+    name = "report-deps",
+    target = "//report:report-generator-binary",
+    java_deps_root = "lib/",
+    version_file = "//:VERSION",
     visibility = ["//visibility:public"]
 )
 
