@@ -20,8 +20,10 @@ package grakn.benchmark.report;
 
 import grakn.benchmark.report.container.QueryExecutionResults;
 import grakn.client.GraknClient;
+import grakn.core.concept.Concept;
 import grakn.core.concept.answer.ConceptMap;
 import grakn.core.concept.answer.ConceptSet;
+import graql.lang.Graql;
 import graql.lang.query.GraqlCompute;
 import graql.lang.query.GraqlDelete;
 import graql.lang.query.GraqlGet;
@@ -29,6 +31,7 @@ import graql.lang.query.GraqlInsert;
 import graql.lang.query.GraqlQuery;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -47,7 +50,10 @@ class QueriesExecutor implements Callable<Map<GraqlQuery, QueryExecutionResults>
 
     @Override
     public Map<GraqlQuery, QueryExecutionResults> call() {
-        Map<GraqlQuery, QueryExecutionResults> result = new HashMap<>();
+        Map<GraqlQuery, QueryExecutionResults> queryData = new HashMap<>();
+
+        List<String> insertedConceptIds = new LinkedList<>();
+
         for (int rep = 0; rep < repetitions; rep++) {
             for (GraqlQuery query : queries) {
 
@@ -81,7 +87,9 @@ class QueriesExecutor implements Callable<Map<GraqlQuery, QueryExecutionResults>
                     roundTrips = AnswerAnalysis.roundTripsCompleted(query.asInsert(), answer);
                     conceptsHandled = AnswerAnalysis.insertedConcepts(query.asInsert(), answer);
 
-                    // TODO delete inserted concepts
+                    for (Concept concept : answer.concepts()) {
+                        insertedConceptIds.add(concept.id().toString());
+                    }
 
                 } else if (query instanceof GraqlDelete) {
                     queryType = "delete";
@@ -105,11 +113,18 @@ class QueriesExecutor implements Callable<Map<GraqlQuery, QueryExecutionResults>
                 tx.close();
 
                 // initialise data container if needed
-                result.putIfAbsent(query, new QueryExecutionResults(queryType, conceptsHandled, roundTrips));
-                result.get(query).addExecutionTime(endTime - startTime);
+                queryData.putIfAbsent(query, new QueryExecutionResults(queryType, conceptsHandled, roundTrips));
+                queryData.get(query).addExecutionTime(endTime - startTime);
 
             }
         }
-        return result;
+
+
+        // delete all the inserted concepts
+        try (GraknClient.Transaction tx = session.transaction().write()) {
+            insertedConceptIds.iterator().forEachRemaining(id -> tx.execute(Graql.parse("match $x id " + id+ "; delete $x;").asDelete()));
+        }
+
+        return queryData;
     }
 }

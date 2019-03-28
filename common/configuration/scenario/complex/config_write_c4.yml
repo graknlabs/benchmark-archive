@@ -1,0 +1,17 @@
+name: "Complex Graph - Write"
+description: "Complex graph writes with: Constant C_in, Constant R_out, Constant A_out"
+dataGenerator: "generic_uniform_network"
+schema: "schema.gql"
+scales:
+  - 2000
+  - 8000
+
+repeatsPerQuery: 50
+
+queries: "queries_complex_write.yml"
+deleteInsertedConcepts: true
+traceDeleteInsertedConcepts: true
+
+concurrency:
+  clients: 4
+  uniqueKeyspaces: false
