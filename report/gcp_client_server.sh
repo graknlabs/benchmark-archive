@@ -9,8 +9,7 @@ fi
 
 GRAKN_URI=$1
 
-# TODO replace this with `graknlabs` url
-git clone https://github.com/flyingsilverfin/benchmark.git
+git clone https://github.com/graknlabs/benchmark.git
 cd benchmark
 git checkout report-generator-scripts
 

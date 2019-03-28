@@ -53,9 +53,7 @@ public class ElasticSearchManager {
         String serverURI =  (arguments.hasOption(ELASTIC_URI)) ? arguments.getOptionValue(ELASTIC_URI) : DEFAULT_ES_SERVER_URI;
         RestClient restClient = RestClient.builder(HttpHost.create(serverURI)).build();
 
-//        Request putTemplateRequest = new Request("PUT", "/_template/" + ES_INDEX_TEMPLATE_NAME);
         HttpEntity entity = new StringEntity(INDEX_TEMPLATE, ContentType.APPLICATION_JSON);
-//        putTemplateRequest.setEntity(entity);
 
         restClient.performRequest("PUT", "/_template/" + ES_INDEX_TEMPLATE_NAME, new HashMap<>(), entity );
         restClient.close();
