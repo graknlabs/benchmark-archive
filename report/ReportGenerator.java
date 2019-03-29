@@ -110,7 +110,7 @@ public class ReportGenerator {
         DataGenerator dataGenerator = initDataGenerator(client, keyspace);
 
         // write the relevant config metadata to the report
-        reportData.addMetadata(config.configName(), config.concurrentClients(), config.configDescription());
+        reportData.addMetadata(config.configName(), config.concurrentClients(), config.configDescription(), config.dataGenerator());
 
         // alternate between generating data and profiling a queries
         List<GraqlQuery> queries = toGraqlQueries(config.getQueries());
@@ -129,7 +129,7 @@ public class ReportGenerator {
         }
 
         // serialize data to JSON
-        Path file = Paths.get(config.configName() + "_report.json");
+        Path file = Paths.get(config.configName() + "_" + config.concurrentClients() + "_report.json");
         Files.write(file, Arrays.asList(reportData.asJson()), Charset.defaultCharset());
     }
 

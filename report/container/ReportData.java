@@ -45,6 +45,7 @@ public class ReportData {
     private int concurrentClients;
     private String configName;
     private String description;
+    private String dataGenerator;
 
 
     public ReportData() {
@@ -52,10 +53,11 @@ public class ReportData {
         multiScaleQueryExecutionResultsLookup = new HashMap<>();
     }
 
-    public void addMetadata(String configName, int concurrentClients, String description) {
+    public void addMetadata(String configName, int concurrentClients, String description, String dataGenerator) {
         this.configName = configName;
         this.concurrentClients = concurrentClients;
         this.description = description;
+        this.dataGenerator = dataGenerator;
     }
 
     public void recordTimesAtScale(int scale, List<Map<GraqlQuery, QueryExecutionResults>> results) {
@@ -139,6 +141,10 @@ public class ReportData {
 
     public String description() {
         return description;
+    }
+
+    public String dataGenerator() {
+        return dataGenerator;
     }
 
     public Map<String, List<MultiScaleResults>> queryExecutionData() {

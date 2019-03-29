@@ -35,6 +35,7 @@ public class ReportDataSerializer extends StdSerializer<ReportData> {
         gen.writeStartObject();
         gen.writeObjectFieldStart("metadata");
         gen.writeStringField("configName", value.configName());
+        gen.writeStringField("dataGenerator", value.dataGenerator());
         gen.writeNumberField("concurrentClients", value.concurrentClients());
         gen.writeStringField("configDescription", value.description());
         gen.writeEndObject();

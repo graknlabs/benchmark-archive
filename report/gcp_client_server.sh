@@ -9,9 +9,9 @@ fi
 
 GRAKN_URI=$1
 
-git clone https://github.com/graknlabs/benchmark.git
+git clone https://github.com/flyingsilverfin/benchmark.git
 cd benchmark
-git checkout report-generator-scripts
+git checkout concurrent-report-clients
 
 bazel build //:report-generator-distribution
 cd bazel-genfiles
@@ -20,7 +20,7 @@ cd report-generator
 
 
 # TODO wait until grakn gRPC port is available
-sleep 30
+sleep 60
 
 
 ./report_generator --config=scenario/road_network/road_config_read.yml --execution-name "road-read" --grakn-uri $GRAKN_URI:48555 --keyspace road_read
