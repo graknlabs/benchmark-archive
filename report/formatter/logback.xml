@@ -40,13 +40,10 @@
     </appender>
 
     <root level="INFO"/>
-    <logger name="grakn.benchmark.report.ReportGenerator" level="INFO">
+    <logger name="grakn.benchmark.report.formatter.ReportFormatter" level="INFO">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="grakn.benchmark" level="INFO">
-        <appender-ref ref="MAIN"/>
-    </logger>
-    <logger name="org.apache.ignite" level="WARN">
         <appender-ref ref="MAIN"/>
     </logger>
 

@@ -47,7 +47,7 @@ java_binary(
     name = "report-generator-binary",
     main_class = "grakn.benchmark.report.ReportGenerator",
     runtime_deps = [
-        "//report:report-generator",
+        "//report/producer:report-generator",
     ],
     classpath_resources = [":logback"],
     visibility = ["//visibility:public"]
@@ -55,7 +55,7 @@ java_binary(
 
 java_deps(
     name = "report-deps",
-    target = "//report:report-generator-binary",
+    target = "//report/producer:report-generator-binary",
     java_deps_root = "lib/",
     version_file = "//:VERSION",
     visibility = ["//visibility:public"]
@@ -63,6 +63,6 @@ java_deps(
 
 filegroup(
     name = "logback",
-    srcs = ["//report:logback.xml"],
+    srcs = ["//report/producer:logback.xml"],
     visibility = ["//visibility:public"]
 )

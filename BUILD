@@ -66,9 +66,9 @@ assemble_zip(
 
 assemble_zip(
     name = "report-generator-distribution",
-    targets = ["//report:report-deps"],
+    targets = ["//report/producer:report-deps"],
     additional_files = {
-        "//report:report_generator": "report_generator",
+        "//report/producer:report_generator": "report_generator",
 
         "//common/configuration/scenario:road_network/queries_read.yml": "scenario/road_network/queries_read.yml",
         "//common/configuration/scenario:road_network/queries_write.yml": "scenario/road_network/queries_write.yml",

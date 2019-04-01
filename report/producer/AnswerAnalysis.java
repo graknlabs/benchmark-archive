@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.report;
+package grakn.benchmark.report.producer;
 
 import grakn.core.concept.answer.Answer;
 import grakn.core.concept.answer.ConceptMap;

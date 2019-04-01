@@ -45,6 +45,12 @@ dependencies:
       version: "2.9.2"
       lang: java
 
+  # -- lightweight JSON parsing --
+  org.sharegov:
+    mjson:
+      version: "1.4.0"
+      lang: java
+
   # -- Tracing --
   io.zipkin.brave:
     brave:

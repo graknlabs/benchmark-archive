@@ -16,16 +16,14 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.report.container;
+package grakn.benchmark.report.producer.container;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import graql.lang.query.GraqlQuery;
-import org.apache.ignite.internal.processors.query.property.QueryReadOnlyMethodsAccessor;
 
-import javax.management.Query;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
