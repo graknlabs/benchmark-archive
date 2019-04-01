@@ -4,9 +4,9 @@ dataGenerator: "road_network"
 schema: "road_network.gql"
 scales:
   - 1000
-  - 2000
   - 4000
   - 8000
+  - 16000
 
 repeatsPerQuery: 5
 
