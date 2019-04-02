@@ -45,7 +45,7 @@ pushd "$WORKING_DIR" > /dev/null
 exit_if_java_not_found
 
 CLASSPATH="${WORKING_DIR}/${REPORT_RUNNER_SERVICE_LIB_CP}:${WORKING_DIR}"
-java -cp "${CLASSPATH}" -Dworking.dir="${WORKING_DIR}" -Xms512m -Xmx512m grakn.benchmark.report.ReportProducer $@
+java -cp "${CLASSPATH}" -Dworking.dir="${WORKING_DIR}" -Xms512m -Xmx512m grakn.benchmark.report.producer.ReportProducer $@
 
 exit_code=$?
 
