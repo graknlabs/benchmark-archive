@@ -31,13 +31,15 @@ cd report-producer
 
 # Wait until server machine is up and running
 echo "Waiting for $GRAKN_URI to be up and running..."
-sleep 20; # wait for a bit to ensure machine is actually responsive
+
+trap - ERR # disable trap temporarily
 RET=1
 while [ $RET -ne 0 ]; do
     sleep 1;
     curl $GRAKN_URI:48555
     RET=$?; # collect return code
 done
+trap report_failure ERR
 
 
 ./report_producer --config=scenario/road_network/road_config_read.yml --execution-name "road-read" --grakn-uri $GRAKN_URI:48555 --keyspace road_read
