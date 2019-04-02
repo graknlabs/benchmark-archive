@@ -11,7 +11,7 @@ module.exports = {
     'max-len': ['error', { ignoreComments: true, code: 150 }],
     'no-use-before-define': 0,
     'import/no-unresolved': 0,
-    'no-param-reassign': ["error", { "props": false }]
+    'no-param-reassign': ['error', { props: false }],
   },
   parserOptions: {
     parser: 'babel-eslint',

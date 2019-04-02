@@ -121,11 +121,11 @@ export default {
       BenchmarkClient.getSpans(
         `{ childrenSpans( parentId: [${
           this.spans.map(span => `"${span.id}"`).join()
-        }] limit: 500){ id name duration parentId tags { childNumber }} }`,
+        }] limit: 1000){ id name duration parentId tags { childNumber }} }`,
       ).then((resp) => {
         this.children = this.attachRepetition(resp.data.childrenSpans);
-        this.stepNumbers = Array.from(new Set(this.children.map(child => child.tags.childNumber)));
-        this.stepNumbers.sort();
+        this.stepNumbers = [...new Set(this.children.map(child => child.tags.childNumber))];
+        this.stepNumbers.sort((a, b) => a - b);
       });
     },
     filterSpansByStep(stepNumber) {

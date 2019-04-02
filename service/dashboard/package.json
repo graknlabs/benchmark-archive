@@ -29,7 +29,7 @@
   },
   "vue": {
     "devServer": {
-      "proxy": "http://localhost:4567"
+      "proxy": "http://35.185.82.220:4567"
     },
     "lintOnSave": true
   }
