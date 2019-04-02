@@ -29,8 +29,17 @@ public class ReportFormatter {
                 .required(true)
                 .type(String.class)
                 .build();
+        Option destinationDirectory = Option.builder("d")
+                .longOpt("destination")
+                .hasArg(true)
+                .desc("Target filesystem location to write the report to")
+                .required(true)
+                .type(String.class)
+                .build();
+
         Options options = new Options();
         options.addOption(reportJsonOption);;
+        options.addOption(destinationDirectory);
         CommandLineParser parser = new DefaultParser();
         CommandLine arguments;
         try {
@@ -50,7 +59,7 @@ public class ReportFormatter {
 
         dataByQuery.values().forEach(System.out::println);
 
-        Path reportFile = Paths.get("formatted_report.txt");
+        Path reportFile = Paths.get(arguments.getOptionValue("destination"), "formatted_report.txt");
         List<String> reportEntries = dataByQuery.keySet().stream()
                 .sorted()
                 .map(key -> dataByQuery.get(key).toString())
