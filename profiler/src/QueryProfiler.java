@@ -83,14 +83,11 @@ class QueryProfiler implements Runnable {
             concurrentExecutionSpan.tag("graphScale", Integer.toString(numConcepts));
             concurrentExecutionSpan.start();
 
-            int counter = 0;
-            long startTime = System.currentTimeMillis();
+            System.out.println("Executing queries");
             for (int rep = 0; rep < repetitions; rep++) {
                 for (GraqlQuery query : queries) {
+                    LOG.debug("Rep. " + rep + ", query: " + query.toString());
 
-                    if (counter % 100 == 0) {
-                        System.out.println("Executed query #: " + counter + ", elapsed time " + (System.currentTimeMillis() - startTime));
-                    }
                     Span querySpan = tracer.newChild(concurrentExecutionSpan.context());
 
                     if (query instanceof GraqlInsert) { querySpan.name("insert-query"); }
@@ -127,7 +124,6 @@ class QueryProfiler implements Runnable {
                         querySpan.finish();
                     }
 
-
                     if (deleteInsertedConcepts && insertedConceptIds != null) {
                         if (traceDeleteInsertedConcepts) {
                             Span deleteQuerySpan = tracer.newChild(concurrentExecutionSpan.context());
@@ -149,7 +145,6 @@ class QueryProfiler implements Runnable {
                             tx.commit();
                         }
                     }
-                    counter++;
                 }
             }
 
