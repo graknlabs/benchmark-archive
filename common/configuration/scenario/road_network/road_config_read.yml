@@ -6,7 +6,6 @@ scales:
   - 1000
   - 4000
   - 8000
-  - 16000
 
 repeatsPerQuery: 5
 
