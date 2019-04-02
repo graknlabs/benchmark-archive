@@ -102,7 +102,7 @@ public class FinancialTransactionsDefinition implements DataGeneratorDefinition 
         RolePlayerTypeStrategy transactorRolePlayer = new RolePlayerTypeStrategy(
                 "transactor",
                 // high variance in the number of role players
-                new ScalingDiscreteGaussian(random, () -> storage.getGraphScale(), 0.01, 0.01),
+                new ScalingDiscreteGaussian(random, () -> storage.getGraphScale(), 0.005, 0.005),
                 new ConceptIdStorageProvider(
                         random,
                         this.storage,
@@ -119,7 +119,6 @@ public class FinancialTransactionsDefinition implements DataGeneratorDefinition 
     }
 
     private void buildImplicitRelationshipStrategies() {
-
 
         // @has-quantity on the transaction relationship (1 quantity per transaction)
         RolePlayerTypeStrategy quantityOwner = new RolePlayerTypeStrategy(

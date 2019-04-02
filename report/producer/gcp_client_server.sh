@@ -19,8 +19,14 @@ unzip report-generator.zip
 cd report-generator
 
 
-# TODO wait until grakn gRPC port is available
-sleep 60
+# Wait until server machine is up and running
+echo "Waiting for $GRAKN_URI to be up and running..."
+RET=1
+while [ $RET -ne 0 ]; do
+    sleep 1;
+    curl $GRAKN_URI:48555
+    RET=$?; # collect return code
+done
 
 
 ./report_generator --config=scenario/road_network/road_config_read.yml --execution-name "road-read" --grakn-uri $GRAKN_URI:48555 --keyspace road_read

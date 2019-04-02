@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SERVER_INSTANCE=performance-report-server2
+SERVER_INSTANCE=performance-report-server
 
 ZONE="us-east1-b"
 
@@ -15,7 +15,7 @@ gcloud compute instances create $SERVER_INSTANCE          \
     --service-account grakn-benchmark-189@grakn-dev.iam.gserviceaccount.com \
     --scopes https://www.googleapis.com/auth/cloud-platform
 
-CLIENT_INSTANCE=performance-report-client2
+CLIENT_INSTANCE=performance-report-client
 echo "Creating report generator client-machine google cloud instance: $CLIENT_INSTANCE..."
 gcloud compute instances create $CLIENT_INSTANCE          \
     --image-family grakn-benchmark-executor             \
