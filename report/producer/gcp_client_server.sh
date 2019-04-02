@@ -49,9 +49,10 @@ trap report_failure ERR
 ./report_producer --config=scenario/road_network/road_config_write_c4.yml --execution-name "road-write-c4" --grakn-uri $GRAKN_URI:48555 --keyspace road_write_c4
 ./report_producer --config=scenario/road_network/road_config_write_c8.yml --execution-name "road-write-c8" --grakn-uri $GRAKN_URI:48555 --keyspace road_write_c8
 
-./report_producer --config=scenario/complex/config_read.yml --execution-name "complex-read" --grakn-uri $GRAKN_URI:48555 --keyspace complex_read
-./report_producer --config=scenario/complex/config_read_c4.yml --execution-name "complex-read-c4" --grakn-uri $GRAKN_URI:48555 --keyspace complex_read_c4
-./report_producer --config=scenario/complex/config_read_c8.yml --execution-name "complex-read-c8" --grakn-uri $GRAKN_URI:48555 --keyspace complex_read_c8
+# TODO re-enable complex reads when statistics are available so queries terminate in reasonable time
+#./report_producer --config=scenario/complex/config_read.yml --execution-name "complex-read" --grakn-uri $GRAKN_URI:48555 --keyspace complex_read
+#./report_producer --config=scenario/complex/config_read_c4.yml --execution-name "complex-read-c4" --grakn-uri $GRAKN_URI:48555 --keyspace complex_read_c4
+#./report_producer --config=scenario/complex/config_read_c8.yml --execution-name "complex-read-c8" --grakn-uri $GRAKN_URI:48555 --keyspace complex_read_c8
 ./report_producer --config=scenario/complex/config_write.yml --execution-name "complex-write" --grakn-uri $GRAKN_URI:48555 --keyspace complex_write
 ./report_producer --config=scenario/complex/config_write_c4.yml --execution-name "complex-write-c4" --grakn-uri $GRAKN_URI:48555 --keyspace complex_write_c4
 ./report_producer --config=scenario/complex/config_write_c8.yml --execution-name "complex-write-c8" --grakn-uri $GRAKN_URI:48555 --keyspace complex_write_c8
