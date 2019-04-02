@@ -5,14 +5,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class QueryData {
+class QueryDataContainer {
     private String query;
     private String configName;
     private String configDescription;
 
     private List<QueryDataEntry> unsortedData;
 
-    public QueryData(String query, String configName, String configDescription) {
+    public QueryDataContainer(String query, String configName, String configDescription) {
         this.query = query;
         this.configName = configName;
         this.configDescription = configDescription;
