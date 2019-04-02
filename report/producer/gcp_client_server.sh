@@ -19,9 +19,8 @@ fi
 
 GRAKN_URI=$1
 
-git clone https://github.com/flyingsilverfin/benchmark.git
+git clone https://github.com/graknlabs/benchmark.git
 cd benchmark
-git checkout concurrent-report-clients
 
 bazel build //:report-producer-distribution
 cd bazel-genfiles
