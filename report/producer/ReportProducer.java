@@ -62,8 +62,8 @@ import java.util.stream.Stream;
 
 import static graql.lang.Graql.parseList;
 
-public class ReportGenerator {
-    private static final Logger LOG = LoggerFactory.getLogger(ReportGenerator.class);
+public class ReportProducer {
+    private static final Logger LOG = LoggerFactory.getLogger(ReportProducer.class);
 
     private final BenchmarkConfiguration config;
     private final ReportData reportData;
@@ -75,8 +75,8 @@ public class ReportGenerator {
             // Parse the configuration for the benchmark
             CommandLine arguments = BenchmarkArguments.parse(args);
 
-            ReportGenerator reportGenerator = new ReportGenerator(arguments);
-            reportGenerator.start();
+            ReportProducer reportProducer = new ReportProducer(arguments);
+            reportProducer.start();
         } catch (DataGeneratorException e) {
             exitCode = 1;
             LOG.error("Error in data generator: ", e);
@@ -89,7 +89,7 @@ public class ReportGenerator {
         }
     }
 
-    public ReportGenerator(CommandLine arguments) {
+    public ReportProducer(CommandLine arguments) {
         config = new BenchmarkConfiguration(arguments);
         reportData = new ReportData();
     }

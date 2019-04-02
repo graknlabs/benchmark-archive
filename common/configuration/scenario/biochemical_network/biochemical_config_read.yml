@@ -5,7 +5,7 @@ schema: "biochemical_network.gql"
 scales:
   - 2000
   - 4000
-  - 8000
+  - 6000 # large number of role players => slow at large scales
 repeatsPerQuery: 5
 
 queries: "queries_read.yml"

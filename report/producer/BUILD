@@ -16,11 +16,11 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-exports_files(["report_generator"], visibility = ["//visibility:public"])
+exports_files(["report_producer"], visibility = ["//visibility:public"])
 load("@graknlabs_bazel_distribution//common:rules.bzl", "java_deps")
 
 java_library(
-    name = "report-generator",
+    name = "report-producer",
     srcs = glob(["*.java", "container/*.java"]),
     deps = [
         "//generator:data-generator",
@@ -44,10 +44,10 @@ java_library(
 )
 
 java_binary(
-    name = "report-generator-binary",
-    main_class = "grakn.benchmark.report.ReportGenerator",
+    name = "report-producer-binary",
+    main_class = "grakn.benchmark.report.ReportProducer",
     runtime_deps = [
-        "//report/producer:report-generator",
+        "//report/producer:report-producer",
     ],
     classpath_resources = [":logback"],
     visibility = ["//visibility:public"]
@@ -55,7 +55,7 @@ java_binary(
 
 java_deps(
     name = "report-deps",
-    target = "//report/producer:report-generator-binary",
+    target = "//report/producer:report-producer-binary",
     java_deps_root = "lib/",
     version_file = "//:VERSION",
     visibility = ["//visibility:public"]

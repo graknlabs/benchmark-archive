@@ -65,10 +65,10 @@ assemble_zip(
 
 
 assemble_zip(
-    name = "report-generator-distribution",
+    name = "report-producer-distribution",
     targets = ["//report/producer:report-deps"],
     additional_files = {
-        "//report/producer:report_generator": "report_generator",
+        "//report/producer:report_producer": "report_producer",
 
         "//common/configuration/scenario:road_network/queries_read.yml": "scenario/road_network/queries_read.yml",
         "//common/configuration/scenario:road_network/queries_write.yml": "scenario/road_network/queries_write.yml",
@@ -90,7 +90,7 @@ assemble_zip(
         "//common/configuration/scenario:complex/config_write_c4.yml": "scenario/complex/config_write_c4.yml",
         "//common/configuration/scenario:complex/config_write_c8.yml": "scenario/complex/config_write_c8.yml",
     },
-    output_filename = "report-generator",
+    output_filename = "report-producer",
     visibility = ["//visibility:public"]
 
 )

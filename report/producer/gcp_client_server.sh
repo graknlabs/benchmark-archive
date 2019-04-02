@@ -1,5 +1,14 @@
 #!/bin/bash
 
+report_failure() {
+  cp ~/log.txt ~/report.json
+  exit 1
+}
+ # catch any error
+trap report_failure ERR
+
+
+
 if [ $# -ne 1 ]
 then
     echo "No arguments supplied"
@@ -7,20 +16,22 @@ then
     exit 1;
 fi
 
+
 GRAKN_URI=$1
 
 git clone https://github.com/flyingsilverfin/benchmark.git
 cd benchmark
 git checkout concurrent-report-clients
 
-bazel build //:report-generator-distribution
+bazel build //:report-producer-distribution
 cd bazel-genfiles
-unzip report-generator.zip
-cd report-generator
+unzip report-producer.zip
+cd report-producer
 
 
 # Wait until server machine is up and running
 echo "Waiting for $GRAKN_URI to be up and running..."
+sleep 20; # wait for a bit to ensure machine is actually responsive
 RET=1
 while [ $RET -ne 0 ]; do
     sleep 1;
@@ -29,19 +40,19 @@ while [ $RET -ne 0 ]; do
 done
 
 
-./report_generator --config=scenario/road_network/road_config_read.yml --execution-name "road-read" --grakn-uri $GRAKN_URI:48555 --keyspace road_read
-./report_generator --config=scenario/road_network/road_config_read_c4.yml --execution-name "road-read-c4" --grakn-uri $GRAKN_URI:48555 --keyspace road_read_c4
-./report_generator --config=scenario/road_network/road_config_read_c8.yml --execution-name "road-read-c8" --grakn-uri $GRAKN_URI:48555 --keyspace road_read_c8
-./report_generator --config=scenario/road_network/road_config_write.yml --execution-name "road-write" --grakn-uri $GRAKN_URI:48555 --keyspace road_write
-./report_generator --config=scenario/road_network/road_config_write_c4.yml --execution-name "road-write-c4" --grakn-uri $GRAKN_URI:48555 --keyspace road_write_c4
-./report_generator --config=scenario/road_network/road_config_write_c8.yml --execution-name "road-write-c8" --grakn-uri $GRAKN_URI:48555 --keyspace road_write_c8
+./report_producer --config=scenario/road_network/road_config_read.yml --execution-name "road-read" --grakn-uri $GRAKN_URI:48555 --keyspace road_read
+./report_producer --config=scenario/road_network/road_config_read_c4.yml --execution-name "road-read-c4" --grakn-uri $GRAKN_URI:48555 --keyspace road_read_c4
+./report_producer --config=scenario/road_network/road_config_read_c8.yml --execution-name "road-read-c8" --grakn-uri $GRAKN_URI:48555 --keyspace road_read_c8
+./report_producer --config=scenario/road_network/road_config_write.yml --execution-name "road-write" --grakn-uri $GRAKN_URI:48555 --keyspace road_write
+./report_producer --config=scenario/road_network/road_config_write_c4.yml --execution-name "road-write-c4" --grakn-uri $GRAKN_URI:48555 --keyspace road_write_c4
+./report_producer --config=scenario/road_network/road_config_write_c8.yml --execution-name "road-write-c8" --grakn-uri $GRAKN_URI:48555 --keyspace road_write_c8
 
-./report_generator --config=scenario/complex/config_read.yml --execution-name "complex-read" --grakn-uri $GRAKN_URI:48555 --keyspace complex_read
-./report_generator --config=scenario/complex/config_read_c4.yml --execution-name "complex-read-c4" --grakn-uri $GRAKN_URI:48555 --keyspace complex_read_c4
-./report_generator --config=scenario/complex/config_read_c8.yml --execution-name "complex-read-c8" --grakn-uri $GRAKN_URI:48555 --keyspace complex_read_c8
-./report_generator --config=scenario/complex/config_write.yml --execution-name "complex-write" --grakn-uri $GRAKN_URI:48555 --keyspace complex_write
-./report_generator --config=scenario/complex/config_write_c4.yml --execution-name "complex-write-c4" --grakn-uri $GRAKN_URI:48555 --keyspace complex_write_c4
-./report_generator --config=scenario/complex/config_write_c8.yml --execution-name "complex-write-c8" --grakn-uri $GRAKN_URI:48555 --keyspace complex_write_c8
+./report_producer --config=scenario/complex/config_read.yml --execution-name "complex-read" --grakn-uri $GRAKN_URI:48555 --keyspace complex_read
+./report_producer --config=scenario/complex/config_read_c4.yml --execution-name "complex-read-c4" --grakn-uri $GRAKN_URI:48555 --keyspace complex_read_c4
+./report_producer --config=scenario/complex/config_read_c8.yml --execution-name "complex-read-c8" --grakn-uri $GRAKN_URI:48555 --keyspace complex_read_c8
+./report_producer --config=scenario/complex/config_write.yml --execution-name "complex-write" --grakn-uri $GRAKN_URI:48555 --keyspace complex_write
+./report_producer --config=scenario/complex/config_write_c4.yml --execution-name "complex-write-c4" --grakn-uri $GRAKN_URI:48555 --keyspace complex_write_c4
+./report_producer --config=scenario/complex/config_write_c8.yml --execution-name "complex-write-c8" --grakn-uri $GRAKN_URI:48555 --keyspace complex_write_c8
 
 
 # merge the JSON files into a single file and write to a single output
