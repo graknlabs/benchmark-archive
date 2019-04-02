@@ -27,6 +27,11 @@ or in raw format in Zipkin's own web dashboard (port 9411).
 
 3. [Without Data Generation] Profile an empty keyspace that evolves as profiled queries are committed
 
+Further, scenario configuration YAML files offer options such as:
+* concurrency - how many concurrent sessions to use, and whether they each use the same keyspace or not
+* scales - what graph scales to profile at
+* deleting inserted concepts - this can be enabled or disabled, as well as whether deletion should be profiled as well
+* optionally comitting queries
 
 ## Adding Tracing Points
 
