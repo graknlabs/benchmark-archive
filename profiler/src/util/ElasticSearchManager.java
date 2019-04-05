@@ -52,7 +52,7 @@ public class ElasticSearchManager {
 
     public static void putIndexTemplate(CommandLine arguments) throws IOException {
         String serverURI =  (arguments.hasOption(ELASTIC_URI)) ? arguments.getOptionValue(ELASTIC_URI) : DEFAULT_ES_SERVER_URI;
-        RestClient restClient = RestClient.builder(HttpHost.create(serverURI)).build();
+        RestClient restClient = RestClient.builder(new HttpHost(serverURI)).build();
 
         HttpEntity entity = new StringEntity(INDEX_TEMPLATE, ContentType.APPLICATION_JSON);
 

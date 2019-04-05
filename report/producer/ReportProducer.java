@@ -141,6 +141,7 @@ public class ReportProducer {
         List<GraknClient.Session> openSessions = new LinkedList<>();
 
         // run N concurrent sessions querying Grakn
+        System.out.println("Timing queries");
         for (int i = 0; i < config.concurrentClients(); i++) {
             GraknClient.Session session = client.session(config.getKeyspace());
             openSessions.add(session);

@@ -6,4 +6,4 @@ queries:
   # expect to see scale in role player (upper bounded) * number of relationships (fixed increments)
   - "match $r (endpoint: $endpoint); get $endpoint;"
   # aggregate counting attributes has been reported to be slow
-  - "match $x isa name; get; count;"
+  - "match $x isa name; get $x; count;"

@@ -45,7 +45,7 @@ java_library(
 
 java_binary(
     name = "report-producer-binary",
-    main_class = "grakn.benchmark.report.ReportProducer",
+    main_class = "grakn.benchmark.report.producer.ReportProducer",
     runtime_deps = [
         "//report/producer:report-producer",
     ],
