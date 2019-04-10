@@ -33,7 +33,6 @@ import graql.lang.query.GraqlDelete;
 import graql.lang.query.GraqlGet;
 import graql.lang.query.GraqlInsert;
 import graql.lang.query.GraqlQuery;
-import graql.lang.statement.Statement;
 import graql.lang.statement.StatementThing;
 import graql.lang.statement.Variable;
 import org.slf4j.Logger;
