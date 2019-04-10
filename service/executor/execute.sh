@@ -15,7 +15,7 @@ if [ $# -ne 5 ]
 then
     echo "Require 5 arguments"
     echo "Usage: ./execute.sh <repo https url> <commit id> <benchmark service IP> <this instance name> <execution id>"
-    exit 1;
+    exit 9; # trap to error
 fi
 
 GRAKN_REPOSITORY_URL=$1

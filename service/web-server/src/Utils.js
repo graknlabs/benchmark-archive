@@ -30,7 +30,7 @@ module.exports = {
             prNumber: req.body.pull_request.number,
             executionInitialisedAt: new Date().toISOString(),
             status: 'INITIALISING',
-            vmName: 'benchmark-executor-'+ req.body.pull_request.merge_commit_sha
+            vmName: 'benchmark-executor-'+ req.body.pull_request.merge_commit_sha.trim()
         }
     },
     createExecutionObject(req){
@@ -40,7 +40,7 @@ module.exports = {
             repoUrl: req.body.repoUrl,
             executionInitialisedAt: new Date().toISOString(),
             status: 'INITIALISING',
-            vmName: 'benchmark-executor-'+ req.body.commit
+            vmName: 'benchmark-executor-'+ req.body.commit.trim()
         } 
     },
     startBenchmarking(scriptPath, execution){

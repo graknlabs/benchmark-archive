@@ -8,15 +8,15 @@ queries:
 
   # branching from one entity, width 3, depth 1
   - "insert
-      $b1 isa blob, has blob-value $bv1; $bv1 -100;
-      $b2 isa blob, has blob-value $bv2; $bv2 -300;
+      $b1 isa blob, has blob-value $bv1 via $imp1; $bv1 -100;
+      $b2 isa blob, has blob-value $bv2 via $imp2; $bv2 -300;
       $ownership1 (owner: $b1, owned: $b2) isa ownership;
 
       $c isa circle;
-      $interaction1 (blobber: $b1, circler: $c) isa interaction, has interaction-value $v1; $v1 -3;
+      $interaction1 (blobber: $b1, circler: $c) isa interaction, has interaction-value $v1 via $imp3; $v1 -3;
 
       $s isa square;
-      $interaction2 (blobber: $b1, squarer: $s) isa interaction, has interaction-value $v2; $v2 -1;"
+      $interaction2 (blobber: $b1, squarer: $s) isa interaction, has interaction-value $v2 via $imp4; $v2 -1;"
 
   # branching from one entity, width 3, depth 3
   # -
@@ -24,12 +24,12 @@ queries:
   # star, 6 role players, with some attribute values
   - "insert
       $i1 (blobber: $b1, blobber: $b2, circler: $c1, circler: $c2, squarer: $s1, squarer: $s2) isa interaction;
-      $b1 isa blob, has blob-value $bv1; $bv1 -1;
+      $b1 isa blob, has blob-value $bv1 via $imp1; $bv1 -1;
       $b2 isa blob;
-      $c1 isa circle, has circle-value $cv1; $cv1 -98;
+      $c1 isa circle, has circle-value $cv1 via $imp2; $cv1 -98;
       $c2 isa circle;
-      $s1 isa square, has square-value $sv1; $sv1 -3;
-      $s2 isa square, has square-value $cv2; $cv2 -99;"
+      $s1 isa square, has square-value $sv1 via $imp3; $sv1 -3;
+      $s2 isa square, has square-value $cv2 via $imp4; $cv2 -99;"
 
   # circle (ie. pentagon)
   - "insert

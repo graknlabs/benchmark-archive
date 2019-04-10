@@ -99,11 +99,11 @@ queries:
   # insert 12 explicit concepts including two relationships, four entities and six attributes,
   # plus six implicit attribute relationships
   - "insert
-      $intersection1 (endpoint: $r1, endpoint: $r2, endpoint: $r3) isa intersection, has region-code $rc;
+      $intersection1 (endpoint: $r1, endpoint: $r2, endpoint: $r3) isa intersection, has region-code $rc via $imp1;
       $rc -1000;
-      $r1 isa road, has name $n1; $n1 \"Street\";
-      $r2 isa road, has name $n2; $n2 \"Avenue\";
-      $r3 isa road, has name $n3; $n3 \"Boulevard\";
-      $intersection2 (endpoint: $r1, endpoint: $r4) isa intersection, has region-code $rc2;
+      $r1 isa road, has name $n1 via $imp2; $n1 \"Street\";
+      $r2 isa road, has name $n2 via $imp3; $n2 \"Avenue\";
+      $r3 isa road, has name $n3 via $imp4; $n3 \"Boulevard\";
+      $intersection2 (endpoint: $r1, endpoint: $r4) isa intersection, has region-code $rc2 via $imp5;
       $rc2 -2000;
-      $r4 isa road, has name $n4; $n4 \"Alice\";"
+      $r4 isa road, has name $n4 via $imp6; $n4 \"Alice\";"
