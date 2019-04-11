@@ -136,18 +136,11 @@ class QueryProfiler implements Runnable {
                             deleteQuerySpan.name("delete-query");
                             deleteQuerySpan.start();
                             try (Tracer.SpanInScope span = tracer.withSpanInScope(deleteQuerySpan)) {
-                                // collect the vars and match clause, then delete in one go to avoid the disappearing relations
-                                // when all role players are deleted
-                                List<Pattern> match = new ArrayList<>();
-                                List<Variable> vars = new ArrayList<>();
-                                for (String conceptId : insertedConceptIds) {
-                                    Variable var = new Variable().asUserDefined();
-                                    vars.add(var);
-                                    StatementThing id = var(var).id(conceptId);
-                                    match.add(id);
-                                }
+                                // create one tx per ID in case the concept no longer exists and throws an error (attr dedup)
                                 GraknClient.Transaction tx = session.transaction().write();
-                                tx.execute(Graql.match(match).delete(vars));
+                                for (String conceptId : insertedConceptIds) {
+                                    tx.execute(Graql.parse("match $x id " + conceptId + "; delete $x;").asDelete());
+                                }
                                 tx.commit();
                             } finally {
                                 deleteQuerySpan.finish();

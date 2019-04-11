@@ -1,5 +1,6 @@
 queries:
   - "match $x isa chemical; get;"
   - "match $x has biochem-id $n; get;"
+  - "match $x isa chemical; $x has biochem-id 1; get;"
   - "match $r (agent: $agent); get $agent;"
 
