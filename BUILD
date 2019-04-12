@@ -89,6 +89,19 @@ assemble_zip(
         "//common/configuration/scenario:complex/config_write.yml": "scenario/complex/config_write.yml",
         "//common/configuration/scenario:complex/config_write_c4.yml": "scenario/complex/config_write_c4.yml",
         "//common/configuration/scenario:complex/config_write_c8.yml": "scenario/complex/config_write_c8.yml",
+
+        # include these in case the scripts want to add these to the report
+         "//common/configuration/scenario:social_network/social_network_config_read.yml": "scenario/social_network/social_network_config_read.yml",
+         "//common/configuration/scenario:social_network/queries_read.yml": "scenario/social_network/queries_read.yml",
+         "//common/configuration/scenario:social_network/social_network.gql": "scenario/social_network/social_network.gql",
+
+         "//common/configuration/scenario:financial_transactions/queries_read.yml": "scenario/financial_transactions/queries_read.yml",
+         "//common/configuration/scenario:financial_transactions/financial_config_read.yml": "scenario/financial_transactions/financial_config_read.yml",
+         "//common/configuration/scenario:financial_transactions/financial.gql": "scenario/financial_transactions/financial.gql",
+
+         "//common/configuration/scenario:biochemical_network/queries_read.yml": "scenario/biochemical_network/queries_read.yml",
+         "//common/configuration/scenario:biochemical_network/biochemical_config_read.yml": "scenario/biochemical_network/biochemical_config_read.yml",
+         "//common/configuration/scenario:biochemical_network/biochemical_network.gql": "scenario/biochemical_network/biochemical_network.gql",
     },
     output_filename = "report-producer",
     visibility = ["//visibility:public"]

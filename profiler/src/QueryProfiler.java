@@ -136,18 +136,33 @@ class QueryProfiler implements Runnable {
                             deleteQuerySpan.name("delete-query");
                             deleteQuerySpan.start();
                             try (Tracer.SpanInScope span = tracer.withSpanInScope(deleteQuerySpan)) {
-                                // create one tx per ID in case the concept no longer exists and throws an error (attr dedup)
-                                GraknClient.Transaction tx = session.transaction().write();
+                                // collect the vars and match clause, then delete in one go to avoid the disappearing relations
+                                // when all role players are deleted
+                                List<Pattern> match = new ArrayList<>();
+                                List<Variable> vars = new ArrayList<>();
                                 for (String conceptId : insertedConceptIds) {
-                                    tx.execute(Graql.parse("match $x id " + conceptId + "; delete $x;").asDelete());
+                                    Variable var = new Variable().asUserDefined();
+                                    vars.add(var);
+                                    StatementThing id = var(var).id(conceptId);
+                                    match.add(id);
                                 }
+                                GraknClient.Transaction tx = session.transaction().write();
+                                tx.execute(Graql.match(match).delete(vars));
                                 tx.commit();
                             } finally {
                                 deleteQuerySpan.finish();
                             }
                         } else {
                             GraknClient.Transaction tx = session.transaction().write();
-                            insertedConceptIds.iterator().forEachRemaining(id -> tx.execute(Graql.parse("match $x id " + id + "; delete $x;").asDelete()));
+                            List<Pattern> match = new ArrayList<>();
+                            List<Variable> vars = new ArrayList<>();
+                            for (String conceptId : insertedConceptIds) {
+                                Variable var = new Variable().asUserDefined();
+                                vars.add(var);
+                                StatementThing id = var(var).id(conceptId);
+                                match.add(id);
+                            }
+                            tx.execute(Graql.match(match).delete(vars));
                             tx.commit();
                         }
                     }
