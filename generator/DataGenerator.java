@@ -18,6 +18,7 @@
 
 package grakn.benchmark.generator;
 
+import grakn.benchmark.common.timer.BenchmarkingTimer;
 import grakn.benchmark.generator.query.QueryProvider;
 import grakn.benchmark.generator.storage.ConceptStorage;
 import grakn.benchmark.common.analysis.InsertQueryAnalyser;
@@ -67,7 +68,7 @@ public class DataGenerator {
      *
      * @param graphScaleLimit
      */
-    public void generate(int graphScaleLimit) {
+    public void generate(int graphScaleLimit, BenchmarkingTimer timer) {
 
         GraknClient.Session session = client.session(keyspace);
 
@@ -78,7 +79,7 @@ public class DataGenerator {
                 Iterator<GraqlInsert> queryStream = queryProvider.nextQueryBatch();
 
                 // execute & parse the results
-                processQueryStream(queryStream, tx);
+                processQueryStream(queryStream, tx, timer);
 
                 printProgress();
                 tx.commit();
@@ -90,13 +91,15 @@ public class DataGenerator {
         System.out.print("\n");
     }
 
-    private void processQueryStream(Iterator<GraqlInsert> queryIterator, GraknClient.Transaction tx) {
+    private void processQueryStream(Iterator<GraqlInsert> queryIterator, GraknClient.Transaction tx, BenchmarkingTimer timer) {
         /*
         Make the data insertions from the stream of queries generated
          */
         queryIterator.forEachRemaining(q -> {
 
+            timer.startDataGeneratorQuery();
             List<ConceptMap> insertions = tx.execute(q);
+            timer.endDataGeneratorQuery();
             HashSet<Concept> insertedConcepts = InsertQueryAnalyser.getInsertedConcepts(q, insertions);
 
             insertedConcepts.forEach(storage::addConcept);

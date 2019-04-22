@@ -22,6 +22,7 @@ package grakn.benchmark.report.producer;
 import grakn.benchmark.common.configuration.parse.BenchmarkArguments;
 import grakn.benchmark.common.configuration.BenchmarkConfiguration;
 import grakn.benchmark.common.exception.BootupException;
+import grakn.benchmark.common.timer.BenchmarkingTimer;
 import grakn.benchmark.generator.DataGenerator;
 import grakn.benchmark.generator.DataGeneratorException;
 import grakn.benchmark.generator.definition.DataGeneratorDefinition;
@@ -114,14 +115,20 @@ public class ReportProducer {
 
         // alternate between generating data and profiling a queries
         List<GraqlQuery> queries = toGraqlQueries(config.getQueries());
+
+        BenchmarkingTimer timer = new BenchmarkingTimer();
         try {
+            timer.startGenerateAndTrack();
             for (int graphScale : config.scalesToProfile()) {
                 LOG.info("Generating graph to scale... " + graphScale);
                 // NOTE number of concepts actually generated may be just around the desired quantity
-                dataGenerator.generate(graphScale);
+                dataGenerator.generate(graphScale, timer);
 
                 // collect and aggregate results
+                timer.startQueryTimeTracking();
                 executeAndRecord(client, queries, graphScale);
+                timer.endQueryTimeTracking();
+                timer.printTimings();
             }
         } finally {
             client.close();

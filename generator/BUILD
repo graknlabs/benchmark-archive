@@ -2,6 +2,7 @@ java_library(
     name = "data-generator",
     srcs = glob(["**/*.java", "*.java"]),
     deps = [
+        "//common/timer:timer",
 
         "@graknlabs_client_java//:client-java",
         "@graknlabs_grakn_core//api:api",

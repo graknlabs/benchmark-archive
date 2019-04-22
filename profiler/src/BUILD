@@ -23,6 +23,7 @@ java_library(
         "//common/analysis:insert-query-analyser",
         "//common/configuration:benchmark-configuration",
         "//common/exception:benchmark-exception",
+        "//common/timer:timer",
         "//generator:data-generator",
 
         "@graknlabs_client_java//:client-java",

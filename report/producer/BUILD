@@ -26,6 +26,7 @@ java_library(
         "//generator:data-generator",
         "//common/configuration:benchmark-configuration",
         "//common/exception:benchmark-exception",
+        "//common/timer:timer",
 
         "@graknlabs_client_java//:client-java",
         "@graknlabs_grakn_core//api:api",

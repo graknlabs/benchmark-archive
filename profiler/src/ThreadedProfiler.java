@@ -100,7 +100,7 @@ public class ThreadedProfiler {
         }
 
         long length = System.currentTimeMillis() - start;
-        System.out.println("Time: " + length);
+        System.out.println("Query execution time: " + length);
     }
 
     public void cleanup() {
