@@ -49,17 +49,19 @@ public class DataGenerator {
     private final String dataGenerator;
     private final QueryProvider queryProvider;
     private final ConceptStorage storage;
+    private final BenchmarkingTimer timer;
 
     private int iteration;
 
 
-    public DataGenerator(GraknClient client, String keyspace, ConceptStorage storage, String dataGenerator, QueryProvider queryProvider) {
+    public DataGenerator(GraknClient client, String keyspace, ConceptStorage storage, String dataGenerator, QueryProvider queryProvider, BenchmarkingTimer timer) {
         this.client = client;
         this.keyspace = keyspace;
         this.dataGenerator = dataGenerator;
         this.queryProvider = queryProvider;
         this.iteration = 0;
         this.storage = storage;
+        this.timer = timer;
     }
 
     /**
@@ -68,7 +70,7 @@ public class DataGenerator {
      *
      * @param graphScaleLimit
      */
-    public void generate(int graphScaleLimit, BenchmarkingTimer timer) {
+    public void generate(int graphScaleLimit) {
 
         GraknClient.Session session = client.session(keyspace);
 
@@ -79,7 +81,7 @@ public class DataGenerator {
                 Iterator<GraqlInsert> queryStream = queryProvider.nextQueryBatch();
 
                 // execute & parse the results
-                processQueryStream(queryStream, tx, timer);
+                processQueryStream(queryStream, tx);
 
                 printProgress();
                 tx.commit();
@@ -91,7 +93,7 @@ public class DataGenerator {
         System.out.print("\n");
     }
 
-    private void processQueryStream(Iterator<GraqlInsert> queryIterator, GraknClient.Transaction tx, BenchmarkingTimer timer) {
+    private void processQueryStream(Iterator<GraqlInsert> queryIterator, GraknClient.Transaction tx) {
         /*
         Make the data insertions from the stream of queries generated
          */

@@ -116,16 +116,17 @@ public class GraknBenchmark {
 
             Ignite ignite = IgniteManager.initIgnite();
             GraknClient client = new GraknClient(config.graknUri());
-            DataGenerator dataGenerator = initDataGenerator(client, config.getKeyspace()); // use a non tracing client as we don't trace data generation yet
-            List<Integer> numConceptsInRun = config.scalesToProfile();
 
             BenchmarkingTimer timer = new BenchmarkingTimer();
+            DataGenerator dataGenerator = initDataGenerator(client, config.getKeyspace(), timer); // use a non tracing client as we don't trace data generation yet
+            List<Integer> numConceptsInRun = config.scalesToProfile();
+
 
             try {
                 timer.startGenerateAndTrack();
                 for (int numConcepts : numConceptsInRun) {
                     LOG.info("Generating graph to scale... " + numConcepts);
-                    dataGenerator.generate(numConcepts, timer);
+                    dataGenerator.generate(numConcepts);
                     timer.startQueryTimeTracking();
                     threadedProfiler.processStaticQueries(config.numQueryRepetitions(), numConcepts);
                     timer.endQueryTimeTracking();
@@ -241,7 +242,7 @@ public class GraknBenchmark {
     /**
      * Connect a data generator to pre-prepared keyspace
      */
-    private DataGenerator initDataGenerator(GraknClient client, String keyspace) {
+    private DataGenerator initDataGenerator(GraknClient client, String keyspace, BenchmarkingTimer timer) {
         int randomSeed = 0;
         String dataGenerator= config.dataGenerator();
         GraknClient.Session session = client.session(keyspace);
@@ -256,7 +257,7 @@ public class GraknBenchmark {
 
         QueryProvider queryProvider = new QueryProvider(dataGeneratorDefinition);
 
-        return new DataGenerator(client, keyspace, storage, dataGenerator, queryProvider);
+        return new DataGenerator(client, keyspace, storage, dataGenerator, queryProvider, timer);
     }
 
     private static void printAscii() {
