@@ -22,10 +22,9 @@ workspace(name = "benchmark")
 # Grakn Labs dependencies #
 ###########################
 
-load("//dependencies/graknlabs:dependencies.bzl", "graknlabs_grakn_core", "graknlabs_build_tools", "graknlabs_graql", "graknlabs_client_java")
+load("//dependencies/graknlabs:dependencies.bzl", "graknlabs_grakn_core", "graknlabs_build_tools", "graknlabs_client_java")
 graknlabs_build_tools()
 graknlabs_grakn_core()
-graknlabs_graql()
 graknlabs_client_java()
 
 load("@graknlabs_build_tools//distribution:dependencies.bzl", "graknlabs_bazel_distribution")
@@ -89,6 +88,8 @@ graknlabs_benchmark_maven_dependencies()
 load("@graknlabs_build_tools//bazel:dependencies.bzl", "bazel_rules_docker")
 bazel_rules_docker()
 
+load("@graknlabs_grakn_core//dependencies/graknlabs:dependencies.bzl", "graknlabs_graql")
+graknlabs_graql()
 
 ###########################
 # Load Graql dependencies #

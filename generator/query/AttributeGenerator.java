@@ -61,7 +61,7 @@ public class AttributeGenerator<Datatype> implements QueryGenerator {
             @Override
             public GraqlInsert next() {
                 queriesGenerated++;
-                Variable attr = new Variable().asUserDefined();
+                Variable attr = new Variable().asReturnedVar();
                 Datatype value = valueProvider.next(); // get one attribute value
 
                 Statement attributeValue = var(attr);

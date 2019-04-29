@@ -96,9 +96,9 @@ public class InsertQueryAnalyserTest {
         String zId = "Vz";
 
         Variable r = new Variable("r");
-        Variable x = new Variable("x").asUserDefined();
-        Variable y = new Variable("y").asUserDefined();
-        Variable z = new Variable("z").asUserDefined();
+        Variable x = new Variable("x").asReturnedVar();
+        Variable y = new Variable("y").asReturnedVar();
+        Variable z = new Variable("z").asReturnedVar();
 
         HashMap<Variable, String> vars = new HashMap<>();
         vars.put(r, rId);
@@ -132,9 +132,9 @@ public class InsertQueryAnalyserTest {
         String zId = "Vz";
 
         Variable r = new Variable("r");
-        Variable x = new Variable("x").asUserDefined();
-        Variable y = new Variable("y").asUserDefined();
-        Variable z = new Variable("z").asUserDefined();
+        Variable x = new Variable("x").asReturnedVar();
+        Variable y = new Variable("y").asReturnedVar();
+        Variable z = new Variable("z").asReturnedVar();
 
         HashMap<Variable, String> vars = new HashMap<>();
         vars.put(r, rId);
@@ -166,8 +166,8 @@ public class InsertQueryAnalyserTest {
 
         String cAttr = "c-name";
 
-        Variable x = new Variable("x").asUserDefined();
-        Variable y = new Variable("y").asUserDefined();
+        Variable x = new Variable("x").asReturnedVar();
+        Variable y = new Variable("y").asReturnedVar();
 
         HashMap<Variable, String> vars = new HashMap<>();
         vars.put(x, xId);
@@ -190,8 +190,8 @@ public class InsertQueryAnalyserTest {
 
         String cAttr = "c-name";
 
-        Variable x = new Variable("x").asUserDefined();
-        Variable y = new Variable("y").asUserDefined();
+        Variable x = new Variable("x").asReturnedVar();
+        Variable y = new Variable("y").asReturnedVar();
 
         HashMap<Variable, String> vars = new HashMap<>();
         vars.put(x, xId);
@@ -209,8 +209,8 @@ public class InsertQueryAnalyserTest {
 
     @Test
     public void whenInsertRelationship_identifyRolePlayers() {
-        Variable xVar = new Variable("x").asUserDefined();
-        Variable yVar = new Variable("y").asUserDefined();
+        Variable xVar = new Variable("x").asReturnedVar();
+        Variable yVar = new Variable("y").asReturnedVar();
         Statement x = var(xVar).id("V123");
         Statement y = var(yVar).id("V234");
         GraqlInsert insertQuery = Graql.match(x, y).insert(var("r").rel("friend", x).rel("friend", y).isa("friendship"));
@@ -233,8 +233,8 @@ public class InsertQueryAnalyserTest {
 
     @Test
     public void whenInsertNonRelationship_returnEmptySet() {
-        Variable x = new Variable("x").asUserDefined();
-        Variable y = new Variable("y").asUserDefined();
+        Variable x = new Variable("x").asReturnedVar();
+        Variable y = new Variable("y").asReturnedVar();
         GraqlInsert insertQuery = Graql.insert(var(x).isa("company").has("name", var(y)).id("V123"), var(y).val("john"));
 
         ConceptMap map = mock(ConceptMap.class);
@@ -251,8 +251,8 @@ public class InsertQueryAnalyserTest {
 
     @Test
     public void whenRelationshipInserted_relationshipLabelFound() {
-        Statement x = var( new Variable("x").asUserDefined()).id("V123");
-        Statement y = var(new Variable("y").asUserDefined()).id("V234");
+        Statement x = var( new Variable("x").asReturnedVar()).id("V123");
+        Statement y = var(new Variable("y").asReturnedVar()).id("V234");
         GraqlInsert insertQuery = Graql.match(x, y).insert(var("r").rel("friend", x).rel("friend", y).isa("friendship"));
         String relationshipLabel = InsertQueryAnalyser.getRelationshipTypeLabel(insertQuery);
         assertEquals("friendship", relationshipLabel);
@@ -260,8 +260,8 @@ public class InsertQueryAnalyserTest {
 
     @Test
     public void whenNoRelationshipInserted_nullReturned() {
-        Statement x = var( new Variable("x").asUserDefined());
-        Statement y = var(new Variable("y").asUserDefined());
+        Statement x = var( new Variable("x").asReturnedVar());
+        Statement y = var(new Variable("y").asReturnedVar());
         GraqlInsert insertQuery = Graql.insert(x.isa("company").has("name", y).id("V123"), y.val("john"));
         String relationshipLabel = InsertQueryAnalyser.getRelationshipTypeLabel(insertQuery);
         assertEquals(null, relationshipLabel);
@@ -269,7 +269,7 @@ public class InsertQueryAnalyserTest {
 
     @Test
     public void whenSameConceptPlaysTwoRoles_conceptRolePairReturnedTwice() {
-        Variable xVar = new Variable("x").asUserDefined();
+        Variable xVar = new Variable("x").asReturnedVar();
         Statement x = var(xVar).id("V123");
         GraqlInsert insertQuery = Graql.match(x).insert(var("r").rel("friend", x).rel("friend", x).isa("friendship"));
 

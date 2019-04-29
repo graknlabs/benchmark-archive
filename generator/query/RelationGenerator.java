@@ -135,7 +135,7 @@ public class RelationGenerator implements QueryGenerator {
                     while (conceptProvider.hasNext() && rolePlayersAssigned < rolePlayersRequired) {
                         ConceptId conceptId = conceptProvider.next();
                         // Add the concept to the query
-                        Variable v = new Variable().asUserDefined();
+                        Variable v = new Variable().asReturnedVar();
                         if (matchVarPattern == null) {
                             matchVarPattern = var(v).id(conceptId.toString());
                         } else {
