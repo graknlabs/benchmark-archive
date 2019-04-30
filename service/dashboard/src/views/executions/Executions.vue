@@ -48,7 +48,7 @@
         :defaultItem="{ text: 'Started At', value: 'executionStartedAt'}"
         @item-selected="onSortbySelection"
       />
-      <el-radio-group value="Asc" size="mini" @change="onSortTypeSelection">
+      <el-radio-group size="mini" v-model="sortType" @change="onSortTypeSelection">
         <el-radio-button name="sort-type" label="Asc"></el-radio-button>
         <el-radio-button name="sort-type" label="Desc"></el-radio-button>
       </el-radio-group>
@@ -73,6 +73,7 @@ export default {
       loading: true,
       // popoverVisible: false,
       executions: [],
+      sortType: "Asc",
       columns: [
         {
           text: "Commit",
@@ -138,14 +139,15 @@ export default {
 
   methods: {
     onSortbySelection(column) {
+      const { sortType } = this;
       this.executions.sort(function(a, b) {
         var x = a[column];
         var y = b[column];
         if (x === null) return 1;
         if (y === null) return -1;
         if (x === y) return 0;
-        if (x < y) return -1;
-        if (x > y) return 1;
+        if (sortType == "Asc") return x < y ? -1 : 1;
+        if (sortType == "Desc") return x < y ? 1 : -1;
       });
     },
 
