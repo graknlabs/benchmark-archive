@@ -141,17 +141,11 @@ export default {
       this.executions.sort(function(a, b) {
         var x = a[column];
         var y = b[column];
-        if (x === null) {
-          return 1;
-        } else if (y === null) {
-          return -1;
-        } else if (x === y) {
-          return 0;
-        } else if (x < y) {
-          return -1;
-        } else if (x > y) {
-          return 1;
-        }
+        if (x === null) return 1;
+        if (y === null) return -1;
+        if (x === y) return 0;
+        if (x < y) return -1;
+        if (x > y) return 1;
       });
     },
 
