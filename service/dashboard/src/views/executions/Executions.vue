@@ -1,8 +1,5 @@
 <template>
-  <section
-    v-loading="loading"
-    class="el-container is-vertical page-container"
-  >
+  <section v-loading="loading" class="el-container is-vertical page-container">
     <!-- <el-row>
         <el-popover
           v-model="popoverVisible"
@@ -43,41 +40,76 @@
         </el-popover>
         <el-button type="success" circle icon="el-icon-plus"></el-button>
     </el-row>-->
-    <execution-card
-      v-for="exec in executions"
-      :key="exec.id"
-      :execution="exec"
-    />
+
+    <el-header>
+      <sortby-selector title="Sort by" :items="columns" :defaultItem="{ text: 'Started At', value: 'executionStartedAt'}" @item-selected="onSortbySelection"/>
+    </el-header>
+
+    <execution-card v-for="exec in executions" :key="exec.id" :execution="exec"/>
   </section>
 </template>
 
 <script>
-import ExecutionCard from './ExecutionCard.vue';
-import BenchmarkClient from '@/util/BenchmarkClient';
+import ExecutionCard from "./ExecutionCard.vue";
+import BenchmarkClient from "@/util/BenchmarkClient";
+import SortbySelector from "@/components/Selector.vue";
 
 export default {
-  name: 'ExecutionsPage',
-  components: { ExecutionCard },
+  name: "ExecutionsPage",
+  components: { SortbySelector, ExecutionCard },
   data() {
     return {
       loading: true,
-      popoverVisible: false,
+      // popoverVisible: false,
       executions: [],
-      newExecution: {
-        commit: undefined,
-        repoUrl: undefined,
-      },
+      columns: []
+      // newExecution: {
+      //   commit: undefined,
+      //   repoUrl: undefined
+      // },
     };
   },
+
   created() {
+    this.columns = [
+      {
+        text: "Commit",
+        value: "commit"
+      },
+      {
+        text: "Status",
+        value: "status"
+      },
+      {
+        text: "Initialised At",
+        value: "executionInitialisedAt"
+      },
+      {
+        text: "Started At",
+        value: "executionStartedAt"
+      },
+      {
+        text: "Completed At",
+        value: "executionCompletedAt"
+      }
+    ];
+
     BenchmarkClient.getExecutions(
-      '{ executions { id prMergedAt prNumber prUrl commit status executionInitialisedAt executionStartedAt executionCompletedAt vmName } }',
-    ).then((execs) => {
+      "{ executions { id " + this.columns.map(item => item.value).join(" ") + "} }"
+    ).then(execs => {
       this.executions = execs.data.executions;
       this.loading = false;
     });
   },
+
   methods: {
+    onSortbySelection(column) {
+      this.executions.sort(function(a, b) {
+        var x = a[column];
+        var y = b[column];
+        return x < y ? -1 : x > y ? 1 : 0;
+      });
+    }
     // triggerExecution() {
     //   BenchmarkClient.triggerExecution(this.newExecution)
     //     .then(() => {
@@ -95,16 +127,27 @@ export default {
     //     });
     //   this.newExecution.commit = undefined;
     // }
-  },
+  }
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import "./src/assets/css/variables.scss";
+
 section {
   min-height: 100%;
 }
 
 .cards-row {
   margin-bottom: 20px;
+}
+
+.el-header {
+  border-bottom: 1px solid $color-light-border;
+  padding: $padding-default;
+  margin-top: -$margin-default;
+  margin-right: -$margin-default;
+  margin-bottom: $margin-default;
+  margin-left: -$margin-default;
 }
 </style>

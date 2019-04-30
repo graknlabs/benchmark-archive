@@ -1,7 +1,7 @@
 <template>
   <el-dropdown>
     <span class="el-dropdown-link">
-      Scale
+      {{title}}
       <span :v-if="currentItem">: </span>
       <span>{{ currentItem }}</span>
       <i class="el-icon-arrow-down el-icon--right" />
@@ -13,7 +13,7 @@
       <el-dropdown-item
         v-for="item in items"
         :key="item"
-        @click.native="updateItem(item.value)"
+        @click.native="updateItem(item)"
       >
         {{ item.text }}
       </el-dropdown-item>
@@ -24,6 +24,10 @@
 <script>
 export default {
   props: {
+    title: {
+      type: String,
+      required: true
+    },
     items: {
       type: Array,
       required: true,
@@ -42,8 +46,8 @@ export default {
 
   methods: {
     updateItem(selectedItem) {
-      this.currentItem = selectedItem;
-      this.$emit('item-selected', selectedItem);
+      this.currentItem = selectedItem.text;
+      this.$emit('item-selected', selectedItem.value);
     },
   },
 };
