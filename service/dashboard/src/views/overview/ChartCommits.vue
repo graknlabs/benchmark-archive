@@ -86,7 +86,7 @@ export default {
   async created() {
     this.scales = [
       ...new Set(this.executionSpans.map(span => span.tags.graphScale)),
-    ].sort((a, b) => a - b).map(scale => { return { text: scale, value: scale } });
+    ].sort((a, b) => a - b).map(scale => ({ text: scale, value: scale }));
 
     this.selectedScale = this.scales[0].value;
 
