@@ -9,9 +9,10 @@
     >
       <span>{{ graphName | formatTitle }}</span>
       <div class="actions">
-        <selector-scale
-          :scales="scales"
-          @scale-selected="onScaleSelection"
+        <scale-selector
+          :items="scales"
+          :defaultItem="scales[0]"
+          @item-selected="onScaleSelection"
         />
       </div>
     </div>
@@ -31,10 +32,10 @@ import 'echarts/lib/chart/line';
 import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/legend';
 import 'echarts/lib/component/legendScroll';
-import SelectorScale from '@/components/SelectorScale.vue';
+import ScaleSelector from '@/components/Selector.vue';
 
 export default {
-  components: { EChart, SelectorScale },
+  components: { EChart, ScaleSelector },
 
   filters: {
     formatTitle(graphName) {

@@ -2,7 +2,7 @@
   <el-dropdown>
     <span class="el-dropdown-link">
       Scale
-      <span>: {{ currentScale }}</span>
+      <span>: {{ currentItem }}</span>
       <i class="el-icon-arrow-down el-icon--right" />
     </span>
     <el-dropdown-menu
@@ -10,11 +10,11 @@
       trigger="hover"
     >
       <el-dropdown-item
-        v-for="scale in scales"
-        :key="scale"
-        @click.native="updateScale(scale)"
+        v-for="item in items"
+        :key="item"
+        @click.native="updateItem(item)"
       >
-        {{ scale }}
+        {{ item }}
       </el-dropdown-item>
     </el-dropdown-menu>
   </el-dropdown>
@@ -23,22 +23,26 @@
 <script>
 export default {
   props: {
-    scales: {
+    items: {
       type: Array,
       required: true,
     },
+    defaultItem: {
+      type: [String, Number],
+      required: false
+    }
   },
 
   data() {
     return {
-      currentScale: this.scales[0],
+      currentItem: this.defaultItem,
     };
   },
 
   methods: {
-    updateScale(selectedScale) {
-      this.currentScale = selectedScale;
-      this.$emit('scale-selected', selectedScale);
+    updateItem(selectedItem) {
+      this.currentItem = selectedItem;
+      this.$emit('item-selected', selectedItem);
     },
   },
 };
