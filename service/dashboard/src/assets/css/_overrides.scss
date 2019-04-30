@@ -2,3 +2,10 @@
   cursor: pointer;
   color: $color-default-link;
 }
+
+
+.el-main {
+  .el-loading-mask {
+    margin: -$margin-default;
+  }
+}

@@ -134,6 +134,8 @@ export default {
   margin-bottom: $margin-default;
   overflow: visible;
   font-size: $font-size-card;
+
+  &:last-child { margin-bottom: 0; }
 }
 
 .el-col.actions {

@@ -42,10 +42,21 @@
     </el-row>-->
 
     <el-header>
-      <sortby-selector title="Sort by" :items="columns" :defaultItem="{ text: 'Started At', value: 'executionStartedAt'}" @item-selected="onSortbySelection"/>
+      <sortby-selector
+        title="Sort by"
+        :items="columns"
+        :defaultItem="{ text: 'Started At', value: 'executionStartedAt'}"
+        @item-selected="onSortbySelection"
+      />
+      <el-radio-group value="Asc" size="mini" @change="onSortTypeSelection">
+        <el-radio-button name="sort-type" label="Asc"></el-radio-button>
+        <el-radio-button name="sort-type" label="Desc"></el-radio-button>
+      </el-radio-group>
     </el-header>
 
-    <execution-card v-for="exec in executions" :key="exec.id" :execution="exec"/>
+    <div class="executions-list">
+      <execution-card v-for="exec in executions" :key="exec.id" :execution="exec"/>
+    </div>
   </section>
 </template>
 
@@ -95,7 +106,9 @@ export default {
     ];
 
     BenchmarkClient.getExecutions(
-      "{ executions { id " + this.columns.map(item => item.value).join(" ") + "} }"
+      "{ executions { id " +
+        this.columns.map(item => item.value).join(" ") +
+        "} }"
     ).then(execs => {
       this.executions = execs.data.executions;
       this.loading = false;
@@ -107,8 +120,22 @@ export default {
       this.executions.sort(function(a, b) {
         var x = a[column];
         var y = b[column];
-        return x < y ? -1 : x > y ? 1 : 0;
+        if (x === null) {
+          return 1;
+        } else if (y === null) {
+          return -1;
+        } else if (x === y) {
+          return 0;
+        } else if (x < y) {
+          return -1;
+        } else if (x > y) {
+          return 1;
+        }
       });
+    },
+
+    onSortTypeSelection() {
+      this.executions.reverse();
     }
     // triggerExecution() {
     //   BenchmarkClient.triggerExecution(this.newExecution)
@@ -134,20 +161,29 @@ export default {
 <style scoped lang="scss">
 @import "./src/assets/css/variables.scss";
 
-section {
-  min-height: 100%;
-}
-
-.cards-row {
-  margin-bottom: 20px;
+.executions-list {
+  margin-top: $height-topBar;
 }
 
 .el-header {
+  height: $height-topBar;
+  width: 100%;
+
+  background-color: $color-default-bg;
   border-bottom: 1px solid $color-light-border;
-  padding: $padding-default;
+
+  align-items: center;
+  display: flex;
   margin-top: -$margin-default;
   margin-right: -$margin-default;
   margin-bottom: $margin-default;
   margin-left: -$margin-default;
+  position: fixed;
+  padding: $padding-default;
+  z-index: 2;
+
+  .el-radio-group {
+    margin-left: $margin-default;
+  }
 }
 </style>
