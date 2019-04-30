@@ -73,7 +73,28 @@ export default {
       loading: true,
       // popoverVisible: false,
       executions: [],
-      columns: []
+      columns: [
+        {
+          text: "Commit",
+          value: "commit"
+        },
+        {
+          text: "Status",
+          value: "status"
+        },
+        {
+          text: "Initialised At",
+          value: "executionInitialisedAt"
+        },
+        {
+          text: "Started At",
+          value: "executionStartedAt"
+        },
+        {
+          text: "Completed At",
+          value: "executionCompletedAt"
+        }
+      ]
       // newExecution: {
       //   commit: undefined,
       //   repoUrl: undefined
