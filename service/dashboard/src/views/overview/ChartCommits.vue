@@ -10,6 +10,7 @@
       <span>{{ graphName | formatTitle }}</span>
       <div class="actions">
         <scale-selector
+          title="Scale"
           :items="scales"
           :defaultItem="scales[0]"
           @item-selected="onScaleSelection"
