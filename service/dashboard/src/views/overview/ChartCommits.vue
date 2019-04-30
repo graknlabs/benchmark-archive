@@ -85,9 +85,9 @@ export default {
   async created() {
     this.scales = [
       ...new Set(this.executionSpans.map(span => span.tags.graphScale)),
-    ].sort((a, b) => a - b);
+    ].sort((a, b) => a - b).map(scale => { return { text: scale, value: scale } });
 
-    this.selectedScale = this.scales[0];
+    this.selectedScale = this.scales[0].value;
 
     this.querySpans = await fetchQuerySpans(this.executionSpans);
     this.queries = uniqueQueriesSortedArray(this.querySpans);

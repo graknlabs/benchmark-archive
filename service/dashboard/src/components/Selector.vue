@@ -2,7 +2,8 @@
   <el-dropdown>
     <span class="el-dropdown-link">
       Scale
-      <span>: {{ currentItem }}</span>
+      <span :v-if="currentItem">: </span>
+      <span>{{ currentItem }}</span>
       <i class="el-icon-arrow-down el-icon--right" />
     </span>
     <el-dropdown-menu
@@ -12,9 +13,9 @@
       <el-dropdown-item
         v-for="item in items"
         :key="item"
-        @click.native="updateItem(item)"
+        @click.native="updateItem(item.value)"
       >
-        {{ item }}
+        {{ item.text }}
       </el-dropdown-item>
     </el-dropdown-menu>
   </el-dropdown>
@@ -28,14 +29,14 @@ export default {
       required: true,
     },
     defaultItem: {
-      type: [String, Number],
+      type: Object,
       required: false
     }
   },
 
   data() {
     return {
-      currentItem: this.defaultItem,
+      currentItem: this.defaultItem.text,
     };
   },
 
