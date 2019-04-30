@@ -11,7 +11,6 @@
       <div class="actions">
         <selector-scale
           :scales="scales"
-          :graph-name="graphName"
           @scale-selected="onScaleSelection"
         />
       </div>

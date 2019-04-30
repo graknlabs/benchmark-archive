@@ -23,11 +23,6 @@
 <script>
 export default {
   props: {
-    graphName: {
-      type: String,
-      required: true,
-    },
-
     scales: {
       type: Array,
       required: true,
