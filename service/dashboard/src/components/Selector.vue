@@ -2,7 +2,7 @@
   <el-dropdown>
     <span class="el-dropdown-link">
       {{title}}
-      <span :v-if="currentItem">: </span>
+      <span v-if="currentItem">: </span>
       <span>{{ currentItem }}</span>
       <i class="el-icon-arrow-down el-icon--right" />
     </span>
@@ -12,7 +12,7 @@
     >
       <el-dropdown-item
         v-for="item in items"
-        :key="item"
+        :key="item.value"
         @click.native="updateItem(item)"
       >
         {{ item.text }}
@@ -40,7 +40,7 @@ export default {
 
   data() {
     return {
-      currentItem: this.defaultItem.text,
+      currentItem: this.defaultItem ? this.defaultItem.text : undefined
     };
   },
 
