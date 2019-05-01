@@ -55,7 +55,7 @@
     </el-header>
 
     <div class="executions-list">
-      <execution-card v-for="exec in executions" :key="exec.id" :execution="exec"/>
+      <execution-card v-for="exec in executions" :key="exec.id" :execution="exec" :columns="columns"/>
     </div>
   </section>
 </template>
@@ -71,8 +71,11 @@ export default {
   data() {
     return {
       loading: true,
+
       // popoverVisible: false,
+
       executions: [],
+
       columns: [
         {
           text: "Commit",
@@ -103,29 +106,6 @@ export default {
   },
 
   created() {
-    this.columns = [
-      {
-        text: "Commit",
-        value: "commit"
-      },
-      {
-        text: "Status",
-        value: "status"
-      },
-      {
-        text: "Initialised At",
-        value: "executionInitialisedAt"
-      },
-      {
-        text: "Started At",
-        value: "executionStartedAt"
-      },
-      {
-        text: "Completed At",
-        value: "executionCompletedAt"
-      }
-    ];
-
     BenchmarkClient.getExecutions(
       "{ executions { id " +
         this.columns.map(item => item.value).join(" ") +

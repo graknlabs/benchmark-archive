@@ -1,65 +1,84 @@
 <template>
   <el-tabs
-    v-model="activeGraph"
+    :value="activeGraph"
     type="border-card"
     class="wrapper"
   >
     <el-tab-pane
-      v-for="graph in graphs"
-      :key="graph"
-      :label="graph"
+      v-for="graphName in graphNames"
+      :key="graphName"
+      :label="graphName"
+      :name="graphName"
     >
       <graph-tab
-        :graph="graph"
-        :execution-spans="filterSpans(graph)"
-        :overview-scale="getOverviewScale(graph)"
-        :overview-query="getOverviewQuery(graph)"
+        :graph="graphName"
+        :execution-spans="getFilterSpans(graphName)"
+        :overview-query="getPreSelectedQuery(graphName)"
+        :overview-scale="getPreSelectedScale(graphName)"
       />
     </el-tab-pane>
   </el-tabs>
 </template>
+
 <script>
 import GraphTab from './GraphTab.vue';
 
 export default {
   name: 'TabularView',
+
   components: { GraphTab },
+
   props: {
-    graphs: Array,
-    executionSpans: Array,
-    currentGraph: String,
-    currentQuery: String,
-    currentScale: Number,
-  },
-  data() {
-    return {
-      activeGraph: '0',
-    };
-  },
-  watch: {
-    graphs(values) {
-      // Once the graphs are available check if we need to select Graph tab based on the
-      // currentGraph parameter that comes from the Ovierview page.
-      if (this.currentGraph) {
-        this.activeGraph = values.indexOf(this.currentGraph).toString();
-      }
+    graphNames: {
+      type: Array,
+      required: true
     },
+
+    spans: {
+      type: Array,
+      required: true
+    },
+
+    preSelectedGraphName: {
+      type: String,
+      required: false,
+    },
+
+    preSelectedQuery: {
+      type: String,
+      required: false,
+    },
+
+    preSelectedScale: {
+      type: Number,
+      required: false
+    }
   },
+
+  computed: {
+    activeGraph() {
+      return this.preSelectedGraphName || this.graphNames[0];
+    }
+  },
+
   methods: {
-    filterSpans(name) {
-      return this.executionSpans.filter(span => span.tags.graphType === name);
+    getFilterSpans(graphName) {
+      return this.spans.filter(span => span.tags.graphType === graphName);
     },
-    getOverviewScale(graphType) {
-      if (this.currentGraph === graphType) { return this.currentScale; }
+
+    getPreSelectedScale(graphName) {
+      if (this.preSelectedGraphName === graphName) { return this.preSelectedScale; }
       return null;
     },
-    getOverviewQuery(graphType) {
-      if (this.currentGraph === graphType) { return this.currentQuery; }
+
+    getPreSelectedQuery(graphName) {
+      if (this.preSelectedGraphName === graphName) { return this.preSelectedQuery; }
       return null;
     },
   },
 };
 </script>
+
 <style scoped>
 .wrapper {
   margin-top: 20px;

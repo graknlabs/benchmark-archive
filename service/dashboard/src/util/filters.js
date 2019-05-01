@@ -5,3 +5,8 @@ Vue.filter('parseDate', (ISOdate) => {
   const epoch = Date.parse(ISOdate);
   return new Date(epoch).toLocaleString('en-GB', { hour12: false });
 });
+
+Vue.filter('replaceBlank', (str, replacement) => {
+  if (str === '' || str === null) return replacement;
+  return str;
+});
