@@ -8,7 +8,7 @@
         title="Scale"
         :items="scales.map(scale => ({ text: scale, value: scale }))"
         :defaultItem="{ text: selectedScale, value: selectedScale }"
-        @item-selected="onScaleSelection"
+        @item-selected="this.selectedScale = scale;"
       />
     </el-row>
     <queries-table
@@ -62,12 +62,6 @@ export default {
     ].sort((a, b) => a - b);
     this.selectedScale = this.preSelectedScale || this.scales[0];
   },
-
-  methods: {
-    onScaleSelection(scale) {
-      this.selectedScale = scale;
-    }
-  }
 };
 
 </script>
