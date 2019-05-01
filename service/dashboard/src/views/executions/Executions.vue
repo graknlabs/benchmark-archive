@@ -48,14 +48,14 @@
         :defaultItem="{ text: 'Started At', value: 'executionStartedAt'}"
         @item-selected="onSortbySelection"
       />
-      <el-radio-group value="Asc" size="mini" @change="onSortTypeSelection">
+      <el-radio-group size="mini" v-model="sortType" @change="onSortTypeSelection">
         <el-radio-button name="sort-type" label="Asc"></el-radio-button>
         <el-radio-button name="sort-type" label="Desc"></el-radio-button>
       </el-radio-group>
     </el-header>
 
     <div class="executions-list">
-      <execution-card v-for="exec in executions" :key="exec.id" :execution="exec"/>
+      <execution-card v-for="exec in executions" :key="exec.id" :execution="exec" :columns="columns"/>
     </div>
   </section>
 </template>
@@ -71,8 +71,13 @@ export default {
   data() {
     return {
       loading: true,
+
       // popoverVisible: false,
+
       executions: [],
+
+      sortType: "Asc",
+
       columns: [
         {
           text: "Commit",
@@ -103,29 +108,6 @@ export default {
   },
 
   created() {
-    this.columns = [
-      {
-        text: "Commit",
-        value: "commit"
-      },
-      {
-        text: "Status",
-        value: "status"
-      },
-      {
-        text: "Initialised At",
-        value: "executionInitialisedAt"
-      },
-      {
-        text: "Started At",
-        value: "executionStartedAt"
-      },
-      {
-        text: "Completed At",
-        value: "executionCompletedAt"
-      }
-    ];
-
     BenchmarkClient.getExecutions(
       "{ executions { id " +
         this.columns.map(item => item.value).join(" ") +
@@ -138,14 +120,15 @@ export default {
 
   methods: {
     onSortbySelection(column) {
+      const { sortType } = this;
       this.executions.sort(function(a, b) {
         var x = a[column];
         var y = b[column];
         if (x === null) return 1;
         if (y === null) return -1;
         if (x === y) return 0;
-        if (x < y) return -1;
-        if (x > y) return 1;
+        if (sortType == "Asc") return x < y ? -1 : 1;
+        if (sortType == "Desc") return x < y ? 1 : -1;
       });
     },
 

@@ -9,3 +9,12 @@
     margin: -$margin-default;
   }
 }
+
+.el-card.flexed .el-card__body {
+  align-content: center;
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  vertical-align: baseline;
+}
