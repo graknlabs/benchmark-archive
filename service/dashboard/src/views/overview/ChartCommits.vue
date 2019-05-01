@@ -11,8 +11,8 @@
       <div class="actions">
         <scale-selector
           title="Scale"
-          :items="scales"
-          :defaultItem="scales[0]"
+          :items="scales.map(scale => ({ text: scale, value: scale }))"
+          :defaultItem="{ text: scales[0], value: scales[0] }"
           @item-selected="onScaleSelection"
         />
       </div>
@@ -86,9 +86,9 @@ export default {
   async created() {
     this.scales = [
       ...new Set(this.executionSpans.map(span => span.tags.graphScale)),
-    ].sort((a, b) => a - b).map(scale => ({ text: scale, value: scale }));
+    ].sort((a, b) => a - b);
 
-    this.selectedScale = this.scales[0].value;
+    this.selectedScale = this.scales[0];
 
     this.querySpans = await fetchQuerySpans(this.executionSpans);
     this.queries = uniqueQueriesSortedArray(this.querySpans);
