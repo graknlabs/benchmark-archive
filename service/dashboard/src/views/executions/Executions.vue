@@ -1,5 +1,8 @@
 <template>
-  <section v-loading="loading" class="el-container is-vertical page-container">
+  <section
+    v-loading="loading"
+    class="el-container is-vertical page-container"
+  >
     <!-- <el-row>
         <el-popover
           v-model="popoverVisible"
@@ -45,28 +48,43 @@
       <sortby-selector
         title="Sort by"
         :items="columns"
-        :defaultItem="{ text: 'Started At', value: 'executionStartedAt'}"
+        :default-item="{ text: 'Started At', value: 'executionStartedAt'}"
         @item-selected="onSortbySelection"
       />
-      <el-radio-group size="mini" v-model="sortType" @change="onSortTypeSelection">
-        <el-radio-button name="sort-type" label="Asc"></el-radio-button>
-        <el-radio-button name="sort-type" label="Desc"></el-radio-button>
+      <el-radio-group
+        v-model="sortType"
+        size="mini"
+        @change="onSortTypeSelection"
+      >
+        <el-radio-button
+          name="sort-type"
+          label="Asc"
+        />
+        <el-radio-button
+          name="sort-type"
+          label="Desc"
+        />
       </el-radio-group>
     </el-header>
 
-    <div class="executions-list">
-      <execution-card v-for="exec in executions" :key="exec.id" :execution="exec" :columns="columns"/>
+    <div class="cards-list executions-list">
+      <execution-card
+        v-for="exec in executions"
+        :key="exec.id"
+        :execution="exec"
+        :columns="columns"
+      />
     </div>
   </section>
 </template>
 
 <script>
-import ExecutionCard from "./ExecutionCard.vue";
-import BenchmarkClient from "@/util/BenchmarkClient";
-import SortbySelector from "@/components/Selector.vue";
+import ExecutionCard from './ExecutionCard.vue';
+import BenchmarkClient from '@/util/BenchmarkClient';
+import SortbySelector from '@/components/Selector.vue';
 
 export default {
-  name: "ExecutionsPage",
+  name: 'ExecutionsPage',
   components: { SortbySelector, ExecutionCard },
   data() {
     return {
@@ -76,30 +94,30 @@ export default {
 
       executions: [],
 
-      sortType: "Asc",
+      sortType: 'Asc',
 
       columns: [
         {
-          text: "Commit",
-          value: "commit"
+          text: 'Commit',
+          value: 'commit',
         },
         {
-          text: "Status",
-          value: "status"
+          text: 'Status',
+          value: 'status',
         },
         {
-          text: "Initialised At",
-          value: "executionInitialisedAt"
+          text: 'Initialised At',
+          value: 'executionInitialisedAt',
         },
         {
-          text: "Started At",
-          value: "executionStartedAt"
+          text: 'Started At',
+          value: 'executionStartedAt',
         },
         {
-          text: "Completed At",
-          value: "executionCompletedAt"
-        }
-      ]
+          text: 'Completed At',
+          value: 'executionCompletedAt',
+        },
+      ],
       // newExecution: {
       //   commit: undefined,
       //   repoUrl: undefined
@@ -109,10 +127,10 @@ export default {
 
   created() {
     BenchmarkClient.getExecutions(
-      "{ executions { id " +
-        this.columns.map(item => item.value).join(" ") +
-        "} }"
-    ).then(execs => {
+      `{ executions { id ${
+        this.columns.map(item => item.value).join(' ')
+      }} }`,
+    ).then((execs) => {
       this.executions = execs.data.executions;
       this.loading = false;
     });
@@ -121,20 +139,20 @@ export default {
   methods: {
     onSortbySelection(column) {
       const { sortType } = this;
-      this.executions.sort(function(a, b) {
-        var x = a[column];
-        var y = b[column];
+      this.executions.sort((a, b) => {
+        const x = a[column];
+        const y = b[column];
         if (x === null) return 1;
         if (y === null) return -1;
         if (x === y) return 0;
-        if (sortType == "Asc") return x < y ? -1 : 1;
-        if (sortType == "Desc") return x < y ? 1 : -1;
+        if (sortType == 'Asc') return x < y ? -1 : 1;
+        if (sortType == 'Desc') return x < y ? 1 : -1;
       });
     },
 
     onSortTypeSelection() {
       this.executions.reverse();
-    }
+    },
     // triggerExecution() {
     //   BenchmarkClient.triggerExecution(this.newExecution)
     //     .then(() => {
@@ -152,7 +170,7 @@ export default {
     //     });
     //   this.newExecution.commit = undefined;
     // }
-  }
+  },
 };
 </script>
 

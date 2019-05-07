@@ -1,7 +1,7 @@
 <template>
   <el-dropdown>
     <span class="el-dropdown-link">
-      {{title}}
+      {{ title }}
       <span v-if="currentItem">: </span>
       <span>{{ currentItem }}</span>
       <i class="el-icon-arrow-down el-icon--right" />
@@ -26,7 +26,7 @@ export default {
   props: {
     title: {
       type: String,
-      required: true
+      required: true,
     },
     items: {
       type: Array,
@@ -34,13 +34,13 @@ export default {
     },
     defaultItem: {
       type: Object,
-      required: false
-    }
+      required: false,
+    },
   },
 
   data() {
     return {
-      currentItem: this.defaultItem ? this.defaultItem.text : undefined
+      currentItem: this.defaultItem ? this.defaultItem.text : undefined,
     };
   },
 

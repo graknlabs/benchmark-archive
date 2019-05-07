@@ -12,7 +12,7 @@
         <scale-selector
           title="Scale"
           :items="scales.map(scale => ({ text: scale, value: scale }))"
-          :defaultItem="{ text: scales[0], value: scales[0] }"
+          :default-item="{ text: scales[0], value: scales[0] }"
           @item-selected="onScaleSelection"
         />
       </div>
