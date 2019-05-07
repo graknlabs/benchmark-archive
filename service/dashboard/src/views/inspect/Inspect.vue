@@ -5,8 +5,7 @@
     </div>
 
     <tabular-view
-      :graph-names="graphNames"
-      :spans="spans"
+      :querySets="querySets"
       :pre-selected-graph-name="preSelectedGraphName"
       :pre-selected-query="preSelectedQuery"
       :pre-selected-scale="preSelectedScale"
@@ -18,6 +17,7 @@
 import BenchmarkClient from "@/util/BenchmarkClient";
 import ExecutionCard from "@/views/executions/ExecutionCard.vue";
 import TabularView from "./TabularView/TabularView.vue";
+import DataProcessor from "@/util/DataProcessor";
 
 export default {
   components: { TabularView, ExecutionCard },
@@ -28,7 +28,7 @@ export default {
 
       execution: null,
 
-      spans: [],
+      querySets: [],
 
       graphNames: [],
 
@@ -67,37 +67,46 @@ export default {
     };
   },
 
-  created() {
+  async created() {
     this.fetchExecution();
-    this.fetchSpans();
+    this.fetchQueries();
   },
 
   methods: {
-    fetchExecution() {
-      BenchmarkClient.getExecutions(
-        `{ executionById (id: "${
-          this.executionId
-        }"){ id prNumber
+    async fetchExecution() {
+      const executionResp = await BenchmarkClient.getExecutions(
+        `{ executionById (id: "${this.executionId}"){ id prNumber
           ${this.executionColumns.map(column => column.value).join(" ")}
         } }`
-      ).then(resp => {
-        this.execution = resp.data.executionById;
-      });
+      );
+
+      this.execution = executionResp.data.executionById;
     },
 
-    fetchSpans() {
-      BenchmarkClient.getSpans(
+    async fetchQueries() {
+      // fetch all spans of the given executionId
+      const spansResp = await BenchmarkClient.getSpans(
         `{ executionSpans( executionName: "${
           this.executionId
         }"){ id name duration tags { graphType executionName graphScale }} }`
-      ).then(resp => {
-        this.spans = resp.data.executionSpans;
+      );
+      const executionSpans = spansResp.data.executionSpans;
 
-        this.graphNames = Array.from(
-          new Set(this.spans.map(span => span.tags.graphType))
-        );
-      });
-    }
+      // fetch all queries of each of the newly fetched executionSpanns
+      const queriesResponse = await Promise.all(
+        executionSpans.map(executionSpan =>
+          BenchmarkClient.getSpans(
+            `{ querySpans( parentId: "${
+              executionSpan.id
+            }" limit: 500){ id parentId name duration tags { query type repetition repetitions }} }`
+          )
+        )
+      );
+      const queries = queriesResponse.map(resp => resp.data.querySpans);
+
+      // post-process the fetched data to produce a well-structures set of queries
+      this.querySets = DataProcessor.processExecutionQueries(executionSpans, queries)
+    },
   }
 };
 </script>

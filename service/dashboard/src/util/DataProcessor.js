@@ -150,8 +150,6 @@ function processExecutionQueries(spans, queries) {
     finalQueriesSet.push(finalQuerySet);
   });
 
-  console.log(finalQueriesSet);
-
   return finalQueriesSet;
 }
 

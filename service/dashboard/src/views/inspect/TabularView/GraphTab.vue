@@ -5,23 +5,22 @@
         <scale-selector
           title="Scale"
           :items="scales.map(scale => ({ text: scale, value: scale }))"
-          :defaultItem="{ text: selectedScale, value: selectedScale }"
-          @item-selected="this.selectedScale = scale;"
+          :default-item="{ text: selectedScale, value: selectedScale }"
+          @item-selected="(scale) => { this.selectedScale = scale; }"
         />
       </div>
     </el-row>
+
     <queries-table
-      v-for="scale in scales"
-      v-show="scale==selectedScale"
-      :key="scale"
-      :execution-spans="spans"
-      :overview-query="preSelectedQuery"
-      :current-scale="scale"
+      :graph-name="graphName"
+      :pre-selected-query="preSelectedQuery"
+      :selected-scale="selectedScale"
+      :scaled-queries-set="scaledQueriesSet"
     />
   </div>
 </template>
 <script>
-import QueriesTable from "./QueriesTable.vue";
+import QueriesTable from "./Queries.vue";
 import ScaleSelector from "@/components/Selector.vue";
 
 export default {
@@ -30,7 +29,9 @@ export default {
   components: { ScaleSelector, QueriesTable },
 
   props: {
-    spans: {
+    graphName: String,
+
+    typedQueriesSet: {
       type: Array,
       required: true
     },
@@ -54,10 +55,32 @@ export default {
   },
 
   created() {
-    this.scales = [
-      ...new Set(this.spans.map(span => span.tags.graphScale))
-    ].sort((a, b) => a - b);
+    // TODO: when we decide to allow navigation between queryTypes of the same graphType,
+    // the implementation here needs to change. At the moment, the scales are the unique set of
+    // those available on wach queryType
+    const scales = [];
+    this.typedQueriesSet.forEach(typedQuerySet => {
+      typedQuerySet.scales.forEach(scale => scales.push(scale.value));
+    });
+    this.scales = [...new Set(scales.sort())];
+
     this.selectedScale = this.preSelectedScale || this.scales[0];
+  },
+
+  computed: {
+    scaledQueriesSet() {
+      // TODO: when we decide to allow navigation between queryTypes of the same graphType,
+      // the implementation here needs to change. At the moment, we're combining the queries
+      // contained within all queryTypes
+      const scaledQueriesSet = [];
+      this.typedQueriesSet.forEach(typedQuerySet => {
+        typedQuerySet.scales
+          .filter(scale => scale.value === this.selectedScale)[0]
+          .queries.forEach(query => scaledQueriesSet.push(query));
+      });
+      scaledQueriesSet.sort((a, b) => a.value > b.value ? 1 : -1)
+      return scaledQueriesSet;
+    }
   }
 };
 </script>
@@ -83,4 +106,3 @@ export default {
   }
 }
 </style>
-

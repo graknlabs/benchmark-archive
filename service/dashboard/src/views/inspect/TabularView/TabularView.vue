@@ -11,9 +11,10 @@
       :name="graphName"
     >
       <graph-tab
-        :spans="getFilterSpans(graphName)"
+        :typed-queries-set="getTypedQueries(graphName)"
         :pre-selected-query="getPreSelectedQuery(graphName)"
         :pre-selected-scale="getPreSelectedScale(graphName)"
+        :graphName="graphName"
       />
     </el-tab-pane>
   </el-tabs>
@@ -28,14 +29,9 @@ export default {
   components: { GraphTab },
 
   props: {
-    graphNames: {
+    querySets: {
       type: Array,
-      required: true
-    },
-
-    spans: {
-      type: Array,
-      required: true
+      required: true,
     },
 
     preSelectedGraphName: {
@@ -50,23 +46,27 @@ export default {
 
     preSelectedScale: {
       type: Number,
-      required: false
-    }
+      required: false,
+    },
   },
 
   computed: {
+    graphNames() {
+      return this.querySets.map(querySet => querySet.type);
+    },
+
     activeGraph() {
       return this.preSelectedGraphName || this.graphNames[0];
-    }
+    },
   },
 
   methods: {
-    getFilterSpans(graphName) {
-      return this.spans.filter(span => span.tags.graphType === graphName);
+    getTypedQueries(graphName) {
+      return this.querySets.filter(querySet => querySet.type === graphName)[0].queryTypes;
     },
 
     getPreSelectedScale(graphName) {
-      if (this.preSelectedGraphName === graphName) { return this.preSelectedScale; }
+      if (this.preSelectedGraphName === graphName) return this.preSelectedScale;
       return null;
     },
 

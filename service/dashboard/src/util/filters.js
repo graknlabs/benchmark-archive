@@ -10,3 +10,8 @@ Vue.filter('replaceBlank', (str, replacement) => {
   if (str === '' || str === null) return replacement;
   return str;
 });
+
+Vue.filter('truncate', (str, limit) => {
+  if (str.length < limit) return str;
+  return `${str.substring(0, limit)}...`;
+});
