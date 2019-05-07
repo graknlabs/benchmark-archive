@@ -65,7 +65,7 @@
         >
           <span
             style="width: 135px; text-align: center;"
-          >{{ execution.executionStartedAt | parseDate | replaceBlank("N/A") }}</span>
+          >{{ execution.executionStartedAt | parseDate }}</span>
         </el-tooltip>
       </template>
 
@@ -78,7 +78,7 @@
         >
           <span
             style="width: 135px; text-align: center;"
-          >{{ execution.executionCompletedAt | parseDate | replaceBlank("N/A") }}</span>
+          >{{ execution.executionCompletedAt | parseDate }}</span>
         </el-tooltip>
       </template>
 
