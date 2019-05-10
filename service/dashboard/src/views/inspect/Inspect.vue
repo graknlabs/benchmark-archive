@@ -5,7 +5,8 @@
     </div>
 
     <tabular-view
-      :querySets="querySets"
+      :graphs="graphs"
+      :querySpans="querySpans"
       :pre-selected-graph-name="preSelectedGraphName"
       :pre-selected-query="preSelectedQuery"
       :pre-selected-scale="preSelectedScale"
@@ -17,7 +18,7 @@
 import BenchmarkClient from "@/util/BenchmarkClient";
 import ExecutionCard from "@/views/executions/ExecutionCard.vue";
 import TabularView from "./TabularView/TabularView.vue";
-import DataProcessor from "@/util/DataProcessor";
+import ExecutionDataModifiers from "@/util/ExecutionDataModifiers";
 
 export default {
   components: { TabularView, ExecutionCard },
@@ -28,9 +29,9 @@ export default {
 
       execution: null,
 
-      querySets: [],
+      graphs: null,
 
-      graphNames: [],
+      querySpans: null,
 
       preSelectedGraphName: this.$route.query.graph,
 
@@ -84,28 +85,25 @@ export default {
     },
 
     async fetchQueries() {
-      // fetch all spans of the given executionId
-      const spansResp = await BenchmarkClient.getSpans(
+      const graphsResp = await BenchmarkClient.getSpans(
         `{ executionSpans( executionName: "${
           this.executionId
         }"){ id name duration tags { graphType executionName graphScale }} }`
       );
-      const executionSpans = spansResp.data.executionSpans;
+      const graphs = graphsResp.data.executionSpans;
+      this.graphs = ExecutionDataModifiers.flattenGraphs(graphs);
 
-      // fetch all queries of each of the newly fetched executionSpanns
       const queriesResponse = await Promise.all(
-        executionSpans.map(executionSpan =>
+        graphs.map(graph =>
           BenchmarkClient.getSpans(
             `{ querySpans( parentId: "${
-              executionSpan.id
+              graph.id
             }" limit: 500){ id parentId name duration tags { query type repetition repetitions }} }`
           )
         )
       );
-      const queries = queriesResponse.map(resp => resp.data.querySpans);
-
-      // post-process the fetched data to produce a well-structures set of queries
-      this.querySets = DataProcessor.processExecutionQueries(executionSpans, queries)
+      const querySpans = queriesResponse.map(resp => resp.data.querySpans);
+      this.querySpans = ExecutionDataModifiers.flattenQuerySpans(querySpans);
     },
   }
 };

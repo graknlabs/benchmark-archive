@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="graphs && querySpans">
     <el-row type="flex" justify="end" class="queries-action-bar">
       <div class="action-item">
         <scale-selector
@@ -12,10 +12,8 @@
     </el-row>
 
     <queries-table
-      :graph-name="graphName"
       :pre-selected-query="preSelectedQuery"
-      :selected-scale="selectedScale"
-      :scaled-queries-set="scaledQueriesSet"
+      :scaled-query-spans="scaledQueries"
     />
   </div>
 </template>
@@ -29,9 +27,17 @@ export default {
   components: { ScaleSelector, QueriesTable },
 
   props: {
-    graphName: String,
+    graphs: {
+      type: Array,
+      required: true,
+    },
 
-    typedQueriesSet: {
+    graphType: {
+      type: String,
+      required: true,
+    },
+
+    querySpans: {
       type: Array,
       required: true
     },
@@ -55,31 +61,16 @@ export default {
   },
 
   created() {
-    // TODO: when we decide to allow navigation between queryTypes of the same graphType,
-    // the implementation here needs to change. At the moment, the scales are the unique set of
-    // those available on wach queryType
-    const scales = [];
-    this.typedQueriesSet.forEach(typedQuerySet => {
-      typedQuerySet.scales.forEach(scale => scales.push(scale.value));
-    });
-    this.scales = [...new Set(scales.sort())];
-
+    this.scales = [...new Set(this.graphs.map(graph => graph.scale))].sort((a, b) => a - b);
     this.selectedScale = this.preSelectedScale || this.scales[0];
   },
 
   computed: {
-    scaledQueriesSet() {
-      // TODO: when we decide to allow navigation between queryTypes of the same graphType,
-      // the implementation here needs to change. At the moment, we're combining the queries
-      // contained within all queryTypes
-      const scaledQueriesSet = [];
-      this.typedQueriesSet.forEach(typedQuerySet => {
-        typedQuerySet.scales
-          .filter(scale => scale.value === this.selectedScale)[0]
-          .queries.forEach(query => scaledQueriesSet.push(query));
-      });
-      scaledQueriesSet.sort((a, b) => a.value > b.value ? 1 : -1)
-      return scaledQueriesSet;
+    scaledQueries() {
+      const graphIds = this.graphs.filter(graph => graph.scale === this.selectedScale).map(graph => graph.id);
+      const scaledQueries = this.querySpans.filter(querySpan => graphIds.includes(querySpan.parentId));
+      scaledQueries.sort((a, b) => a.value > b.value ? 1 : -1);
+      return scaledQueries;
     }
   }
 };

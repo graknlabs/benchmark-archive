@@ -1,5 +1,5 @@
 /* eslint-disable no-plusplus */
-function buildQueriesMap(queries) {
+function getLegenedsData(queries) {
   let matchQuery = 0;
   let matchInsertQuery = 0;
   let insertQuery = 0;
@@ -36,44 +36,55 @@ function computeStdDeviation(spans, avgTime) {
 }
 
 /**
- * queriesTime structure => [
- *                             {
- *                                query: "",
- *                                times: [ { commit: "", avgTime: "" }, ... ]
- *                              },
- *                              ...
- *                           ]
- * For each query we register all the times per commit, this is because
- * queries will become series in the chart.
- * E.g. query A is the first serie wiht an avgTime per commit(x axis)
+ * Produces the data required for populating commit charts.
+ *
+ * Sample output is as follows:
+ *  [
+ *    {
+ *      query: "...",
+ *      times: [
+ *        {
+ *          commit: "...",
+ *          executionId: "...",
+ *          avgTime: 00.00,
+ *          stdDeviation: 00.00,
+ *          repetitions: 0,
+ *        }
+ *      ]
+ *    }
+ *  ]
+ *
+ * @param {String[]} queries unique list of Graql query values.
+ * @param {Object[]} querySpans query spans containing executionId and scale, as well as the typical query span properties.
+ * @param {Object[]} executions execution objects with the commit property.
+ * @param {Number} selectedScale the scale currently selected by the user on the chart.
+ *
+ * @return {Object[]} the data required to populate the commit charts.
  */
-function buildQueriesTimes(queries, spans, executions, currentScale) {
+function getChartData(queries, querySpans, executions, selectedScale) {
   return queries.map((query) => {
-    // Find all the spans related to the current query
-    const querySpans = spans.filter(span => span.tags.query === query);
-    // For each commit, compute the average time the current query took to execute
-    const times = executions.map((exec) => {
-      // Collect all the spans relative to this current commit and query
-      const executionQuerySpans = querySpans.filter(
-        span => span.executionName === exec.id && span.scale === currentScale,
+    const targetQuerySpans = querySpans.filter(querySpan => querySpan.value === query);
+    const times = executions.map((execution) => {
+      const executionQuerySpans = targetQuerySpans.filter(
+        targetQuerySpan => targetQuerySpan.executionId === execution.id && targetQuerySpan.scale === selectedScale,
       );
-      // Compute average time combining all the repetitions
       const avgTime = computeAvgTime(executionQuerySpans);
       const stdDeviation = computeStdDeviation(executionQuerySpans, avgTime);
 
       return {
-        commit: exec.commit,
+        commit: execution.commit,
+        executionId: execution.id,
         avgTime: avgTime / 1000,
         stdDeviation: stdDeviation / 1000,
         repetitions: executionQuerySpans.length,
-        executionId: exec.id,
       };
     });
+
     return { query, times };
   });
 }
 
 export default {
-  buildQueriesMap,
-  buildQueriesTimes,
+  getLegenedsData,
+  getChartData,
 };

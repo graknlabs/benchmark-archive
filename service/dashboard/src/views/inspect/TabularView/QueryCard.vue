@@ -4,10 +4,10 @@
       <el-tooltip
         class="item"
         effect="dark"
-        :content="query.value"
+        :content="query"
         placement="top"
       >
-        <span style="width: 300px;">{{ query.value | truncate(100) }}</span>
+        <span style="width: 300px;">{{ query | truncate(100) }}</span>
       </el-tooltip>
 
       <el-tooltip
@@ -18,7 +18,7 @@
       >
         <span
           class="text-size-18"
-        >{{ minSpan.span.duration | fixedMs }}/{{ minSpan.order + 1 | ordinalise }}</span>
+        >{{ minSpan.duration | fixedMs }}/{{ minSpan.rep + 1 | ordinalise }}</span>
       </el-tooltip>
 
       <el-tooltip
@@ -38,7 +38,7 @@
       >
         <span
           class="text-size-18"
-        >{{ maxSpan.span.duration | fixedMs }}/{{ maxSpan.order + 1 | ordinalise }}</span>
+        >{{ maxSpan.duration | fixedMs }}/{{ maxSpan.rep + 1 | ordinalise }}</span>
       </el-tooltip>
     </div>
   </el-card>
@@ -62,9 +62,14 @@ export default {
   },
   props: {
     query: {
-      type: Object,
+      type: String,
       required: true,
     },
+
+    querySpans: {
+      type: Array,
+      required: true,
+    }
   },
 
   data() {
@@ -75,7 +80,7 @@ export default {
 
   computed: {
     sortedSpans() {
-      return this.query.reps.sort((a, b) => (a.span.duration > b.span.duration ? 1 : -1));
+      return this.querySpans.sort((a, b) => (a.duration > b.duration ? 1 : -1));
     },
 
     minSpan() {
@@ -90,14 +95,14 @@ export default {
       const lowMiddleIndex = Math.floor((this.sortedSpans.length - 1) / 2);
       const highMiddleIndex = Math.ceil((this.sortedSpans.length - 1) / 2);
       return (
-        (this.sortedSpans[lowMiddleIndex].span.duration
-          + this.sortedSpans[highMiddleIndex].span.duration)
+        (this.sortedSpans[lowMiddleIndex].duration
+          + this.sortedSpans[highMiddleIndex].duration)
         / 2
       );
     },
 
     reps() {
-      return this.query.reps.length;
+      return this.querySpans.length;
     },
   },
 
@@ -105,8 +110,8 @@ export default {
     fetchSteps() {
       console.log('clicked');
       BenchmarkClient.getSpans(
-        `{ childrenSpans( parentId: [${this.spans
-          .map(span => `"${span.id}"`)
+        `{ childrenSpans( parentId: [${this.querySpans
+          .map(querySpan => `"${querySpan.id}"`)
           .join()}] limit: 1000){ id name duration parentId tags { childNumber }} }`,
       ).then((resp) => {
         // console.log(resp.data.childrenSpans)

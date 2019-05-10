@@ -1,68 +1,89 @@
 <template>
-  <el-tabs
-    :value="activeGraph"
-    type="border-card"
-    class="wrapper"
-  >
-    <el-tab-pane
-      v-for="graphName in graphNames"
-      :key="graphName"
-      :label="graphName"
-      :name="graphName"
-    >
-      <graph-tab
-        :typed-queries-set="getTypedQueries(graphName)"
-        :pre-selected-query="getPreSelectedQuery(graphName)"
-        :pre-selected-scale="getPreSelectedScale(graphName)"
-        :graphName="graphName"
-      />
-    </el-tab-pane>
-  </el-tabs>
+  <div v-if="graphs && querySpans">
+    <el-tabs :value="activeGraph" type="border-card" class="wrapper">
+      <el-tab-pane
+        v-for="graphType in graphTypes"
+        :key="graphType"
+        :label="graphType"
+        :name="graphType"
+      >
+        <graph-tab
+          :querySpans="filterQuerySpans(graphType)"
+          :pre-selected-query="getPreSelectedQuery(graphType)"
+          :pre-selected-scale="getPreSelectedScale(graphType)"
+          :graphType="graphType"
+          :graphs="filterGraphs(graphType)"
+        />
+      </el-tab-pane>
+    </el-tabs>
+  </div>
 </template>
 
 <script>
-import GraphTab from './GraphTab.vue';
+import GraphTab from "./GraphTab.vue";
 
 export default {
-  name: 'TabularView',
+  name: "TabularView",
 
   components: { GraphTab },
 
   props: {
-    querySets: {
+    graphs: {
       type: Array,
-      required: true,
+      required: false
+    },
+
+    querySpans: {
+      type: Array,
+      required: false
     },
 
     preSelectedGraphName: {
       type: String,
-      required: false,
+      required: false
     },
 
     preSelectedQuery: {
       type: String,
-      required: false,
+      required: false
     },
 
     preSelectedScale: {
       type: Number,
-      required: false,
-    },
+      required: false
+    }
   },
 
   computed: {
-    graphNames() {
-      return this.querySets.map(querySet => querySet.type);
+    graphTypes() {
+      const uniqueGraphTypes = [
+        ...new Set(this.graphs.map(graph => graph.type))
+      ];
+      return uniqueGraphTypes;
     },
 
     activeGraph() {
-      return this.preSelectedGraphName || this.graphNames[0];
-    },
+      return this.preSelectedGraphName || this.graphTypes[0];
+    }
   },
 
   methods: {
-    getTypedQueries(graphName) {
-      return this.querySets.filter(querySet => querySet.type === graphName)[0].queryTypes;
+    filterQuerySpans(graphType) {
+      const querySpans = [];
+      const graphsOfInterest = this.filterGraphs(graphType);
+      graphsOfInterest.forEach(graph => {
+        this.querySpans
+          .filter(query => query.parentId === graph.id)
+          .forEach(query => {
+            querySpans.push(query);
+          });
+      });
+
+      return querySpans;
+    },
+
+    filterGraphs(graphType) {
+      return this.graphs.filter(graph => graph.type == graphType);
     },
 
     getPreSelectedScale(graphName) {
@@ -71,10 +92,12 @@ export default {
     },
 
     getPreSelectedQuery(graphName) {
-      if (this.preSelectedGraphName === graphName) { return this.preSelectedQuery; }
+      if (this.preSelectedGraphName === graphName) {
+        return this.preSelectedQuery;
+      }
       return null;
-    },
-  },
+    }
+  }
 };
 </script>
 

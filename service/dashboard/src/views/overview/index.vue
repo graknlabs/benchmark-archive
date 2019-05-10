@@ -1,55 +1,100 @@
 <template>
-  <el-container class="is-vertical overview-section">
-    <el-row
-      v-for="graphType in graphTypes"
-      :key="graphType"
-      class="panel"
-    >
+  <el-container v-loading="loading"  class="is-vertical overview-section">
+    <el-row v-for="graphType in graphTypes" :key="graphType" class="panel">
       <commits-chart
-        :graph-name="graphType"
+        :graph-type="graphType"
         :executions="completedExecutions"
-        :execution-spans="filterSpans(graphType)"
+        :graphs="filterGraphs(graphType)"
+        :querySpans="filterQueries(graphType)"
       />
     </el-row>
   </el-container>
 </template>
 
 <script>
-import BenchmarkClient from '@/util/BenchmarkClient';
-import CommitsChart from './ChartCommits.vue';
+import BenchmarkClient from "@/util/BenchmarkClient";
+import CommitsChart from "./ChartCommits.vue";
+import ExecutionDataModifiers from "@/util/ExecutionDataModifiers";
 
 export default {
-  name: 'OverviewPage',
+  name: "OverviewPage",
+
   components: { CommitsChart },
+
   data() {
     return {
       numberOfCompletedExecutions: 8,
+
       completedExecutions: null,
+
       graphTypes: [],
-      executionSpans: null,
+
+      graphs: null,
+
+      queries: null,
+
+      loading: true
     };
   },
+
   async created() {
-    // Get the last N completed executions
-    // Note: we need to reverse the array because in the chart we want to show the most recent execution not as first but as last (rightmost)
-    this.completedExecutions = (await BenchmarkClient.getLatestCompletedExecutions(
-      this.numberOfCompletedExecutions,
-    )).reverse();
-    // Get all the execution spans relative to those executions
-    this.executionSpans = await BenchmarkClient.getExecutionsSpans(this.completedExecutions);
-    // Compute graph names from spans, for each graph name we draw a chart
-    this.graphTypes = [...new Set(this.executionSpans.map(span => span.tags.graphType))];
+    await this.fetchData();
+    this.graphTypes = [...new Set(this.graphs.map(graph => graph.type))];
+    this.loading = false;
   },
+
   methods: {
-    filterSpans(name) {
-      return this.executionSpans.filter(span => span.tags.graphType === name);
+    async fetchData() {
+      this.completedExecutions = (await BenchmarkClient.getLatestCompletedExecutions(
+        this.numberOfCompletedExecutions
+      )).reverse();
+
+      const graphs = await BenchmarkClient.getExecutionsSpans(
+        this.completedExecutions
+      );
+      this.graphs = ExecutionDataModifiers.flattenGraphs(graphs);
+
+      const queriesResponse = await Promise.all(
+        this.graphs.map(graph =>
+          BenchmarkClient.getSpans(
+            `{ querySpans( parentId: "${
+              graph.id
+            }" limit: 500){ id parentId name duration tags { query type repetition repetitions }} }`
+          )
+        )
+      );
+      const queries = queriesResponse.map(resp => resp.data.querySpans);
+      this.queries = ExecutionDataModifiers.flattenQuerySpans(queries);
     },
-  },
+
+    filterGraphs(graphType) {
+      return this.graphs.filter(graph => graph.type === graphType);
+    },
+
+    filterQueries(graphType) {
+      const queries = [];
+      const graphsOfInterest = this.filterGraphs(graphType);
+      graphsOfInterest.forEach(graph => {
+        this.queries
+          .filter(query => query.parentId === graph.id)
+          .forEach(query => {
+            queries.push(query);
+          });
+      });
+
+      return queries;
+    }
+  }
 };
 </script>
 
 <style lang="scss" scoped>
 @import "./src/assets/css/variables.scss";
+
+.el-container {
+  min-height: 100%;
+}
+
 .panel {
   margin-bottom: $margin-default;
 

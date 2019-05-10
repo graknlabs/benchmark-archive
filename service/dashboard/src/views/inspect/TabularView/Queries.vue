@@ -2,9 +2,10 @@
   <div>
     <div class="cards-list">
       <query-card
-        v-for="scaledQuerySet in scaledQueriesSet"
-        :key="scaledQuerySet.value"
-        :query="scaledQuerySet"
+        v-for="query in queries"
+        :key="query"
+        :query="query"
+        :query-spans="getQuerySpans(query)"
       />
     </div>
   </div>
@@ -14,7 +15,7 @@
 import QueryCard from './QueryCard.vue';
 
 export default {
-  name: 'QueriesTable',
+  name: 'Queries',
 
   components: { QueryCard },
 
@@ -24,11 +25,23 @@ export default {
       required: false,
     },
 
-    scaledQueriesSet: {
+    scaledQuerySpans: {
       type: Array,
       required: true,
     }
   },
+
+  computed: {
+    queries() {
+      return [...new Set(this.scaledQuerySpans.map(querySpan => querySpan.value))];
+    }
+  },
+
+  methods: {
+    getQuerySpans(queryValue) {
+      return this.scaledQuerySpans.filter(querySpan => querySpan.value === queryValue).map(span => ({ rep: span.rep, duration: span.duration }));
+    }
+  }
 }
 </script>
 
