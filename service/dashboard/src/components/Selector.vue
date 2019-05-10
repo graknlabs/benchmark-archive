@@ -28,13 +28,16 @@ export default {
       type: String,
       required: true,
     },
+
     items: {
       type: Array,
       required: true,
     },
+
     defaultItem: {
       type: Object,
       required: false,
+      default: null,
     },
   },
 

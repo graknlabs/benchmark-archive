@@ -145,8 +145,9 @@ export default {
         if (x === null) return 1;
         if (y === null) return -1;
         if (x === y) return 0;
-        if (sortType == 'Asc') return x < y ? -1 : 1;
-        if (sortType == 'Desc') return x < y ? 1 : -1;
+        if (sortType === 'Asc') return x < y ? -1 : 1;
+        if (sortType === 'Desc') return x < y ? 1 : -1;
+        return false;
       });
     },
 

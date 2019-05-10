@@ -1,6 +1,10 @@
 <template>
   <div v-if="graphs && querySpans">
-    <el-tabs :value="activeGraph" type="border-card" class="wrapper">
+    <el-tabs
+      :value="activeGraph"
+      type="border-card"
+      class="wrapper"
+    >
       <el-tab-pane
         v-for="graphType in graphTypes"
         :key="graphType"
@@ -8,10 +12,10 @@
         :name="graphType"
       >
         <graph-tab
-          :querySpans="filterQuerySpans(graphType)"
+          :query-spans="filterQuerySpans(graphType)"
           :pre-selected-query="getPreSelectedQuery(graphType)"
           :pre-selected-scale="getPreSelectedScale(graphType)"
-          :graphType="graphType"
+          :graph-type="graphType"
           :graphs="filterGraphs(graphType)"
         />
       </el-tab-pane>
@@ -20,61 +24,66 @@
 </template>
 
 <script>
-import GraphTab from "./GraphTab.vue";
+import GraphTab from './GraphTab.vue';
 
 export default {
-  name: "TabularView",
+  name: 'TabularView',
 
   components: { GraphTab },
 
   props: {
     graphs: {
       type: Array,
-      required: false
+      required: false,
+      default: null,
     },
 
     querySpans: {
       type: Array,
-      required: false
+      required: false,
+      default: null,
     },
 
     preSelectedGraphName: {
       type: String,
-      required: false
+      required: false,
+      default: null,
     },
 
     preSelectedQuery: {
       type: String,
-      required: false
+      required: false,
+      default: null,
     },
 
     preSelectedScale: {
       type: Number,
-      required: false
-    }
+      required: false,
+      default: null,
+    },
   },
 
   computed: {
     graphTypes() {
       const uniqueGraphTypes = [
-        ...new Set(this.graphs.map(graph => graph.type))
+        ...new Set(this.graphs.map(graph => graph.type)),
       ];
       return uniqueGraphTypes;
     },
 
     activeGraph() {
       return this.preSelectedGraphName || this.graphTypes[0];
-    }
+    },
   },
 
   methods: {
     filterQuerySpans(graphType) {
       const querySpans = [];
       const graphsOfInterest = this.filterGraphs(graphType);
-      graphsOfInterest.forEach(graph => {
+      graphsOfInterest.forEach((graph) => {
         this.querySpans
           .filter(query => query.parentId === graph.id)
-          .forEach(query => {
+          .forEach((query) => {
             querySpans.push(query);
           });
       });
@@ -83,7 +92,7 @@ export default {
     },
 
     filterGraphs(graphType) {
-      return this.graphs.filter(graph => graph.type == graphType);
+      return this.graphs.filter(graph => graph.type === graphType);
     },
 
     getPreSelectedScale(graphName) {
@@ -96,8 +105,8 @@ export default {
         return this.preSelectedQuery;
       }
       return null;
-    }
-  }
+    },
+  },
 };
 </script>
 

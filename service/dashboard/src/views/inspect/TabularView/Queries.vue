@@ -23,26 +23,27 @@ export default {
     preSelectedQuery: {
       type: String,
       required: false,
+      default: null,
     },
 
     scaledQuerySpans: {
       type: Array,
       required: true,
-    }
+    },
   },
 
   computed: {
     queries() {
       return [...new Set(this.scaledQuerySpans.map(querySpan => querySpan.value))];
-    }
+    },
   },
 
   methods: {
     getQuerySpans(queryValue) {
       return this.scaledQuerySpans.filter(querySpan => querySpan.value === queryValue).map(span => ({ rep: span.rep, duration: span.duration }));
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>

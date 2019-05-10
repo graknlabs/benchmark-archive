@@ -1,12 +1,16 @@
 <template>
   <section>
     <div v-if="execution">
-      <execution-card class="execution-card" :execution="execution" :columns="executionColumns"/>
+      <execution-card
+        class="execution-card"
+        :execution="execution"
+        :columns="executionColumns"
+      />
     </div>
 
     <tabular-view
       :graphs="graphs"
-      :querySpans="querySpans"
+      :query-spans="querySpans"
       :pre-selected-graph-name="preSelectedGraphName"
       :pre-selected-query="preSelectedQuery"
       :pre-selected-scale="preSelectedScale"
@@ -15,10 +19,10 @@
 </template>
 
 <script>
-import BenchmarkClient from "@/util/BenchmarkClient";
-import ExecutionCard from "@/views/executions/ExecutionCard.vue";
-import TabularView from "./TabularView/TabularView.vue";
-import ExecutionDataModifiers from "@/util/ExecutionDataModifiers";
+import BenchmarkClient from '@/util/BenchmarkClient';
+import ExecutionCard from '@/views/executions/ExecutionCard.vue';
+import TabularView from './TabularView/TabularView.vue';
+import ExecutionDataModifiers from '@/util/ExecutionDataModifiers';
 
 export default {
   components: { TabularView, ExecutionCard },
@@ -41,30 +45,30 @@ export default {
 
       executionColumns: [
         {
-          text: "Status",
-          value: "status"
+          text: 'Status',
+          value: 'status',
         },
         {
-          text: "Repository",
-          value: "repoUrl"
+          text: 'Repository',
+          value: 'repoUrl',
         },
         {
-          text: "Commit",
-          value: "commit"
+          text: 'Commit',
+          value: 'commit',
         },
         {
-          text: "PR",
-          value: "prUrl"
+          text: 'PR',
+          value: 'prUrl',
         },
         {
-          text: "Started At",
-          value: "executionStartedAt"
+          text: 'Started At',
+          value: 'executionStartedAt',
         },
         {
-          text: "Completed At",
-          value: "executionCompletedAt"
-        }
-      ]
+          text: 'Completed At',
+          value: 'executionCompletedAt',
+        },
+      ],
     };
   },
 
@@ -77,8 +81,8 @@ export default {
     async fetchExecution() {
       const executionResp = await BenchmarkClient.getExecutions(
         `{ executionById (id: "${this.executionId}"){ id prNumber
-          ${this.executionColumns.map(column => column.value).join(" ")}
-        } }`
+          ${this.executionColumns.map(column => column.value).join(' ')}
+        } }`,
       );
 
       this.execution = executionResp.data.executionById;
@@ -88,24 +92,22 @@ export default {
       const graphsResp = await BenchmarkClient.getSpans(
         `{ executionSpans( executionName: "${
           this.executionId
-        }"){ id name duration tags { graphType executionName graphScale }} }`
+        }"){ id name duration tags { graphType executionName graphScale }} }`,
       );
       const graphs = graphsResp.data.executionSpans;
       this.graphs = ExecutionDataModifiers.flattenGraphs(graphs);
 
       const queriesResponse = await Promise.all(
-        graphs.map(graph =>
-          BenchmarkClient.getSpans(
-            `{ querySpans( parentId: "${
-              graph.id
-            }" limit: 500){ id parentId name duration tags { query type repetition repetitions }} }`
-          )
-        )
+        graphs.map(graph => BenchmarkClient.getSpans(
+          `{ querySpans( parentId: "${
+            graph.id
+          }" limit: 500){ id parentId name duration tags { query type repetition repetitions }} }`,
+        )),
       );
       const querySpans = queriesResponse.map(resp => resp.data.querySpans);
       this.querySpans = ExecutionDataModifiers.flattenQuerySpans(querySpans);
     },
-  }
+  },
 };
 </script>
 

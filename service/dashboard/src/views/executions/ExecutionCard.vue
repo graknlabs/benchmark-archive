@@ -195,10 +195,7 @@ export default {
     },
 
     shouldRenderColumn(columnToRender) {
-      for (const column of this.columns) {
-        if (column.value === columnToRender) return true;
-      }
-      return false;
+      return this.columns.some(column => column.value === columnToRender);
     },
 
     getTooltipFor(columnToTooltip) {

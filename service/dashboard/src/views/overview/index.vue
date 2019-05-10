@@ -1,23 +1,30 @@
 <template>
-  <el-container v-loading="loading"  class="is-vertical overview-section">
-    <el-row v-for="graphType in graphTypes" :key="graphType" class="panel">
+  <el-container
+    v-loading="loading"
+    class="is-vertical overview-section"
+  >
+    <el-row
+      v-for="graphType in graphTypes"
+      :key="graphType"
+      class="panel"
+    >
       <commits-chart
         :graph-type="graphType"
         :executions="completedExecutions"
         :graphs="filterGraphs(graphType)"
-        :querySpans="filterQueries(graphType)"
+        :query-spans="filterQueries(graphType)"
       />
     </el-row>
   </el-container>
 </template>
 
 <script>
-import BenchmarkClient from "@/util/BenchmarkClient";
-import CommitsChart from "./ChartCommits.vue";
-import ExecutionDataModifiers from "@/util/ExecutionDataModifiers";
+import BenchmarkClient from '@/util/BenchmarkClient';
+import CommitsChart from './ChartCommits.vue';
+import ExecutionDataModifiers from '@/util/ExecutionDataModifiers';
 
 export default {
-  name: "OverviewPage",
+  name: 'OverviewPage',
 
   components: { CommitsChart },
 
@@ -33,7 +40,7 @@ export default {
 
       queries: null,
 
-      loading: true
+      loading: true,
     };
   },
 
@@ -46,22 +53,20 @@ export default {
   methods: {
     async fetchData() {
       this.completedExecutions = (await BenchmarkClient.getLatestCompletedExecutions(
-        this.numberOfCompletedExecutions
+        this.numberOfCompletedExecutions,
       )).reverse();
 
       const graphs = await BenchmarkClient.getExecutionsSpans(
-        this.completedExecutions
+        this.completedExecutions,
       );
       this.graphs = ExecutionDataModifiers.flattenGraphs(graphs);
 
       const queriesResponse = await Promise.all(
-        this.graphs.map(graph =>
-          BenchmarkClient.getSpans(
-            `{ querySpans( parentId: "${
-              graph.id
-            }" limit: 500){ id parentId name duration tags { query type repetition repetitions }} }`
-          )
-        )
+        this.graphs.map(graph => BenchmarkClient.getSpans(
+          `{ querySpans( parentId: "${
+            graph.id
+          }" limit: 500){ id parentId name duration tags { query type repetition repetitions }} }`,
+        )),
       );
       const queries = queriesResponse.map(resp => resp.data.querySpans);
       this.queries = ExecutionDataModifiers.flattenQuerySpans(queries);
@@ -74,17 +79,17 @@ export default {
     filterQueries(graphType) {
       const queries = [];
       const graphsOfInterest = this.filterGraphs(graphType);
-      graphsOfInterest.forEach(graph => {
+      graphsOfInterest.forEach((graph) => {
         this.queries
           .filter(query => query.parentId === graph.id)
-          .forEach(query => {
+          .forEach((query) => {
             queries.push(query);
           });
       });
 
       return queries;
-    }
-  }
+    },
+  },
 };
 </script>
 

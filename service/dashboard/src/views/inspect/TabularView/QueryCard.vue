@@ -46,11 +46,9 @@
 
 <script>
 import BenchmarkClient from '@/util/BenchmarkClient';
-import copy from 'copy-to-clipboard';
 import ordinal from 'ordinal';
 
 export default {
-
   filters: {
     fixedMs(num) {
       return `${Number(num / 1000).toFixed(3)}`;
@@ -69,7 +67,7 @@ export default {
     querySpans: {
       type: Array,
       required: true,
-    }
+    },
   },
 
   data() {
@@ -80,7 +78,8 @@ export default {
 
   computed: {
     sortedSpans() {
-      return this.querySpans.sort((a, b) => (a.duration > b.duration ? 1 : -1));
+      const sortedSpans = this.querySpans;
+      return sortedSpans.sort((a, b) => (a.duration > b.duration ? 1 : -1));
     },
 
     minSpan() {
@@ -107,6 +106,7 @@ export default {
   },
 
   methods: {
+
     fetchSteps() {
       console.log('clicked');
       BenchmarkClient.getSpans(
