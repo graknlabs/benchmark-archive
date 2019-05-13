@@ -1,5 +1,8 @@
 <template>
-  <el-container class="is-vertical overview-section">
+  <el-container
+    v-loading="loading"
+    class="is-vertical overview-section"
+  >
     <el-row
       v-for="graphType in graphTypes"
       :key="graphType"

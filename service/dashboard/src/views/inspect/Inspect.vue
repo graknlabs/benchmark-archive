@@ -22,7 +22,8 @@
 import BenchmarkClient from '@/util/BenchmarkClient';
 import ExecutionCard from '@/views/executions/ExecutionCard.vue';
 import TabularView from './TabularView/TabularView.vue';
-import ExecutionDataFormatters from '@/util/ExecutionDataFormatters';
+import EDM from '@/util/ExecutionDataFormatters';
+const {flattenGraphs, flattenQuerySpans, } = EDM;
 
 export default {
   components: { TabularView, ExecutionCard },
@@ -95,7 +96,7 @@ export default {
         }"){ id name duration tags { graphType executionName graphScale }} }`,
       );
       const graphs = graphsResp.data.executionSpans;
-      this.graphs = ExecutionDataFormatters.flattenGraphs(graphs);
+      this.graphs = flattenGraphs(graphs);
 
       const queriesResponse = await Promise.all(
         graphs.map(graph => BenchmarkClient.getSpans(
@@ -105,7 +106,7 @@ export default {
         )),
       );
       const querySpans = queriesResponse.map(resp => resp.data.querySpans);
-      this.querySpans = ExecutionDataFormatters.flattenQuerySpans(querySpans);
+      this.querySpans = flattenQuerySpans(querySpans);
     },
   },
 };
