@@ -15,20 +15,23 @@
       </div>
     </el-row>
 
-    <queries-table
+    <query-cards
+      v-for="scale in scales"
+      v-show="scale===selectedScale"
+      :key="scale"
       :pre-selected-query="preSelectedQuery"
       :scaled-query-spans="scaledQueries"
     />
   </div>
 </template>
 <script>
-import QueriesTable from './Queries.vue';
+import QueryCards from './Queries.vue';
 import ScaleSelector from '@/components/Selector.vue';
 
 export default {
   name: 'GraphTab',
 
-  components: { ScaleSelector, QueriesTable },
+  components: { ScaleSelector, QueryCards },
 
   props: {
     graphs: {
@@ -88,7 +91,7 @@ export default {
 .queries-action-bar {
   height: 39px;
 
-  border-bottom: 1px solid $color-light-border;
+  border-bottom: 1px solid $color-border-light;
 
   align-items: center;
   display: flex;

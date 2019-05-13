@@ -21,7 +21,7 @@
 <script>
 import BenchmarkClient from '@/util/BenchmarkClient';
 import CommitsChart from './ChartCommits.vue';
-import ExecutionDataModifiers from '@/util/ExecutionDataModifiers';
+import ExecutionDataFormatters from '@/util/ExecutionDataFormatters';
 
 export default {
   name: 'OverviewPage',
@@ -59,7 +59,7 @@ export default {
       const graphs = await BenchmarkClient.getExecutionsSpans(
         this.completedExecutions,
       );
-      this.graphs = ExecutionDataModifiers.flattenGraphs(graphs);
+      this.graphs = ExecutionDataFormatters.flattenGraphs(graphs);
 
       const queriesResponse = await Promise.all(
         this.graphs.map(graph => BenchmarkClient.getSpans(
@@ -69,7 +69,7 @@ export default {
         )),
       );
       const queries = queriesResponse.map(resp => resp.data.querySpans);
-      this.queries = ExecutionDataModifiers.flattenQuerySpans(queries);
+      this.queries = ExecutionDataFormatters.flattenQuerySpans(queries);
     },
 
     filterGraphs(graphType) {

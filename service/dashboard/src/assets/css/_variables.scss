@@ -1,14 +1,25 @@
 $height-topBar: 60px;
 $height-sideNav-logo: $height-topBar;
-
-$color-light-border: #ebeef5;
-$color-default-bg: white;
-$color-default-link: #409EFF;
-
-$margin-default: 20px;
-
-$padding-default: $margin-default;
-
 $width-sideNav: 170px;
 
+$color-border-light: #ebeef5;
+$color-link-default: #409EFF;
+$color-text-gray: #909399;
+$color-bg-default: white;
+$color-bg-table-alternate: #fafafa;
+$color-bg-table-hover: #f5f7fa;
+
+$margin-default: 20px;
+$margin-most: $margin-default * 1.5;
+$margin-more: $margin-default * 1.25;
+$margin-less: $margin-default * 0.75;
+$margin-least: $margin-default * 0.5;
+
+$padding-default: $margin-default;
+$padding-most: $margin-most;
+$padding-more: $margin-more;
+$padding-less: $margin-less;
+$padding-least: $margin-least;
+
 $font-size-card: 14px;
+$font-size-table-header: 15px;

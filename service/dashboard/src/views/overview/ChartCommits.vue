@@ -30,10 +30,10 @@ import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/legend';
 import 'echarts/lib/component/legendScroll';
 import ScaleSelector from '@/components/Selector.vue';
-import EDM from '@/util/ExecutionDataModifiers';
+import EDF from '@/util/ExecutionDataFormatters';
 
 const { getLegenedsData, getChartData } = Util;
-const { addExecutionIdAndScaleToQuerySpan } = EDM;
+const { addExecutionIdAndScaleToQuerySpan } = EDF;
 
 export default {
   components: { EChart, ScaleSelector },

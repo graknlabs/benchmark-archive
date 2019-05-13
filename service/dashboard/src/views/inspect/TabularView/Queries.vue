@@ -15,7 +15,7 @@
 import QueryCard from './QueryCard.vue';
 
 export default {
-  name: 'Queries',
+  name: 'QueryCards',
 
   components: { QueryCard },
 
@@ -40,7 +40,7 @@ export default {
 
   methods: {
     getQuerySpans(queryValue) {
-      return this.scaledQuerySpans.filter(querySpan => querySpan.value === queryValue).map(span => ({ rep: span.rep, duration: span.duration }));
+      return this.scaledQuerySpans.filter(querySpan => querySpan.value === queryValue);
     },
   },
 };

@@ -1,153 +1,188 @@
 <template>
   <div>
-    <el-row class="currentRow">
-      <el-col
-        :span="14"
-        class="name-column"
-        :style="styleObject"
-      >
-        <i
-          :class="{ 'el-icon-circle-plus-outline': !expand, 'el-icon-remove-outline': expand }"
-          @click="expandLine"
-        />
-        <div>{{ spans[0].name }}</div>
-      </el-col>
-      <el-col :span="3">
-        {{ min.duration | fixedMs }} ({{ min.repetition + 1 }})
-      </el-col>
-      <el-col :span="3">
-        {{ med | fixedMs }}
-      </el-col>
-      <el-col :span="3">
-        {{ max.duration | fixedMs }} ({{ max.repetition + 1 }})
-      </el-col>
-      <el-col :span="1">
-        {{ reps }}
-      </el-col>
-    </el-row>
-    <el-row v-if="expand">
+    <div
+      :class="'flexed tableRow ' + (expaned ? 'expanded' : '')"
+      :style="'padding-left:' + padding + 'px;'"
+      @click="toggleChildSteps()"
+    >
+      <span class="stepName" style="width: 300px;">
+        <i class="el-icon el-icon-arrow-right"/>
+        {{ step | truncate(100) }}
+      </span>
+
+      <span
+        :style="'width: 110px; margin-left: -' + padding + 'px'"
+      >{{ minSpan.duration | fixedMs }}/{{ minSpan.rep + 1 | ordinalise }}</span>
+
+      <span style="width: 90px;">{{ median | fixedMs }}/{{ reps }}</span>
+
+      <span
+        style="width: 115px;"
+      >{{ maxSpan.duration | fixedMs }}/{{ maxSpan.rep + 1 | ordinalise }}</span>
+    </div>
+    <div v-if="expaned">
       <step-line
-        v-for="stepName in stepNames"
-        :key="stepName"
-        :spans="filterSpansByStep(stepName)"
-        :padding="parseInt(padding)+10"
+        v-for="childStepName in childStepNames"
+        :key="childStepName"
+        :step="childStepName"
+        :stepSpans="filterChildStepSpans(childStepName)"
+        :padding="padding+10"
       />
-    </el-row>
+    </div>
   </div>
 </template>
-<style scoped>
-.currentRow{
-  margin: 3px 0px;
-  padding: 3px;
-}
-.currentRow:hover {
-  background-color: #fd9789;
-}
-.name-column{
-  display: flex;
-  justify-content: start;
-}
-i {
-  cursor: pointer;
-  margin-right: 5px;
-}
-.el-col{
+
+<script>
+import BenchmarkClient from "@/util/BenchmarkClient";
+import EDF from "@/util/ExecutionDataFormatters";
+const { flattenStepSpans, attachRepsToChildSpans } = EDF;
+import ordinal from "ordinal";
+
+export default {
+  name: "StepLine",
+
+  filters: {
+    fixedMs(num) {
+      return `${Number(num / 1000).toFixed(3)}`;
+    },
+
+    ordinalise(num) {
+      return ordinal(num);
+    }
+  },
+
+  props: {
+    stepSpans: {
+      type: Array,
+      required: true
+    },
+
+    step: {
+      type: String,
+      required: true
+    },
+
+    padding: {
+      type: Number,
+      required: true
+    }
+  },
+
+  data() {
+    return {
+      expaned: false,
+      childStepSpans: null,
+      childStepNames: null,
+    };
+  },
+
+  computed: {
+    sortedSpans() {
+      const sortedSpans = this.stepSpans;
+      return sortedSpans.sort((a, b) => (a.duration > b.duration ? 1 : -1));
+    },
+
+    minSpan() {
+      return this.sortedSpans[0];
+    },
+
+    maxSpan() {
+      return this.sortedSpans[this.sortedSpans.length - 1];
+    },
+
+    median() {
+      const lowMiddleIndex = Math.floor((this.sortedSpans.length - 1) / 2);
+      const highMiddleIndex = Math.ceil((this.sortedSpans.length - 1) / 2);
+      return (
+        (this.sortedSpans[lowMiddleIndex].duration +
+          this.sortedSpans[highMiddleIndex].duration) /
+        2
+      );
+    },
+
+    reps() {
+      return this.stepSpans.length;
+    }
+  },
+
+  methods: {
+    toggleChildSteps() {
+      this.expaned = !this.expaned;
+      if (!this.expaned) return;
+      this.fetchChildStepSpans();
+    },
+
+    async fetchChildStepSpans() {
+      const childStepSpansResp = await BenchmarkClient.getSpans(
+        `{ childrenSpans( parentId: [${this.stepSpans
+          .map(stepSpan => `"${stepSpan.id}"`)
+          .join()}]){ id name duration parentId timestamp tags { childNumber }} }`
+      );
+
+      let childStepSpans = childStepSpansResp.data.childrenSpans;
+      childStepSpans = flattenStepSpans(childStepSpans, this.stepSpans);
+
+      this.childStepSpans = attachRepsToChildSpans(
+        childStepSpans,
+        this.stepSpans
+      );
+
+      if (this.childStepSpans.length) {
+        const { parentId } = this.childStepSpans[0];
+
+        this.childStepNames = this.childStepSpans
+          .filter(childStepSpan => childStepSpan.parentId === parentId)
+          .sort((a, b) => a.timestamp > b.timestamp)
+          .map(childStepSpan => childStepSpan.name);
+      }
+    },
+
+    filterChildStepSpans(childStepName) {
+      return this.childStepSpans.filter(
+        childStepSpan => childStepSpan.name === childStepName
+      );
+    }
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+@import "./src/assets/css/variables.scss";
+
+.tableRow {
+  border-bottom: 1px solid $color-border-light;
+
+  &.expanded {
+    .el-icon {
+      transform: rotate(90deg);
+    }
+  }
+
+  .stepName {
+    text-align: left;
+    padding-left: $padding-default;
+
+    .el-icon {
+      cursor: pointer;
+    }
+  }
+
+  span {
     text-align: center;
+    padding: $padding-more/2 0;
+  }
+
+  &:nth-child(odd) {
+    background-color: $color-bg-table-alternate;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background-color: $color-bg-table-hover;
+  }
 }
 </style>
 
-<script>
-import BenchmarkClient from '@/util/BenchmarkClient';
-
-export default {
-  name: 'StepLine',
-  filters: {
-    fixedMs(num) {
-      return `${Number(num / 1000).toFixed(3)} ms`;
-    },
-  },
-  props: {
-    spans: Array,
-    padding: String,
-  },
-  data() {
-    return {
-      expand: false,
-      children: null,
-      stepNames: null,
-      styleObject: {
-        'padding-left': `${this.padding}px`,
-        'text-align': 'left',
-        'font-style': 'italic',
-      },
-    };
-  },
-  computed: {
-    min() {
-      let min = this.spans[0];
-      this.spans.forEach((span) => {
-        if (span.duration < min.duration) {
-          min = span;
-        }
-      });
-      return min;
-    },
-    max() {
-      let max = this.spans[0];
-      this.spans.forEach((span) => {
-        if (span.duration > max.duration) {
-          max = span;
-        }
-      });
-      return max;
-    },
-    med() {
-      const durations = this.spans.map(span => span.duration);
-      durations.sort((a, b) => a - b);
-      const middle = (durations.length + 1) / 2;
-      const isEven = durations.length % 2 === 0;
-      return isEven
-        ? (durations[middle - 1.5] + durations[middle - 0.5]) / 2
-        : durations[middle - 1];
-    },
-    reps() {
-      return this.spans.length;
-    },
-  },
-  methods: {
-    expandLine() {
-      this.expand = !this.expand;
-      if (!this.expand) return;
-      this.fetchChildrenSpans();
-    },
-    fetchChildrenSpans() {
-      BenchmarkClient.getSpans(
-        `{ childrenSpans( parentId: [${
-          this.spans.map(span => `"${span.id}"`).join()
-        }]){ id name duration parentId timestamp tags { childNumber }} }`,
-      ).then((resp) => {
-        this.children = this.attachRepetition(resp.data.childrenSpans);
-        this.stepNames = sortStepNames(this.children);
-      });
-    },
-    attachRepetition(childrenSpans) {
-      // Children spans don't have the tags repetition and repetitions, so we attach them here taking the values from parent
-      return childrenSpans.map((span) => {
-        const parentSpan = this.spans.filter(parent => parent.id === span.parentId)[0];
-        return Object.assign({ repetition: parentSpan.repetition, repetitions: parentSpan.repetitions }, span);
-      });
-    },
-    filterSpansByStep(stepName) {
-      return this.children.filter(child => child.name === stepName);
-    },
-  },
-};
-
-function sortStepNames(children) {
-  const { parentId } = children[0];
-  return children
-    .filter(c => c.parentId === parentId)
-    .sort((a, b) => a.timestamp > b.timestamp)
-    .map(child => child.name);
-}
-</script>

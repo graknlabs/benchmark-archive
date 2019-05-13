@@ -50,13 +50,13 @@ export default {
 @import "./src/assets/css/variables";
 
 .el-aside {
-  background-color: $color-default-bg;
+  background-color: $color-bg-default;
   width: $width-sideNav !important;
 }
 
 .logo {
   box-sizing: border-box;
-  border-bottom: 1px solid $color-light-border;
+  border-bottom: 1px solid $color-border-light;
   display: flex;
   align-items: center;
 
