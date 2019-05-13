@@ -1,5 +1,5 @@
 /* eslint-disable no-plusplus */
-function getLegenedsData(queries) {
+function getLegendsData(queries) {
   let matchQuery = 0;
   let matchInsertQuery = 0;
   let insertQuery = 0;
@@ -85,6 +85,6 @@ function getChartData(queries, querySpans, executions, selectedScale) {
 }
 
 export default {
-  getLegenedsData,
+  getLegendsData,
   getChartData,
 };

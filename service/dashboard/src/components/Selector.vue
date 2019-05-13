@@ -1,7 +1,7 @@
 <template>
   <el-dropdown>
     <span class="el-dropdown-link">
-      {{ title }}
+      <span>{{ title }}</span>
       <span v-if="currentItem">: </span>
       <span>{{ currentItem }}</span>
       <i class="el-icon-arrow-down el-icon--right" />
@@ -15,7 +15,7 @@
         :key="item.value"
         @click.native="updateItem(item)"
       >
-        {{ item.text }}
+        <span>{{ item.text }}</span>
       </el-dropdown-item>
     </el-dropdown-menu>
   </el-dropdown>

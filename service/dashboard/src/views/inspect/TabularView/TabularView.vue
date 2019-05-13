@@ -80,6 +80,7 @@ export default {
     filterQuerySpans(graphType) {
       const querySpans = [];
       const graphsOfInterest = this.filterGraphs(graphType);
+
       graphsOfInterest.forEach((graph) => {
         this.querySpans
           .filter(query => query.parentId === graph.id)

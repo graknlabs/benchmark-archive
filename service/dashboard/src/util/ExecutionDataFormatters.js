@@ -9,20 +9,14 @@ function flattenGraphs(graphs) {
 }
 
 function flattenQuerySpans(querySpanGroups) {
-  const flattenedSpans = [];
-  querySpanGroups.forEach((querySpanGroup) => {
-    querySpanGroup.forEach((querySpan) => {
-      flattenedSpans.push({
-        id: querySpan.id,
-        parentId: querySpan.parentId,
-        name: querySpan.name,
-        value: querySpan.tags.query,
-        rep: querySpan.tags.repetition,
-        duration: querySpan.duration,
-      });
-    });
-  });
-  return flattenedSpans;
+  return querySpanGroups.flat().map(querySpan => ({
+    id: querySpan.id,
+    parentId: querySpan.parentId,
+    name: querySpan.name,
+    value: querySpan.tags.query,
+    rep: querySpan.tags.repetition,
+    duration: querySpan.duration,
+  }));
 }
 
 function flattenStepSpans(stepSpans, querySpans) {

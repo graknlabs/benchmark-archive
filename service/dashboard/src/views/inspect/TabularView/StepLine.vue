@@ -5,8 +5,11 @@
       :style="'padding-left:' + padding + 'px;'"
       @click="toggleChildSteps()"
     >
-      <span class="stepName" style="width: 300px;">
-        <i class="el-icon el-icon-arrow-right"/>
+      <span
+        class="stepName"
+        style="width: 300px;"
+      >
+        <i class="el-icon el-icon-arrow-right" />
         {{ step | truncate(100) }}
       </span>
 
@@ -25,7 +28,7 @@
         v-for="childStepName in childStepNames"
         :key="childStepName"
         :step="childStepName"
-        :stepSpans="filterChildStepSpans(childStepName)"
+        :step-spans="filterChildStepSpans(childStepName)"
         :padding="padding+10"
       />
     </div>
@@ -33,13 +36,14 @@
 </template>
 
 <script>
-import BenchmarkClient from "@/util/BenchmarkClient";
-import EDF from "@/util/ExecutionDataFormatters";
+import BenchmarkClient from '@/util/BenchmarkClient';
+import EDF from '@/util/ExecutionDataFormatters';
+import ordinal from 'ordinal';
+
 const { flattenStepSpans, attachRepsToChildSpans } = EDF;
-import ordinal from "ordinal";
 
 export default {
-  name: "StepLine",
+  name: 'StepLine',
 
   filters: {
     fixedMs(num) {
@@ -48,24 +52,24 @@ export default {
 
     ordinalise(num) {
       return ordinal(num);
-    }
+    },
   },
 
   props: {
     stepSpans: {
       type: Array,
-      required: true
+      required: true,
     },
 
     step: {
       type: String,
-      required: true
+      required: true,
     },
 
     padding: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
@@ -94,15 +98,15 @@ export default {
       const lowMiddleIndex = Math.floor((this.sortedSpans.length - 1) / 2);
       const highMiddleIndex = Math.ceil((this.sortedSpans.length - 1) / 2);
       return (
-        (this.sortedSpans[lowMiddleIndex].duration +
-          this.sortedSpans[highMiddleIndex].duration) /
-        2
+        (this.sortedSpans[lowMiddleIndex].duration
+          + this.sortedSpans[highMiddleIndex].duration)
+        / 2
       );
     },
 
     reps() {
       return this.stepSpans.length;
-    }
+    },
   },
 
   methods: {
@@ -116,7 +120,7 @@ export default {
       const childStepSpansResp = await BenchmarkClient.getSpans(
         `{ childrenSpans( parentId: [${this.stepSpans
           .map(stepSpan => `"${stepSpan.id}"`)
-          .join()}]){ id name duration parentId timestamp tags { childNumber }} }`
+          .join()}]){ id name duration parentId timestamp tags { childNumber }} }`,
       );
 
       let childStepSpans = childStepSpansResp.data.childrenSpans;
@@ -124,7 +128,7 @@ export default {
 
       this.childStepSpans = attachRepsToChildSpans(
         childStepSpans,
-        this.stepSpans
+        this.stepSpans,
       );
 
       if (this.childStepSpans.length) {
@@ -139,10 +143,10 @@ export default {
 
     filterChildStepSpans(childStepName) {
       return this.childStepSpans.filter(
-        childStepSpan => childStepSpan.name === childStepName
+        childStepSpan => childStepSpan.name === childStepName,
       );
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -185,4 +189,3 @@ export default {
   }
 }
 </style>
-

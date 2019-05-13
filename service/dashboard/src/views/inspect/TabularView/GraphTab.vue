@@ -1,5 +1,6 @@
 <template>
-  <div v-if="graphs && querySpans">
+  <!-- TODO: check on why and how this condition is required -->
+  <div>
     <el-row
       type="flex"
       justify="end"

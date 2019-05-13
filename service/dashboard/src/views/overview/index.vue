@@ -1,8 +1,5 @@
 <template>
-  <el-container
-    v-loading="loading"
-    class="is-vertical overview-section"
-  >
+  <el-container class="is-vertical overview-section">
     <el-row
       v-for="graphType in graphTypes"
       :key="graphType"
@@ -12,7 +9,6 @@
         :graph-type="graphType"
         :executions="completedExecutions"
         :graphs="filterGraphs(graphType)"
-        :query-spans="filterQueries(graphType)"
       />
     </el-row>
   </el-container>
@@ -24,7 +20,7 @@ import CommitsChart from './ChartCommits.vue';
 import ExecutionDataFormatters from '@/util/ExecutionDataFormatters';
 
 export default {
-  name: 'OverviewPage',
+  name: 'Overview',
 
   components: { CommitsChart },
 
@@ -37,21 +33,17 @@ export default {
       graphTypes: [],
 
       graphs: null,
-
-      queries: null,
-
-      loading: true,
     };
   },
 
   async created() {
-    await this.fetchData();
+    await this.fetchGraphs();
     this.graphTypes = [...new Set(this.graphs.map(graph => graph.type))];
-    this.loading = false;
   },
 
   methods: {
-    async fetchData() {
+    // fetch the last n executions for which, we'd like to populate the charts
+    async fetchGraphs() {
       this.completedExecutions = (await BenchmarkClient.getLatestCompletedExecutions(
         this.numberOfCompletedExecutions,
       )).reverse();
@@ -59,35 +51,12 @@ export default {
       const graphs = await BenchmarkClient.getExecutionsSpans(
         this.completedExecutions,
       );
-      this.graphs = ExecutionDataFormatters.flattenGraphs(graphs);
 
-      const queriesResponse = await Promise.all(
-        this.graphs.map(graph => BenchmarkClient.getSpans(
-          `{ querySpans( parentId: "${
-            graph.id
-          }" limit: 500){ id parentId name duration tags { query type repetition repetitions }} }`,
-        )),
-      );
-      const queries = queriesResponse.map(resp => resp.data.querySpans);
-      this.queries = ExecutionDataFormatters.flattenQuerySpans(queries);
+      this.graphs = ExecutionDataFormatters.flattenGraphs(graphs);
     },
 
     filterGraphs(graphType) {
       return this.graphs.filter(graph => graph.type === graphType);
-    },
-
-    filterQueries(graphType) {
-      const queries = [];
-      const graphsOfInterest = this.filterGraphs(graphType);
-      graphsOfInterest.forEach((graph) => {
-        this.queries
-          .filter(query => query.parentId === graph.id)
-          .forEach((query) => {
-            queries.push(query);
-          });
-      });
-
-      return queries;
     },
   },
 };

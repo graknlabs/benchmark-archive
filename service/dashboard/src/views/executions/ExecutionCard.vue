@@ -145,7 +145,6 @@ export default {
         () => {
           BenchmarkClient.deleteExecution(execution)
             .then(() => {
-              console.log('execution deleted.');
               this.$message({
                 showClose: true,
                 message: 'The execution was deleted successfully.',
@@ -153,7 +152,6 @@ export default {
               });
             })
             .catch((e) => {
-              console.log(e);
               this.$message({
                 showClose: true,
                 message:
@@ -170,7 +168,6 @@ export default {
         () => {
           BenchmarkClient.stopExecution(execution)
             .then(() => {
-              console.log('execution stopped.');
               this.$message({
                 showClose: true,
                 message: 'The execution was stopped successfully.',
@@ -178,7 +175,6 @@ export default {
               });
             })
             .catch((e) => {
-              console.log(e);
               this.$message({
                 showClose: true,
                 message:
