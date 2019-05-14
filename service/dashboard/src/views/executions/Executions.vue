@@ -48,8 +48,8 @@
       <sortby-selector
         title="Sort by"
         :items="columns"
-        :default-item="{ text: 'Started At', value: 'executionStartedAt'}"
-        @item-selected="onSortbySelection"
+        :default-item="{ text: 'Initialised At', value: 'executionInitialisedAt'}"
+        @item-selected="sortExecutions"
       />
       <el-radio-group
         v-model="sortType"
@@ -94,7 +94,7 @@ export default {
 
       executions: [],
 
-      sortType: 'Asc',
+      sortType: 'Desc',
 
       columns: [
         {
@@ -125,19 +125,19 @@ export default {
     };
   },
 
-  created() {
-    BenchmarkClient.getExecutions(
+  async created() {
+    const executionsResp = await BenchmarkClient.getExecutions(
       `{ executions { id ${
         this.columns.map(item => item.value).join(' ')
       }} }`,
-    ).then((execs) => {
-      this.executions = execs.data.executions;
-      this.loading = false;
-    });
+    );
+    this.executions = executionsResp.data.executions;
+    this.sortExecutions('executionInitialisedAt');
+    this.loading = false;
   },
 
   methods: {
-    onSortbySelection(column) {
+    sortExecutions(column) {
       const { sortType } = this;
       this.executions.sort((a, b) => {
         const x = a[column];
