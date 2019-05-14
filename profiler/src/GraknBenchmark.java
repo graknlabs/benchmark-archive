@@ -37,21 +37,29 @@ import grakn.benchmark.profiler.util.ElasticSearchManager;
 import grakn.benchmark.common.timer.BenchmarkingTimer;
 import grakn.benchmark.profiler.util.TracingGraknClient;
 import grakn.client.GraknClient;
+import grakn.core.concept.answer.ConceptMap;
 import grakn.core.concept.type.AttributeType;
+import graql.lang.query.GraqlInsert;
 import graql.lang.query.GraqlQuery;
 import org.apache.commons.cli.CommandLine;
 import org.apache.ignite.Ignite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
+import static grakn.benchmark.profiler.util.ConcurrentDataLoader.concurrentDataImport;
 import static graql.lang.Graql.parseList;
 
 /**
@@ -142,7 +150,14 @@ public class GraknBenchmark {
             }
 
 
-        } else if (config.loadSchema()) {  // USECASE:  Load Schema + Profile running queries from config file
+        } else if (config.loadSchema() && config.staticDataImport()) {  // USECASE:  Load Schema + static graph, then profile
+
+        } else if (config.loadSchema()) { // USECASE: Load schema, then run queries without preloading any data
+            /*
+            TWO uses cases:
+            1. Load schema + static graph, then profile
+            2. Load schema, then profile without preloading data (graph may grow while being profiled)
+             */
 
             GraknClient tracingClient = TracingGraknClient.get(config.graknUri());
             List<String> keyspaces;
@@ -152,6 +167,12 @@ public class GraknBenchmark {
             } else {
                 traceKeyspaceCreation(tracingClient);
                 keyspaces = Collections.singletonList(config.getKeyspace());
+            }
+
+            if (config.staticDataImport()) {
+                // import the static data into the keyspaces
+                // tracing not properly enabled right now
+                concurrentDataImport(tracingClient, keyspaces, config.staticDataImportQueries(),   8);
             }
 
             ThreadedProfiler threadedProfiler = new ThreadedProfiler(tracingClient, keyspaces, config);
@@ -237,6 +258,7 @@ public class GraknBenchmark {
             tx.commit();
         }
     }
+
 
 
     /**
