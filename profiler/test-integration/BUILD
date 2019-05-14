@@ -1,6 +1,6 @@
 java_test(
     name = "profiler-bootup-test-integration",
-    test_class = "grakn.benchmark.profiler.ProfilerBootupTestIntegration",
+    test_class = "grakn.benchmark.profiler.ProfilerBootupIT",
     srcs = ["ProfilerBootupIT.java"],
     deps = [
         "//profiler/src:benchmark-profiler",
