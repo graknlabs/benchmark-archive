@@ -1,0 +1,16 @@
+queries:
+
+  # transitive closure
+  - "match (Q-from: $x, Q-to: $y) isa Q; get; limit 5050;"
+
+  # exhaustive iterative transitive closure
+  - "match (Q-from: $x, Q-to: $y) isa Q; get;"
+
+  # transitive closure with a bound
+  - "match (Q-from: $x, Q-to: $y) isa Q;$x has index 'a'; get;"
+
+  # limited transitive closure
+  - "match (Q-from: $x, Q-to: $y) isa Q; get; limit 110;"
+
+
+

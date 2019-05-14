@@ -54,6 +54,12 @@ assemble_zip(
         "//common/configuration/scenario:complex/config_write.yml": "scenario/complex/config_write.yml",
         "//common/configuration/scenario:complex/schema.gql" : "scenario/complex/schema.gql",
 
+        "//common/configuration/scenario:reasoning/queries_read.yml": "scenario/reasoning/queries_read.yml",
+        "//common/configuration/scenario:reasoning/transitivity_data.gql": "scenario/reasoning/transitivity_data.gql",
+        "//common/configuration/scenario:reasoning/config_read.yml": "scenario/reasoning/config_read.yml",
+        "//common/configuration/scenario:reasoning/transitivity_schema.gql": "scenario/reasoning/transitivity_schema.gql",
+
+
         # External dependencies: Elasticsearch and Zipkin
         "//profiler:setup.sh": "external-dependencies/setup.sh",
         "@external-dependencies-zipkin//file": "external-dependencies/zipkin.jar",

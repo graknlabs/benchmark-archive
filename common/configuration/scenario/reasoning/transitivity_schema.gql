@@ -1,0 +1,19 @@
+define
+
+baseEntity sub entity,
+	has index,
+    plays Q-from,
+    plays Q-to;
+startEntity sub baseEntity;
+bulkEntity sub baseEntity;
+
+Q sub relation, relates Q-from, relates Q-to;
+
+index sub attribute, datatype string;
+
+transitivity sub rule,
+when {
+(Q-from: $x, Q-to: $z) isa Q;
+(Q-from: $z, Q-to: $y) isa Q;},
+then {
+(Q-from: $x, Q-to: $y) isa Q;};

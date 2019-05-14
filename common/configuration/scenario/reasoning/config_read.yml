@@ -1,0 +1,13 @@
+name: "Transitive Closure - Read"
+description: "Simple chain of transitive relations"
+schema: "transitivity_schema.gql"
+dataImportFile: "transitivity_data.gql"
+repeatsPerQuery: 3
+
+queries: "queries_read.yml"
+deleteInsertedConcepts: false
+traceDeleteInsertedConcepts: false
+
+concurrency:
+  clients: 1
+  uniqueKeyspaces: false

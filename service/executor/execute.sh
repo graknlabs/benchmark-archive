@@ -81,6 +81,7 @@ curl --header "Content-Type: application/json" \
 ./benchmark --config ./scenario/social_network/social_network_config_read.yml    --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200
 ./benchmark --config ./scenario/biochemical_network/biochemical_config_read.yml  --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200
 ./benchmark --config ./scenario/complex/config_read.yml                          --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200 --keyspace generic_uniform_network_read
+./benchmark --config ./scenario/reasoning/config_read.yml                        --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200 --load-schema --static-data-import
 
 # TODO report log files
 
