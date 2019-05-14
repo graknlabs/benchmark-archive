@@ -39,7 +39,7 @@ import static graql.lang.Graql.type;
 import static graql.lang.Graql.var;
 
 public class ProfilerBootupIT {
-    private final static Path WEB_CONTENT_DATA_GEN_CONFIG_PATH = Paths.get("common/configuration/test/resources/web_content/web_content_config_data_gen.yml");
+    private final static Path WEB_CONTENT_DATA_GEN_CONFIG_PATH = Paths.get("profiler/test-integration/resources/web_content/web_content_config_data_gen.yml");
 
     @Rule
     public final ExpectedException expectedException = ExpectedException.none();
