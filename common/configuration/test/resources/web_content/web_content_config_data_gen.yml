@@ -1,4 +1,4 @@
-name: ""
+name: "test"
 description: ""
 dataGenerator: "web_content"
 schema: "web_content_schema.gql"

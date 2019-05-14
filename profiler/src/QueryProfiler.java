@@ -52,6 +52,7 @@ class QueryProfiler implements Runnable {
     private String configName;
     private String description;
     private String dataGenerator;
+    private String dataImport;
     private Tracer tracer;
     private final List<GraqlQuery> queries;
     private final int repetitions;
@@ -67,7 +68,8 @@ class QueryProfiler implements Runnable {
         executionName = config.executionName();
         deleteInsertedConcepts = config.deleteInsertedConcepts();
         traceDeleteInsertedConcepts = config.traceDeleteInsertedConcepts();
-        dataGenerator = config.dataGenerator();
+        dataGenerator = config.generateData() ? config.dataGenerator() : null;
+        dataImport = config.staticDataImport() ? config.staticDataImportFilePath() : null;
         this.concurrentId = concurrentId;
         this.tracer = tracer;
         this.queries = queries;
@@ -79,14 +81,16 @@ class QueryProfiler implements Runnable {
     @Override
     public void run() {
         try {
+            LOG.info("running query profiler");
             Span concurrentExecutionSpan = tracer.newTrace().name("concurrent-execution");
             concurrentExecutionSpan.tag("configurationName", configName);
             concurrentExecutionSpan.tag("description", description);
             concurrentExecutionSpan.tag("executionName", executionName);
             concurrentExecutionSpan.tag("concurrentClient", Integer.toString(concurrentId));
-            concurrentExecutionSpan.tag("graphType", dataGenerator);
+            concurrentExecutionSpan.tag("graphType", dataGenerator != null? dataGenerator : dataImport);
             concurrentExecutionSpan.tag("queryRepetitions", Integer.toString(repetitions));
             concurrentExecutionSpan.tag("graphScale", Integer.toString(numConcepts));
+            concurrentExecutionSpan.tag("configurationName", configName);
             concurrentExecutionSpan.start();
 
             System.out.println("Executing queries");
@@ -169,6 +173,7 @@ class QueryProfiler implements Runnable {
                 }
             }
 
+            LOG.info("finished?");
             concurrentExecutionSpan.finish();
             // give zipkin reporter time to finish transmitting spans/close spans cleanly
             Thread.sleep(1000);

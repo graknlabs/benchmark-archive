@@ -129,6 +129,7 @@ public class BenchmarkConfiguration {
     }
 
     public boolean staticDataImport() { return staticDataImport; }
+    public String staticDataImportFilePath() { return benchmarkConfigFile.getDataImportFilePath(); }
     public List<GraqlInsert> staticDataImportQueries() { return dataImportQueries; }
 
     public int numQueryRepetitions() {
@@ -222,7 +223,7 @@ public class BenchmarkConfiguration {
      * Parse Graql file of static queries to load
      */
     private List<GraqlInsert> parseDataImportQueries(Path configFilePath) {
-        Path dataImportFilePath = configFilePath.getParent().resolve(benchmarkConfigFile.getDataImportFilePath());
+        Path dataImportFilePath = configFilePath.getParent().resolve(staticDataImportFilePath());
         try {
             List<String> strings = Files.readAllLines(dataImportFilePath, StandardCharsets.UTF_8);
             String joinedInsertQueries = String.join("\n", strings);
