@@ -173,7 +173,6 @@ class QueryProfiler implements Runnable {
                 }
             }
 
-            LOG.info("finished?");
             concurrentExecutionSpan.finish();
             // give zipkin reporter time to finish transmitting spans/close spans cleanly
             Thread.sleep(1000);
