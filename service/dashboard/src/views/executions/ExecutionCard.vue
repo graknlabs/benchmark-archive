@@ -134,8 +134,8 @@ export default {
   },
 
   computed: {
-    isInProgress(status) {
-      return status === 'INITIALISING' || status === 'RUNNING';
+    isInProgress() {
+      return (this.execution.status === 'INITIALISING' || this.execution.status === 'RUNNING');
     },
   },
 
