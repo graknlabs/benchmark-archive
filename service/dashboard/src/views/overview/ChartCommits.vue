@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import BenchmarkClient from '@/util/BenchmarkClient';
+import BenchmarkClient from "@/util/BenchmarkClient";
 import Util from "./QueriesUtil";
 const { getLegendsData, getChartData } = Util;
 import EChart from "vue-echarts";
@@ -54,7 +54,7 @@ export default {
     graphs: {
       type: Array,
       required: true
-    },
+    }
   },
 
   data() {
@@ -71,7 +71,7 @@ export default {
 
       querySpans: [],
 
-      loading: true,
+      loading: true
     };
   },
 
@@ -168,66 +168,67 @@ export default {
         }
       }));
 
-      const xData = chartData[0].times.map(x => ({
-        value: x.commit.substring(0, 15),
-        commit: x.commit
-      }));
+      if (chartData.length) {
+        const xData = chartData[0].times.map(x => ({
+          value: x.commit.substring(0, 15),
+          commit: x.commit
+        }));
 
-      this.chartOoptions = {
-        tooltip: {
-          show: true,
-          trigger: "item"
-        },
-        legend: {
-          type: "scroll",
-          orient: "horizontal",
-          left: 10,
-          bottom: 0,
-          data: Object.values(this.legendsData).sort(),
+        this.chartOoptions = {
           tooltip: {
             show: true,
-            showDelay: 500,
-            triggerOn: "mousemove",
-            formatter: args =>
-              Object.keys(this.legendsData).filter(
-                x => this.legendsData[x] === args.name
-              )
-          }
-        },
-        calculable: true,
-        xAxis: [
-          {
-            type: "category",
-            boundaryGap: false,
-            data: xData,
-            triggerEvent: true
-          }
-        ],
-        yAxis: [
-          {
-            type: "value",
-            axisLabel: {
-              formatter: "{value} ms"
+            trigger: "item"
+          },
+          legend: {
+            type: "scroll",
+            orient: "horizontal",
+            left: 10,
+            bottom: 0,
+            data: Object.values(this.legendsData).sort(),
+            tooltip: {
+              show: true,
+              showDelay: 500,
+              triggerOn: "mousemove",
+              formatter: args =>
+                Object.keys(this.legendsData).filter(
+                  x => this.legendsData[x] === args.name
+                )
             }
+          },
+          calculable: true,
+          xAxis: [
+            {
+              type: "category",
+              boundaryGap: false,
+              data: xData,
+              triggerEvent: true
+            }
+          ],
+          yAxis: [
+            {
+              type: "value",
+              axisLabel: {
+                formatter: "{value} ms"
+              }
+            }
+          ],
+          series,
+          dataZoom: [
+            {
+              type: "inside",
+              zoomOnMouseWheel: "ctrl",
+              filterMode: "none",
+              orient: "vertical"
+            }
+          ],
+          grid: {
+            left: 70,
+            top: 20,
+            right: 70,
+            bottom: 70
           }
-        ],
-        series,
-        dataZoom: [
-          {
-            type: "inside",
-            zoomOnMouseWheel: "ctrl",
-            filterMode: "none",
-            orient: "vertical"
-          }
-        ],
-        grid: {
-          left: 70,
-          top: 20,
-          right: 70,
-          bottom: 70
-        }
-      };
-
+        };
+      }
       this.loading = false;
     }
   }
