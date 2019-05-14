@@ -1,0 +1,17 @@
+<configuration debug="false">
+    <!--Configure the standard out appender used to print the Grakn logo-->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO"/>
+
+    <logger name="grakn.benchmark" level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="org.apache.ignite" level="ERROR">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+</configuration>

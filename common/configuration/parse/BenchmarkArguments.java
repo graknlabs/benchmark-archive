@@ -36,6 +36,7 @@ public class BenchmarkArguments {
     public final static String KEYSPACE_ARGUMENT = "keyspace";
     public final static String NO_DATA_GENERATION_ARGUMENT = "no-data-generation";
     public final static String LOAD_SCHEMA_ARGUMENT = "load-schema";
+    public final static String STATIC_DATA_IMPORT_ARGUMENT = "static-data-import";
     public final static String EXECUTION_NAME_ARGUMENT = "execution-name";
     public final static String ELASTIC_URI = "elastic-uri";
 
@@ -92,6 +93,14 @@ public class BenchmarkArguments {
                 .desc("Load a schema, even if data generation is disabled")
                 .type(Boolean.class)
                 .build();
+
+        Option staticDataImport = Option.builder("lq")
+                .longOpt(STATIC_DATA_IMPORT_ARGUMENT)
+                .required(false)
+                .desc("Load a set of static queries to import and create a graph (as opposed to graph generation)")
+                .type(Boolean.class)
+                .build();
+
         Option elasticsearchAddressOption = Option.builder("e")
                 .longOpt(ELASTIC_URI)
                 .hasArg(true)
@@ -105,6 +114,7 @@ public class BenchmarkArguments {
         options.addOption(keyspaceOption);
         options.addOption(noDataGenerationOption);
         options.addOption(loadSchema);
+        options.addOption(staticDataImport);
         options.addOption(executionNameOption);
         options.addOption(elasticsearchAddressOption);
         return options;

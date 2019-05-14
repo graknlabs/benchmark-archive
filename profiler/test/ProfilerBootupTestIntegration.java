@@ -62,20 +62,6 @@ public class ProfilerBootupTestIntegration {
         session.close();
     }
 
-    @Test
-    public void whenProvidingAbsolutePathToExistingConfig_benchmarkShouldStart() {
-        String[] args = new String[]{"--config", WEB_CONTENT_CONFIG_PATH.toAbsolutePath().toString(), "--execution-name", "grakn-benchmark-test"};
-        CommandLine commandLine = BenchmarkArguments.parse(args);
-        GraknBenchmark graknBenchmark = new GraknBenchmark(commandLine);
-    }
-
-    @Test
-    public void whenProvidingRelativePathToExistingConfig_benchmarkShouldStart() {
-        String[] args = new String[]{"--config", "web_content_config_test.yml", "--execution-name", "grakn-benchmark-test"};
-        System.setProperty("working.dir", WEB_CONTENT_CONFIG_PATH.getParent().toString());
-        CommandLine commandLine = BenchmarkArguments.parse(args);
-        GraknBenchmark graknBenchmark = new GraknBenchmark(commandLine);
-    }
 
     @Test
     public void whenSchemaExistsInKeyspace_throwException() {

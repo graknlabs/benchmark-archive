@@ -24,6 +24,9 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import grakn.benchmark.common.configuration.parse.BenchmarkArguments;
 import grakn.benchmark.common.configuration.parse.BenchmarkConfigurationFile;
 import grakn.benchmark.common.configuration.parse.QueriesConfigurationFile;
+import graql.lang.Graql;
+import graql.lang.query.GraqlInsert;
+import graql.lang.query.GraqlQuery;
 import org.apache.commons.cli.CommandLine;
 
 import java.io.IOException;
@@ -32,6 +35,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class parses multiple yaml files into object and wraps them
@@ -45,8 +49,10 @@ public class BenchmarkConfiguration {
 
     private final boolean generateData;
     private final boolean loadSchema;
+    private final boolean staticDataImport;
     private List<String> queries;
     private List<String> graqlSchema;
+    private List<GraqlInsert> dataImportQueries;
     private BenchmarkConfigurationFile benchmarkConfigFile;
     private String keyspace;
     private String graknUri;
@@ -57,25 +63,33 @@ public class BenchmarkConfiguration {
 
         this.executionName = arguments.getOptionValue(BenchmarkArguments.EXECUTION_NAME_ARGUMENT);
 
-        // Parse yaml file with generic configurations
-        this.benchmarkConfigFile = parseConfigurationFile(configFilePath);
-
-        // Parse yaml file containing all the queries for profiler (QueryExecutor)
-        this.queries = parseQueriesFile(configFilePath).getQueries();
-
-        // Parse yaml file containing Graql statements that define a schema, used by DataGenerator
-        this.graqlSchema = parseGraqlSchema(configFilePath);
-
-        // use given keyspace string if exists, otherwise use yaml file `name` tag
-        this.keyspace = arguments.hasOption(BenchmarkArguments.KEYSPACE_ARGUMENT) ? arguments.getOptionValue(BenchmarkArguments.KEYSPACE_ARGUMENT) : this.dataGenerator();
-
-        this.graknUri = (arguments.hasOption(BenchmarkArguments.GRAKN_URI)) ? arguments.getOptionValue(BenchmarkArguments.GRAKN_URI) : DEFAULT_GRAKN_URI;
-
         // If --no-data-generation is specified, don't generate any data (work with existing keyspace)
         this.generateData = !(arguments.hasOption(BenchmarkArguments.NO_DATA_GENERATION_ARGUMENT));
 
+        // Parse yaml file with generic configurations (mandatory)
+        this.benchmarkConfigFile = parseConfigurationFile(configFilePath);
+
+        // Parse yaml file containing all the queries for profiler (QueryExecutor) (mandatory)
+        this.queries = parseQueriesFile(configFilePath).getQueries();
+
         // If --load-schema is specified, load a schema even if data generation is disabled
         this.loadSchema = arguments.hasOption(BenchmarkArguments.LOAD_SCHEMA_ARGUMENT);
+        // Parse yaml file containing Graql statements that define a schema, used by DataGenerator (optional)
+        if (this.generateData || this.loadSchema) {
+            this.graqlSchema = parseGraqlSchema(configFilePath);
+        }
+
+        // use given keyspace string if exists, otherwise use yaml file `name` tag (optional with default)
+        this.keyspace = arguments.hasOption(BenchmarkArguments.KEYSPACE_ARGUMENT) ? arguments.getOptionValue(BenchmarkArguments.KEYSPACE_ARGUMENT) : this.dataGenerator();
+
+        // Grakn URI (optional with a default)
+        this.graknUri = (arguments.hasOption(BenchmarkArguments.GRAKN_URI)) ? arguments.getOptionValue(BenchmarkArguments.GRAKN_URI) : DEFAULT_GRAKN_URI;
+
+        // if --load-static is specified, load a static list of queries indicated in the config file
+        this.staticDataImport = arguments.hasOption(BenchmarkArguments.STATIC_DATA_IMPORT_ARGUMENT);
+        if (staticDataImport) {
+            dataImportQueries = parseDataImportQueries(configFilePath);
+        }
     }
 
     public String graknUri() {
@@ -97,10 +111,6 @@ public class BenchmarkConfiguration {
         return keyspace;
     }
 
-    public List<String> getGraqlSchema() {
-        return graqlSchema;
-    }
-
     public List<String> getQueries() {
         return queries;
     }
@@ -114,6 +124,12 @@ public class BenchmarkConfiguration {
     }
 
     public boolean loadSchema() { return loadSchema; }
+    public List<String> getGraqlSchema() {
+        return graqlSchema;
+    }
+
+    public boolean staticDataImport() { return staticDataImport; }
+    public List<GraqlInsert> staticDataImportQueries() { return dataImportQueries; }
 
     public int numQueryRepetitions() {
         return benchmarkConfigFile.getRepeatsPerQuery();
@@ -179,7 +195,7 @@ public class BenchmarkConfiguration {
      */
     private QueriesConfigurationFile parseQueriesFile(Path configFilePath) {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        Path queryFilePath = configFilePath.getParent().resolve(benchmarkConfigFile.getQueriesFilePath());
+        Path queryFilePath = configFilePath.getParent().resolve(benchmarkConfigFile.getQueriesFileRelativePath());
         try {
             return mapper.readValue(queryFilePath.toFile(), QueriesConfigurationFile.class);
         } catch (IOException e) {
@@ -194,11 +210,28 @@ public class BenchmarkConfiguration {
      * @return List of string representing Graql schema declaration statements
      */
     private List<String> parseGraqlSchema(Path configFilePath) {
-        Path schemaFilePath = configFilePath.getParent().resolve(benchmarkConfigFile.getRelativeSchemaFile());
+        Path schemaFilePath = configFilePath.getParent().resolve(benchmarkConfigFile.getSchemaRelativePath());
         try {
             return Files.readAllLines(schemaFilePath, StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new ConfigurationException("Exception parsing Graql schema file", e);
+        }
+    }
+
+    /**
+     * Parse Graql file of static queries to load
+     */
+    private List<GraqlInsert> parseDataImportQueries(Path configFilePath) {
+        Path dataImportFilePath = configFilePath.getParent().resolve(benchmarkConfigFile.getDataImportFilePath());
+        try {
+            List<String> strings = Files.readAllLines(dataImportFilePath, StandardCharsets.UTF_8);
+            String joinedInsertQueries = String.join("\n", strings);
+            List<GraqlInsert> insertQueries = Graql.parseList(joinedInsertQueries)
+                    .map(GraqlQuery::asInsert)
+                    .collect(Collectors.toList());
+            return insertQueries;
+        } catch (IOException e ){
+            throw new ConfigurationException("Exception parsing static insert Graql queries file", e);
         }
     }
 }

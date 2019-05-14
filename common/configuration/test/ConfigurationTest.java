@@ -19,18 +19,21 @@
 package grakn.benchmark.common.configuration;
 
 import grakn.benchmark.common.configuration.parse.BenchmarkArguments;
-import grakn.benchmark.profiler.GraknBenchmark;
 import org.apache.commons.cli.CommandLine;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 
 /**
  *
  */
 public class ConfigurationTest {
+    private final static Path WEB_CONTENT_DATA_GEN_CONFIG_PATH = Paths.get("common/configuration/test/resources/web_content/web_content_config_data_gen.yml");
+    private final static Path WEB_CONTENT_DATA_IMPORT_CONFIG_PATH = Paths.get("common/configuration/test/resources/web_content/web_content_config_data_import.yml");
 
     @Rule
     public final ExpectedException expectedException = ExpectedException.none();
@@ -43,21 +46,46 @@ public class ConfigurationTest {
         String[] args = new String[]{"--config", "nonexistingpath", "--execution-name", "grakn-benchmark-test"};
         CommandLine commandLine = BenchmarkArguments.parse(args);
         expectedException.expect(ConfigurationException.class);
-        expectedException.expectMessage("The provided config file [nonexistingpath] does not exist");
-        GraknBenchmark graknBenchmark = new GraknBenchmark(commandLine);
+        expectedException.expectMessage("The provided config file");
+        expectedException.expectMessage("nonexistingpath");
+        expectedException.expectMessage("does not exist");
+        BenchmarkConfiguration configuration = new BenchmarkConfiguration(commandLine);
     }
 
     @Test
     public void whenConfigurationArgumentNotProvided_throwException() {
         expectedException.expect(ConfigurationException.class);
         expectedException.expectMessage("Missing required option: c");
-        GraknBenchmark graknBenchmark = new GraknBenchmark(BenchmarkArguments.parse(new String[] {"--execution-name", "grakn-benchmark-test"}));
+        BenchmarkArguments.parse(new String[]{"--execution-name", "grakn-benchmark-test"});
     }
 
     @Test
     public void whenExecutionNameArgumentNotProvided_throwException() {
         expectedException.expect(ConfigurationException.class);
         expectedException.expectMessage("Missing required option: n");
-        GraknBenchmark graknBenchmark = new GraknBenchmark(BenchmarkArguments.parse(new String[] {"--config", "web_content_config_test.yml"}));
+        BenchmarkArguments.parse(new String[]{"--config", "web_content_config_data_gen.yml"});
     }
+
+    @Test
+    public void whenProvidingValidStaticQueriesFile_noExceptionThrown() {
+        String[] args = new String[]{"--config", WEB_CONTENT_DATA_IMPORT_CONFIG_PATH.toAbsolutePath().toString(), "--execution-name", "grakn-benchmark-test", "--static-data-import"};
+        CommandLine commandLine = BenchmarkArguments.parse(args);
+        BenchmarkConfiguration config = new BenchmarkConfiguration(commandLine);
+    }
+
+    @Test
+    public void whenProvidingAbsolutePathToConfig_noExceptionThrown() {
+        String[] args = new String[]{"--config", WEB_CONTENT_DATA_GEN_CONFIG_PATH.toAbsolutePath().toString(), "--execution-name", "grakn-benchmark-test"};
+        CommandLine commandLine = BenchmarkArguments.parse(args);
+        BenchmarkConfiguration config = new BenchmarkConfiguration(commandLine);
+    }
+
+    @Test
+    public void whenProvidingRelativePathToExistingConfig_noExceptionThrown() {
+        String[] args = new String[]{"--config", "web_content_config_data_gen.yml", "--execution-name", "grakn-benchmark-test"};
+        System.setProperty("working.dir", WEB_CONTENT_DATA_GEN_CONFIG_PATH.getParent().toString());
+        CommandLine commandLine = BenchmarkArguments.parse(args);
+        BenchmarkConfiguration config = new BenchmarkConfiguration(commandLine);
+    }
+
 }

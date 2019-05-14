@@ -1,0 +1,217 @@
+define
+
+abbreviation sub attribute datatype string;
+name sub attribute datatype string,
+    has abbreviation;
+url sub attribute datatype string;
+title sub attribute datatype string;
+#date-published sub attribute datatype date;
+num-citations sub attribute datatype long;
+text-abstract sub attribute datatype string;
+tag sub attribute datatype string;
+subject-matter sub attribute datatype string;
+notes sub attribute datatype string;
+
+# Relevant to social media channels
+shares sub attribute datatype long;
+likes sub attribute datatype long;
+claps sub attribute datatype long;
+
+##################################################################
+# Actors and their interrelations
+##################################################################
+forename sub name;
+surname sub name;
+middle-name sub name;
+person sub entity,
+    has name,
+    has forename,
+    has surname,
+    has middle-name,
+    plays employee,
+    plays author,
+    plays party,
+    plays member;
+##################################################################
+# Affiliations
+##################################################################
+job-title sub name;
+affiliation sub relationship,
+    relates party;
+membership sub affiliation,
+    relates member as party,
+    relates group_ as party;
+employment sub affiliation,
+    relates employee as member,
+    relates employer as group_,
+    has job-title;
+##################################################################
+# Ownership - this is quite a generic relationship
+##################################################################
+ownership sub relationship,
+    relates owner,
+    relates property;
+transitive-ownership sub rule,
+when {
+    (owner: $a, property: $b) isa ownership;
+    (owner: $b, property: $c) isa ownership;
+} then {
+    (owner: $a, property: $c) isa ownership;
+};
+##################################################################
+# Organisations
+##################################################################
+organisation sub entity,
+    plays member,
+    plays group_,
+    plays property,
+    plays owner,
+    plays party,
+    has name;
+company sub organisation,
+    plays employer;
+department sub organisation;
+university sub organisation,
+    plays employer;
+team sub organisation;
+
+transitive-organisation-membership sub rule,
+when {
+    $top isa organisation;
+    (owner: $top, property: $bottom) isa ownership;
+    (group_: $bottom, member: $memb) isa membership;
+} then {
+    (group_: $top, member: $memb) isa membership;
+};
+##################################################################
+# Projects
+##################################################################
+project sub entity,
+    plays group_,
+    plays property,
+    plays owner,
+    has name;
+##################################################################
+# Publications
+##################################################################
+author-name sub name;
+publication sub entity,
+    has title,
+    has url,
+#    has date-published,
+    has tag,
+    has author-name,
+    has text-abstract,
+    plays content,
+    plays authored-content;
+scientific-publication sub publication,
+    has num-citations,
+    has subject-matter,
+    plays journal-submission;
+
+# media-post could be something small, like a twitter or fb post,
+# or a medium article
+media-post sub publication;
+article sub media-post,
+    has claps,
+    has likes,
+    has shares;
+book sub publication;
+scientific-journal sub publication,
+    has name,
+    plays corpus,
+    plays orchestrated-journal;
+journal-orchestration sub relationship,
+    relates orchestrator,
+    relates orchestrated-journal;
+##################################################################
+# Compilations
+##################################################################
+# Here I distinguish between a compilation and the act of compilation
+act-of-compilation sub relationship,
+    relates compilation,
+    relates compilation-member;
+act-of-works-compilation sub act-of-compilation,
+    relates corpus as compilation,
+    relates piece-of-work as compilation-member;
+journal-compilation sub act-of-works-compilation,
+    relates corpus,
+    relates journal-submission as piece-of-work;
+##################################################################
+# Authorship
+##################################################################
+authorship sub relationship,
+    relates author,
+    relates authored-content;
+# The idea here is that a publication can exist without an authorship relationship,
+# in which case we should store it, and connect to a person with a matching name if present
+when-authored-name-then-make-authorship sub rule,
+when {
+    $pub isa publication, has author-name $n;
+    $person isa person, has name $n;
+} then {
+    (authored-content: $pub, author: $person) isa authorship;
+};
+symposium sub entity,
+    has name,
+    has url,
+    plays orchestrator;
+##################################################################
+# Publishing platforms
+##################################################################
+publishing-platform sub entity,
+    plays hosting-platform,
+    has name,
+    has url;
+content-hosting sub relationship,
+    relates content,
+    relates hosting-platform;
+web-service sub publishing-platform;
+website sub web-service,
+    plays parent-site;
+##################################################################
+# Interconnecting content
+##################################################################
+web-page sub relationship,
+    plays child-page,
+    plays parent-page,
+    plays page-containing-link,
+    plays page-linked-to,
+    relates content,
+    relates parent-site,
+    has url;
+web-page-hierarchy sub relationship,
+    relates child-page,
+    relates parent-page;
+# This isn't exactly correct, since we really want to match the beginning of the parent url
+when-url-substring-then-in-hierarchy sub rule,
+when {
+    $x has url $url1;
+    $y has url $url2;
+    $url1 contains $url2;
+    $x != $y;
+} then {
+    (child-page: $x, parent-page: $y) isa web-page-hierarchy;
+};
+##################################################################
+# References - when one information source references something else
+##################################################################
+reference sub relationship,
+    relates subject-referred-to,
+    relates referer;
+hyperlink sub reference,
+    relates page-linked-to as subject-referred-to,
+    relates page-containing-link as referer;
+##################################################################
+# Sales
+##################################################################
+sale sub relationship,
+    relates vendor,
+    relates buyer,
+    relates product,
+    relates service,
+    plays subject-referred-to;
+object sub entity,
+    plays product,
+    plays subject-referred-to,
+    has name;

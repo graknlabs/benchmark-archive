@@ -1,0 +1,77 @@
+queries:
+  # Simple read queries
+
+  # -- these should all be indexed and fast --
+  # match entity
+  - "match $x isa person; get $x;"
+  # match relationship
+  - "match $x isa employment; get $x;"
+  # match attribute
+  - "match $x isa url; get $x;"
+
+
+  # Simple Write queries
+
+  # insert entity
+  - "insert $x isa person;"
+  # insert disconnected relationship
+  - "insert $x isa ownership;"
+  # insert disconnected attribute
+  - "insert $x isa name 'wxyz';"
+
+
+  # -- One hop queries --
+  # match entity with relationship
+  - "match $x isa person; $y (employee: $x) isa employment; get $x, $y;"
+  # match entities with attribute
+  - "match $x has url; get $x;"
+  # match nested relationship, web-page to web-page-hierarchy
+  - "match $x isa web-page; ($x) isa web-page-hierarchy; get;"
+
+
+  # -- Linear Multi-hop queries with specific labeled targets --
+  # 4 relationship hops, including one nested relationship
+  - "match $p isa person;
+      (member: $p, group_: $employer) isa employment;
+      $employer isa organisation;
+      (author: $p, authored-content: $ac) isa authorship;
+      $ac isa publication;
+      (content: $ac, parent-site: $ps) isa web-page;
+      (child-page: $ps, parent-page: $pp) isa web-page-hierarchy;
+      get;"
+
+  # same 4 hops with attributes
+  - "match $p isa person, has name $person-name;
+      (member: $p, group_: $employer) isa employment, has job-title $title;
+      $employer isa organisation, has name $orgname;
+      (author: $p, authored-content: $ac) isa authorship;
+      $ac isa publication, has title $t;
+      (content: $ac, parent-site: $ps) isa web-page, has url $u;
+      (child-page: $ps, parent-page: $pp) isa web-page-hierarchy;
+      get;"
+
+
+  # -- Multi-hop insertions --
+  # Insert linearly connected set of concepts
+  - "insert $x isa person; (employee: $x, employer: $y) isa ownership; $y isa university;"
+  # Insert linearly connected set of concepts with attributes
+  - "insert $x isa person, has forename 'John', has surname 'Doe', has middle-name 'Billy';
+      (employee: $x, employer: $y) isa ownership;
+      $y isa university, has name 'Grakn University';"
+  # insert branching connected set of concepts (entity in >2 relationships required)
+  - "insert $x isa person;
+      (employee: $x, employer: $y) isa ownership; $y isa university;
+      (author: $x, authored-content: $ac) isa authorship; $ac isa publication;
+      (member: $x, group_: $g) isa membership; $g isa project;"
+  # insert branching connected set of concepts (entity in >2 relationships required) with attributes
+  - "insert $x isa person, has forename 'John', has surname 'Doe', has middle-name 'Billy';
+      (employee: $x, employer: $y) isa ownership; $y isa university, has name 'Grakn University';
+      (author: $x, authored-content: $ac) isa authorship; $ac isa publication;
+      (member: $x, group_: $g) isa membership; $g isa project, has name 'graqlbot';"
+
+
+  # TODO - one-hop match, insert
+  # TODO - multi-hop match, insert
+
+
+

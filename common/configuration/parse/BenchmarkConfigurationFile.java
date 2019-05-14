@@ -30,6 +30,7 @@ public class BenchmarkConfigurationFile {
     private String dataGenerator;
     private String schema;
     private String queries;
+    private String dataImportFilePath;
     private List<Integer> scalesToProfile;
     private Integer repeatsPerQuery;
 
@@ -61,16 +62,19 @@ public class BenchmarkConfigurationFile {
     public void setSchema(String schemaFile) {
         this.schema = schemaFile;
     }
-    public String getRelativeSchemaFile() {
+    public String getSchemaRelativePath() {
         return this.schema;
     }
 
     public void setQueries(String queriesYaml) {
         this.queries = queriesYaml;
     }
-    public String getQueriesFilePath() {
+    public String getQueriesFileRelativePath() {
         return this.queries;
     }
+
+    public void setDataImportFile(String dataImportFilePath) { this.dataImportFilePath = dataImportFilePath; }
+    public String getDataImportFilePath() { return this.dataImportFilePath; }
 
     public void setDeleteInsertedConcepts(Boolean deleteInsertedConcepts) {
         this.deleteInsertedConcepts = deleteInsertedConcepts;
