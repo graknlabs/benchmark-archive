@@ -151,7 +151,7 @@ export default {
                 type: 'success',
               });
             })
-            .catch((e) => {
+            .catch(() => {
               this.$message({
                 showClose: true,
                 message:
@@ -174,7 +174,7 @@ export default {
                 type: 'success',
               });
             })
-            .catch((e) => {
+            .catch(() => {
               this.$message({
                 showClose: true,
                 message:

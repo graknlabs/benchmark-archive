@@ -60,7 +60,7 @@
         :key="stepNumber"
         :step="filterStepSpans(stepNumber)[0].name"
         :step-spans="filterStepSpans(stepNumber)"
-        :padding=0
+        :padding="0"
       />
     </section>
   </el-card>

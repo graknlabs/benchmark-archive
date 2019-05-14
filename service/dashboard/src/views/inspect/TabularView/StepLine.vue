@@ -29,7 +29,7 @@
         :key="childStepName"
         :step="childStepName"
         :step-spans="filterChildStepSpans(childStepName)"
-        :padding=padding+10
+        :padding="padding+10"
       />
     </div>
   </div>

@@ -147,6 +147,7 @@ export default {
         if (x === y) return 0;
         if (sortType === 'Asc') return x < y ? -1 : 1;
         if (sortType === 'Desc') return x < y ? 1 : -1;
+        return false;
       });
     },
 

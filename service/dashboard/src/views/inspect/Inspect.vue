@@ -23,7 +23,8 @@ import BenchmarkClient from '@/util/BenchmarkClient';
 import ExecutionCard from '@/views/executions/ExecutionCard.vue';
 import TabularView from './TabularView/TabularView.vue';
 import EDM from '@/util/ExecutionDataFormatters';
-const {flattenGraphs, flattenQuerySpans, } = EDM;
+
+const { flattenGraphs, flattenQuerySpans } = EDM;
 
 export default {
   components: { TabularView, ExecutionCard },

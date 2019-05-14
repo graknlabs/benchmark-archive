@@ -17,7 +17,9 @@
 <script>
 import BenchmarkClient from '@/util/BenchmarkClient';
 import CommitsChart from './ChartCommits.vue';
-import ExecutionDataFormatters from '@/util/ExecutionDataFormatters';
+import EDF from '@/util/ExecutionDataFormatters';
+
+const { flattenGraphs } = EDF;
 
 export default {
   name: 'Overview',
@@ -52,7 +54,7 @@ export default {
         this.completedExecutions,
       );
 
-      this.graphs = ExecutionDataFormatters.flattenGraphs(graphs);
+      this.graphs = flattenGraphs(graphs);
     },
 
     filterGraphs(graphType) {
