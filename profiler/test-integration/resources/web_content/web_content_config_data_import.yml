@@ -1,0 +1,15 @@
+name: ""
+description: ""
+schema: "web_content_schema.gql"
+dataImportFile: "web_content_data.gql"
+scales:
+  - 2000
+repeatsPerQuery: 0
+
+queries: "queries_read.yml"
+deleteInsertedConcepts: true
+traceDeleteInsertedConcepts: false
+
+concurrency:
+  clients: 1
+  uniqueKeyspaces: false

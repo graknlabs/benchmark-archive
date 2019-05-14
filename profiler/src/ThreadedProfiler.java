@@ -67,13 +67,9 @@ public class ThreadedProfiler {
         executorService = Executors.newFixedThreadPool(concurrentClients);
     }
 
-    public void processStaticQueries(int numRepeats, int numConcepts) {
-        LOG.trace("Starting processStaticQueries");
-        this.processQueries(queries, numRepeats, numConcepts);
-        LOG.trace("Finished processStaticQueries");
-    }
+    public void processQueries(int queryRepetitions, int numConcepts) {
+        LOG.trace("Starting processQueries");
 
-    void processQueries(List<GraqlQuery> queries, int repetitions, int numConcepts) {
         List<Future> runningConcurrentQueries = new LinkedList<>();
         List<GraknClient.Session> openSessions = new LinkedList<>();
 
@@ -84,7 +80,7 @@ public class ThreadedProfiler {
             String keyspace = (keyspaces.size() > 1) ? keyspaces.get(i) : keyspaces.get(0);
             GraknClient.Session session = client.session(keyspace);
             openSessions.add(session);
-            QueryProfiler processor = new QueryProfiler(config, i, Tracing.currentTracer(), queries, repetitions, numConcepts, session);
+            QueryProfiler processor = new QueryProfiler(config, i, Tracing.currentTracer(), queries, queryRepetitions, numConcepts, session);
             runningConcurrentQueries.add(executorService.submit(processor));
         }
 
@@ -101,6 +97,8 @@ public class ThreadedProfiler {
 
         long length = System.currentTimeMillis() - start;
         System.out.println("Query execution time: " + length);
+
+        LOG.trace("Finished processQueries");
     }
 
     public void cleanup() {

@@ -37,26 +37,19 @@ import grakn.benchmark.profiler.util.ElasticSearchManager;
 import grakn.benchmark.common.timer.BenchmarkingTimer;
 import grakn.benchmark.profiler.util.TracingGraknClient;
 import grakn.client.GraknClient;
-import grakn.core.concept.answer.ConceptMap;
 import grakn.core.concept.type.AttributeType;
-import graql.lang.query.GraqlInsert;
 import graql.lang.query.GraqlQuery;
 import org.apache.commons.cli.CommandLine;
 import org.apache.ignite.Ignite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
 import static grakn.benchmark.profiler.util.ConcurrentDataLoader.concurrentDataImport;
@@ -136,7 +129,7 @@ public class GraknBenchmark {
                     LOG.info("Generating graph to scale... " + numConcepts);
                     dataGenerator.generate(numConcepts);
                     timer.startQueryTimeTracking();
-                    threadedProfiler.processStaticQueries(config.numQueryRepetitions(), numConcepts);
+                    threadedProfiler.processQueries(config.numQueryRepetitions(), numConcepts);
                     timer.endQueryTimeTracking();
                     timer.printTimings();
                 }
@@ -150,13 +143,11 @@ public class GraknBenchmark {
             }
 
 
-        } else if (config.loadSchema() && config.staticDataImport()) {  // USECASE:  Load Schema + static graph, then profile
-
-        } else if (config.loadSchema()) { // USECASE: Load schema, then run queries without preloading any data
+        } else if (config.loadSchema()) {
             /*
             TWO uses cases:
-            1. Load schema + static graph, then profile
             2. Load schema, then profile without preloading data (graph may grow while being profiled)
+            1. Load schema + static graph, then profile
              */
 
             GraknClient tracingClient = TracingGraknClient.get(config.graknUri());
@@ -169,15 +160,15 @@ public class GraknBenchmark {
                 keyspaces = Collections.singletonList(config.getKeyspace());
             }
 
+            int numConcepts = 0;
             if (config.staticDataImport()) {
-                // import the static data into the keyspaces
-                // tracing not properly enabled right now
-                concurrentDataImport(tracingClient, keyspaces, config.staticDataImportQueries(),   8);
+                // USECASE 2 - see above
+                // import the static data into the keyspaces. Tracing this step is not enabled right now
+                numConcepts = concurrentDataImport(tracingClient, keyspaces, config.staticDataImportQueries(),   8);
             }
 
             ThreadedProfiler threadedProfiler = new ThreadedProfiler(tracingClient, keyspaces, config);
-            int numConcepts = 0;
-            threadedProfiler.processStaticQueries(config.numQueryRepetitions(), numConcepts);
+            threadedProfiler.processQueries(config.numQueryRepetitions(), numConcepts);
             threadedProfiler.cleanup();
             tracingClient.close();
 
@@ -193,7 +184,7 @@ public class GraknBenchmark {
 
 //            int numConcepts = threadedProfiler.aggregateCount();
             int numConcepts = 0; // TODO re-add this properly for concurrent clients
-            threadedProfiler.processStaticQueries(config.numQueryRepetitions(), numConcepts);
+            threadedProfiler.processQueries(config.numQueryRepetitions(), numConcepts);
             threadedProfiler.cleanup();
             client.close();
         }

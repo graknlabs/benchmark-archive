@@ -1,0 +1,4 @@
+insert
+    $x isa person, has forename 'John', has surname 'Doe', has middle-name 'Billy';
+    $y isa university, has name 'Grakn University';
+    (employee: $x, employer: $y) isa employment;

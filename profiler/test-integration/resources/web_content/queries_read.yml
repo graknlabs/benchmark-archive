@@ -4,7 +4,7 @@ queries:
   # -- these should all be indexed and fast --
   # match entity
   - "match $x isa person; get $x;"
-  # match relationship
+  # match relation
   - "match $x isa employment; get $x;"
   # match attribute
   - "match $x isa url; get $x;"
@@ -14,23 +14,23 @@ queries:
 
   # insert entity
   - "insert $x isa person;"
-  # insert disconnected relationship
+  # insert disconnected relation
   - "insert $x isa ownership;"
   # insert disconnected attribute
-  - "insert $x isa name 'wxyz';"
+  - "insert $x 'wxyz' isa name;"
 
 
   # -- One hop queries --
-  # match entity with relationship
+  # match entity with relation
   - "match $x isa person; $y (employee: $x) isa employment; get $x, $y;"
   # match entities with attribute
   - "match $x has url; get $x;"
-  # match nested relationship, web-page to web-page-hierarchy
+  # match nested relation, web-page to web-page-hierarchy
   - "match $x isa web-page; ($x) isa web-page-hierarchy; get;"
 
 
   # -- Linear Multi-hop queries with specific labeled targets --
-  # 4 relationship hops, including one nested relationship
+  # 4 relation hops, including one nested relation
   - "match $p isa person;
       (member: $p, group_: $employer) isa employment;
       $employer isa organisation;
@@ -58,12 +58,12 @@ queries:
   - "insert $x isa person, has forename 'John', has surname 'Doe', has middle-name 'Billy';
       (employee: $x, employer: $y) isa ownership;
       $y isa university, has name 'Grakn University';"
-  # insert branching connected set of concepts (entity in >2 relationships required)
+  # insert branching connected set of concepts (entity in >2 relations required)
   - "insert $x isa person;
       (employee: $x, employer: $y) isa ownership; $y isa university;
       (author: $x, authored-content: $ac) isa authorship; $ac isa publication;
       (member: $x, group_: $g) isa membership; $g isa project;"
-  # insert branching connected set of concepts (entity in >2 relationships required) with attributes
+  # insert branching connected set of concepts (entity in >2 relations required) with attributes
   - "insert $x isa person, has forename 'John', has surname 'Doe', has middle-name 'Billy';
       (employee: $x, employer: $y) isa ownership; $y isa university, has name 'Grakn University';
       (author: $x, authored-content: $ac) isa authorship; $ac isa publication;
