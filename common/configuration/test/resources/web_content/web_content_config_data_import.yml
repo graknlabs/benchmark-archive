@@ -1,7 +1,7 @@
 name: ""
 description: ""
 schema: "web_content_schema.gql"
-dataImportFile: "web_content_data_graph.gql"
+dataImportFile: "web_content_data.gql"
 scales:
   - 2000
 repeatsPerQuery: 0

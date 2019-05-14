@@ -63,8 +63,8 @@ public class BenchmarkConfiguration {
 
         this.executionName = arguments.getOptionValue(BenchmarkArguments.EXECUTION_NAME_ARGUMENT);
 
-        // If --no-data-generation is specified, don't generate any data (work with existing keyspace)
-        this.generateData = !(arguments.hasOption(BenchmarkArguments.NO_DATA_GENERATION_ARGUMENT));
+        // If --no-data-generation or --static-data-import is specified, don't generate any data (work with existing keyspace)
+        this.generateData = !((arguments.hasOption(BenchmarkArguments.NO_DATA_GENERATION_ARGUMENT)) || (arguments.hasOption(BenchmarkArguments.STATIC_DATA_IMPORT_ARGUMENT)));
 
         // Parse yaml file with generic configurations (mandatory)
         this.benchmarkConfigFile = parseConfigurationFile(configFilePath);
