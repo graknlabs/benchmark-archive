@@ -149,30 +149,36 @@ export default {
 
       this.legendsData = getLegendsData(this.queries);
 
-      const series = chartData.map(data => ({
-        name: this.legendsData[data.query],
-        type: 'line',
-        data: data.times.map(dataItem => ({
-          value: Number(dataItem.avgTime).toFixed(3),
-          symbolSize: Math.min(dataItem.stdDeviation / 10, 45) + 5,
-          symbol: 'circle',
-          stdDeviation: dataItem.stdDeviation,
-          repetitions: dataItem.repetitions,
-          executionId: dataItem.executionId,
-        })),
-        smooth: true,
-        emphasis: { label: { show: false }, itemStyle: { color: 'yellow' } },
-        showAllSymbol: true,
-        tooltip: {
-          formatter: args => `
+      const series = chartData.map((data) => {
+        const maxStdDeviation = 45;
+
+        return {
+          name: this.legendsData[data.query],
+          type: 'line',
+          data: data.times.map(dataItem => ({
+            value: Number(dataItem.avgTime).toFixed(3),
+            symbolSize: Math.min(dataItem.stdDeviation / 10, maxStdDeviation) + 5,
+            symbol: 'circle',
+            stdDeviation: dataItem.stdDeviation,
+            repetitions: dataItem.repetitions,
+            executionId: dataItem.executionId,
+            itemStyle: {
+              // draw the chart node with a different color when its standard deviation exceeds the given maximum amount
+              color: dataItem.stdDeviation / 10 > maxStdDeviation ? '#666' : null,
+            },
+          })),
+          smooth: true,
+          emphasis: { label: { show: false }, itemStyle: { color: 'yellow' } },
+          showAllSymbol: true,
+          tooltip: {
+            formatter: args => `
                     query: ${args.seriesName}
                     <br> avgTime: ${Number(args.data.value).toFixed(3)} ms
-                    <br> stdDeviation: ${Number(args.data.stdDeviation).toFixed(
-          3,
-        )} ms
+                    <br> stdDeviation: ${Number(args.data.stdDeviation).toFixed(3)} ms
                     <br> repetitions: ${args.data.repetitions}`,
-        },
-      }));
+          },
+        };
+      });
 
       if (chartData.length) {
         const xData = chartData[0].times.map(x => ({
