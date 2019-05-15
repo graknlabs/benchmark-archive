@@ -96,11 +96,15 @@ export default {
       type: Array,
       required: true,
     },
+
+    expanded: {
+      type: Boolean,
+      required: true,
+    },
   },
 
   data() {
     return {
-      expanded: false,
       stepSpans: null,
       stepNumbers: 0,
     };
@@ -133,6 +137,12 @@ export default {
     reps() {
       return this.querySpans.length;
     },
+  },
+
+  created() {
+    if (this.expanded) {
+      this.fetchStepSpans();
+    }
   },
 
   methods: {

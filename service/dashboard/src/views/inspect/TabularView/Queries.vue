@@ -6,6 +6,7 @@
         :key="query"
         :query="query"
         :query-spans="getQuerySpans(query)"
+        :expanded="query === preSelectedQuery"
       />
     </div>
   </div>
