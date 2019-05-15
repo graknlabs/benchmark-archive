@@ -73,6 +73,7 @@
         :key="exec.id"
         :execution="exec"
         :columns="columns"
+        @reload-required="fetchExecutions"
       />
     </div>
   </section>
@@ -126,17 +127,21 @@ export default {
   },
 
   async created() {
-    const executionsResp = await BenchmarkClient.getExecutions(
-      `{ executions { id vmName ${
-        this.columns.map(item => item.value).join(' ')
-      }} }`,
-    );
-    this.executions = executionsResp.data.executions;
-    this.sortExecutions('executionInitialisedAt');
-    this.loading = false;
+    await this.fetchExecutions();
   },
 
   methods: {
+    async fetchExecutions() {
+      const executionsResp = await BenchmarkClient.getExecutions(
+        `{ executions { id vmName ${
+          this.columns.map(item => item.value).join(' ')
+        }} }`,
+      );
+      this.executions = executionsResp.data.executions;
+      this.sortExecutions('executionInitialisedAt');
+      this.loading = false;
+    },
+
     sortExecutions(column) {
       const { sortType } = this;
       this.executions.sort((a, b) => {

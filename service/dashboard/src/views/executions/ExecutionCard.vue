@@ -63,9 +63,7 @@
           :content="getTooltipFor('executionStartedAt')"
           placement="top"
         >
-          <span
-            style="width: 135px; text-align: center;"
-          >{{ execution.executionStartedAt | parseDate }}</span>
+          <span style="width: 135px; text-align: center;">{{ execution.executionStartedAt | parseDate }}</span>
         </el-tooltip>
       </template>
 
@@ -76,9 +74,7 @@
           :content="getTooltipFor('executionCompletedAt')"
           placement="top"
         >
-          <span
-            style="width: 135px; text-align: center;"
-          >{{ execution.executionCompletedAt | parseDate }}</span>
+          <span style="width: 135px; text-align: center;">{{ execution.executionCompletedAt | parseDate }}</span>
         </el-tooltip>
       </template>
 
@@ -114,13 +110,13 @@ import BenchmarkClient from '@/util/BenchmarkClient';
 import copy from 'copy-to-clipboard';
 
 export default {
-
   filters: {
     substringRepo(repoUrl) {
       if (!repoUrl) return '';
       return repoUrl.substring(19);
     },
   },
+
   props: {
     execution: {
       type: Object,
@@ -135,7 +131,10 @@ export default {
 
   computed: {
     isInProgress() {
-      return (this.execution.status === 'INITIALISING' || this.execution.status === 'RUNNING');
+      return (
+        this.execution.status === 'INITIALISING'
+        || this.execution.status === 'RUNNING'
+      );
     },
   },
 
@@ -150,6 +149,9 @@ export default {
                 message: 'The execution was deleted successfully.',
                 type: 'success',
               });
+              // have the parent component re-fetch all executions which should now exclude
+              // this deleted execution
+              this.$emit('reload-required');
             })
             .catch(() => {
               this.$message({
@@ -173,6 +175,9 @@ export default {
                 message: 'The execution was stopped successfully.',
                 type: 'success',
               });
+              // have the parent component re-fetch all executions which should now have
+              // the updated status for this execution
+              this.$emit('reload-required');
             })
             .catch(() => {
               this.$message({
