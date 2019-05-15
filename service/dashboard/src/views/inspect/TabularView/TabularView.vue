@@ -44,7 +44,7 @@ export default {
       default: null,
     },
 
-    preSelectedGraphName: {
+    preSelectedGraphType: {
       type: String,
       required: false,
       default: null,
@@ -72,7 +72,7 @@ export default {
     },
 
     activeGraph() {
-      return this.preSelectedGraphName || this.graphTypes[0];
+      return this.preSelectedGraphType || this.graphTypes[0];
     },
   },
 
@@ -95,13 +95,13 @@ export default {
       return this.graphs.filter(graph => graph.type === graphType);
     },
 
-    getPreSelectedScale(graphName) {
-      if (this.preSelectedGraphName === graphName) return this.preSelectedScale;
+    getPreSelectedScale(graphType) {
+      if (this.preSelectedGraphType === graphType) return this.preSelectedScale;
       return null;
     },
 
-    getPreSelectedQuery(graphName) {
-      if (this.preSelectedGraphName === graphName) {
+    getPreSelectedQuery(graphType) {
+      if (this.preSelectedGraphType === graphType) {
         return this.preSelectedQuery;
       }
       return null;

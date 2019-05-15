@@ -11,7 +11,7 @@
     <tabular-view
       :graphs="graphs"
       :query-spans="querySpans"
-      :pre-selected-graph-name="preSelectedGraphName"
+      :pre-selected-graph-type="preSelectedGraphType"
       :pre-selected-query="preSelectedQuery"
       :pre-selected-scale="preSelectedScale"
     />
@@ -39,7 +39,7 @@ export default {
 
       querySpans: null,
 
-      preSelectedGraphName: this.$route.query.graph,
+      preSelectedGraphType: this.$route.query.graph,
 
       preSelectedQuery: this.$route.query.query,
 
