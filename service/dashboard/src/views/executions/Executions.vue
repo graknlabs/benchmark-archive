@@ -127,7 +127,7 @@ export default {
 
   async created() {
     const executionsResp = await BenchmarkClient.getExecutions(
-      `{ executions { id ${
+      `{ executions { id vmName ${
         this.columns.map(item => item.value).join(' ')
       }} }`,
     );
