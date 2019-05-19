@@ -1,5 +1,5 @@
 <template>
-  <el-card>
+  <el-card @click.native="openInspect">
     <div class="flexed">
       <template v-if="shouldRenderColumn('status')">
         <div :class="'status status-' + execution.status.toLowerCase()">
@@ -25,9 +25,10 @@
           :content="getTooltipFor('commit')"
           placement="top"
         >
-          <router-link :to="'inspect/' + execution.id">
-            {{ execution.commit.slice(0, 15) }}
-          </router-link>
+          <a
+            :href="execution.repoUrl + '/commit/' + execution.commit"
+            target="_blank"
+          >{{ execution.commit.slice(0, 15) }}</a>
         </el-tooltip>
       </template>
 
@@ -63,9 +64,7 @@
           :content="getTooltipFor('executionStartedAt')"
           placement="top"
         >
-          <span
-            style="width: 135px; text-align: center;"
-          >{{ execution.executionStartedAt | parseDate }}</span>
+          <span style="width: 135px; text-align: center;">{{ execution.executionStartedAt | parseDate }}</span>
         </el-tooltip>
       </template>
 
@@ -76,9 +75,7 @@
           :content="getTooltipFor('executionCompletedAt')"
           placement="top"
         >
-          <span
-            style="width: 135px; text-align: center;"
-          >{{ execution.executionCompletedAt | parseDate }}</span>
+          <span style="width: 135px; text-align: center;">{{ execution.executionCompletedAt | parseDate }}</span>
         </el-tooltip>
       </template>
 
@@ -114,7 +111,6 @@ import BenchmarkClient from '@/util/BenchmarkClient';
 import copy from 'copy-to-clipboard';
 
 export default {
-
   filters: {
     substringRepo(repoUrl) {
       if (!repoUrl) return '';
@@ -131,15 +127,29 @@ export default {
       type: Array,
       required: true,
     },
+
+    clickPath: {
+      type: String,
+      required: false,
+      default: '#',
+    },
   },
 
   computed: {
     isInProgress() {
-      return (this.execution.status === 'INITIALISING' || this.execution.status === 'RUNNING');
+      return (
+        this.execution.status === 'INITIALISING'
+        || this.execution.status === 'RUNNING'
+      );
     },
   },
 
   methods: {
+    openInspect(e) {
+      if (e.target.tagName !== 'A') { // the clicked element on the card is not a link
+        this.$router.push({ path: this.clickPath });
+      }
+    },
     deleteExecution(execution) {
       this.$confirm('Are you sure you want to delete this execution?').then(
         () => {
@@ -204,6 +214,10 @@ export default {
 
 <style lang="scss" scoped>
 @import "./src/assets/css/variables.scss";
+
+.el-card {
+  cursor: pointer;
+}
 
 .status {
   width: 90px;

@@ -73,6 +73,7 @@
         :key="exec.id"
         :execution="exec"
         :columns="columns"
+        :click-path="'inspect/' + exec.id"
       />
     </div>
   </section>
@@ -127,7 +128,7 @@ export default {
 
   async created() {
     const executionsResp = await BenchmarkClient.getExecutions(
-      `{ executions { id vmName ${
+      `{ executions { id vmName repoUrl ${
         this.columns.map(item => item.value).join(' ')
       }} }`,
     );
