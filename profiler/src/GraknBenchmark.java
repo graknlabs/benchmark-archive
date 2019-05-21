@@ -122,11 +122,10 @@ public class GraknBenchmark {
             DataGenerator dataGenerator = initDataGenerator(client, config.getKeyspace(), timer); // use a non tracing client as we don't trace data generation yet
             List<Integer> numConceptsInRun = config.scalesToProfile();
 
-
             try {
                 timer.startGenerateAndTrack();
                 for (int numConcepts : numConceptsInRun) {
-                    LOG.info("Generating graph to scale... " + numConcepts);
+                    LOG.info("\n Generating graph to scale... " + numConcepts);
                     dataGenerator.generate(numConcepts);
                     timer.startQueryTimeTracking();
                     threadedProfiler.processQueries(config.numQueryRepetitions(), numConcepts);

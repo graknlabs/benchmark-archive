@@ -184,6 +184,5 @@ class QueryProfiler implements Runnable {
             session.close();
         }
         System.out.println("Thread runnable finished running queries");
-        System.out.print("\n");
     }
 }
