@@ -1,7 +1,0 @@
-define
-person sub entity,
-    plays friend,
-    has name;
-
-friendship sub relation, relates friend;
-name sub attribute, datatype string;

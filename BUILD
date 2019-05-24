@@ -16,62 +16,66 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-exports_files(
-    [
-        "VERSION",
-        "deployment.properties",
-    ],
-    visibility = ["//visibility:public"],
-)
+exports_files(["VERSION", "deployment.properties"], visibility = ["//visibility:public"])
 
 # TODO: Need to add 'benchmark-dashboard' as a distribution.
 load("@graknlabs_bazel_distribution//common:rules.bzl", "assemble_zip")
 
+
 assemble_zip(
     name = "profiler-distribution",
+    targets = ["//profiler:profiler-deps"],
+    output_filename = "profiler",
+
     additional_files = {
         "//profiler:benchmark": "benchmark",
+
         "//common/configuration/scenario:road_network/queries_read.yml": "scenario/road_network/queries_read.yml",
         "//common/configuration/scenario:road_network/queries_write.yml": "scenario/road_network/queries_write.yml",
         "//common/configuration/scenario:road_network/road_config_read.yml": "scenario/road_network/road_config_read.yml",
         "//common/configuration/scenario:road_network/road_config_write.yml": "scenario/road_network/road_config_write.yml",
         "//common/configuration/scenario:road_network/road_network.gql": "scenario/road_network/road_network.gql",
+
         "//common/configuration/scenario:social_network/social_network_config_read.yml": "scenario/social_network/social_network_config_read.yml",
         "//common/configuration/scenario:social_network/queries_read.yml": "scenario/social_network/queries_read.yml",
         "//common/configuration/scenario:social_network/social_network.gql": "scenario/social_network/social_network.gql",
+
         "//common/configuration/scenario:financial_transactions/queries_read.yml": "scenario/financial_transactions/queries_read.yml",
         "//common/configuration/scenario:financial_transactions/financial_config_read.yml": "scenario/financial_transactions/financial_config_read.yml",
         "//common/configuration/scenario:financial_transactions/financial.gql": "scenario/financial_transactions/financial.gql",
+
         "//common/configuration/scenario:biochemical_network/queries_read.yml": "scenario/biochemical_network/queries_read.yml",
         "//common/configuration/scenario:biochemical_network/biochemical_config_read.yml": "scenario/biochemical_network/biochemical_config_read.yml",
         "//common/configuration/scenario:biochemical_network/biochemical_network.gql": "scenario/biochemical_network/biochemical_network.gql",
+
         "//common/configuration/scenario:complex/queries_complex_read.yml": "scenario/complex/queries_complex_read.yml",
         "//common/configuration/scenario:complex/queries_complex_write.yml": "scenario/complex/queries_complex_write.yml",
         "//common/configuration/scenario:complex/config_read.yml": "scenario/complex/config_read.yml",
         "//common/configuration/scenario:complex/config_write.yml": "scenario/complex/config_write.yml",
-        "//common/configuration/scenario:complex/schema.gql": "scenario/complex/schema.gql",
+        "//common/configuration/scenario:complex/schema.gql" : "scenario/complex/schema.gql",
+
         "//common/configuration/scenario:reasoning/queries_read.yml": "scenario/reasoning/queries_read.yml",
         "//common/configuration/scenario:reasoning/transitivity_data.gql": "scenario/reasoning/transitivity_data.gql",
         "//common/configuration/scenario:reasoning/config_read.yml": "scenario/reasoning/config_read.yml",
         "//common/configuration/scenario:reasoning/transitivity_schema.gql": "scenario/reasoning/transitivity_schema.gql",
-        "//common/configuration/scenario:loading/loading_data_queries.yml": "scenario/loading/loading_data_queries.yml",
-        "//common/configuration/scenario:loading/config_read.yml": "scenario/loading/config_read.yml",
-        "//common/configuration/scenario:loading/loading_schema.gql": "scenario/loading/loading_schema.gql",
+
 
         # External dependencies: Elasticsearch and Zipkin
         "//profiler:setup.sh": "external-dependencies/setup.sh",
         "@external-dependencies-zipkin//file": "external-dependencies/zipkin.jar",
-        "@external-dependencies-elasticsearch//file": "external-dependencies/elasticsearch.zip",
+        "@external-dependencies-elasticsearch//file": "external-dependencies/elasticsearch.zip"
     },
-    output_filename = "profiler",
-    targets = ["//profiler:profiler-deps"],
-    visibility = ["//visibility:public"],
+    visibility = ["//visibility:public"]
 )
+
+
 
 assemble_zip(
     name = "report-producer-distribution",
+    targets = ["//report/producer:report-deps"],
     additional_files = {
         "//report/producer:report_producer": "report_producer",
+
         "//common/configuration/scenario:road_network/queries_read.yml": "scenario/road_network/queries_read.yml",
         "//common/configuration/scenario:road_network/queries_write.yml": "scenario/road_network/queries_write.yml",
         "//common/configuration/scenario:road_network/road_network.gql": "scenario/road_network/road_network.gql",
@@ -81,9 +85,10 @@ assemble_zip(
         "//common/configuration/scenario:road_network/road_config_write.yml": "scenario/road_network/road_config_write.yml",
         "//common/configuration/scenario:road_network/road_config_write_c4.yml": "scenario/road_network/road_config_write_c4.yml",
         "//common/configuration/scenario:road_network/road_config_write_c8.yml": "scenario/road_network/road_config_write_c8.yml",
+
         "//common/configuration/scenario:complex/queries_complex_read.yml": "scenario/complex/queries_complex_read.yml",
         "//common/configuration/scenario:complex/queries_complex_write.yml": "scenario/complex/queries_complex_write.yml",
-        "//common/configuration/scenario:complex/schema.gql": "scenario/complex/schema.gql",
+        "//common/configuration/scenario:complex/schema.gql" : "scenario/complex/schema.gql",
         "//common/configuration/scenario:complex/config_read.yml": "scenario/complex/config_read.yml",
         "//common/configuration/scenario:complex/config_read_c4.yml": "scenario/complex/config_read_c4.yml",
         "//common/configuration/scenario:complex/config_read_c8.yml": "scenario/complex/config_read_c8.yml",
@@ -92,20 +97,24 @@ assemble_zip(
         "//common/configuration/scenario:complex/config_write_c8.yml": "scenario/complex/config_write_c8.yml",
 
         # include these in case the scripts want to add these to the report
-        "//common/configuration/scenario:social_network/social_network_config_read.yml": "scenario/social_network/social_network_config_read.yml",
-        "//common/configuration/scenario:social_network/queries_read.yml": "scenario/social_network/queries_read.yml",
-        "//common/configuration/scenario:social_network/social_network.gql": "scenario/social_network/social_network.gql",
-        "//common/configuration/scenario:financial_transactions/queries_read.yml": "scenario/financial_transactions/queries_read.yml",
-        "//common/configuration/scenario:financial_transactions/financial_config_read.yml": "scenario/financial_transactions/financial_config_read.yml",
-        "//common/configuration/scenario:financial_transactions/financial.gql": "scenario/financial_transactions/financial.gql",
-        "//common/configuration/scenario:biochemical_network/queries_read.yml": "scenario/biochemical_network/queries_read.yml",
-        "//common/configuration/scenario:biochemical_network/biochemical_config_read.yml": "scenario/biochemical_network/biochemical_config_read.yml",
-        "//common/configuration/scenario:biochemical_network/biochemical_network.gql": "scenario/biochemical_network/biochemical_network.gql",
+         "//common/configuration/scenario:social_network/social_network_config_read.yml": "scenario/social_network/social_network_config_read.yml",
+         "//common/configuration/scenario:social_network/queries_read.yml": "scenario/social_network/queries_read.yml",
+         "//common/configuration/scenario:social_network/social_network.gql": "scenario/social_network/social_network.gql",
+
+         "//common/configuration/scenario:financial_transactions/queries_read.yml": "scenario/financial_transactions/queries_read.yml",
+         "//common/configuration/scenario:financial_transactions/financial_config_read.yml": "scenario/financial_transactions/financial_config_read.yml",
+         "//common/configuration/scenario:financial_transactions/financial.gql": "scenario/financial_transactions/financial.gql",
+
+         "//common/configuration/scenario:biochemical_network/queries_read.yml": "scenario/biochemical_network/queries_read.yml",
+         "//common/configuration/scenario:biochemical_network/biochemical_config_read.yml": "scenario/biochemical_network/biochemical_config_read.yml",
+         "//common/configuration/scenario:biochemical_network/biochemical_network.gql": "scenario/biochemical_network/biochemical_network.gql",
     },
     output_filename = "report-producer",
-    targets = ["//report/producer:report-deps"],
-    visibility = ["//visibility:public"],
+    visibility = ["//visibility:public"]
+
 )
+
+
 
 # When a Bazel build or test is executed with RBE, it will be executed using the following platform.
 # The platform is based on the standard rbe_ubuntu1604 from @bazel_toolchains,
