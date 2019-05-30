@@ -82,7 +82,7 @@ curl --header "Content-Type: application/json" \
 ./benchmark --config ./scenario/biochemical_network/biochemical_config_read.yml  --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200
 ./benchmark --config ./scenario/complex/config_read.yml                          --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200 --keyspace generic_uniform_network_read
 ./benchmark --config ./scenario/reasoning/config_read.yml                        --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200 --load-schema --static-data-import
-
+./benchmark --config ./scenario/rule_scaling/config_read.yml                     --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200 --keyspace rule_scaling --load-schema --static-data-import
 # TODO report log files
 
 # Call completed hook on the service

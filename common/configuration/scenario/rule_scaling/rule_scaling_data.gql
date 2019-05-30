@@ -1,0 +1,150 @@
+insert
+$x0 isa someEntity;
+$y0 isa intermediateEntity;
+$link0 isa intermediateEntity;
+$index0 isa intermediateEntity;
+$anotherLink0 isa finalEntity;
+(someRole: $x0, anotherRole: $y0) isa baseRelation;
+(someRole: $y0, anotherRole: $link0) isa anotherBaseRelation;
+(someRole: $link0, anotherRole: $index0) isa specificRelation0;
+(someRole: $index0, anotherRole: $anotherLink0) isa anotherSpecificRelation0;
+
+$x1 isa someEntity;
+$y1 isa intermediateEntity;
+$link1 isa intermediateEntity;
+$index1 isa intermediateEntity;
+$anotherLink1 isa finalEntity;
+(someRole: $x1, anotherRole: $y1) isa baseRelation;
+(someRole: $y1, anotherRole: $link1) isa anotherBaseRelation;
+(someRole: $link1, anotherRole: $index1) isa specificRelation1;
+(someRole: $index1, anotherRole: $anotherLink1) isa anotherSpecificRelation1;
+
+$x2 isa someEntity;
+$y2 isa intermediateEntity;
+$link2 isa intermediateEntity;
+$index2 isa intermediateEntity;
+$anotherLink2 isa finalEntity;
+(someRole: $x2, anotherRole: $y2) isa baseRelation;
+(someRole: $y2, anotherRole: $link2) isa anotherBaseRelation;
+(someRole: $link2, anotherRole: $index2) isa specificRelation2;
+(someRole: $index2, anotherRole: $anotherLink2) isa anotherSpecificRelation2;
+
+$x3 isa someEntity;
+$y3 isa intermediateEntity;
+$link3 isa intermediateEntity;
+$index3 isa intermediateEntity;
+$anotherLink3 isa finalEntity;
+(someRole: $x3, anotherRole: $y3) isa baseRelation;
+(someRole: $y3, anotherRole: $link3) isa anotherBaseRelation;
+(someRole: $link3, anotherRole: $index3) isa specificRelation3;
+(someRole: $index3, anotherRole: $anotherLink3) isa anotherSpecificRelation3;
+
+$x4 isa someEntity;
+$y4 isa intermediateEntity;
+$link4 isa intermediateEntity;
+$index4 isa intermediateEntity;
+$anotherLink4 isa finalEntity;
+(someRole: $x4, anotherRole: $y4) isa baseRelation;
+(someRole: $y4, anotherRole: $link4) isa anotherBaseRelation;
+(someRole: $link4, anotherRole: $index4) isa specificRelation4;
+(someRole: $index4, anotherRole: $anotherLink4) isa anotherSpecificRelation4;
+
+$x5 isa someEntity;
+$y5 isa intermediateEntity;
+$link5 isa intermediateEntity;
+$index5 isa intermediateEntity;
+$anotherLink5 isa finalEntity;
+(someRole: $x5, anotherRole: $y5) isa baseRelation;
+(someRole: $y5, anotherRole: $link5) isa anotherBaseRelation;
+(someRole: $link5, anotherRole: $index5) isa specificRelation5;
+(someRole: $index5, anotherRole: $anotherLink5) isa anotherSpecificRelation5;
+
+$x6 isa someEntity;
+$y6 isa intermediateEntity;
+$link6 isa intermediateEntity;
+$index6 isa intermediateEntity;
+$anotherLink6 isa finalEntity;
+(someRole: $x6, anotherRole: $y6) isa baseRelation;
+(someRole: $y6, anotherRole: $link6) isa anotherBaseRelation;
+(someRole: $link6, anotherRole: $index6) isa specificRelation6;
+(someRole: $index6, anotherRole: $anotherLink6) isa anotherSpecificRelation6;
+
+$x7 isa someEntity;
+$y7 isa intermediateEntity;
+$link7 isa intermediateEntity;
+$index7 isa intermediateEntity;
+$anotherLink7 isa finalEntity;
+(someRole: $x7, anotherRole: $y7) isa baseRelation;
+(someRole: $y7, anotherRole: $link7) isa anotherBaseRelation;
+(someRole: $link7, anotherRole: $index7) isa specificRelation7;
+(someRole: $index7, anotherRole: $anotherLink7) isa anotherSpecificRelation7;
+
+$x8 isa someEntity;
+$y8 isa intermediateEntity;
+$link8 isa intermediateEntity;
+$index8 isa intermediateEntity;
+$anotherLink8 isa finalEntity;
+(someRole: $x8, anotherRole: $y8) isa baseRelation;
+(someRole: $y8, anotherRole: $link8) isa anotherBaseRelation;
+(someRole: $link8, anotherRole: $index8) isa specificRelation8;
+(someRole: $index8, anotherRole: $anotherLink8) isa anotherSpecificRelation8;
+
+$x9 isa someEntity;
+$y9 isa intermediateEntity;
+$link9 isa intermediateEntity;
+$index9 isa intermediateEntity;
+$anotherLink9 isa finalEntity;
+(someRole: $x9, anotherRole: $y9) isa baseRelation;
+(someRole: $y9, anotherRole: $link9) isa anotherBaseRelation;
+(someRole: $link9, anotherRole: $index9) isa specificRelation9;
+(someRole: $index9, anotherRole: $anotherLink9) isa anotherSpecificRelation9;
+
+$x10 isa someEntity;
+$y10 isa intermediateEntity;
+$link10 isa intermediateEntity;
+$index10 isa intermediateEntity;
+$anotherLink10 isa finalEntity;
+(someRole: $x10, anotherRole: $y10) isa baseRelation;
+(someRole: $y10, anotherRole: $link10) isa anotherBaseRelation;
+(someRole: $link10, anotherRole: $index10) isa specificRelation10;
+(someRole: $index10, anotherRole: $anotherLink10) isa anotherSpecificRelation10;
+
+$x11 isa someEntity;
+$y11 isa intermediateEntity;
+$link11 isa intermediateEntity;
+$index11 isa intermediateEntity;
+$anotherLink11 isa finalEntity;
+(someRole: $x11, anotherRole: $y11) isa baseRelation;
+(someRole: $y11, anotherRole: $link11) isa anotherBaseRelation;
+(someRole: $link11, anotherRole: $index11) isa specificRelation11;
+(someRole: $index11, anotherRole: $anotherLink11) isa anotherSpecificRelation11;
+
+$x12 isa someEntity;
+$y12 isa intermediateEntity;
+$link12 isa intermediateEntity;
+$index12 isa intermediateEntity;
+$anotherLink12 isa finalEntity;
+(someRole: $x12, anotherRole: $y12) isa baseRelation;
+(someRole: $y12, anotherRole: $link12) isa anotherBaseRelation;
+(someRole: $link12, anotherRole: $index12) isa specificRelation12;
+(someRole: $index12, anotherRole: $anotherLink12) isa anotherSpecificRelation12;
+
+$x13 isa someEntity;
+$y13 isa intermediateEntity;
+$link13 isa intermediateEntity;
+$index13 isa intermediateEntity;
+$anotherLink13 isa finalEntity;
+(someRole: $x13, anotherRole: $y13) isa baseRelation;
+(someRole: $y13, anotherRole: $link13) isa anotherBaseRelation;
+(someRole: $link13, anotherRole: $index13) isa specificRelation13;
+(someRole: $index13, anotherRole: $anotherLink13) isa anotherSpecificRelation13;
+
+$x14 isa someEntity;
+$y14 isa intermediateEntity;
+$link14 isa intermediateEntity;
+$index14 isa intermediateEntity;
+$anotherLink14 isa finalEntity;
+(someRole: $x14, anotherRole: $y14) isa baseRelation;
+(someRole: $y14, anotherRole: $link14) isa anotherBaseRelation;
+(someRole: $link14, anotherRole: $index14) isa specificRelation14;
+(someRole: $index14, anotherRole: $anotherLink14) isa anotherSpecificRelation14;

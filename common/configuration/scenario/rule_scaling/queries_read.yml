@@ -1,0 +1,13 @@
+queries:
+
+  - "match 
+      $x isa someEntity;
+      (someRole: $x, anotherRole: $y) isa baseRelation;
+      (someRole: $y, anotherRole: $link) isa anotherBaseRelation;
+      $r (someRole: $link, anotherRole: $anotherLink) isa inferredRelation;
+      $r has inferredAttribute $value;
+      $r has anotherInferredAttribute $anotherValue;
+      (someRole: $anotherLink, anotherRole: $index) isa indexingRelation;
+      get;"
+
+
