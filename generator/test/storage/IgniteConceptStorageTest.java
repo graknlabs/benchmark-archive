@@ -18,6 +18,7 @@
 
 package grakn.benchmark.generator.storage;
 
+import grakn.benchmark.generator.util.KeyspaceSchemaLabels;
 import grakn.core.concept.Concept;
 import grakn.core.concept.ConceptId;
 import grakn.core.concept.Label;
@@ -168,9 +169,12 @@ public class IgniteConceptStorageTest {
         Type relConceptTypeMock = mock(Type.class);
         when(relThingMock.type()).thenReturn(relConceptTypeMock); // Concept Type
         when(relConceptTypeMock.label()).thenReturn(Label.of("friendship")); // Type label
-
+        KeyspaceSchemaLabels schemaLabels = mock(KeyspaceSchemaLabels.class);
+        when(schemaLabels.attributeLabelsDataTypes()).thenReturn(attributeTypes);
+        when(schemaLabels.entityLabels()).thenReturn(entityTypes);
+        when(schemaLabels.relationLabels()).thenReturn(relationshipTypes);
         // create new ignite store
-        this.store = new IgniteConceptStorage(entityTypes, relationshipTypes, attributeTypes);
+        this.store = new IgniteConceptStorage(schemaLabels);
     }
 
     @Test

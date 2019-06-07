@@ -1,17 +1,43 @@
-package grakn.benchmark.profiler.util;
+package grakn.benchmark.profiler.usecase;
 
+import grakn.benchmark.common.configuration.BenchmarkConfiguration;
+import grakn.benchmark.profiler.ThreadedProfiler;
+import grakn.benchmark.profiler.util.SchemaManager;
 import grakn.client.GraknClient;
 import grakn.core.concept.answer.ConceptMap;
 import graql.lang.query.GraqlInsert;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ConcurrentDataLoader {
+public class LoadSchemaLoadData implements UseCase {
+
+    private final BenchmarkConfiguration config;
+    private final GraknClient client;
+    private final SchemaManager schemaManager;
+
+    LoadSchemaLoadData(BenchmarkConfiguration config, GraknClient client, SchemaManager schemaManager) {
+        this.config = config;
+        this.client = client;
+        this.schemaManager = schemaManager;
+    }
+
+    @Override
+    public void run() {
+        schemaManager.loadSchema();
+        List<String> keyspaces = Collections.singletonList(config.getKeyspace());
+
+        int numConcepts = concurrentDataImport(client, keyspaces, config.staticDataImportQueries(), 8);
+
+        ThreadedProfiler threadedProfiler = new ThreadedProfiler(client, keyspaces, config);
+        threadedProfiler.processQueries(config.numQueryRepetitions(), numConcepts);
+        threadedProfiler.cleanup();
+    }
 
     /**
      * Execute a set of graql insert queries into each given keyspace
@@ -19,7 +45,7 @@ public class ConcurrentDataLoader {
      *
      * @return concepts imported per keyspace (all named variables will be counted, so eg. likely excluding implicit rels)
      */
-    public static int concurrentDataImport(GraknClient client, List<String> keyspaces, List<GraqlInsert> dataImportQueries, int concurrency) {
+    private static int concurrentDataImport(GraknClient client, List<String> keyspaces, List<GraqlInsert> dataImportQueries, int concurrency) {
         int importedConcepts = 0;
         for (String keyspace : keyspaces) {
             importedConcepts = 0;
@@ -38,7 +64,7 @@ public class ConcurrentDataLoader {
                             GraknClient.Transaction writeTransaction = session.transaction().write();
                             List<ConceptMap> insertedIds = writeTransaction.execute(insertQuery);
                             writeTransaction.commit();
-                            insertedConcepts += insertedIds.stream().map(map -> map.concepts().size()).reduce((a, b) -> a + b).orElse(0);
+                            insertedConcepts += insertedIds.stream().map(map -> map.concepts().size()).reduce(Integer::sum).orElse(0);
                         }
                         return insertedConcepts;
                     }, executorService);

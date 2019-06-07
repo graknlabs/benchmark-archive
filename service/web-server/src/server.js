@@ -57,33 +57,40 @@ app.post('/execution/new', (req, res) => {
 
 app.post('/execution/start', (req, res) => {
     executionsController.updateExecutionStatus(req.body, { status : 'RUNNING', executionStartedAt: new Date().toISOString()})
-        .then(()=> { console.log("Execution marked as RUNNING."); })
-        .catch((err) => { console.error(err); });
-    res.status(200).json({});
+        .then(()=> {
+            res.status(200).json({});
+            console.log("Execution marked as RUNNING.");
+        }).catch((err) => { console.error(err); });
 });
 
 app.post('/execution/completed', (req, res) => {
     executionsController.updateExecutionStatus(req.body, { status : 'COMPLETED', executionCompletedAt: new Date().toISOString()})
-        .then(()=> { console.log("Execution marked as COMPLETED."); })
-        .catch((err) => { console.error(err); })
+        .then(()=> {
+            res.status(200).json({});
+            console.log("Execution marked as COMPLETED.");
+            }).catch((err) => { console.error(err); })
     utils.deleteInstance(DELETE_INSTANCE_SCRIPT_PATH, req.body.vmName);
-    res.status(200).json({});
+
 });
 
 app.post('/execution/stop', (req, res) => {
     executionsController.updateExecutionStatus(req.body, { status : 'STOPPED', executionCompletedAt: new Date().toISOString()})
-        .then(()=> { console.log("Execution marked as STOPPED."); })
-        .catch((err) => { console.error(err); })
+        .then(()=> {
+            res.status(200).json({});
+            console.log("Execution marked as STOPPED.");
+        }).catch((err) => { console.error(err); })
     utils.deleteInstance(DELETE_INSTANCE_SCRIPT_PATH, req.body.vmName);
-    res.status(200).json({});
+
 });
 
 app.post('/execution/delete', (req, res) => {
     executionsController.deleteExecution(req.body)
-        .then(()=> { console.log("Execution deleted."); })
-        .catch((err) => { console.error(err); })
+        .then(()=> {
+            res.status(200).json({});
+            console.log("Execution deleted.");
+        }).catch((err) => { console.error(err); })
     utils.deleteInstance(DELETE_INSTANCE_SCRIPT_PATH, req.body.vmName);
-    res.status(200).json({});
+
 });
 
 app.post('/execution/failed', (req, res) => {
