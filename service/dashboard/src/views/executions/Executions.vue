@@ -95,6 +95,8 @@ export default {
 
       executions: [],
 
+      sortColumn: 'executionInitialisedAt',
+
       sortType: 'Desc',
 
       columns: [
@@ -138,11 +140,12 @@ export default {
         }} }`,
       );
       this.executions = executionsResp.data.executions;
-      this.sortExecutions('executionInitialisedAt');
+      this.sortExecutions(this.sortColumn);
       this.loading = false;
     },
 
     sortExecutions(column) {
+      this.sortColumn = column;
       const { sortType } = this;
       this.executions.sort((a, b) => {
         const x = a[column];
