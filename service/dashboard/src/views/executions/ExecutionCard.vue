@@ -1,5 +1,5 @@
 <template>
-  <el-card @click.native="openInspect">
+  <el-card @click.native="onCardClick">
     <div class="flexed">
       <template v-if="shouldRenderColumn('status')">
         <div :class="'status status-' + execution.status.toLowerCase()">
@@ -145,7 +145,7 @@ export default {
   },
 
   methods: {
-    openInspect(e) {
+    onCardClick(e) {
       if (e.target.tagName !== 'A') { // the clicked element on the card is not a link
         this.$router.push({ path: this.clickPath });
       }
