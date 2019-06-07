@@ -20,7 +20,6 @@ public class DataImportIT {
     private final static Path WEB_CONTENT_DATA_IMPORT_CONFIG_PATH = Paths.get("profiler/test-integration/resources/web_content/web_content_config_data_import.yml");
 
     private GraknClient client;
-    private GraknClient.Session session;
     private String keyspace;
 
     @Before
@@ -29,12 +28,10 @@ public class DataImportIT {
         client = new GraknClient(uri);
         String uuid = UUID.randomUUID().toString().substring(0, 30).replace("-", "");
         keyspace = "test_" + uuid;
-        session = client.session(keyspace);
     }
 
     @After
     public void tearDown() {
-        session.close();
         client.keyspaces().delete(keyspace);
         client.close();
     }
@@ -51,10 +48,11 @@ public class DataImportIT {
         GraknBenchmark graknBenchmark = new GraknBenchmark(commandLine);
         graknBenchmark.start();
 
-        try (GraknClient.Transaction tx = session.transaction().read()) {
+        GraknClient.Session session = client.session(keyspace);
+        GraknClient.Transaction tx = session.transaction().read();
             List<Numeric> answer = tx.execute(Graql.parse("match $x isa thing; get; count;").asGetAggregate());
             assertTrue(answer.get(0).number().intValue() > 0);
-        }
-
+        tx.close();
+        session.close();
     }
 }

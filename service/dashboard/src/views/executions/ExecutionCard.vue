@@ -1,5 +1,5 @@
 <template>
-  <el-card>
+  <el-card @click.native="onCardClick">
     <div class="flexed">
       <template v-if="shouldRenderColumn('status')">
         <div :class="'status status-' + execution.status.toLowerCase()">
@@ -25,9 +25,10 @@
           :content="getTooltipFor('commit')"
           placement="top"
         >
-          <router-link :to="'inspect/' + execution.id">
-            {{ execution.commit.slice(0, 15) }}
-          </router-link>
+          <a
+            :href="execution.repoUrl + '/commit/' + execution.commit"
+            target="_blank"
+          >{{ execution.commit.slice(0, 15) }}</a>
         </el-tooltip>
       </template>
 
@@ -127,6 +128,12 @@ export default {
       type: Array,
       required: true,
     },
+
+    clickPath: {
+      type: String,
+      required: false,
+      default: '#',
+    },
   },
 
   computed: {
@@ -139,6 +146,11 @@ export default {
   },
 
   methods: {
+    onCardClick(e) {
+      if (e.target.tagName !== 'A') { // the clicked element on the card is not a link
+        this.$router.push({ path: this.clickPath });
+      }
+    },
     deleteExecution(execution) {
       this.$confirm('Are you sure you want to delete this execution?').then(
         () => {
@@ -209,6 +221,10 @@ export default {
 
 <style lang="scss" scoped>
 @import "./src/assets/css/variables.scss";
+
+.el-card {
+  cursor: pointer;
+}
 
 .status {
   width: 90px;

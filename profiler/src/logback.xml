@@ -43,6 +43,13 @@
     <logger name="grakn.benchmark.profiler.GraknBenchmark" level="INFO">
         <appender-ref ref="STDOUT"/>
     </logger>
+    <logger name="grakn.benchmark.profiler.util.SchemaManager" level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="grakn.benchmark.profiler.usecase" level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </logger>
     <logger name="grakn.benchmark" level="INFO">
         <appender-ref ref="MAIN"/>
     </logger>

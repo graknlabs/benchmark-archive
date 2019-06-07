@@ -31,10 +31,11 @@ import grakn.benchmark.generator.query.QueryProvider;
 import grakn.benchmark.generator.storage.ConceptStorage;
 import grakn.benchmark.generator.storage.IgniteConceptStorage;
 import grakn.benchmark.generator.util.IgniteManager;
-import grakn.benchmark.generator.util.SchemaManager;
+import grakn.benchmark.generator.util.KeyspaceSchemaLabels;
 import grakn.benchmark.report.producer.container.QueryExecutionResults;
 import grakn.benchmark.report.producer.container.ReportData;
 import grakn.client.GraknClient;
+import grakn.core.concept.answer.ConceptMap;
 import grakn.core.concept.type.AttributeType;
 import graql.lang.Graql;
 import graql.lang.query.GraqlQuery;
@@ -49,11 +50,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -62,12 +65,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static graql.lang.Graql.parseList;
+import static graql.lang.Graql.var;
 
 public class ReportProducer {
     private static final Logger LOG = LoggerFactory.getLogger(ReportProducer.class);
 
     private final BenchmarkConfiguration config;
     private final ReportData reportData;
+    private final GraknClient client;
 
     public static void main(String[] args) {
         printAscii();
@@ -93,23 +98,23 @@ public class ReportProducer {
     public ReportProducer(CommandLine arguments) {
         config = new BenchmarkConfiguration(arguments);
         reportData = new ReportData();
+        client = new GraknClient(config.graknUri());
     }
 
 
     public void start() throws IOException {
         Ignite ignite = IgniteManager.initIgnite();
-        GraknClient client = new GraknClient(config.graknUri());
         String keyspace = config.getKeyspace();
 
         // error if keyspace not empty
-        verifyKeyspaceIsEmpty(client, keyspace);
+        if (keyspaceExists(keyspace)) throw new BootupException("Keyspace [" + keyspace + "] already exists");
 
         // load schema into keyspace
-        loadSchema(client, keyspace, config.getGraqlSchema());
+        loadSchema(keyspace, config.getGraqlSchema());
 
         // create the data generator
         BenchmarkingTimer timer = new BenchmarkingTimer();
-        DataGenerator dataGenerator = initDataGenerator(client, keyspace, timer);
+        DataGenerator dataGenerator = initDataGenerator(keyspace, timer);
 
         // write the relevant config metadata to the report
         reportData.addMetadata(config.configName(), config.concurrentClients(), config.configDescription(), config.dataGenerator());
@@ -175,16 +180,10 @@ public class ReportProducer {
     /**
      * Connect a data generator to pre-prepared keyspace
      */
-    private DataGenerator initDataGenerator(GraknClient client, String keyspace, BenchmarkingTimer timer) {
+    private DataGenerator initDataGenerator(String keyspace, BenchmarkingTimer timer) {
         int randomSeed = 0;
-        GraknClient.Session session = client.session(keyspace);
-
-        SchemaManager schemaManager = new SchemaManager(session);
-        HashSet<String> entityTypeLabels = schemaManager.getEntityTypes();
-        HashSet<String> relationshipTypeLabels = schemaManager.getRelationTypes();
-        Map<String, AttributeType.DataType<?>> attributeTypeLabels = schemaManager.getAttributeTypes();
-        ConceptStorage storage = new IgniteConceptStorage(entityTypeLabels, relationshipTypeLabels, attributeTypeLabels);
-
+        KeyspaceSchemaLabels schemaLabels = new KeyspaceSchemaLabels(client, keyspace);
+        ConceptStorage storage = new IgniteConceptStorage(schemaLabels);
         String dataGenerator = config.dataGenerator();
         DataGeneratorDefinition dataGeneratorDefinition = DefinitionFactory.getDefinition(dataGenerator, new Random(randomSeed), storage);
         QueryProvider queryProvider = new QueryProvider(dataGeneratorDefinition);
@@ -195,15 +194,11 @@ public class ReportProducer {
         return queries.stream().map(q -> (GraqlQuery) Graql.parse(q)).collect(Collectors.toList());
     }
 
-    private void verifyKeyspaceIsEmpty(GraknClient client, String keyspace) {
-        // verify keyspace is empty
-        SchemaManager schemaManager = new SchemaManager(client.session(keyspace));
-        if (!schemaManager.verifyEmptyKeyspace()) {
-            throw new BootupException("Keyspace " + keyspace + " is not empty.");
-        }
+    private boolean keyspaceExists(String keyspace) {
+        return client.keyspaces().retrieve().contains(keyspace);
     }
 
-    private void loadSchema(GraknClient client, String keyspace, List<String> schemaQueries) {
+    private void loadSchema(String keyspace, List<String> schemaQueries) {
         // load schema
         LOG.info("Initialising keyspace `" + keyspace + "`...");
         try (GraknClient.Transaction tx = client.session(keyspace).transaction().write()) {

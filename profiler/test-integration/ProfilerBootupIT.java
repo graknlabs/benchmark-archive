@@ -64,35 +64,15 @@ public class ProfilerBootupIT {
     }
 
     @Test
-    public void whenSchemaExistsInKeyspace_throwException() {
-
-        try (GraknClient.Transaction tx = session.transaction().write()) {
-            List<ConceptMap> answer = tx.execute(Graql.define(type("person").sub("entity")));
-            tx.commit();
-        }
-
-        expectedException.expect(BootupException.class);
-        expectedException.expectMessage("is not empty");
+    public void whenKeyspaceAlreadyExists_throwException() {
+        GraknClient.Transaction tx = session.transaction().read();
+        tx.close();
         String[] args = new String[]{"--config", WEB_CONTENT_DATA_GEN_CONFIG_PATH.toAbsolutePath().toString(), "--keyspace", keyspace, "--execution-name", "testing"};
         CommandLine commandLine = BenchmarkArguments.parse(args);
         GraknBenchmark graknBenchmark = new GraknBenchmark(commandLine);
-        graknBenchmark.start();
-    }
-
-    @Test
-    public void whenDataExistsInKeyspace_throwException() {
-
-        try (GraknClient.Transaction tx = session.transaction().write()){
-            List<ConceptMap> answer = tx.execute(Graql.define(type("person").sub("entity")));
-            answer = tx.execute(Graql.insert(var("x").isa("person")));
-            tx.commit();
-        }
 
         expectedException.expect(BootupException.class);
-        expectedException.expectMessage("is not empty");
-        String[] args = new String[] {"--config", WEB_CONTENT_DATA_GEN_CONFIG_PATH.toAbsolutePath().toString(), "--keyspace", keyspace, "--execution-name", "testing"};
-        CommandLine commandLine = BenchmarkArguments.parse(args);
-        GraknBenchmark graknBenchmark = new GraknBenchmark(commandLine);
+        expectedException.expectMessage("already exists");
         graknBenchmark.start();
     }
 }

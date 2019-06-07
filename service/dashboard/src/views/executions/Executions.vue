@@ -73,6 +73,7 @@
         :key="exec.id"
         :execution="exec"
         :columns="columns"
+        :click-path="'inspect/' + exec.id"
         @reload-required="fetchExecutions"
       />
     </div>

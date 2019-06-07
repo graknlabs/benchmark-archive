@@ -1,0 +1,13 @@
+name: "Rule Scaling Test"
+description: "Tests for query execution on graphs with large number of rules"
+schema: "rule_scaling_schema.gql"
+dataImportFile: "rule_scaling_data.gql"
+repeatsPerQuery: 3
+
+queries: "queries_read.yml"
+deleteInsertedConcepts: false
+traceDeleteInsertedConcepts: false
+
+concurrency:
+  clients: 1
+  uniqueKeyspaces: false

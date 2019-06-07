@@ -11,31 +11,43 @@ queries:
       $z isa circle;
       get; limit 5;"
 
-# TODO re-enable when statistics are available to make these queries complete
+  # branching that has attributes at the ends, which means the QP needs to operate depth first for a good plan
+  - "match
+      $b1 isa blob;
+      $b2 isa blob;
+      ($b1, $b2) isa ownership;
+      ($b2, $s1) isa ownership;
+      $s1 has shape-value 3;
+      $c isa circle;
+      ($b1, $c) isa interaction;
+      ($c, $c2) isa sizing;
+      $c2 has circle-value 2; get;"
+
+
   # branching from one entity, width 3, depth 1
-#  - "match
-#      $b1 isa blob;
-#      $b2 isa blob;
-#      ($b1, $b2) isa ownership;
-#      $c isa circle;
-#      ($b1, $c) isa interaction;
-#      $s isa square;
-#      ($b1, $s) isa interaction;
-#      get; limit 5;"
+  - "match
+      $b1 isa blob;
+      $b2 isa blob;
+      ($b1, $b2) isa ownership;
+      $c isa circle;
+      ($b1, $c) isa interaction;
+      $s isa square;
+      ($b1, $s) isa interaction;
+      get; limit 5;"
 #
 #  # branching from one entity, width 3, depth 3
 #  # -
 #
 #  # star, 6 role players, half with attribute values
-#  - "match
-#      ($b1, $b2, $c1, $c2, $s1, $s2) isa interaction;
-#      $b1 isa blob, has blob-value 1;
-#      $b2 isa blob;
-#      $c1 isa circle, has circle-value 2;
-#      $c2 isa circle;
-#      $s1 isa square, has shape-value 3;
-#      $s2 isa square;
-#      get;limit 5;"
+  - "match
+      ($b1, $b2, $c1, $c2, $s1, $s2) isa interaction;
+      $b1 isa blob, has blob-value 1;
+      $b2 isa blob;
+      $c1 isa circle, has circle-value 2;
+      $c2 isa circle;
+      $s1 isa square, has shape-value 3;
+      $s2 isa square;
+      get;limit 5;"
 #
 #  # circle (ie. pentagon)
 #  - "match
@@ -55,20 +67,20 @@ queries:
 #  # It may be interesting to keep the ternary relations as unspecific types to see if we
 #  # can prune search space using histograms of connectivity (eg. the only relations with more than 2
 #  # role players are actually interactions!). Meanwhile many relations have two RPs so we don't gain any information
-#  - "match
-#      $b1 isa blob;
-#      $b2 isa blob;
-#      $c isa circle;
-#      $s isa square;
-#      ($b1, $b2) isa sizing;
-#      ($b2, $c) isa ownership;
-#      ($c, $s) isa ownership;
-#      ($s, $b1) isa interaction;
-#      ($b1, $c) isa relation;
-#      (bigger: $b2, smaller: $s) isa sizing;
-#      ($b1, $b2, $c) isa relation;
-#      ($b1, $b2, $s) isa relation;
-#      ($b2, $c, $s) isa relation;
-#      ($b1, $c, $s) isa relation;
-#      ($b1, $b2, $c, $s) isa interaction;
-#      get;limit 5;"
+  - "match
+      $b1 isa blob;
+      $b2 isa blob;
+      $c isa circle;
+      $s isa square;
+      ($b1, $b2) isa sizing;
+      ($b2, $c) isa ownership;
+      ($c, $s) isa ownership;
+      ($s, $b1) isa interaction;
+      ($b1, $c) isa relation;
+      (bigger: $b2, smaller: $s) isa sizing;
+      ($b1, $b2, $c) isa relation;
+      ($b1, $b2, $s) isa relation;
+      ($b2, $c, $s) isa relation;
+      ($b1, $c, $s) isa relation;
+      ($b1, $b2, $c, $s) isa interaction;
+      get;limit 5;"

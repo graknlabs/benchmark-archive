@@ -103,6 +103,7 @@ public class ThreadedProfiler {
 
     public void cleanup() {
         executorService.shutdown();
+        client.close();
     }
 }
 

@@ -18,7 +18,7 @@
 
 java_library(
     name = "benchmark-profiler",
-    srcs = glob(["*.java", "util/*.java"]),
+    srcs = glob(["*.java", "util/*.java", "usecase/*.java"]),
     deps = [
         "//common/analysis:insert-query-analyser",
         "//common/configuration:benchmark-configuration",
@@ -29,7 +29,6 @@ java_library(
         "@graknlabs_client_java//:client-java",
         "@graknlabs_graql//java:graql",
         "@graknlabs_grakn_core//api:api",
-        "@graknlabs_grakn_core//common:common",
         "@graknlabs_grakn_core//concept:concept",
 
         # together these can be used to create clients with tracing enabled
