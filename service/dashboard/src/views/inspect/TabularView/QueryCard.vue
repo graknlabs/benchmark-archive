@@ -63,7 +63,7 @@
 
         <step-line
           v-if="!stepOrGroup.hasOwnProperty('members')"
-          :key="stepOrGroup.order"
+          :key="stepOrGroup.name"
           :step="stepOrGroup.name"
           :step-spans="filterStepSpans(stepOrGroup.order)"
           :padding="0"
@@ -204,36 +204,39 @@ export default {
       const steps = this.stepSpans.filter(span => span.rep === 0);
       steps.sort((a, b) => a.order - b.order);
 
-      // first step is not a group. insert it.
-      this.stepsAndGroups.push(steps[0]);
+      let currentStep = {
+        name: steps[0].name,
+        order: steps[0].order,
+      };
+      let currentSteps = [];
+      let i = 1;
 
-      // iterate over 'steps' to identify the consequent spans with the same name (which should belong to the same group)
-      // construct the group object and add it among non-group items to 'stepsAndGroups'
-      for (let i = 1; i < steps.length - 1; i += 1) {
-        const previousStep = steps[i - 1];
-        const currentStep = steps[i];
-        const nextStep = steps[i + 1];
-
-        const shouldStepBeAddedToGroup = currentStep.name === previousStep.name || currentStep.name === nextStep.name;
-
-        if (shouldStepBeAddedToGroup) {
-          const lastInsertedGroup = this.stepsAndGroups[this.stepsAndGroups.length - 1];
-          const isLastItemAGroup = Object.prototype.hasOwnProperty.call(lastInsertedGroup, 'members');
-
-          if (isLastItemAGroup) {
-            lastInsertedGroup.members[steps[i].order] = this.filterStepSpans(steps[i].order);
-          } else {
-            const group = { members: {} };
-            group.members[steps[i].order] = this.filterStepSpans(steps[i].order);
-            this.stepsAndGroups.push(group);
-          }
+      do {
+        if (steps[i].name === currentStep.name) {
+          currentSteps.push(steps[i - 1]);
+          currentSteps.push(steps[i]);
         } else {
-          this.stepsAndGroups.push(steps[i]);
+          const stepOrGroup = this.buildStepOrGroup(currentStep, currentSteps);
+          this.stepsAndGroups.push(stepOrGroup);
+          currentStep = { name: steps[i].name, order: steps[i].order };
+          currentSteps = [];
         }
-      }
+        i += 1;
+      } while (i < steps.length);
 
       // last step is not a group. insert it.
       this.stepsAndGroups.push(steps[steps.length - 1]);
+    },
+
+    buildStepOrGroup(step, grouppedSteps) {
+      if (grouppedSteps.length) {
+        const group = { members: {} };
+        grouppedSteps.forEach((grouppedStep) => {
+          group.members[grouppedStep.order] = this.filterStepSpans(grouppedStep.order);
+        });
+        return group;
+      }
+      return { name: step.name, order: step.order };
     },
 
     filterStepSpans(stepNumber) {
