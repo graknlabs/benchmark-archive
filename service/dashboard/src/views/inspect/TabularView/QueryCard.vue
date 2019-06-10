@@ -166,9 +166,14 @@ export default {
       this.loading = true;
 
       this.queryExpanded = !this.queryExpanded;
-      if (!this.queryExpanded) return;
+      if (!this.queryExpanded) {
+        this.loading = false;
+        return;
+      }
 
-      await this.fetchStepSpans();
+      if (!this.stepsAndGroups.length) {
+        await this.fetchStepSpans();
+      }
 
       this.loading = false;
     },
