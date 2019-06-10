@@ -1,7 +1,5 @@
 <template>
-  <el-card
-    v-loading="loading"
-  >
+  <el-card v-loading="loading">
     <div
       class="queryCardDetails flexed"
       @click="toggleStepsTable()"
@@ -203,61 +201,39 @@ export default {
      *    - values are array of span objects
      */
     produceStepsAndGroups() {
-      // get a sorted (by order) array of stepSpans where no two stepSpan
-      // have the same combination of order and name
-      const steps = this.stepSpans
-        .filter((span) => {
-          const key = span.name + span.order;
-          if (!this[key]) {
-            this[key] = true;
-            return true;
-          }
-          return false;
-        })
-        .sort((a, b) => a.order - b.order);
+      const steps = this.stepSpans.filter(span => span.rep === 0);
+      steps.sort((a, b) => a.order - b.order);
 
+      // first step is not a group. insert it.
       this.stepsAndGroups.push(steps[0]);
 
       // iterate over 'steps' to identify the consequent spans with the same name (which should belong to the same group)
       // construct the group object and add it among non-group items to 'stepsAndGroups'
-      for (let i = 1; i < steps.length; i += 1) {
-        const currentStep = steps[i];
+      for (let i = 1; i < steps.length - 1; i += 1) {
         const previousStep = steps[i - 1];
-
-        if (i === steps.length - 1) {
-          this.stepsAndGroups.push(steps[i]);
-          break;
-        }
-
+        const currentStep = steps[i];
         const nextStep = steps[i + 1];
 
-        if (currentStep.name === previousStep.name) {
-          addToStepsAndGroups(i, this);
-        } else if (currentStep.name === nextStep.name) {
-          addToStepsAndGroups(i, this);
+        const shouldStepBeAddedToGroup = currentStep.name === previousStep.name || currentStep.name === nextStep.name;
+
+        if (shouldStepBeAddedToGroup) {
+          const lastInsertedGroup = this.stepsAndGroups[this.stepsAndGroups.length - 1];
+          const isLastItemAGroup = Object.prototype.hasOwnProperty.call(lastInsertedGroup, 'members');
+
+          if (isLastItemAGroup) {
+            lastInsertedGroup.members[steps[i].order] = this.filterStepSpans(steps[i].order);
+          } else {
+            const group = { members: {} };
+            group.members[steps[i].order] = this.filterStepSpans(steps[i].order);
+            this.stepsAndGroups.push(group);
+          }
         } else {
           this.stepsAndGroups.push(steps[i]);
         }
       }
 
-      function addToStepsAndGroups(i, scope) {
-        const lastInsertedStepOrGroup = scope.stepsAndGroups[
-          scope.stepsAndGroups.length - 1
-        ];
-
-        if (
-          Object.prototype.hasOwnProperty.call(
-            lastInsertedStepOrGroup,
-            'members',
-          )
-        ) {
-          lastInsertedStepOrGroup.members[steps[i].order] = scope.filterStepSpans(steps[i].order);
-        } else {
-          const group = { members: {} };
-          group.members[steps[i].order] = scope.filterStepSpans(steps[i].order);
-          scope.stepsAndGroups.push(group);
-        }
-      }
+      // last step is not a group. insert it.
+      this.stepsAndGroups.push(steps[steps.length - 1]);
     },
 
     filterStepSpans(stepNumber) {
