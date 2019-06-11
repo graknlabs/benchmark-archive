@@ -270,7 +270,7 @@ public class IgniteConceptStorage implements ConceptStorage {
     }
 
     @Override
-    public void addConcept(Concept concept) {
+    public void addConcept(Concept concept, Long conceptKey) {
 
         Label conceptTypeLabel = concept.asThing().type().label();
         String tableName = labelToSqlName(conceptTypeLabel.toString());
@@ -343,12 +343,12 @@ public class IgniteConceptStorage implements ConceptStorage {
      * Add a role player, and specify its type, the relationship, and role it fills
      * This will track
      *
-     * @param conceptId
+     * @param conceptKey
      * @param conceptType
      * @param relationshipType
      * @param role
      */
-    public void addRolePlayer(String conceptId, String conceptType, String relationshipType, String role) {
+    public void addRolePlayerByKey(Long conceptKey, String conceptType, String relationshipType, String role) {
 
         // sanity check for the user in case they entered something wrong in the data generator
         if (!this.relationshipTypeLabels.contains(relationshipType)) {
@@ -409,7 +409,7 @@ public class IgniteConceptStorage implements ConceptStorage {
     /**
      * String stuffing all the roles played by a concept of a given type in a specific relationship into one
      */
-    public List<ConceptId> getIdsNotPlayingRole(String typeLabel, String relationshipType, String role) {
+    public List<Long> getKeysNotPlayingRole(String typeLabel, String relationshipType, String role) {
         String tableName = labelToSqlName(typeLabel);
         String columnName = labelToSqlName(relationshipType);
         String roleName = sanitizeString(role);
@@ -474,7 +474,7 @@ public class IgniteConceptStorage implements ConceptStorage {
         return sql;
     }
 
-    public ConceptId getConceptId(String typeLabel, int offset) {
+    public Long getConceptKey(String typeLabel, int offset) {
         try (Statement stmt = conn.createStatement()) {
             try (ResultSet rs = stmt.executeQuery(sqlGetId(typeLabel, offset))) {
                 if (rs != null && rs.next()) { // Need to do this to increment one line in the ResultSet

@@ -19,7 +19,6 @@
 package grakn.benchmark.generator.provider.concept;
 
 import grakn.benchmark.generator.storage.ConceptStorage;
-import grakn.core.concept.ConceptId;
 
 import java.util.Random;
 
@@ -46,10 +45,10 @@ public class ConceptIdStorageProvider implements ConceptIdProvider {
     }
 
     @Override
-    public ConceptId next() {
+    public Long next() {
         int conceptCount = this.conceptStorage.getConceptCount(this.typeLabel);
         int randomOffset = rand.nextInt(conceptCount);
-        return conceptStorage.getConceptId(typeLabel, randomOffset);
+        return conceptStorage.getConceptKey(typeLabel, randomOffset);
     }
 
 }

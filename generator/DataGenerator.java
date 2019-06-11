@@ -115,7 +115,7 @@ public class DataGenerator {
                     conceptList.forEach(concept -> {
                         String rolePlayerId = concept.id().toString();
                         String rolePlayerTypeLabel = concept.asThing().type().label().toString();
-                        storage.addRolePlayer(rolePlayerId, rolePlayerTypeLabel, relationshipAdded, roleName);
+                        storage.addRolePlayerByKey(rolePlayerId, rolePlayerTypeLabel, relationshipAdded, roleName);
                     });
                 });
             }

@@ -54,10 +54,10 @@ public class ConceptIdStorageProviderTest {
     public void whenAskForNextId_returnCorrectId() {
         ConceptStorage storage = mock(ConceptStorage.class);
         when(storage.getConceptCount("person")).thenReturn(4);
-        when(storage.getConceptId("person", 0)).thenReturn(ConceptId.of("a"));
-        when(storage.getConceptId("person", 1)).thenReturn(ConceptId.of("b"));
-        when(storage.getConceptId("person", 2)).thenReturn(ConceptId.of("c"));
-        when(storage.getConceptId("person", 3)).thenReturn(ConceptId.of("d"));
+        when(storage.getConceptKey("person", 0)).thenReturn(ConceptId.of("a"));
+        when(storage.getConceptKey("person", 1)).thenReturn(ConceptId.of("b"));
+        when(storage.getConceptKey("person", 2)).thenReturn(ConceptId.of("c"));
+        when(storage.getConceptKey("person", 3)).thenReturn(ConceptId.of("d"));
 
         Random random = mock(Random.class);
         when(random.nextInt(4)).thenReturn(2).thenReturn(0).thenReturn(1).thenReturn(1);
