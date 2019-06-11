@@ -204,24 +204,20 @@ export default {
       const steps = this.stepSpans.filter(span => span.rep === 0);
       steps.sort((a, b) => a.order - b.order);
 
-      let currentStep = {
-        name: steps[0].name,
-        order: steps[0].order,
-      };
+      let currentStep = steps[0];
       let currentSteps = [];
-      let i = 1;
+      let i = 0;
 
       do {
         if (steps[i].name === currentStep.name) {
-          currentSteps.push(steps[i - 1]);
           currentSteps.push(steps[i]);
+          i += 1;
         } else {
           const stepOrGroup = this.buildStepOrGroup(currentStep, currentSteps);
           this.stepsAndGroups.push(stepOrGroup);
-          currentStep = { name: steps[i].name, order: steps[i].order };
+          currentStep = steps[i];
           currentSteps = [];
         }
-        i += 1;
       } while (i < steps.length);
 
       // last step is not a group. insert it.
@@ -229,14 +225,14 @@ export default {
     },
 
     buildStepOrGroup(step, grouppedSteps) {
-      if (grouppedSteps.length) {
+      if (grouppedSteps.length > 1) {
         const group = { members: {} };
         grouppedSteps.forEach((grouppedStep) => {
           group.members[grouppedStep.order] = this.filterStepSpans(grouppedStep.order);
         });
         return group;
       }
-      return { name: step.name, order: step.order };
+      return step;
     },
 
     filterStepSpans(stepNumber) {
