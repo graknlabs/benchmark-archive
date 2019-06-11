@@ -24,7 +24,7 @@
 }
 
 .cards-list { 
-  .el-card {
+  .el-card, .card {
     margin-bottom: $margin-default;
     overflow: visible;
     font-size: $font-size-card;

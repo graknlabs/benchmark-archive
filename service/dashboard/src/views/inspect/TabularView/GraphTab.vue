@@ -2,9 +2,13 @@
   <div>
     <el-row
       type="flex"
-      justify="end"
+      justify="start"
+      align="middle"
       class="queries-action-bar"
     >
+      <p class="graphDescription">
+        {{ graphDescription }}
+      </p>
       <div class="action-item">
         <scale-selector
           title="Scale"
@@ -76,6 +80,10 @@ export default {
       scaledQueries.sort((a, b) => (a.value > b.value ? 1 : -1));
       return scaledQueries;
     },
+
+    graphDescription() {
+      return this.graphs[0].description;
+    },
   },
 
   created() {
@@ -89,19 +97,10 @@ export default {
 @import "./src/assets/css/variables.scss";
 
 .queries-action-bar {
-  height: 39px;
+  color: darken($color-text-gray, 20%);
+  padding-bottom: $padding-default;
 
-  border-bottom: 1px solid $color-border-light;
-
-  align-items: center;
-  display: flex;
-  justify-content: flex-end;
-  margin-top: -$margin-default;
-  margin-right: -$margin-default;
-  margin-bottom: $margin-default;
-  margin-left: -$margin-default;
-
-  .action-item {
+  .action-item, .graphDescription {
     padding-right: $padding-default;
   }
 }

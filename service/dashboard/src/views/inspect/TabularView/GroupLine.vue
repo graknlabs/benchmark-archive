@@ -4,23 +4,37 @@
       :class="'flexed tableRow ' + (expaned ? 'expanded' : '')"
       @click="toggleMembers"
     >
-      <span
-        class="groupName"
-        style="width: 300px;"
-      >
+      <span :style="'text-align: left; padding-left:' + padding + 'px;'">
         <i class="el-icon el-icon-arrow-right" />
         {{ groupName | truncate(100) }}
       </span>
 
-      <span
-        style="width: 110px;"
-      >{{ minSpan.duration | fixedMs }}/<a :href="'#' + groupName + indexOfMinSpan">{{ indexOfMinSpan | ordinalise }}</a></span>
+      <el-tooltip
+        class="item"
+        effect="dark"
+        :content="minTooltipContent()"
+        placement="top"
+      >
+        <span>{{ minSpan.duration | fixedMs }}/<a :href="'#' + groupName + indexOfMinSpan">{{ indexOfMinSpan | ordinalise }}</a></span>
+      </el-tooltip>
 
-      <span style="width: 90px;">{{ median | fixedMs }}/{{ reps }}</span>
+      <el-tooltip
+        class="item"
+        effect="dark"
+        :content="medianTooltipContent()"
+        placement="top"
+      >
+        <span>{{ median | fixedMs }}/{{ reps }}</span>
+      </el-tooltip>
 
-      <span
-        style="width: 115px;"
-      >{{ maxSpan.duration | fixedMs }}/<a :href="'#' + groupName + indexOfMaxSpan">{{ indexOfMaxSpan | ordinalise }}</a></span>
+      <el-tooltip
+        class="item"
+        effect="dark"
+        :content="maxTooltipContent()"
+        placement="top"
+      >
+        <span>{{ maxSpan.duration | fixedMs }}/<a :href="'#' + groupName + indexOfMaxSpan">{{ indexOfMaxSpan | ordinalise }}</a></span>
+      </el-tooltip>
     </div>
     <div v-if="expaned">
       <step-line
@@ -31,7 +45,7 @@
         :step-spans="members[memberOrder]"
         :is-fastest-member="isSpanFastest(memberOrder)"
         :is-slowest-member="isSpanSlowest(memberOrder)"
-        :padding="10"
+        :padding="padding + 20"
       />
     </div>
   </div>
@@ -59,6 +73,11 @@ export default {
   props: {
     members: {
       type: Object,
+      required: true,
+    },
+
+    padding: {
+      type: Number,
       required: true,
     },
   },
@@ -138,6 +157,27 @@ export default {
     isSpanSlowest(order) {
       return this.indexOfMaxSpan === order - this.firstMemberOrder + 1;
     },
+
+    minTooltipContent() {
+      const { ordinalise } = this.$options.filters;
+      return `The ${ordinalise(
+        this.minSpan.rep + 1,
+      )} step in this group was the FASTEST.`;
+    },
+
+    maxTooltipContent() {
+      const { ordinalise } = this.$options.filters;
+      return `The ${ordinalise(
+        this.maxSpan.rep + 1,
+      )} step in this group was the SLOWEST.`;
+    },
+
+    medianTooltipContent() {
+      const { fixedMs } = this.$options.filters;
+      return `Among all ${Object.keys(this.members).length} members of this group, the median was ${fixedMs(
+        this.median,
+      )}.`;
+    },
   },
 };
 </script>
@@ -146,7 +186,9 @@ export default {
 @import "./src/assets/css/variables.scss";
 
 .tableRow {
+  background-color: #fafafa;
   border-bottom: 1px solid $color-border-light;
+  cursor: pointer;
 
   &.expanded {
     .el-icon {
@@ -154,22 +196,37 @@ export default {
     }
   }
 
-  .groupName {
-    text-align: left;
-    padding-left: $padding-default;
-
-    .el-icon {
-      cursor: pointer;
-    }
-  }
-
   span {
     text-align: center;
     padding: $padding-more/2 0;
+
+    &:nth-child(1) {
+      width: 300px;
+
+      box-sizing: border-box;
+    }
+
+    &:nth-child(2) {
+      width: 100px;
+    }
+
+    &:nth-child(3) {
+      width: 100px;
+    }
+
+    &:nth-child(4) {
+      width: 100px;
+      box-sizing: border-box;
+      padding-right: 20px;
+    }
   }
 
-  &:nth-child(odd) {
-    background-color: $color-bg-table-alternate;
+  .fastest {
+    color: #27ae60;
+  }
+
+  .slowest {
+    color: #c0392b;
   }
 
   &:last-child {
@@ -180,4 +237,5 @@ export default {
     background-color: $color-bg-table-hover;
   }
 }
+
 </style>

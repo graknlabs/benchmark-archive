@@ -94,9 +94,10 @@ export default {
       const graphsResp = await BenchmarkClient.getSpans(
         `{ executionSpans( executionName: "${
           this.executionId
-        }"){ id name duration tags { graphType executionName graphScale }} }`,
+        }"){ id name duration tags { graphType executionName graphScale description }} }`,
       );
       const graphs = graphsResp.data.executionSpans;
+      console.log(graphs);
       this.graphs = flattenGraphs(graphs);
 
       const queriesResponse = await Promise.all(

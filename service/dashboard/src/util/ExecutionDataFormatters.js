@@ -4,6 +4,7 @@ function flattenGraphs(graphs) {
     type: graph.tags.graphType,
     scale: graph.tags.graphScale,
     executionId: graph.tags.executionName,
+    description: graph.tags.description,
   }));
   return flattenedGraphs;
 }

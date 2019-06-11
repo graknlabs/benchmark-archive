@@ -1,76 +1,101 @@
 <template>
-  <el-card v-loading="loading">
-    <div
-      class="queryCardDetails flexed"
-      @click="toggleStepsTable()"
-    >
-      <el-tooltip
-        class="item"
-        effect="dark"
-        :content="query"
-        placement="top"
-      >
-        <span style="width: 300px;">{{ query | truncate(100) }}</span>
-      </el-tooltip>
-
-      <el-tooltip
-        class="item"
-        effect="dark"
-        content="Min/Rep"
-        placement="top"
-      >
-        <span class="text-size-18">{{ minSpan.duration | fixedMs }}/{{ minSpan.rep + 1 | ordinalise }}</span>
-      </el-tooltip>
-
-      <el-tooltip
-        class="item"
-        effect="dark"
-        content="Median/Reps"
-        placement="top"
-      >
-        <span class="text-size-18">{{ median | fixedMs }}/{{ reps }}</span>
-      </el-tooltip>
-
-      <el-tooltip
-        class="item"
-        effect="dark"
-        content="Max/Rep"
-        placement="top"
-      >
-        <span class="text-size-18">{{ maxSpan.duration | fixedMs }}/{{ maxSpan.rep + 1 | ordinalise }}</span>
-      </el-tooltip>
-    </div>
-
-    <section
-      v-if="queryExpanded"
-      class="stepsTable"
-    >
+  <div class="queryCard card">
+    <el-card v-loading="loading">
       <div
-        v-show="!loading"
-        class="flexed tableHeader"
+        class="queryCardDetails flexed"
+        @click="toggleStepsTable()"
       >
-        <span style="width: 320px;">Query</span>
-        <span style="width: 115px;">Min/Rep</span>
-        <span style="width: 90px;">Median/Reps</span>
-        <span style="width: 115px;">Max/Rep</span>
-      </div>
-      <template v-for="(stepOrGroup, index) in stepsAndGroups">
-        <group-line
-          v-if="stepOrGroup.hasOwnProperty('members')"
-          :key="index"
-          :members="stepOrGroup.members"
-        />
+        <el-tooltip
+          class="item"
+          effect="dark"
+          :content="query"
+          placement="top"
+        >
+          <div class="queryCardDetail">
+            <p
+              class="tableHeader"
+              style="text-align: left;"
+            >
+              Query/Step
+            </p>
+            <p style="text-align: left;">
+              {{ query | truncate(100) }}
+            </p>
+          </div>
+        </el-tooltip>
 
-        <step-line
-          v-if="!stepOrGroup.hasOwnProperty('members')"
-          :key="stepOrGroup.name"
-          :step="stepOrGroup.name"
-          :step-spans="filterStepSpans(stepOrGroup.order)"
-          :padding="0"
-        />
-      </template>
-    </section>
-  </el-card>
+        <el-tooltip
+          class="item"
+          effect="dark"
+          :content="minTooltipContent()"
+          placement="top"
+        >
+          <div class="queryCardDetail">
+            <p class="tableHeader">
+              Min/Rep
+            </p>
+            <p class="text-size-18">
+              {{ minSpan.duration | fixedMs }}/{{ minSpan.rep + 1 | ordinalise }}
+            </p>
+          </div>
+        </el-tooltip>
+
+        <el-tooltip
+          class="item"
+          effect="dark"
+          :content="medianTooltipContent()"
+          placement="top"
+        >
+          <div class="queryCardDetail">
+            <p class="tableHeader">
+              Median/Reps
+            </p>
+            <p class="text-size-18">
+              {{ median | fixedMs }}/{{ reps }}
+            </p>
+          </div>
+        </el-tooltip>
+
+        <el-tooltip
+          class="item"
+          effect="dark"
+          :content="maxTooltipContent()"
+          placement="top"
+        >
+          <div class="queryCardDetail">
+            <p class="tableHeader">
+              Max/Rep
+            </p>
+            <p class="text-size-18">
+              {{ maxSpan.duration | fixedMs }}/{{ maxSpan.rep + 1 | ordinalise }}
+            </p>
+          </div>
+        </el-tooltip>
+      </div>
+
+      <section
+        v-if="queryExpanded"
+        class="stepsTable"
+      >
+        <template v-for="(stepOrGroup, index) in stepsAndGroups">
+          <group-line
+            v-if="stepOrGroup.hasOwnProperty('members')"
+            :key="index"
+            :members="stepOrGroup.members"
+            :padding="20"
+          />
+
+          <step-line
+            v-if="!stepOrGroup.hasOwnProperty('members')"
+            :key="stepOrGroup.name"
+            :step="stepOrGroup.name"
+            :step-spans="filterStepSpans(stepOrGroup.order)"
+            :padding="20"
+          />
+        </template>
+      </section>
+    </el-card>
+  </div>
 </template>
 
 <script>
@@ -228,7 +253,9 @@ export default {
       if (grouppedSteps.length > 1) {
         const group = { members: {} };
         grouppedSteps.forEach((grouppedStep) => {
-          group.members[grouppedStep.order] = this.filterStepSpans(grouppedStep.order);
+          group.members[grouppedStep.order] = this.filterStepSpans(
+            grouppedStep.order,
+          );
         });
         return group;
       }
@@ -238,33 +265,79 @@ export default {
     filterStepSpans(stepNumber) {
       return this.stepSpans.filter(stepSpan => stepSpan.order === stepNumber);
     },
+
+    minTooltipContent() {
+      const { ordinalise } = this.$options.filters;
+      return `The ${ordinalise(
+        this.minSpan.rep + 1,
+      )} repetition of this query was the FASTEST.`;
+    },
+
+    maxTooltipContent() {
+      const { ordinalise } = this.$options.filters;
+      return `The ${ordinalise(
+        this.maxSpan.rep + 1,
+      )} repetition of this query was the SLOWEST.`;
+    },
+
+    medianTooltipContent() {
+      const { fixedMs } = this.$options.filters;
+      return `Among all ${this.reps} repetitions of this query, the median was ${fixedMs(
+        this.median,
+      )}.`;
+    },
   },
 };
 </script>
+
+<style lang="scss">
+.queryCard {
+  .el-card__body {
+    padding: 0;
+  }
+}
+</style>
 
 <style lang="scss" scoped>
 @import "./src/assets/css/variables.scss";
 
 .queryCardDetails {
   cursor: pointer;
+
+  padding: $padding-default;
+
+  .queryCardDetail {
+    text-align: center;
+
+    &:nth-child(1) {
+      width: 300px;
+    }
+
+    &:nth-child(2) {
+      width: 100px;
+    }
+
+    &:nth-child(3) {
+      width: 100px;
+    }
+
+    &:nth-child(4) {
+      width: 100px;
+    }
+  }
+}
+
+.tableHeader {
+  padding-bottom: $padding-less;
+
+  color: $color-text-gray;
+  font-size: $font-size-table-header;
+  font-weight: 600;
 }
 
 .stepsTable {
-  margin-top: $margin-most;
-  margin-right: -$margin-default;
-  margin-bottom: -$margin-default;
-  margin-left: -$margin-default;
-
-  .tableHeader {
-    border-bottom: 1px solid $color-border-light;
-    padding-bottom: $padding-least;
-
-    span {
-      color: $color-text-gray;
-      font-size: $font-size-table-header;
-      font-weight: 600;
-    }
-  }
+  background-color: #fafafa;
+  // padding :0 $padding-default;
 
   span {
     text-align: center;
