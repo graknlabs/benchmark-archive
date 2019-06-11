@@ -1,6 +1,7 @@
 <template>
   <div>
     <div
+      :id="anchorId"
       :class="'flexed tableRow ' + (expaned ? 'expanded' : '')"
       :style="'padding-left:' + padding + 'px;'"
       @click="toggleChildSteps()"
@@ -15,12 +16,14 @@
 
       <span
         :style="'width: 110px; margin-left: -' + padding + 'px'"
+        :class="isFastestMember === true ? 'fastest' : ''"
       >{{ minSpan.duration | fixedMs }}/{{ minSpan.rep + 1 | ordinalise }}</span>
 
       <span style="width: 90px;">{{ median | fixedMs }}/{{ reps }}</span>
 
       <span
         style="width: 115px;"
+        :class="isSlowestMember === true ? 'slowest' : ''"
       >{{ maxSpan.duration | fixedMs }}/{{ maxSpan.rep + 1 | ordinalise }}</span>
     </div>
     <div v-if="expaned">
@@ -69,6 +72,22 @@ export default {
     padding: {
       type: Number,
       required: true,
+    },
+
+    anchorId: {
+      type: String,
+      required: false,
+      default: '',
+    },
+
+    isFastestMember: {
+      type: Boolean,
+      required: false,
+    },
+
+    isSlowestMember: {
+      type: Boolean,
+      required: false,
     },
   },
 
@@ -174,6 +193,15 @@ export default {
   span {
     text-align: center;
     padding: $padding-more/2 0;
+
+  }
+
+  .fastest {
+    color: #27ae60;
+  }
+
+  .slowest {
+    color: #c0392b;
   }
 
   &:nth-child(odd) {
