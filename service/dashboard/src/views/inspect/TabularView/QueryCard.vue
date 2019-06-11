@@ -213,7 +213,7 @@ export default {
           currentSteps.push(steps[i]);
           i += 1;
         } else {
-          const stepOrGroup = this.buildStepOrGroup(currentStep, currentSteps);
+          const stepOrGroup = this.buildStepOrGroup(currentSteps);
           this.stepsAndGroups.push(stepOrGroup);
           currentStep = steps[i];
           currentSteps = [];
@@ -224,7 +224,7 @@ export default {
       this.stepsAndGroups.push(steps[steps.length - 1]);
     },
 
-    buildStepOrGroup(step, grouppedSteps) {
+    buildStepOrGroup(grouppedSteps) {
       if (grouppedSteps.length > 1) {
         const group = { members: {} };
         grouppedSteps.forEach((grouppedStep) => {
@@ -232,7 +232,7 @@ export default {
         });
         return group;
       }
-      return step;
+      return grouppedSteps[0];
     },
 
     filterStepSpans(stepNumber) {
