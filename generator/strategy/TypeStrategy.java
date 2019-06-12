@@ -19,6 +19,7 @@
 package grakn.benchmark.generator.strategy;
 
 import grakn.benchmark.generator.probdensity.ProbabilityDensityFunction;
+import grakn.benchmark.generator.provider.key.ConceptKeyProvider;
 
 /**
  * A Type strategy is a container composed of:
@@ -29,10 +30,12 @@ import grakn.benchmark.generator.probdensity.ProbabilityDensityFunction;
 public abstract class TypeStrategy {
     private final String typeLabel;
     private final ProbabilityDensityFunction numInstancesPDF;
+    private final ConceptKeyProvider conceptKeyProvider;
 
-    public TypeStrategy(String typeLabel, ProbabilityDensityFunction numInstancesPDF) {
+    public TypeStrategy(String typeLabel, ProbabilityDensityFunction numInstancesPDF, ConceptKeyProvider conceptKeyProvider) {
         this.numInstancesPDF = numInstancesPDF;
         this.typeLabel = typeLabel;
+        this.conceptKeyProvider = conceptKeyProvider;
     }
 
     public String getTypeLabel() {

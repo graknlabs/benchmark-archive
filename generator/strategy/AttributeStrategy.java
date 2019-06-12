@@ -19,6 +19,7 @@
 package grakn.benchmark.generator.strategy;
 
 import grakn.benchmark.generator.probdensity.ProbabilityDensityFunction;
+import grakn.benchmark.generator.provider.key.ConceptKeyProvider;
 import grakn.benchmark.generator.provider.value.ValueProvider;
 
 import java.util.Iterator;
@@ -36,8 +37,9 @@ public class AttributeStrategy<T> extends TypeStrategy {
 
     public AttributeStrategy(String attributeTypeLabel,
                              ProbabilityDensityFunction numInstancesPDF,
+                             ConceptKeyProvider attributeKeyProvider,
                              ValueProvider<T> valueProvider) {
-        super(attributeTypeLabel, numInstancesPDF);
+        super(attributeTypeLabel, numInstancesPDF, attributeKeyProvider);
         this.valueProvider = valueProvider;
     }
 

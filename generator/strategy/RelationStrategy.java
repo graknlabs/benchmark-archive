@@ -19,6 +19,7 @@
 package grakn.benchmark.generator.strategy;
 
 import grakn.benchmark.generator.probdensity.ProbabilityDensityFunction;
+import grakn.benchmark.generator.provider.key.ConceptKeyProvider;
 
 import java.util.Set;
 
@@ -32,8 +33,8 @@ public class RelationStrategy extends TypeStrategy {
 
     private Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies;
 
-    public <P extends ProbabilityDensityFunction> RelationStrategy(String typeLabel, P numInstancesPDF, Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies) {
-        super(typeLabel, numInstancesPDF);
+    public <P extends ProbabilityDensityFunction> RelationStrategy(String typeLabel, P numInstancesPDF, ConceptKeyProvider relationKeyProvider, Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies) {
+        super(typeLabel, numInstancesPDF, relationKeyProvider);
         this.rolePlayerTypeStrategies = rolePlayerTypeStrategies;
     }
 
