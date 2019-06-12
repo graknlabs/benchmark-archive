@@ -21,8 +21,8 @@ package grakn.benchmark.generator.definition;
 import grakn.benchmark.generator.probdensity.FixedConstant;
 import grakn.benchmark.generator.probdensity.FixedDiscreteGaussian;
 import grakn.benchmark.generator.probdensity.ScalingDiscreteGaussian;
-import grakn.benchmark.generator.provider.concept.ConceptIdStorageProvider;
-import grakn.benchmark.generator.provider.concept.NotInRelationshipConceptIdProvider;
+import grakn.benchmark.generator.provider.concept.ConceptKeyStorageProvider;
+import grakn.benchmark.generator.provider.concept.NotInRelationshipConceptKeyProvider;
 import grakn.benchmark.generator.provider.value.UniqueIntegerProvider;
 import grakn.benchmark.generator.storage.ConceptStorage;
 import grakn.benchmark.generator.strategy.AttributeStrategy;
@@ -103,7 +103,7 @@ public class FinancialTransactionsDefinition implements DataGeneratorDefinition 
                 "transactor",
                 // high variance in the number of role players
                 new ScalingDiscreteGaussian(random, () -> storage.getGraphScale(), 0.005, 0.005),
-                new ConceptIdStorageProvider(
+                new ConceptKeyStorageProvider(
                         random,
                         this.storage,
                         "trader")
@@ -124,7 +124,7 @@ public class FinancialTransactionsDefinition implements DataGeneratorDefinition 
         RolePlayerTypeStrategy quantityOwner = new RolePlayerTypeStrategy(
                 "@has-quantity-owner",
                 new FixedConstant(1),
-                new NotInRelationshipConceptIdProvider(
+                new NotInRelationshipConceptKeyProvider(
                         random,
                         storage,
                         "transaction", "@has-quantity", "@has-quantity-owner"
@@ -133,7 +133,7 @@ public class FinancialTransactionsDefinition implements DataGeneratorDefinition 
         RolePlayerTypeStrategy quantityValue = new RolePlayerTypeStrategy(
                 "@has-quantity-value",
                 new FixedConstant(1),
-                new ConceptIdStorageProvider(
+                new ConceptKeyStorageProvider(
                         random,
                         this.storage,
                         "quantity"

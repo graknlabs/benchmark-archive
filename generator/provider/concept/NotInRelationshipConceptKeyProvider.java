@@ -20,35 +20,46 @@ package grakn.benchmark.generator.provider.concept;
 
 import grakn.benchmark.generator.storage.ConceptStorage;
 
+import java.util.List;
 import java.util.Random;
 
-public class ConceptIdStorageProvider implements ConceptIdProvider {
+public class NotInRelationshipConceptKeyProvider implements ConceptKeyProvider {
 
+    private String relationshipLabel;
+    private String roleLabel;
     private final Random rand;
+    private String typeLabel;
     ConceptStorage conceptStorage;
-    protected String typeLabel;
 
-    public ConceptIdStorageProvider(Random rand, ConceptStorage conceptStorage, String typeLabel) {
+    public NotInRelationshipConceptKeyProvider(Random rand,
+                                               ConceptStorage conceptStorage,
+                                               String rolePlayerTypeLabel,
+                                               String relationshipLabel,
+                                               String roleLabel
+    ) {
         this.rand = rand;
+        this.typeLabel = rolePlayerTypeLabel;
+        this.relationshipLabel = relationshipLabel;
+        this.roleLabel = roleLabel;
         this.conceptStorage = conceptStorage;
-        this.typeLabel = typeLabel;
     }
+
 
     @Override
     public boolean hasNext() {
-        return this.conceptStorage.getConceptCount(this.typeLabel) > 0;
+        return !conceptStorage.getKeysNotPlayingRole(typeLabel, relationshipLabel, roleLabel).isEmpty();
     }
 
     @Override
     public boolean hasNextN(int n) {
-        return this.conceptStorage.getConceptCount(this.typeLabel) >= n;
+        return conceptStorage.getKeysNotPlayingRole(typeLabel, relationshipLabel, roleLabel).size() >= n;
     }
 
     @Override
     public Long next() {
-        int conceptCount = this.conceptStorage.getConceptCount(this.typeLabel);
-        int randomOffset = rand.nextInt(conceptCount);
-        return conceptStorage.getConceptKey(typeLabel, randomOffset);
+        List<Long> notInRelationshipConceptIds = conceptStorage.getKeysNotPlayingRole(typeLabel, relationshipLabel, roleLabel);
+        int randomOffset = rand.nextInt(notInRelationshipConceptIds.size());
+        return notInRelationshipConceptIds.get(randomOffset);
     }
 
 }

@@ -22,7 +22,7 @@ import grakn.benchmark.generator.probdensity.FixedConstant;
 import grakn.benchmark.generator.probdensity.FixedDiscreteGaussian;
 import grakn.benchmark.generator.probdensity.ScalingBoundedZipf;
 import grakn.benchmark.generator.probdensity.ScalingDiscreteGaussian;
-import grakn.benchmark.generator.provider.concept.ConceptIdStorageProvider;
+import grakn.benchmark.generator.provider.concept.ConceptKeyStorageProvider;
 import grakn.benchmark.generator.provider.value.RandomStringProvider;
 import grakn.benchmark.generator.storage.ConceptStorage;
 import grakn.benchmark.generator.strategy.AttributeStrategy;
@@ -106,7 +106,7 @@ public class SocialNetworkDefinition implements DataGeneratorDefinition {
         RolePlayerTypeStrategy friendRoleFiller = new RolePlayerTypeStrategy(
                 "friend",
                 new FixedConstant(2),
-                new ConceptIdStorageProvider(
+                new ConceptKeyStorageProvider(
                         random,
                         this.storage,
                         "person")
@@ -125,12 +125,12 @@ public class SocialNetworkDefinition implements DataGeneratorDefinition {
         RolePlayerTypeStrategy likedPageRole = new RolePlayerTypeStrategy(
                 "liked",
                 new FixedConstant(1),
-                new ConceptIdStorageProvider(random, storage, "page")
+                new ConceptKeyStorageProvider(random, storage, "page")
         );
         RolePlayerTypeStrategy likerPersonRole = new RolePlayerTypeStrategy(
                 "liker",
                 new FixedConstant(1),
-                new ConceptIdStorageProvider(random, storage, "person")
+                new ConceptKeyStorageProvider(random, storage, "person")
         );
         this.relationshipStrategies.add(
                 1.0,
@@ -148,12 +148,12 @@ public class SocialNetworkDefinition implements DataGeneratorDefinition {
         RolePlayerTypeStrategy nameOwner = new RolePlayerTypeStrategy(
                 "@has-name-owner",
                 new FixedConstant(1),
-                new ConceptIdStorageProvider(random, storage, "person")
+                new ConceptKeyStorageProvider(random, storage, "person")
         );
         RolePlayerTypeStrategy nameValue = new RolePlayerTypeStrategy(
                 "@has-name-value",
                 new FixedConstant(1),
-                new ConceptIdStorageProvider(random, storage, "name")
+                new ConceptKeyStorageProvider(random, storage, "name")
         );
         this.relationshipStrategies.add(
                 1.0,

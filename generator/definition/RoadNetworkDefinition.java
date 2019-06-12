@@ -20,9 +20,9 @@ package grakn.benchmark.generator.definition;
 
 import grakn.benchmark.generator.probdensity.FixedConstant;
 import grakn.benchmark.generator.probdensity.FixedUniform;
-import grakn.benchmark.generator.provider.concept.CentralConceptProvider;
-import grakn.benchmark.generator.provider.concept.ConceptIdStorageProvider;
-import grakn.benchmark.generator.provider.concept.NotInRelationshipConceptIdProvider;
+import grakn.benchmark.generator.provider.concept.CentralConceptKeyProvider;
+import grakn.benchmark.generator.provider.concept.ConceptKeyStorageProvider;
+import grakn.benchmark.generator.provider.concept.NotInRelationshipConceptKeyProvider;
 import grakn.benchmark.generator.provider.value.RandomStringProvider;
 import grakn.benchmark.generator.storage.ConceptStorage;
 import grakn.benchmark.generator.strategy.AttributeStrategy;
@@ -97,9 +97,9 @@ public class RoadNetworkDefinition implements DataGeneratorDefinition {
         RolePlayerTypeStrategy unusedEndpointRoads = new RolePlayerTypeStrategy(
                 "endpoint",
                 new FixedConstant(1),
-                new CentralConceptProvider(
+                new CentralConceptKeyProvider(
                         new FixedUniform(random, 10, 40), // choose 10-40 roads not in relationships
-                        new NotInRelationshipConceptIdProvider(
+                        new NotInRelationshipConceptKeyProvider(
                                 random,
                                 storage,
                                 "road",
@@ -111,7 +111,7 @@ public class RoadNetworkDefinition implements DataGeneratorDefinition {
         RolePlayerTypeStrategy anyEndpointRoads = new RolePlayerTypeStrategy(
                 "endpoint",
                 new FixedUniform(random, 1, 5), // choose 1-5 other role players for an intersection
-                new ConceptIdStorageProvider(random, storage, "road")
+                new ConceptKeyStorageProvider(random, storage, "road")
         );
 
         this.relationshipStrategies.add(
@@ -131,7 +131,7 @@ public class RoadNetworkDefinition implements DataGeneratorDefinition {
         RolePlayerTypeStrategy nameOwner = new RolePlayerTypeStrategy(
                 "@has-name-owner",
                 new FixedConstant(1),
-                new NotInRelationshipConceptIdProvider(
+                new NotInRelationshipConceptKeyProvider(
                         random,
                         storage,
                         "road",
@@ -143,9 +143,9 @@ public class RoadNetworkDefinition implements DataGeneratorDefinition {
         RolePlayerTypeStrategy nameValue = new RolePlayerTypeStrategy(
                 "@has-name-value",
                 new FixedConstant(1),
-                new CentralConceptProvider(
+                new CentralConceptKeyProvider(
                         new FixedConstant(60), // take unused names
-                        new NotInRelationshipConceptIdProvider(
+                        new NotInRelationshipConceptKeyProvider(
                                 random,
                                 storage,
                                 "name",

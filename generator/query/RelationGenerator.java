@@ -18,10 +18,9 @@
 
 package grakn.benchmark.generator.query;
 
-import grakn.benchmark.generator.provider.concept.CentralConceptProvider;
+import grakn.benchmark.generator.provider.concept.CentralConceptKeyProvider;
 import grakn.benchmark.generator.strategy.RelationStrategy;
 import grakn.benchmark.generator.strategy.RolePlayerTypeStrategy;
-import grakn.core.concept.ConceptId;
 import graql.lang.Graql;
 import graql.lang.pattern.Pattern;
 import graql.lang.query.GraqlInsert;
@@ -65,8 +64,8 @@ public class RelationGenerator implements QueryGenerator {
 
         Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies = this.strategy.getRolePlayerTypeStrategies();
         for (RolePlayerTypeStrategy rolePlayerTypeStrategy : rolePlayerTypeStrategies) {
-            if (rolePlayerTypeStrategy.getConceptProvider() instanceof CentralConceptProvider) {
-                ((CentralConceptProvider) rolePlayerTypeStrategy.getConceptProvider()).resetUniqueness();
+            if (rolePlayerTypeStrategy.getConceptProvider() instanceof CentralConceptKeyProvider) {
+                ((CentralConceptKeyProvider) rolePlayerTypeStrategy.getConceptProvider()).resetUniqueness();
             }
         }
 

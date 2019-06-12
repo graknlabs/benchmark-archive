@@ -30,14 +30,14 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ConceptIdStorageProviderTest {
+public class ConceptKeyStorageProviderTest {
 
     @Test
     public void whenConceptCountZero_hasNextFalse() {
         ConceptStorage storage = mock(ConceptStorage.class);
         when(storage.getConceptCount("person")).thenReturn(0);
         Random random = null;
-        ConceptIdStorageProvider conceptIdProvider = new ConceptIdStorageProvider(random, storage, "person");
+        ConceptKeyStorageProvider conceptIdProvider = new ConceptKeyStorageProvider(random, storage, "person");
         assertFalse(conceptIdProvider.hasNext());
     }
 
@@ -46,7 +46,7 @@ public class ConceptIdStorageProviderTest {
         ConceptStorage storage = mock(ConceptStorage.class);
         when(storage.getConceptCount("person")).thenReturn(1);
         Random random = null;
-        ConceptIdStorageProvider conceptIdProvider = new ConceptIdStorageProvider(random, storage, "person");
+        ConceptKeyStorageProvider conceptIdProvider = new ConceptKeyStorageProvider(random, storage, "person");
         assertTrue(conceptIdProvider.hasNext());
     }
 
@@ -62,7 +62,7 @@ public class ConceptIdStorageProviderTest {
         Random random = mock(Random.class);
         when(random.nextInt(4)).thenReturn(2).thenReturn(0).thenReturn(1).thenReturn(1);
 
-        ConceptIdStorageProvider conceptIdProvider = new ConceptIdStorageProvider(random, storage, "person");
+        ConceptKeyStorageProvider conceptIdProvider = new ConceptKeyStorageProvider(random, storage, "person");
 
         assertEquals(ConceptId.of("c"), conceptIdProvider.next());
         assertEquals(ConceptId.of("a"), conceptIdProvider.next());
@@ -76,7 +76,7 @@ public class ConceptIdStorageProviderTest {
         ConceptStorage storage = mock(ConceptStorage.class);
         when(storage.getConceptCount("person")).thenReturn(4);
         Random random = mock(Random.class);
-        ConceptIdStorageProvider conceptIdProvider = new ConceptIdStorageProvider(random, storage, "person");
+        ConceptKeyStorageProvider conceptIdProvider = new ConceptKeyStorageProvider(random, storage, "person");
 
         assertTrue(conceptIdProvider.hasNextN(0));
         assertTrue(conceptIdProvider.hasNextN(1));

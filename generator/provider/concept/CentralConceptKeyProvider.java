@@ -19,7 +19,6 @@
 package grakn.benchmark.generator.provider.concept;
 
 import grakn.benchmark.generator.probdensity.ProbabilityDensityFunction;
-import grakn.core.concept.ConceptId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,17 +32,17 @@ import java.util.ArrayList;
  * when adding multiple relationships, if the centralConceptsPdf specifies `1`, all relationships
  * will connect to that same Concept in this iteration.
  */
-public class CentralConceptProvider implements ConceptIdProvider {
-    private static final Logger LOG = LoggerFactory.getLogger(CentralConceptProvider.class);
+public class CentralConceptKeyProvider implements ConceptKeyProvider {
+    private static final Logger LOG = LoggerFactory.getLogger(CentralConceptKeyProvider.class);
 
-    private ConceptIdProvider conceptIdProvider;
+    private ConceptKeyProvider conceptKeyProvider;
     private Boolean isReset;
     private ArrayList<Long> uniqueConceptKeyList;
     private int consumeFrom = 0;
     private ProbabilityDensityFunction centralConceptsPdf;
 
-    public CentralConceptProvider(ProbabilityDensityFunction centralConceptsPdf, ConceptIdProvider conceptIdProvider) {
-        this.conceptIdProvider = conceptIdProvider;
+    public CentralConceptKeyProvider(ProbabilityDensityFunction centralConceptsPdf, ConceptKeyProvider conceptKeyProvider) {
+        this.conceptKeyProvider = conceptKeyProvider;
         this.isReset = true;
         this.uniqueConceptKeyList = new ArrayList<>();
         this.centralConceptsPdf = centralConceptsPdf;
@@ -94,11 +93,11 @@ public class CentralConceptProvider implements ConceptIdProvider {
 
         // only if the provider can provide the required number of values
         // do we fill our circular buffer
-        if (conceptIdProvider.hasNextN(requiredCentralConcepts)) {
+        if (conceptKeyProvider.hasNextN(requiredCentralConcepts)) {
             LOG.trace("Refilling central concept provider with number of concepts: " + requiredCentralConcepts);
             int count = 0;
-            while (conceptIdProvider.hasNext() && count < requiredCentralConcepts) {
-                uniqueConceptKeyList.add(conceptIdProvider.next());
+            while (conceptKeyProvider.hasNext() && count < requiredCentralConcepts) {
+                uniqueConceptKeyList.add(conceptKeyProvider.next());
                 count++;
             }
         }
