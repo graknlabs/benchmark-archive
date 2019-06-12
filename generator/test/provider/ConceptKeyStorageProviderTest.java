@@ -19,7 +19,6 @@
 package grakn.benchmark.generator.provider.concept;
 
 import grakn.benchmark.generator.storage.ConceptStorage;
-import grakn.core.concept.ConceptId;
 import org.junit.Test;
 
 import java.util.Random;
@@ -37,8 +36,8 @@ public class ConceptKeyStorageProviderTest {
         ConceptStorage storage = mock(ConceptStorage.class);
         when(storage.getConceptCount("person")).thenReturn(0);
         Random random = null;
-        ConceptKeyStorageProvider conceptIdProvider = new ConceptKeyStorageProvider(random, storage, "person");
-        assertFalse(conceptIdProvider.hasNext());
+        ConceptKeyStorageProvider conceptKeyProvider = new ConceptKeyStorageProvider(random, storage, "person");
+        assertFalse(conceptKeyProvider.hasNext());
     }
 
     @Test
@@ -46,28 +45,28 @@ public class ConceptKeyStorageProviderTest {
         ConceptStorage storage = mock(ConceptStorage.class);
         when(storage.getConceptCount("person")).thenReturn(1);
         Random random = null;
-        ConceptKeyStorageProvider conceptIdProvider = new ConceptKeyStorageProvider(random, storage, "person");
-        assertTrue(conceptIdProvider.hasNext());
+        ConceptKeyStorageProvider conceptKeyProvider = new ConceptKeyStorageProvider(random, storage, "person");
+        assertTrue(conceptKeyProvider.hasNext());
     }
 
     @Test
     public void whenAskForNextId_returnCorrectId() {
         ConceptStorage storage = mock(ConceptStorage.class);
         when(storage.getConceptCount("person")).thenReturn(4);
-        when(storage.getConceptKey("person", 0)).thenReturn(ConceptId.of("a"));
-        when(storage.getConceptKey("person", 1)).thenReturn(ConceptId.of("b"));
-        when(storage.getConceptKey("person", 2)).thenReturn(ConceptId.of("c"));
-        when(storage.getConceptKey("person", 3)).thenReturn(ConceptId.of("d"));
+        when(storage.getConceptKey("person", 0)).thenReturn(1L);
+        when(storage.getConceptKey("person", 1)).thenReturn(2L);
+        when(storage.getConceptKey("person", 2)).thenReturn(3L);
+        when(storage.getConceptKey("person", 3)).thenReturn(4L);
 
         Random random = mock(Random.class);
         when(random.nextInt(4)).thenReturn(2).thenReturn(0).thenReturn(1).thenReturn(1);
 
-        ConceptKeyStorageProvider conceptIdProvider = new ConceptKeyStorageProvider(random, storage, "person");
+        ConceptKeyStorageProvider conceptKeyProvider = new ConceptKeyStorageProvider(random, storage, "person");
 
-        assertEquals(ConceptId.of("c"), conceptIdProvider.next());
-        assertEquals(ConceptId.of("a"), conceptIdProvider.next());
-        assertEquals(ConceptId.of("b"), conceptIdProvider.next());
-        assertEquals(ConceptId.of("b"), conceptIdProvider.next());
+        assertEquals(3L, (long) conceptKeyProvider.next());
+        assertEquals(1L, (long) conceptKeyProvider.next());
+        assertEquals(2L, (long) conceptKeyProvider.next());
+        assertEquals(2L, (long) conceptKeyProvider.next());
 
     }
 
@@ -76,13 +75,13 @@ public class ConceptKeyStorageProviderTest {
         ConceptStorage storage = mock(ConceptStorage.class);
         when(storage.getConceptCount("person")).thenReturn(4);
         Random random = mock(Random.class);
-        ConceptKeyStorageProvider conceptIdProvider = new ConceptKeyStorageProvider(random, storage, "person");
+        ConceptKeyStorageProvider conceptKeyProvider = new ConceptKeyStorageProvider(random, storage, "person");
 
-        assertTrue(conceptIdProvider.hasNextN(0));
-        assertTrue(conceptIdProvider.hasNextN(1));
-        assertTrue(conceptIdProvider.hasNextN(2));
-        assertTrue(conceptIdProvider.hasNextN(3));
-        assertTrue(conceptIdProvider.hasNextN(4));
-        assertFalse(conceptIdProvider.hasNextN(5));
+        assertTrue(conceptKeyProvider.hasNextN(0));
+        assertTrue(conceptKeyProvider.hasNextN(1));
+        assertTrue(conceptKeyProvider.hasNextN(2));
+        assertTrue(conceptKeyProvider.hasNextN(3));
+        assertTrue(conceptKeyProvider.hasNextN(4));
+        assertFalse(conceptKeyProvider.hasNextN(5));
     }
 }

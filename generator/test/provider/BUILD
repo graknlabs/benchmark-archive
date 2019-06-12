@@ -11,7 +11,7 @@ java_test(
 
 java_test(
     name = "conceptid-storage-provider-test",
-    test_class = "grakn.benchmark.generator.provider.concept.ConceptIdStorageProviderTest",
+    test_class = "grakn.benchmark.generator.provider.concept.ConceptKeyStorageProviderTest",
     srcs = ["ConceptKeyStorageProviderTest.java"],
     deps = [
         "@graknlabs_grakn_core//concept:concept",
@@ -22,7 +22,7 @@ java_test(
 
 java_test(
      name = "not-in-relationship-conceptid-storage-provider-test",
-     test_class = "grakn.benchmark.generator.provider.concept.NotInRelationshipConceptIdProviderTest",
+     test_class = "grakn.benchmark.generator.provider.concept.NotInRelationshipConceptKeyProviderTest",
      srcs = ["NotInRelationshipConceptKeyProviderTest.java"],
      deps = [
         "@graknlabs_grakn_core//concept:concept",
