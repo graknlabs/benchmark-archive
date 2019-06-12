@@ -21,7 +21,6 @@ package grakn.benchmark.generator.storage;
 import grakn.benchmark.generator.DataGeneratorException;
 import grakn.benchmark.generator.util.KeyspaceSchemaLabels;
 import grakn.core.concept.Concept;
-import grakn.core.concept.ConceptId;
 import grakn.core.concept.Label;
 import grakn.core.concept.thing.Attribute;
 import grakn.core.concept.type.AttributeType;
@@ -66,7 +65,7 @@ public class IgniteConceptStorage implements ConceptStorage {
 
     private Connection conn;
     private final String cachingMethod = "REPLICATED";
-    private final int ID_INDEX = 1;
+    private final int KEY_INDEX = 1;
     private final int VALUE_INDEX = 2;
 
     // store a counter for number of role players because the ignite tables de-duplicate IDs that play multiple roles
@@ -104,8 +103,8 @@ public class IgniteConceptStorage implements ConceptStorage {
 
 
         labelToSqlNameMap = mapLabelToSqlName(entityTypeLabels, relationshipTypeLabels, attributeTypeLabels.keySet());
-        cleanTables();
         initializeSqlDriver();
+        cleanTables();
         createTables();
     }
 
@@ -130,12 +129,8 @@ public class IgniteConceptStorage implements ConceptStorage {
     }
 
     private void cleanTables() {
-        try {
-            clean(this.getAllTypeLabels());
-            dropTable("roleplayers"); // one special table for tracking role players
-        } catch (SQLException e) {
-            LOG.trace(e.getMessage(), e);
-        }
+        clean(this.getAllTypeLabels());
+        dropTable("roleplayers"); // one special table for tracking role players
     }
 
     private void initializeSqlDriver() {
@@ -157,11 +152,11 @@ public class IgniteConceptStorage implements ConceptStorage {
     private void createTables() {
         // Create database tables.
         for (String typeLabel : this.entityTypeLabels) {
-            this.createTypeIdsTable(typeLabel, this.relationshipTypeLabels);
+            this.createTypeKeysTable(typeLabel, this.relationshipTypeLabels);
         }
 
         for (String typeLabel : this.relationshipTypeLabels) {
-            this.createTypeIdsTable(typeLabel, this.relationshipTypeLabels);
+            this.createTypeKeysTable(typeLabel, this.relationshipTypeLabels);
         }
 
         for (Map.Entry<String, AttributeType.DataType<?>> entry : this.attributeTypeLabels.entrySet()) {
@@ -173,7 +168,7 @@ public class IgniteConceptStorage implements ConceptStorage {
 
         // re-create special table
         // role players that have been assigned into a relationship at some point
-        createTable("roleplayers", "VARCHAR", new LinkedList<>());
+        createTable("roleplayers", "LONG", new LinkedList<>());
 
     }
 
@@ -193,16 +188,16 @@ public class IgniteConceptStorage implements ConceptStorage {
     }
 
     /**
-     * Create a table for storing concept IDs of the given type
+     * Create a table for storing concept keys for the given type
      *
      * @param typeLabel
      */
-    private void createTypeIdsTable(String typeLabel, Set<String> relationshipLabels) {
+    private void createTypeKeysTable(String typeLabel, Set<String> relationshipLabels) {
         String sqlTypeLabel = labelToSqlName(typeLabel);
         List<String> relationshipColumnNames = relationshipLabels.stream()
                 .map(label -> labelToSqlName(label))
                 .collect(Collectors.toList());
-        createTable(sqlTypeLabel, "VARCHAR", relationshipColumnNames);
+        createTable(sqlTypeLabel, "LONG", relationshipColumnNames);
     }
 
     /**
@@ -223,11 +218,10 @@ public class IgniteConceptStorage implements ConceptStorage {
         String sqlTypeLabel = labelToSqlName(typeLabel);
         try (Statement stmt = conn.createStatement()) {
             stmt.executeUpdate("CREATE TABLE " + sqlTypeLabel + " (" +
-                    " id VARCHAR PRIMARY KEY, " +
+                    " key VARCHAR PRIMARY KEY, " +
                     " value " + sqlDatatypeName + ", " +
                     joinColumnLabels(relationshipColumnNames) +
-                    " nothing LONG) " +
-                    " WITH \"template=" + cachingMethod + "\"");
+                    ") WITH \"template=" + cachingMethod + "\"");
         } catch (SQLException e) {
             LOG.trace(e.getMessage(), e);
         }
@@ -242,7 +236,7 @@ public class IgniteConceptStorage implements ConceptStorage {
     private void createTable(String tableName, String sqlDatatypeName, List<String> furtherColumns) {
         try (Statement stmt = conn.createStatement()) {
             String sqlStatement = "CREATE TABLE " + tableName + " (" +
-                    " id " + sqlDatatypeName + " PRIMARY KEY, " +
+                    " key " + sqlDatatypeName + " PRIMARY KEY, " +
                     joinColumnLabels(furtherColumns) +
                     " nothing LONG) " +
                     " WITH \"template=" + cachingMethod + "\"";
@@ -282,7 +276,7 @@ public class IgniteConceptStorage implements ConceptStorage {
 
             // check if this ID is already in the table suffices
             try (Statement stmt = this.conn.createStatement()) {
-                String checkExists = "SELECT id FROM " + tableName + " WHERE id = '" + conceptId + "'";
+                String checkExists = "SELECT key FROM " + tableName + " WHERE key = " + conceptKey;
                 try (ResultSet rs = stmt.executeQuery(checkExists)) {
                     // skip insertion if this query has any results
                     if (rs.next()) {
@@ -297,7 +291,7 @@ public class IgniteConceptStorage implements ConceptStorage {
 
             Object value = attribute.value();
             try (PreparedStatement stmt = this.conn.prepareStatement(
-                    "INSERT INTO " + tableName + " (id, value, ) VALUES (?, ?, )")) {
+                    "INSERT INTO " + tableName + " (key, value, ) VALUES (?, ?, )")) {
 
                 if (value.getClass() == String.class) {
                     stmt.setString(VALUE_INDEX, (String) value);
@@ -317,7 +311,7 @@ public class IgniteConceptStorage implements ConceptStorage {
                     throw new UnsupportedOperationException(String.format("Datatype %s isn't supported by Grakn", datatype));
                 }
 
-                stmt.setString(ID_INDEX, conceptId);
+                stmt.setLong(KEY_INDEX, conceptKey);
                 stmt.executeUpdate();
 
             } catch (SQLException e) {
@@ -328,8 +322,8 @@ public class IgniteConceptStorage implements ConceptStorage {
 
         } else {
             try (PreparedStatement stmt = this.conn.prepareStatement(
-                    "INSERT INTO " + tableName + " (id, ) VALUES (?, )")) {
-                stmt.setString(ID_INDEX, conceptId);
+                    "INSERT INTO " + tableName + " (key, ) VALUES (?, )")) {
+                stmt.setLong(KEY_INDEX, conceptKey);
                 stmt.executeUpdate();
             } catch (SQLException e) {
                 if (!e.getSQLState().equals("23000")) {
@@ -341,7 +335,6 @@ public class IgniteConceptStorage implements ConceptStorage {
 
     /**
      * Add a role player, and specify its type, the relationship, and role it fills
-     * This will track
      *
      * @param conceptKey
      * @param conceptType
@@ -369,7 +362,7 @@ public class IgniteConceptStorage implements ConceptStorage {
         try (Statement stmt = conn.createStatement()) {
             // do a select to retrieve currently filled roles by this conceptID in this relationship
             String retrieveCurrentRolesSql = "SELECT " + sqlRelationship + " from " + sqlTypeTable +
-                    " where id = '" + conceptId + "'";
+                    " where key = " + conceptKey;
             String currentRoles = "";
             try (ResultSet rs = stmt.executeQuery(retrieveCurrentRolesSql)) {
                 rs.next(); // move to cursor first result
@@ -383,7 +376,7 @@ public class IgniteConceptStorage implements ConceptStorage {
                 currentRoles = currentRoles + "," + sqlRole;
                 String setCurrentRolesSql = "UPDATE " + sqlTypeTable +
                         " SET " + sqlRelationship + " = '" + currentRoles + "'" +
-                        " WHERE id = '" + conceptId + "'";
+                        " WHERE key = " + conceptKey;
                 stmt.executeUpdate(setCurrentRolesSql);
             }
         } catch (SQLException e) {
@@ -392,10 +385,10 @@ public class IgniteConceptStorage implements ConceptStorage {
 
         // add the conceptID to the overall role players table
         try (Statement stmt = conn.createStatement()) {
-            String checkExists = "SELECT id FROM roleplayers WHERE id = '" + conceptId + "'";
+            String checkExists = "SELECT key FROM roleplayers WHERE key = " + conceptKey;
             try (ResultSet rs = stmt.executeQuery(checkExists)) {
                 if (!rs.next()) {
-                    String addRolePlayer = "INSERT INTO roleplayers (id, ) VALUES ('" + conceptId + "')";
+                    String addRolePlayer = "INSERT INTO roleplayers (key, ) VALUES (" + conceptKey + ")";
                     stmt.executeUpdate(addRolePlayer);
                 }
             } catch (SQLException e) {
@@ -414,15 +407,15 @@ public class IgniteConceptStorage implements ConceptStorage {
         String columnName = labelToSqlName(relationshipType);
         String roleName = sanitizeString(role);
 
-        String sql = "SELECT ID, " + columnName + " FROM " + tableName +
+        String sql = "SELECT key, " + columnName + " FROM " + tableName +
                 " WHERE (" + columnName + " IS NULL OR " + columnName + "  NOT LIKE '%" + roleName + "%')";
 
-        LinkedList<ConceptId> ids = new LinkedList<>();
+        LinkedList<Long> conceptKeys = new LinkedList<>();
 
         try (Statement stmt = conn.createStatement()) {
             try (ResultSet rs = stmt.executeQuery(sql)) {
                 while (rs.next()) {
-                    ids.addLast(ConceptId.of(rs.getString("id")));
+                    conceptKeys.addLast(rs.getLong("key"));
                 }
             } catch (SQLException e) {
                 LOG.trace(e.getMessage(), e);
@@ -430,7 +423,7 @@ public class IgniteConceptStorage implements ConceptStorage {
         } catch (SQLException e) {
             LOG.trace(e.getMessage(), e);
         }
-        return ids;
+        return conceptKeys;
     }
 
     public Integer numIdsNotPlayingRole(String typeLabel, String relationshipType, String role) {
@@ -438,7 +431,7 @@ public class IgniteConceptStorage implements ConceptStorage {
         String columnName = labelToSqlName(relationshipType);
         String roleName = sanitizeString(role);
 
-        String sql = "SELECT COUNT(ID) FROM " + tableName +
+        String sql = "SELECT COUNT(key) FROM " + tableName +
                 " WHERE (" + columnName + " IS NULL OR " + columnName + "  NOT LIKE '%" + roleName + "%')";
 
         try (Statement stmt = conn.createStatement()) {
@@ -460,25 +453,25 @@ public class IgniteConceptStorage implements ConceptStorage {
     [{FETCH {FIRST | NEXT} expression {ROW | ROWS} ONLY}]}]
      */
 
-    private String sqlGetId(String typeLabel, int offset) {
-        String sql = "SELECT id FROM " + labelToSqlName(typeLabel) +
+    private String sqlGetKey(String typeLabel, int offset) {
+        String sqlStatement = "SELECT key FROM " + labelToSqlName(typeLabel) +
                 " OFFSET " + offset +
                 " FETCH FIRST ROW ONLY";
-        return sql;
+        return sqlStatement;
     }
 
     private String sqlGetAttrValue(String typeLabel, int offset) {
-        String sql = "SELECT value FROM " + labelToSqlName(typeLabel) +
+        String sqlStatement = "SELECT value FROM " + labelToSqlName(typeLabel) +
                 " OFFSET " + offset +
                 " FETCH FIRST ROW ONLY";
-        return sql;
+        return sqlStatement;
     }
 
     public Long getConceptKey(String typeLabel, int offset) {
         try (Statement stmt = conn.createStatement()) {
-            try (ResultSet rs = stmt.executeQuery(sqlGetId(typeLabel, offset))) {
+            try (ResultSet rs = stmt.executeQuery(sqlGetKey(typeLabel, offset))) {
                 if (rs != null && rs.next()) { // Need to do this to increment one line in the ResultSet
-                    return ConceptId.of(rs.getString(ID_INDEX));
+                    return rs.getLong(KEY_INDEX);
                 }
             } catch (SQLException e) {
                 LOG.trace(e.getMessage(), e);
@@ -493,7 +486,7 @@ public class IgniteConceptStorage implements ConceptStorage {
         try (Statement stmt = conn.createStatement()) {
             try (ResultSet rs = stmt.executeQuery(sqlGetAttrValue(typeLabel, offset))) {
                 if (rs != null && rs.next()) { // Need to do this to increment one line in the ResultSet
-                    return rs.getDate(ID_INDEX);
+                    return rs.getDate(VALUE_INDEX);
                 }
             } catch (SQLException e) {
                 LOG.trace(e.getMessage(), e);
@@ -597,10 +590,10 @@ public class IgniteConceptStorage implements ConceptStorage {
      */
     @Override
     public int totalOrphanEntities() {
-        Set<String> rolePlayerIds = getIds("roleplayers");
-        Set<String> entityIds = new HashSet<>();
+        Set<Long> rolePlayerIds = getKeys("roleplayers");
+        Set<Long> entityIds = new HashSet<>();
         for (String typeLabel : this.entityTypeLabels) {
-            Set<String> ids = getIds(labelToSqlName(typeLabel));
+            Set<Long> ids = getKeys(labelToSqlName(typeLabel));
             entityIds.addAll(ids);
         }
         entityIds.removeAll(rolePlayerIds);
@@ -614,10 +607,10 @@ public class IgniteConceptStorage implements ConceptStorage {
      */
     @Override
     public int totalOrphanAttributes() {
-        Set<String> rolePlayerIds = getIds("roleplayers");
-        Set<String> attributeIds = new HashSet<>();
+        Set<Long> rolePlayerIds = getKeys("roleplayers");
+        Set<Long> attributeIds = new HashSet<>();
         for (String typeLabel : this.attributeTypeLabels.keySet()) {
-            Set<String> ids = getIds(labelToSqlName(typeLabel));
+            Set<Long> ids = getKeys(labelToSqlName(typeLabel));
             attributeIds.addAll(ids);
         }
         attributeIds.removeAll(rolePlayerIds);
@@ -632,10 +625,10 @@ public class IgniteConceptStorage implements ConceptStorage {
      */
     @Override
     public int totalRelationshipsRolePlayersOverlap() {
-        Set<String> rolePlayerIds = getIds("roleplayers");
-        Set<String> relationshipIds = new HashSet<>();
+        Set<Long> rolePlayerIds = getKeys("roleplayers");
+        Set<Long> relationshipIds = new HashSet<>();
         for (String typeLabel : this.relationshipTypeLabels) {
-            Set<String> ids = getIds(labelToSqlName(typeLabel));
+            Set<Long> ids = getKeys(labelToSqlName(typeLabel));
             relationshipIds.addAll(ids);
         }
         relationshipIds.retainAll(rolePlayerIds);
@@ -650,13 +643,13 @@ public class IgniteConceptStorage implements ConceptStorage {
         return entities + attributes + relationships;
     }
 
-    private Set<String> getIds(String tableName) {
-        String sql = "SELECT id FROM " + tableName;
-        Set<String> ids = new HashSet<>();
+    private Set<Long> getKeys(String tableName) {
+        String sql = "SELECT key FROM " + tableName;
+        Set<Long> keys = new HashSet<>();
         try (Statement stmt = conn.createStatement()) {
             try (ResultSet resultSet = stmt.executeQuery(sql)) {
                 while (resultSet.next()) {
-                    ids.add(resultSet.getString(ID_INDEX));
+                    keys.add(resultSet.getLong(KEY_INDEX));
                 }
             } catch (SQLException e) {
                 LOG.trace(e.getMessage(), e);
@@ -665,20 +658,19 @@ public class IgniteConceptStorage implements ConceptStorage {
             LOG.trace(e.getMessage(), e);
         }
 
-        return ids;
+        return keys;
     }
 
     /**
      * clean up a table for a specific type
      */
-    public void clean(Set<String> typeLabels) throws SQLException {
+    public void clean(Set<String> typeLabels) {
         for (String typeLabel : typeLabels) {
             dropTable(labelToSqlName(typeLabel));
         }
     }
 
-    private void dropTable(String tableName) throws SQLException {
-        Connection conn = DriverManager.getConnection("jdbc:ignite:thin://127.0.0.1/");
+    private void dropTable(String tableName) {
         try (PreparedStatement stmt = conn.prepareStatement("DROP TABLE IF EXISTS " + tableName)) {
             stmt.executeUpdate();
         } catch (SQLException e) {

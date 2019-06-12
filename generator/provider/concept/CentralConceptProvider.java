@@ -38,14 +38,14 @@ public class CentralConceptProvider implements ConceptIdProvider {
 
     private ConceptIdProvider conceptIdProvider;
     private Boolean isReset;
-    private ArrayList<ConceptId> uniqueConceptIdsList;
+    private ArrayList<Long> uniqueConceptKeyList;
     private int consumeFrom = 0;
     private ProbabilityDensityFunction centralConceptsPdf;
 
     public CentralConceptProvider(ProbabilityDensityFunction centralConceptsPdf, ConceptIdProvider conceptIdProvider) {
         this.conceptIdProvider = conceptIdProvider;
         this.isReset = true;
-        this.uniqueConceptIdsList = new ArrayList<>();
+        this.uniqueConceptKeyList = new ArrayList<>();
         this.centralConceptsPdf = centralConceptsPdf;
     }
 
@@ -60,7 +60,7 @@ public class CentralConceptProvider implements ConceptIdProvider {
             refillBuffer();
             isReset = false;
         }
-        return !uniqueConceptIdsList.isEmpty();
+        return !uniqueConceptKeyList.isEmpty();
     }
 
     @Override
@@ -71,7 +71,7 @@ public class CentralConceptProvider implements ConceptIdProvider {
     }
 
     @Override
-    public ConceptId next() {
+    public Long next() {
         // Get the same list as used previously, or generate one if not seen before
         // Only create a new stream if resetUniqueness() has been called prior
 
@@ -81,15 +81,15 @@ public class CentralConceptProvider implements ConceptIdProvider {
         }
 
         // construct the circular buffer-reading stream
-        ConceptId value = uniqueConceptIdsList.get(consumeFrom);
-        consumeFrom = (consumeFrom + 1) % uniqueConceptIdsList.size();
+        Long value = uniqueConceptKeyList.get(consumeFrom);
+        consumeFrom = (consumeFrom + 1) % uniqueConceptKeyList.size();
         return value;
     }
 
     private void refillBuffer() {
         // re-fill the internal buffer of conceptIds to be repeated (the centrality aspect)
         int requiredCentralConcepts = centralConceptsPdf.sample();
-        this.uniqueConceptIdsList.clear();
+        this.uniqueConceptKeyList.clear();
         LOG.trace("Trying to refill central concept provider with numebr of concepts: " + requiredCentralConcepts);
 
         // only if the provider can provide the required number of values
@@ -98,7 +98,7 @@ public class CentralConceptProvider implements ConceptIdProvider {
             LOG.trace("Refilling central concept provider with number of concepts: " + requiredCentralConcepts);
             int count = 0;
             while (conceptIdProvider.hasNext() && count < requiredCentralConcepts) {
-                uniqueConceptIdsList.add(conceptIdProvider.next());
+                uniqueConceptKeyList.add(conceptIdProvider.next());
                 count++;
             }
         }

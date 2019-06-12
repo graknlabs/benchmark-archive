@@ -34,7 +34,7 @@ public interface ConceptStorage {
 
     Long getConceptKey(String typeLabel, int offset);
 
-    List<ConceptId> getKeysNotPlayingRole(String typeLabel, String relationshipType, String role);
+    List<Long> getKeysNotPlayingRole(String typeLabel, String relationshipType, String role);
 
     Integer numIdsNotPlayingRole(String typeLabel, String relationshipType, String role);
 

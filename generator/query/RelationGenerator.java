@@ -127,19 +127,19 @@ public class RelationGenerator implements QueryGenerator {
 
                     // Find random role-players matching this type
                     // Pick ids from the list of concept ids
-                    Iterator<ConceptId> conceptProvider = rolePlayerTypeStrategy.getConceptProvider();
+                    Iterator<Long> conceptProvider = rolePlayerTypeStrategy.getConceptProvider();
                     int rolePlayersRequired = rolePlayerTypeStrategy.getNumInstancesPDF().sample();
 
                     // Build the match insert query
                     int rolePlayersAssigned = 0;
                     while (conceptProvider.hasNext() && rolePlayersAssigned < rolePlayersRequired) {
-                        ConceptId conceptId = conceptProvider.next();
+                        Long conceptKey = conceptProvider.next();
                         // Add the concept to the query
                         Variable v = new Variable().asReturnedVar();
                         if (matchVarPattern == null) {
-                            matchVarPattern = var(v).id(conceptId.toString());
+                            matchVarPattern = var(v).has("unique-key", conceptKey);
                         } else {
-                            Pattern varPattern = var(v).id(conceptId.toString());
+                            Pattern varPattern = var(v).has("unique-key", conceptKey);
                             matchVarPattern = and(matchVarPattern, varPattern);
                         }
                         insertVarPattern = insertVarPattern.rel(roleLabel, var(v));

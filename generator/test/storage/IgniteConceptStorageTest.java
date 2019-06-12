@@ -260,10 +260,12 @@ public class IgniteConceptStorageTest {
             store.addConcept(conceptMock, conceptMockKeys.get(conceptMock));
         }
 
-        // add all but the attribute and relationship
-        Iterator<Concept> iterator = conceptMockKeys.keySet().iterator();
-        for (int i = 0; i < conceptMockKeys.size() - 2; i++) {
-            Concept conceptMock = iterator.next();
+        for (Concept conceptMock : conceptMockKeys.keySet()) {
+            String conceptType = conceptMock.asThing().type().label().toString();
+            if (relationshipTypes.contains(conceptType) || attributeTypes.containsKey(conceptType)) {
+                // add all but the attribute and relationship, so skip these
+                continue;
+            }
             Thing thing = conceptMock.asThing();
             store.addRolePlayerByKey(conceptMockKeys.get(conceptMock), thing.type().label().toString(), relTypeLabel, "somerole");
         }
@@ -279,10 +281,11 @@ public class IgniteConceptStorageTest {
             store.addConcept(conceptMock, conceptMockKeys.get(conceptMock));
         }
 
-        // add all but the relationship (last element)
-        Iterator<Concept> iterator = conceptMockKeys.keySet().iterator();
-        for (int i = 0; i < conceptMockKeys.size() - 1; i++) {
-            Concept conceptMock = iterator.next();
+        for (Concept conceptMock : conceptMockKeys.keySet()) {
+            if (relationshipTypes.contains(conceptMock.asThing().type().label().toString())) {
+                // add all but the relation concept, so skip these
+                continue;
+            }
             Thing thing = conceptMock.asThing();
             store.addRolePlayerByKey(conceptMockKeys.get(conceptMock), thing.type().label().toString(), relTypeLabel, "somerole");
         }
@@ -325,7 +328,7 @@ public class IgniteConceptStorageTest {
         for (Concept conceptMock : conceptMockKeys.keySet()) {
             store.addConcept(conceptMock, conceptMockKeys.get(conceptMock));
         }
-        Concept aPerson = conceptMockKeys.keySet().stream().filter(concept -> concept.asThing().type().label().equals("person")).findFirst().get();
+        Concept aPerson = conceptMockKeys.keySet().stream().filter(concept -> concept.asThing().type().label().toString().equals("person")).findFirst().get();
         String personTypeLabel = aPerson.asThing().type().label().toString(); // follow what's implemented in mocks
         String relationshipType = relationshipTypes.stream().findFirst().get();
         String role = "some-role"; // test the string safety conversion too by including -
@@ -341,7 +344,7 @@ public class IgniteConceptStorageTest {
         for (Concept conceptMock : conceptMockKeys.keySet()) {
             store.addConcept(conceptMock, conceptMockKeys.get(conceptMock));
         }
-        Concept aPerson = conceptMockKeys.keySet().stream().filter(concept -> concept.asThing().type().label().equals("person")).findFirst().get();
+        Concept aPerson = conceptMockKeys.keySet().stream().filter(concept -> concept.asThing().type().label().toString().equals("person")).findFirst().get();
         String personTypeLabel = aPerson.asThing().type().label().toString(); // follow what's implemented in mocks
         String relationshipType = relationshipTypes.stream().findFirst().get();
         String role1 = "some-role-1"; // test the string safety conversion too by including -
@@ -354,7 +357,7 @@ public class IgniteConceptStorageTest {
         List<Long> entitiesNotPlayingRole2 = store.getKeysNotPlayingRole(personTypeLabel, relationshipType, role2);
 
         Long[] correctEntities = conceptMockKeys.entrySet().stream()
-                .filter(entry -> entry.getKey().asThing().type().label().equals("person") && !entry.getKey().id().equals(aPerson.id()))
+                .filter(entry -> entry.getKey().asThing().type().label().toString().equals("person") && !entry.getKey().asThing().id().equals(aPerson.asThing().id()))
                 .map(entry -> entry.getValue())
                 .collect(Collectors.toList()).toArray(new Long[]{});
 
@@ -369,7 +372,7 @@ public class IgniteConceptStorageTest {
         for (Concept conceptMock : conceptMockKeys.keySet()) {
             store.addConcept(conceptMock, conceptMockKeys.get(conceptMock));
         }
-        Concept aPerson = conceptMockKeys.keySet().stream().filter(concept -> concept.asThing().type().label().equals("person")).findFirst().get();
+        Concept aPerson = conceptMockKeys.keySet().stream().filter(concept -> concept.asThing().type().label().toString().equals("person")).findFirst().get();
         String personTypeLabel = aPerson.asThing().type().label().toString(); // follow what's implemented in mocks
         String relationshipType = relationshipTypes.stream().findFirst().get();
         String role = "some-role"; // test the string safety conversion too by including -
@@ -395,7 +398,7 @@ public class IgniteConceptStorageTest {
             store.addConcept(conceptMock, conceptMockKeys.get(conceptMock));
         }
 
-        Concept anAge = conceptMockKeys.keySet().stream().filter(concept -> concept.asThing().type().label().equals("age")).findFirst().get();
+        Concept anAge = conceptMockKeys.keySet().stream().filter(concept -> concept.asThing().type().label().toString().equals("age")).findFirst().get();
         String ageLabel = anAge.asThing().type().label().toString();
         store.addRolePlayerByKey(conceptMockKeys.get(anAge), ageLabel, "@has-" + ageLabel, "@has-" + ageLabel + "-value");
 

@@ -18,10 +18,8 @@
 
 package grakn.benchmark.generator.provider.concept;
 
-import grakn.core.concept.ConceptId;
-
 import java.util.Iterator;
 
-public interface ConceptIdProvider extends Iterator<ConceptId> {
+public interface ConceptIdProvider extends Iterator<Long> {
     boolean hasNextN(int n);
 }
