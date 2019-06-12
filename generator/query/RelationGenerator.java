@@ -18,7 +18,7 @@
 
 package grakn.benchmark.generator.query;
 
-import grakn.benchmark.generator.provider.concept.CentralConceptKeyProvider;
+import grakn.benchmark.generator.provider.key.CentralConceptKeyProvider;
 import grakn.benchmark.generator.strategy.RelationStrategy;
 import grakn.benchmark.generator.strategy.RolePlayerTypeStrategy;
 import graql.lang.Graql;
@@ -125,7 +125,7 @@ public class RelationGenerator implements QueryGenerator {
                     String roleLabel = rolePlayerTypeStrategy.getTypeLabel();
 
                     // Find random role-players matching this type
-                    // Pick ids from the list of concept ids
+                    // Pick ids from the list of keys
                     Iterator<Long> conceptProvider = rolePlayerTypeStrategy.getConceptProvider();
                     int rolePlayersRequired = rolePlayerTypeStrategy.getNumInstancesPDF().sample();
 
@@ -133,7 +133,7 @@ public class RelationGenerator implements QueryGenerator {
                     int rolePlayersAssigned = 0;
                     while (conceptProvider.hasNext() && rolePlayersAssigned < rolePlayersRequired) {
                         Long conceptKey = conceptProvider.next();
-                        // Add the concept to the query
+                        // Add the key to the query
                         Variable v = new Variable().asReturnedVar();
                         if (matchVarPattern == null) {
                             matchVarPattern = var(v).has("unique-key", conceptKey);

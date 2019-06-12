@@ -22,7 +22,7 @@ import grakn.benchmark.generator.probdensity.FixedConstant;
 import grakn.benchmark.generator.probdensity.FixedDiscreteGaussian;
 import grakn.benchmark.generator.probdensity.ScalingBoundedZipf;
 import grakn.benchmark.generator.probdensity.ScalingDiscreteGaussian;
-import grakn.benchmark.generator.provider.concept.ConceptKeyStorageProvider;
+import grakn.benchmark.generator.provider.key.ConceptKeyStorageProvider;
 import grakn.benchmark.generator.provider.value.RandomStringProvider;
 import grakn.benchmark.generator.storage.ConceptStorage;
 import grakn.benchmark.generator.strategy.AttributeStrategy;

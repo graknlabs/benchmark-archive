@@ -188,7 +188,7 @@ public class IgniteConceptStorage implements ConceptStorage {
     }
 
     /**
-     * Create a table for storing concept keys for the given type
+     * Create a table for storing key keys for the given type
      *
      * @param typeLabel
      */
@@ -354,7 +354,7 @@ public class IgniteConceptStorage implements ConceptStorage {
             totalExplicitRolePlayers += 1;
         }
 
-        // add the role to this concept ID's row/column for this relationship
+        // add the role to this key's  row/column for this relationship
         String sqlTypeTable = labelToSqlName(conceptType);
         String sqlRelationship = labelToSqlName(relationshipType);
         String sqlRole = sanitizeString(role);
@@ -400,7 +400,7 @@ public class IgniteConceptStorage implements ConceptStorage {
     }
 
     /**
-     * String stuffing all the roles played by a concept of a given type in a specific relationship into one
+     * String stuffing all the roles played by a key of a given type in a specific relationship into one
      */
     public List<Long> getKeysNotPlayingRole(String typeLabel, String relationshipType, String role) {
         String tableName = labelToSqlName(typeLabel);
@@ -562,7 +562,7 @@ public class IgniteConceptStorage implements ConceptStorage {
 
 
     /**
-     * Return total count of number of role players (repeat counts of the same concept playing multiples roles is
+     * Return total count of number of role players (repeat counts of the same key playing multiples roles is
      * counted repeatedly, not once)
      *
      * @return
@@ -573,7 +573,7 @@ public class IgniteConceptStorage implements ConceptStorage {
     }
 
     /**
-     * Return total count of number of role players (repeat counts of the same concept playing multiples roles is
+     * Return total count of number of role players (repeat counts of the same key playing multiples roles is
      * counted repeatedly, not once)
      *
      * @return

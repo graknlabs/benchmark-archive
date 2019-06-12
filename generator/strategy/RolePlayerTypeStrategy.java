@@ -19,7 +19,7 @@
 package grakn.benchmark.generator.strategy;
 
 import grakn.benchmark.generator.probdensity.ProbabilityDensityFunction;
-import grakn.benchmark.generator.provider.concept.ConceptKeyProvider;
+import grakn.benchmark.generator.provider.key.ConceptKeyProvider;
 
 /**
  * A container for the three things required for how to generate a batch of role players:

@@ -20,9 +20,9 @@ package grakn.benchmark.generator.definition;
 
 import grakn.benchmark.generator.probdensity.FixedConstant;
 import grakn.benchmark.generator.probdensity.FixedUniform;
-import grakn.benchmark.generator.provider.concept.CentralConceptKeyProvider;
-import grakn.benchmark.generator.provider.concept.ConceptKeyStorageProvider;
-import grakn.benchmark.generator.provider.concept.NotInRelationshipConceptKeyProvider;
+import grakn.benchmark.generator.provider.key.CentralConceptKeyProvider;
+import grakn.benchmark.generator.provider.key.ConceptKeyStorageProvider;
+import grakn.benchmark.generator.provider.key.NotInRelationshipConceptKeyProvider;
 import grakn.benchmark.generator.provider.value.RandomStringProvider;
 import grakn.benchmark.generator.storage.ConceptStorage;
 import grakn.benchmark.generator.strategy.AttributeStrategy;

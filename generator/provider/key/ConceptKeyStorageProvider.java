@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.generator.provider.concept;
+package grakn.benchmark.generator.provider.key;
 
 import grakn.benchmark.generator.storage.ConceptStorage;
 

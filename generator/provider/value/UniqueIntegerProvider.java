@@ -13,7 +13,7 @@
  *  GNU Affero General Public License for more details.
  *
  *  You should have received a copy of the GNU Affero General Public License
- *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *  along with program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package grakn.benchmark.generator.provider.value;
@@ -25,7 +25,7 @@ public class UniqueIntegerProvider implements ValueProvider<Integer> {
     private int n;
 
     public UniqueIntegerProvider(int start) {
-        this.n = start - 1;
+        n = start - 1;
     }
 
     @Override
@@ -35,8 +35,8 @@ public class UniqueIntegerProvider implements ValueProvider<Integer> {
 
     @Override
     public Integer next() {
-        this.n++;
-        return this.n;
+        n++;
+        return n;
     }
 
 }

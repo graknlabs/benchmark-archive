@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.generator.provider.concept;
+package grakn.benchmark.generator.provider.key;
 
 import grakn.benchmark.generator.probdensity.ProbabilityDensityFunction;
 import org.slf4j.Logger;
@@ -49,7 +49,7 @@ public class CentralConceptKeyProvider implements ConceptKeyProvider {
     }
 
     public void resetUniqueness() {
-        LOG.trace("Resetting central concept provider");
+        LOG.trace("Resetting central key provider");
         isReset = true;
     }
 
@@ -89,12 +89,12 @@ public class CentralConceptKeyProvider implements ConceptKeyProvider {
         // re-fill the internal buffer of conceptIds to be repeated (the centrality aspect)
         int requiredCentralConcepts = centralConceptsPdf.sample();
         this.uniqueConceptKeyList.clear();
-        LOG.trace("Trying to refill central concept provider with numebr of concepts: " + requiredCentralConcepts);
+        LOG.trace("Trying to refill central key provider with numebr of concepts: " + requiredCentralConcepts);
 
         // only if the provider can provide the required number of values
         // do we fill our circular buffer
         if (conceptKeyProvider.hasNextN(requiredCentralConcepts)) {
-            LOG.trace("Refilling central concept provider with number of concepts: " + requiredCentralConcepts);
+            LOG.trace("Refilling central key provider with number of concepts: " + requiredCentralConcepts);
             int count = 0;
             while (conceptKeyProvider.hasNext() && count < requiredCentralConcepts) {
                 uniqueConceptKeyList.add(conceptKeyProvider.next());

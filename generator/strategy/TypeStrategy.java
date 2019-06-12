@@ -24,7 +24,6 @@ import grakn.benchmark.generator.probdensity.ProbabilityDensityFunction;
  * A Type strategy is a container composed of:
  * - a type label defining what type to generate
  * - a PDF defining how many type instances to generate
- * <p>
  * and it is consumed by a generator.
  */
 public abstract class TypeStrategy {

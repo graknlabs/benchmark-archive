@@ -19,8 +19,8 @@
 package grakn.benchmark.generator.query;
 
 import grakn.benchmark.generator.probdensity.FixedConstant;
-import grakn.benchmark.generator.provider.concept.CentralConceptKeyProvider;
-import grakn.benchmark.generator.provider.concept.ConceptKeyProvider;
+import grakn.benchmark.generator.provider.key.CentralConceptKeyProvider;
+import grakn.benchmark.generator.provider.key.ConceptKeyProvider;
 import grakn.benchmark.generator.strategy.RelationStrategy;
 import grakn.benchmark.generator.strategy.RolePlayerTypeStrategy;
 import graql.lang.query.GraqlInsert;
