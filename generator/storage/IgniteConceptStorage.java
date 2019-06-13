@@ -91,7 +91,7 @@ public class IgniteConceptStorage implements ConceptStorage {
         LOG.debug("Initialising ignite...");
         // Read schema concepts and create ignite tables
         this.entityTypeLabels = labels.entityLabels();
-        this.explicitRelationshipTypeLabels = labels.relationLabels();
+        this.explicitRelationshipTypeLabels = new HashSet<>(labels.relationLabels());
         this.attributeTypeLabels = labels.attributeLabelsDataTypes();
 
         this.relationshipTypeLabels = labels.relationLabels();
