@@ -23,3 +23,7 @@ define
         relates agent, # scale number of agents over time
         relates catalyst, # scale number of catalysts over time
         key unique-key;
+
+define
+    @has-biochem-id key unique-key;
+

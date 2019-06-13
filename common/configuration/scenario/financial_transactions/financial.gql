@@ -1,27 +1,25 @@
 define
 
-    # fixed increments
-    quantity sub attribute, datatype long;
-    name sub attribute, datatype string;
+    unique-key sub attribute, datatype long;
 
-    # don't instantiate this
+    # fixed increments
+    quantity sub attribute, datatype long,
+        key unique-key;
+    name sub attribute, datatype string,
+        key unique-key;
+
     trader sub entity,
         plays transactor,
-        has name;
-
-    #government sub entity,
-    #    plays taxor,
-    #    has name;
+        has name,
+        key unique-key;
 
 
     # fixed increments
     transaction sub relation,
         relates transactor,  # scaling increments => most connections are via role players to few relationships
-        has quantity;
-    #    plays taxed;
+        has quantity,
+        key unique-key;
 
-
-    #taxation sub relationship,
-    #    relates taxor,
-    #    relatex taxed;
-
+define
+    @has-quantity key unique-key;
+    @has-name key unique-key;

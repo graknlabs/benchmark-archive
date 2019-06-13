@@ -56,7 +56,7 @@ public class RelationGeneratorTest {
 
         List<Long> conceptKeyList = Arrays.asList(1L);
         CentralConceptKeyProvider centralConceptKeyProvider = mock(CentralConceptKeyProvider.class); //(new FixedConstant(3), conceptIdList.iterator());
-        when(rolePlayerTypeStrategy.getConceptProvider()).thenReturn(centralConceptKeyProvider);
+        when(rolePlayerTypeStrategy.getConceptKeyProvider()).thenReturn(centralConceptKeyProvider);
         when(centralConceptKeyProvider.hasNext()).thenReturn(true);
         when(centralConceptKeyProvider.next()).thenReturn(conceptKeyList.get(0));
 
