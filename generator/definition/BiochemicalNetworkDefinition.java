@@ -21,7 +21,9 @@ package grakn.benchmark.generator.definition;
 import grakn.benchmark.generator.probdensity.FixedConstant;
 import grakn.benchmark.generator.probdensity.FixedDiscreteGaussian;
 import grakn.benchmark.generator.probdensity.ScalingDiscreteGaussian;
+import grakn.benchmark.generator.provider.key.ConceptKeyProvider;
 import grakn.benchmark.generator.provider.key.ConceptKeyStorageProvider;
+import grakn.benchmark.generator.provider.key.CountingKeyProvider;
 import grakn.benchmark.generator.provider.key.NotInRelationshipConceptKeyProvider;
 import grakn.benchmark.generator.provider.value.UniqueIntegerProvider;
 import grakn.benchmark.generator.storage.ConceptStorage;
@@ -58,10 +60,12 @@ public class BiochemicalNetworkDefinition implements DataGeneratorDefinition {
         this.relationshipStrategies = new WeightedPicker<>(random);
         this.attributeStrategies = new WeightedPicker<>(random);
 
-        buildEntityStrategies();
-        buildAttributeStrategies();
-        buildExplicitRelationshipStrategies();
-        buildImplicitRelationshipStrategies();
+        CountingKeyProvider globalUniqueKeyProvider = new CountingKeyProvider(0);
+
+        buildEntityStrategies(globalUniqueKeyProvider);
+        buildAttributeStrategies(globalUniqueKeyProvider);
+        buildExplicitRelationshipStrategies(globalUniqueKeyProvider);
+        buildImplicitRelationshipStrategies(globalUniqueKeyProvider);
 
         this.metaTypeStrategies = new WeightedPicker<>(random);
         this.metaTypeStrategies.add(1.0, entityStrategies);
@@ -69,26 +73,28 @@ public class BiochemicalNetworkDefinition implements DataGeneratorDefinition {
         this.metaTypeStrategies.add(1.0, attributeStrategies);
     }
 
-    private void buildEntityStrategies() {
+    private void buildEntityStrategies(CountingKeyProvider globalKeyProvider) {
 
         this.entityStrategies.add(
                 1.0,
                 new EntityStrategy(
                         "chemical",
-                        new FixedDiscreteGaussian(this.random, 11, 5))
+                        new FixedDiscreteGaussian(this.random, 11, 5),
+                        globalKeyProvider)
         );
 
         this.entityStrategies.add(
                 1.0,
                 new EntityStrategy(
                         "enzyme",
-                        new FixedDiscreteGaussian(this.random, 5, 0.8)
+                        new FixedDiscreteGaussian(this.random, 5, 0.8),
+                        globalKeyProvider
                 )
         );
 
     }
 
-    private void buildAttributeStrategies() {
+    private void buildAttributeStrategies(CountingKeyProvider globalKeyProvider) {
 
         UniqueIntegerProvider idGenerator = new UniqueIntegerProvider(0);
         this.attributeStrategies.add(
@@ -96,6 +102,7 @@ public class BiochemicalNetworkDefinition implements DataGeneratorDefinition {
                 new AttributeStrategy<>(
                         "biochem-id",
                         new FixedDiscreteGaussian(this.random, 5, 3),
+                        globalKeyProvider,
                         idGenerator
                 )
         );
@@ -103,7 +110,7 @@ public class BiochemicalNetworkDefinition implements DataGeneratorDefinition {
 
     }
 
-    private void buildExplicitRelationshipStrategies() {
+    private void buildExplicitRelationshipStrategies(CountingKeyProvider globalKeyProvider) {
 
         // increasingly large interactions (increasing number of role players)
         RolePlayerTypeStrategy agentRolePlayer = new RolePlayerTypeStrategy(
@@ -129,12 +136,13 @@ public class BiochemicalNetworkDefinition implements DataGeneratorDefinition {
                 new RelationStrategy(
                         "interaction",
                         new FixedDiscreteGaussian(this.random, 50, 25),
+                        globalKeyProvider,
                         new HashSet<>(Arrays.asList(agentRolePlayer, catalystRolePlayer))
                 )
         );
     }
 
-    private void buildImplicitRelationshipStrategies() {
+    private void buildImplicitRelationshipStrategies(CountingKeyProvider globalKeyProvider) {
 
 
         // @has-biochem-id for chemicals
@@ -161,6 +169,7 @@ public class BiochemicalNetworkDefinition implements DataGeneratorDefinition {
                 new RelationStrategy(
                         "@has-biochem-id",
                         new FixedDiscreteGaussian(random, 22, 6), // more than number of entities being created to compensate for being picked less
+                        globalKeyProvider,
                         new HashSet<>(Arrays.asList(chemicalIdOwner, chemicalIdValue))
                 )
         );
@@ -190,6 +199,7 @@ public class BiochemicalNetworkDefinition implements DataGeneratorDefinition {
                 new RelationStrategy(
                         "@has-biochem-id",
                         new FixedDiscreteGaussian(random, 22, 6), // more than number of entities being created to compensate for being picked less
+                        globalKeyProvider,
                         new HashSet<>(Arrays.asList(enzymeIdOwner, enzymeIdValue))
                 )
         );

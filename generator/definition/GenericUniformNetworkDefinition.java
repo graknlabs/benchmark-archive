@@ -24,6 +24,7 @@ import grakn.benchmark.generator.probdensity.FixedDiscreteGaussian;
 import grakn.benchmark.generator.probdensity.FixedUniform;
 import grakn.benchmark.generator.provider.key.CentralConceptKeyProvider;
 import grakn.benchmark.generator.provider.key.ConceptKeyStorageProvider;
+import grakn.benchmark.generator.provider.key.CountingKeyProvider;
 import grakn.benchmark.generator.provider.key.NotInRelationshipConceptKeyProvider;
 import grakn.benchmark.generator.provider.value.UniqueIntegerProvider;
 import grakn.benchmark.generator.storage.ConceptStorage;
@@ -62,10 +63,12 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         implicitRelationshipStrategies = new WeightedPicker<>(random);
         attributeStrategies = new WeightedPicker<>(random);
 
-        buildEntityStrategies();
-        buildAttributeStrategies();
-        buildExplicitRelationshipStrategies();
-        buildImplicitRelationshipStrategies();
+        CountingKeyProvider globalUniqueKeyProvider = new CountingKeyProvider(0);
+
+        buildEntityStrategies(globalUniqueKeyProvider);
+        buildAttributeStrategies(globalUniqueKeyProvider);
+        buildExplicitRelationshipStrategies(globalUniqueKeyProvider);
+        buildImplicitRelationshipStrategies(globalUniqueKeyProvider);
 
         this.metaTypeStrategies = new WeightedPicker<>(random);
         this.metaTypeStrategies.add(1.0, entityStrategies);
@@ -75,36 +78,40 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
     }
 
 
-    private void buildEntityStrategies() {
+    private void buildEntityStrategies(CountingKeyProvider globalKeyProvider) {
         this.entityStrategies.add(
                 1.0,
                 new EntityStrategy(
                         "blob",
-                        new FixedUniform(this.random, 8, 18))
+                        new FixedUniform(this.random, 8, 18),
+                        globalKeyProvider)
         );
 
         this.entityStrategies.add(
                 1.0,
                 new EntityStrategy(
                         "square",
-                        new FixedUniform(this.random, 11, 21))
+                        new FixedUniform(this.random, 11, 21),
+                        globalKeyProvider)
         );
 
         this.entityStrategies.add(
                 1.0,
                 new EntityStrategy(
                         "circle",
-                        new FixedUniform(this.random, 16, 26))
+                        new FixedUniform(this.random, 16, 26),
+                        globalKeyProvider)
         );
 
     }
 
-    private void buildAttributeStrategies() {
+    private void buildAttributeStrategies(CountingKeyProvider globalKeyProvider) {
         this.attributeStrategies.add(
                 1.0,
                 new AttributeStrategy<>(
                         "blob-value",
                         new FixedUniform(this.random, 1, 5),
+                        globalKeyProvider,
                         new UniqueIntegerProvider(0)
                 )
         );
@@ -114,6 +121,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
                 new AttributeStrategy<>(
                         "square-value",
                         new FixedUniform(this.random, 3, 11),
+                        globalKeyProvider,
                         new UniqueIntegerProvider(0)
                 )
         );
@@ -123,6 +131,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
                 new AttributeStrategy<>(
                         "circle-value",
                         new FixedUniform(this.random, 1, 3),
+                        globalKeyProvider,
                         new UniqueIntegerProvider(0)
                 )
         );
@@ -132,6 +141,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
                 new AttributeStrategy<>(
                         "interaction-value",
                         new FixedUniform(this.random, 2, 18),
+                        globalKeyProvider,
                         new UniqueIntegerProvider(0)
                 )
         );
@@ -141,12 +151,13 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
                 new AttributeStrategy<>(
                         "ownership-cost",
                         new FixedUniform(this.random, 3, 15),
+                        globalKeyProvider,
                         new UniqueIntegerProvider(0)
                 )
         );
     }
 
-    private void buildExplicitRelationshipStrategies() {
+    private void buildExplicitRelationshipStrategies(CountingKeyProvider globalKeyProvider) {
 
 
         // -------------    interactions    ---------------
@@ -167,6 +178,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         this.explicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("interaction",
                         new FixedUniform(this.random, 45, 75),
+                        globalKeyProvider,
                         new HashSet<>(Arrays.asList(blobberRolePlayer, circlerRolePlayer, squarerRolePlayer))
                 )
         );
@@ -188,6 +200,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         this.explicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("ownership-of-blob",
                         new FixedUniform(this.random, 10, 20),
+                        globalKeyProvider,
                         new HashSet<>(Arrays.asList(blobOwner, blobOwned))
                 )
         );
@@ -207,6 +220,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         this.explicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("ownership-of-square",
                         new FixedUniform(this.random, 20, 30),
+                        globalKeyProvider,
                         new HashSet<>(Arrays.asList(blobOwnerSquare, squareOwnedBlob))
                 )
         );
@@ -226,6 +240,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         this.explicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("ownership-of-circle",
                         new FixedUniform(this.random, 25, 35),
+                        globalKeyProvider,
                         new HashSet<>(Arrays.asList(circleOwner, circleOwned))
                 )
         );
@@ -245,6 +260,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         this.explicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("ownership-of-blob",
                         new FixedUniform(this.random, 12, 20),
+                        globalKeyProvider,
                         new HashSet<>(Arrays.asList(blobOwnedCircle, circleOwnerBlob))
                 )
         );
@@ -264,6 +280,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         this.explicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("ownership-of-circle",
                         new FixedUniform(this.random, 12, 26),
+                        globalKeyProvider,
                         new HashSet<>(Arrays.asList(circleOwnedSquare, squareOwnsCircle))
                 )
         );
@@ -283,6 +300,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         this.explicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("ownership-of-blob",
                         new FixedUniform(this.random, 2, 30),
+                        globalKeyProvider,
                         new HashSet<>(Arrays.asList(blobOwnedSquare, squareOwnsBlob))
                 )
         );
@@ -305,6 +323,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         this.explicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("sizing-blob",
                         new FixedUniform(this.random, 5, 13),
+                        globalKeyProvider,
                         new HashSet<>(Arrays.asList(blobBigger, blobSmaller))
                 )
         );
@@ -325,6 +344,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         this.explicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("sizing-circle",
                         new FixedUniform(random, 4, 10),
+                        globalKeyProvider,
                         new HashSet<>(Arrays.asList(blobBiggerCircle, circleSmallerBlob))
                 )
         );
@@ -345,6 +365,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         this.explicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("sizing-square",
                         new FixedUniform(random, 3, 8),
+                        globalKeyProvider,
                         new HashSet<>(Arrays.asList(blobBiggerSquare, squareSmallerBlob))
                 )
         );
@@ -365,6 +386,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         this.explicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("sizing-square",
                         new FixedUniform(random, 2, 6),
+                        globalKeyProvider,
                         new HashSet<>(Arrays.asList(circleBiggerSquare, squareSmallerCircle))
                 )
         );
@@ -384,12 +406,13 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         this.explicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("sizing-blob",
                         new FixedUniform(this.random, 1, 5),
+                        globalKeyProvider,
                         new HashSet<>(Arrays.asList(squareBiggerBlob, blobSmallerSquare))
                 )
         );
     }
 
-    private void buildImplicitRelationshipStrategies() {
+    private void buildImplicitRelationshipStrategies(CountingKeyProvider globalKeyProvider) {
 
         // assign randomly values to blobs that don't have values
         RolePlayerTypeStrategy blobValueOwner = new RolePlayerTypeStrategy("@has-blob-value-owner",
@@ -406,6 +429,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         implicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("@has-blob-value",
                         new FixedUniform(random, 7, 18),
+                        globalKeyProvider,
                         new HashSet<>(Arrays.asList(blobValueOwner, blobValueValue))
                 )
         );
@@ -425,6 +449,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         implicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("@has-square-value",
                         new FixedUniform(this.random, 11, 20),
+                        globalKeyProvider,
                         new HashSet<>(Arrays.asList(squareValueOwner, squareValueValue))
                 )
         );
@@ -444,6 +469,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         implicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("@has-circle-value",
                         new FixedUniform(random, 16, 25),
+                        globalKeyProvider,
                         new HashSet<>(Arrays.asList(circleValueOwner, circleValueValue))
                 )
         );
@@ -463,6 +489,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         implicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("@has-interaction-value",
                         new FixedDiscreteGaussian(random, 40, 15),
+                        globalKeyProvider,
                         new HashSet<>(Arrays.asList(interactionValueOwner, interactionValueValue))
                 )
         );
@@ -484,6 +511,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         implicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("@has-ownership-cost",
                         new FixedDiscreteGaussian(random, 31, 10),
+                        globalKeyProvider,
                         new HashSet<>(Arrays.asList(blobOwnershipCostValue, blobOwnershipCostOwner))
                 )
         );
@@ -503,6 +531,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         implicitRelationshipStrategies.add(1.0,
                 new RelationStrategy("@has-ownership-cost",
                         new FixedDiscreteGaussian(random, 32.5, 15),
+                        globalKeyProvider,
                         new HashSet<>(Arrays.asList(circleOwnershipCostOwner, circleOwnershipCostValue))
                 )
         );
@@ -526,6 +555,7 @@ public class GenericUniformNetworkDefinition implements DataGeneratorDefinition 
         implicitRelationshipStrategies.add(2.0,
                 new RelationStrategy("@has-ownership-cost",
                         new FixedDiscreteGaussian(random, 8, 2),
+                        globalKeyProvider,
                         new HashSet<>(Arrays.asList(squareOwnershipCostOwner, squareOwnershipCostValue))
                 )
         );

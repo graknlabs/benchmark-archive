@@ -22,6 +22,7 @@ import grakn.benchmark.generator.probdensity.FixedConstant;
 import grakn.benchmark.generator.probdensity.FixedDiscreteGaussian;
 import grakn.benchmark.generator.probdensity.ScalingDiscreteGaussian;
 import grakn.benchmark.generator.provider.key.ConceptKeyStorageProvider;
+import grakn.benchmark.generator.provider.key.CountingKeyProvider;
 import grakn.benchmark.generator.provider.key.NotInRelationshipConceptKeyProvider;
 import grakn.benchmark.generator.provider.value.UniqueIntegerProvider;
 import grakn.benchmark.generator.storage.ConceptStorage;
@@ -59,11 +60,12 @@ public class FinancialTransactionsDefinition implements DataGeneratorDefinition 
         this.relationshipStrategies = new WeightedPicker<>(random);
         this.attributeStrategies = new WeightedPicker<>(random);
 
+        CountingKeyProvider globalUniqueKeyProvider = new CountingKeyProvider(0);
 
-        buildEntityStrategies();
-        buildAttributeStrategies();
-        buildExplicitRelationshipStrategies();
-        buildImplicitRelationshipStrategies();
+        buildEntityStrategies(globalUniqueKeyProvider);
+        buildAttributeStrategies(globalUniqueKeyProvider);
+        buildExplicitRelationshipStrategies(globalUniqueKeyProvider);
+        buildImplicitRelationshipStrategies(globalUniqueKeyProvider);
 
         this.metaTypeStrategies = new WeightedPicker<>(random);
         this.metaTypeStrategies.add(1.0, entityStrategies);
@@ -71,18 +73,20 @@ public class FinancialTransactionsDefinition implements DataGeneratorDefinition 
         this.metaTypeStrategies.add(1.0, attributeStrategies);
     }
 
-    private void buildEntityStrategies() {
+    private void buildEntityStrategies(CountingKeyProvider globalKeyProvider) {
         // we use a scaling PDF rather than a fixed one for these entities
         this.entityStrategies.add(
                 1.0,
                 new EntityStrategy(
                         "trader",
-                        new ScalingDiscreteGaussian(this.random, () -> storage.getGraphScale(), 0.02, 0.01))
+                        new ScalingDiscreteGaussian(this.random, () -> storage.getGraphScale(), 0.02, 0.01),
+                        globalKeyProvider
+                )
         );
 
     }
 
-    private void buildAttributeStrategies() {
+    private void buildAttributeStrategies(CountingKeyProvider globalKeyProvider) {
         // fixed PDF for number of attributes added
         UniqueIntegerProvider idGenerator = new UniqueIntegerProvider(0);
         this.attributeStrategies.add(
@@ -90,13 +94,14 @@ public class FinancialTransactionsDefinition implements DataGeneratorDefinition 
                 new AttributeStrategy<>(
                         "quantity",
                         new FixedDiscreteGaussian(this.random, 5, 3),
+                        globalKeyProvider,
                         idGenerator
                 )
         );
 
     }
 
-    private void buildExplicitRelationshipStrategies() {
+    private void buildExplicitRelationshipStrategies(CountingKeyProvider globalKeyProvider) {
 
         // increasingly large interactions (increasing number of role players)
         RolePlayerTypeStrategy transactorRolePlayer = new RolePlayerTypeStrategy(
@@ -113,12 +118,13 @@ public class FinancialTransactionsDefinition implements DataGeneratorDefinition 
                 new RelationStrategy(
                         "transaction",
                         new FixedDiscreteGaussian(this.random, 50, 10), // but fixed number of rels added per iter
+                        globalKeyProvider,
                         new HashSet<>(Arrays.asList(transactorRolePlayer))
                 )
         );
     }
 
-    private void buildImplicitRelationshipStrategies() {
+    private void buildImplicitRelationshipStrategies(CountingKeyProvider globalKeyProvider) {
 
         // @has-quantity on the transaction relationship (1 quantity per transaction)
         RolePlayerTypeStrategy quantityOwner = new RolePlayerTypeStrategy(
@@ -144,6 +150,7 @@ public class FinancialTransactionsDefinition implements DataGeneratorDefinition 
                 new RelationStrategy(
                         "@has-quantity",
                         new ScalingDiscreteGaussian(random, () -> storage.getGraphScale(), 0.01, 0.005), // more than number of entities being created to compensate for being picked less
+                        globalKeyProvider,
                         new HashSet<>(Arrays.asList(quantityOwner, quantityValue))
                 )
         );

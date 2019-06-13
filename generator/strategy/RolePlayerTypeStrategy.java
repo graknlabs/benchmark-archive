@@ -29,15 +29,10 @@ import grakn.benchmark.generator.provider.key.ConceptKeyProvider;
  */
 public class RolePlayerTypeStrategy extends TypeStrategy {
 
-    private ConceptKeyProvider conceptKeyProvider;
 
     public RolePlayerTypeStrategy(String roleLabel, ProbabilityDensityFunction numInstancesPDF, ConceptKeyProvider conceptKeyProvider) {
-        super(roleLabel, numInstancesPDF);
-        this.conceptKeyProvider = conceptKeyProvider;
+        super(roleLabel, numInstancesPDF, conceptKeyProvider);
     }
 
-    public ConceptKeyProvider getConceptProvider() {
-        return conceptKeyProvider;
-    }
 }
 

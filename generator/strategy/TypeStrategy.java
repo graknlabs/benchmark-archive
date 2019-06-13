@@ -30,7 +30,7 @@ import grakn.benchmark.generator.provider.key.ConceptKeyProvider;
 public abstract class TypeStrategy {
     private final String typeLabel;
     private final ProbabilityDensityFunction numInstancesPDF;
-    private final ConceptKeyProvider conceptKeyProvider;
+    final ConceptKeyProvider conceptKeyProvider;
 
     public TypeStrategy(String typeLabel, ProbabilityDensityFunction numInstancesPDF, ConceptKeyProvider conceptKeyProvider) {
         this.numInstancesPDF = numInstancesPDF;
@@ -44,6 +44,10 @@ public abstract class TypeStrategy {
 
     public ProbabilityDensityFunction getNumInstancesPDF() {
         return numInstancesPDF;
+    }
+
+    public ConceptKeyProvider getConceptKeyProvider() {
+        return conceptKeyProvider;
     }
 }
 

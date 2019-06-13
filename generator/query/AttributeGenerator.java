@@ -73,7 +73,7 @@ public class AttributeGenerator<Datatype> implements QueryGenerator {
                     throw new DataGeneratorException("Unimplemented data type " + value.getClass());
                 }
 
-                return Graql.insert(var(attr).isa(attributeTypeLabel), attributeValue);
+                return Graql.insert(var(attr).isa(attributeTypeLabel).has("unique-key", strategy.getConceptKeyProvider().next()), attributeValue);
             }
         };
     }

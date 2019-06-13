@@ -64,8 +64,8 @@ public class RelationGenerator implements QueryGenerator {
 
         Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies = this.strategy.getRolePlayerTypeStrategies();
         for (RolePlayerTypeStrategy rolePlayerTypeStrategy : rolePlayerTypeStrategies) {
-            if (rolePlayerTypeStrategy.getConceptProvider() instanceof CentralConceptKeyProvider) {
-                ((CentralConceptKeyProvider) rolePlayerTypeStrategy.getConceptProvider()).resetUniqueness();
+            if (rolePlayerTypeStrategy.getConceptKeyProvider() instanceof CentralConceptKeyProvider) {
+                ((CentralConceptKeyProvider) rolePlayerTypeStrategy.getConceptKeyProvider()).resetUniqueness();
             }
         }
 
@@ -81,7 +81,7 @@ public class RelationGenerator implements QueryGenerator {
 
             private boolean haveRequiredRolePlayers() {
                 return strategy.getRolePlayerTypeStrategies().stream()
-                        .map(s -> s.getConceptProvider().hasNextN(s.getNumInstancesPDF().peek()))
+                        .map(s -> s.getConceptKeyProvider().hasNextN(s.getNumInstancesPDF().peek()))
                         .allMatch(b -> b);
             }
 
@@ -126,7 +126,7 @@ public class RelationGenerator implements QueryGenerator {
 
                     // Find random role-players matching this type
                     // Pick ids from the list of keys
-                    Iterator<Long> conceptProvider = rolePlayerTypeStrategy.getConceptProvider();
+                    Iterator<Long> conceptProvider = rolePlayerTypeStrategy.getConceptKeyProvider();
                     int rolePlayersRequired = rolePlayerTypeStrategy.getNumInstancesPDF().sample();
 
                     // Build the match insert query
@@ -146,7 +146,7 @@ public class RelationGenerator implements QueryGenerator {
                     }
                 }
                 queriesGenerated++;
-                return Graql.match(matchVarPattern).insert(insertVarPattern);
+                return Graql.match(matchVarPattern).insert(insertVarPattern.has("unique-key", strategy.getConceptKeyProvider().next()));
             }
         };
     }
