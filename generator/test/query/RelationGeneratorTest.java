@@ -21,6 +21,7 @@ package grakn.benchmark.generator.query;
 import grakn.benchmark.generator.probdensity.FixedConstant;
 import grakn.benchmark.generator.provider.key.CentralConceptKeyProvider;
 import grakn.benchmark.generator.provider.key.ConceptKeyProvider;
+import grakn.benchmark.generator.provider.key.CountingKeyProvider;
 import grakn.benchmark.generator.strategy.RelationStrategy;
 import grakn.benchmark.generator.strategy.RolePlayerTypeStrategy;
 import graql.lang.query.GraqlInsert;
@@ -53,6 +54,7 @@ public class RelationGeneratorTest {
         when(strategy.getRolePlayerTypeStrategies()).thenReturn(rolePlayerTypeStrategies);
         when(strategy.getTypeLabel()).thenReturn("friendship");
         when(strategy.getNumInstancesPDF()).thenReturn(new FixedConstant(2));
+        when(strategy.getConceptKeyProvider()).thenReturn(new CountingKeyProvider(0));
 
         List<Long> conceptKeyList = Arrays.asList(1L);
         CentralConceptKeyProvider centralConceptKeyProvider = mock(CentralConceptKeyProvider.class); //(new FixedConstant(3), conceptIdList.iterator());
@@ -92,6 +94,7 @@ public class RelationGeneratorTest {
         when(strategy.getRolePlayerTypeStrategies()).thenReturn(rolePlayerTypeStrategies);
         when(strategy.getTypeLabel()).thenReturn("ownership");
         when(strategy.getNumInstancesPDF()).thenReturn(new FixedConstant(2));
+        when(strategy.getConceptKeyProvider()).thenReturn(new CountingKeyProvider(0));
 
 
         RelationGenerator queryGenerator = new RelationGenerator(strategy);
@@ -139,6 +142,7 @@ public class RelationGeneratorTest {
         when(strategy.getRolePlayerTypeStrategies()).thenReturn(rolePlayerTypeStrategies);
         when(strategy.getTypeLabel()).thenReturn("friendship");
         when(strategy.getNumInstancesPDF()).thenReturn(new FixedConstant(1));
+        when(strategy.getConceptKeyProvider()).thenReturn(new CountingKeyProvider(0));
 
         RelationGenerator queryGenerator = new RelationGenerator(strategy);
         Iterator<GraqlInsert> queries = queryGenerator.generate();
@@ -189,6 +193,7 @@ public class RelationGeneratorTest {
         when(strategy.getTypeLabel()).thenReturn("friendship");
         // target: generate two relationships
         when(strategy.getNumInstancesPDF()).thenReturn(new FixedConstant(2));
+        when(strategy.getConceptKeyProvider()).thenReturn(new CountingKeyProvider(0));
 
         RelationGenerator queryGenerator = new RelationGenerator(strategy);
         Iterator<GraqlInsert> queries = queryGenerator.generate();
@@ -227,6 +232,7 @@ public class RelationGeneratorTest {
         when(strategy.getTypeLabel()).thenReturn("friendship");
         // target: generate two relationships
         when(strategy.getNumInstancesPDF()).thenReturn(new FixedConstant(2));
+        when(strategy.getConceptKeyProvider()).thenReturn(new CountingKeyProvider(0));
 
         RelationGenerator queryGenerator = new RelationGenerator(strategy);
         Iterator<GraqlInsert> queries = queryGenerator.generate();

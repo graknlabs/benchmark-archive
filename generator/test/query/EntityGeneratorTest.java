@@ -19,6 +19,7 @@
 package grakn.benchmark.generator.query;
 
 import grakn.benchmark.generator.probdensity.FixedConstant;
+import grakn.benchmark.generator.provider.key.CountingKeyProvider;
 import grakn.benchmark.generator.strategy.EntityStrategy;
 import graql.lang.query.GraqlInsert;
 import org.junit.Test;
@@ -37,6 +38,7 @@ public class EntityGeneratorTest {
         EntityStrategy strategy = mock(EntityStrategy.class);
         when(strategy.getTypeLabel()).thenReturn("person");
         when(strategy.getNumInstancesPDF()).thenReturn(new FixedConstant(0)); // always generate 3
+        when(strategy.getConceptKeyProvider()).thenReturn(new CountingKeyProvider(0));
 
         EntityGenerator generator = new EntityGenerator(strategy);
         Iterator<GraqlInsert> insertEntityQueries = generator.generate();
@@ -48,6 +50,7 @@ public class EntityGeneratorTest {
         EntityStrategy strategy = mock(EntityStrategy.class);
         when(strategy.getTypeLabel()).thenReturn("person");
         when(strategy.getNumInstancesPDF()).thenReturn(new FixedConstant(5)); // always generate 3
+        when(strategy.getConceptKeyProvider()).thenReturn(new CountingKeyProvider(0));
 
         EntityGenerator generator = new EntityGenerator(strategy);
         Iterator<GraqlInsert> insertEntityQueries = generator.generate();
