@@ -168,7 +168,7 @@ public class BiochemicalNetworkDefinition implements DataGeneratorDefinition {
                 1.0,
                 new RelationStrategy(
                         "@has-biochem-id",
-                        new FixedDiscreteGaussian(random, 22, 6), // more than number of entities being created to compensate for being picked less
+                        new FixedDiscreteGaussian(random, 24, 6), // more than number of entities being created to compensate for being picked less
                         globalKeyProvider,
                         new HashSet<>(Arrays.asList(chemicalIdOwner, chemicalIdValue))
                 )
@@ -198,7 +198,7 @@ public class BiochemicalNetworkDefinition implements DataGeneratorDefinition {
                 1.0,
                 new RelationStrategy(
                         "@has-biochem-id",
-                        new FixedDiscreteGaussian(random, 22, 6), // more than number of entities being created to compensate for being picked less
+                        new FixedDiscreteGaussian(random, 24, 6), // more than number of entities being created to compensate for being picked less
                         globalKeyProvider,
                         new HashSet<>(Arrays.asList(enzymeIdOwner, enzymeIdValue))
                 )

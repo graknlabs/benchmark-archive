@@ -1,6 +1,6 @@
 define
 
-    unique-key sub attribute, datatype long
+    unique-key sub attribute, datatype long;
 
     # fixed increments
     name sub attribute, datatype string,

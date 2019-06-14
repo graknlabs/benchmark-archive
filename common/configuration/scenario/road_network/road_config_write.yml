@@ -3,11 +3,11 @@ description: "Road network writes with: Constant C_in, Constant R_out, Constant 
 dataGenerator: "road_network"
 schema: "road_network.gql"
 scales:
-  - 2000
-  - 4000
-  - 8000
+  - 1000
+#  - 4000
+#  - 8000
 
-repeatsPerQuery: 5
+repeatsPerQuery: 15
 
 queries: "queries_write.yml"
 deleteInsertedConcepts: true
