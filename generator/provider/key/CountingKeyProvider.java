@@ -38,6 +38,6 @@ public class CountingKeyProvider implements ConceptKeyProvider {
     @Override
     public Long next() {
         n++;
-        return n-1;
+        return n;
     }
 }

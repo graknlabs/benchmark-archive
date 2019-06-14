@@ -4,10 +4,11 @@ dataGenerator: "road_network"
 schema: "road_network.gql"
 scales:
   - 1000
+#  - 1000
 #  - 4000
 #  - 8000
 
-repeatsPerQuery: 15
+repeatsPerQuery: 1
 
 queries: "queries_write.yml"
 deleteInsertedConcepts: true
