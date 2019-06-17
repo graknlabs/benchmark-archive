@@ -7,6 +7,8 @@ const utils = require('./Utils');
 const ExecController = require('./ExecutionsController');
 const SpansController = require('./SpansController');
 
+const history = require('connect-history-api-fallback');
+
 const ES_URI = config.es.host + ":" + config.es.port;
 const LAUNCH_EXECUTOR_SCRIPT_PATH = __dirname + '/../../launch_executor_server.sh';
 const DELETE_INSTANCE_SCRIPT_PATH = __dirname + '/../../delete_instance.sh';
@@ -16,6 +18,13 @@ const executionsController = new ExecController(esClient);
 const spans = new SpansController(esClient);
 
 const app = module.exports = express();
+
+// Changes the requested location to the (default) /index.html, whenever there is a request which fulfills the following criteria:
+// 1. The request is a GET request
+// 2. which accepts text/html,
+// 3. is not a direct file request, i.e. the requested path does not contain a . (DOT) character and
+// 4. does not match a pattern provided in options.rewrites (read docs of connect-history-api-fallback)
+app.use(history());
 
 // Serve static files for web dashboard
 app.use(express.static(__dirname + '/../../dashboard/dist'));
@@ -33,9 +42,9 @@ app.post('/pull_request', checkPullRequestIsMerged, (req, res) => {
             utils.startBenchmarking(LAUNCH_EXECUTOR_SCRIPT_PATH, execution);
             console.log("New execution added to ES.");
             res.status(200).json({ triggered: true });
-        }).catch((err) => { 
+        }).catch((err) => {
             res.status(500).json({ triggered: false, error: true });
-            console.error(err); 
+            console.error(err);
         });
 });
 
@@ -49,9 +58,9 @@ app.post('/execution/new', (req, res) => {
             utils.startBenchmarking(LAUNCH_EXECUTOR_SCRIPT_PATH, execution);
             console.log("New execution added to ES.");
             res.status(200).json({ triggered: true });
-        }).catch((err) => { 
+        }).catch((err) => {
             res.status(500).json({ triggered: false, error: true });
-            console.error(err); 
+            console.error(err);
         });
 });
 
