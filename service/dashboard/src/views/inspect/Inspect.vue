@@ -97,7 +97,6 @@ export default {
         }"){ id name duration tags { graphType executionName graphScale description }} }`,
       );
       const graphs = graphsResp.data.executionSpans;
-      console.log(graphs);
       this.graphs = flattenGraphs(graphs);
 
       const queriesResponse = await Promise.all(
