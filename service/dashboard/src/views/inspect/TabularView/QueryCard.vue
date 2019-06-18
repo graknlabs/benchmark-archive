@@ -11,14 +11,11 @@
           :content="query"
           placement="top"
         >
-          <div class="queryCardDetail">
-            <p
-              class="tableHeader"
-              style="text-align: left;"
-            >
-              Query/Step
-            </p>
-            <p style="text-align: left;">
+          <div
+            class="queryCardDetail"
+            style="padding: 0;"
+          >
+            <p>
               {{ query | truncate(100) }}
             </p>
           </div>
@@ -27,15 +24,31 @@
         <el-tooltip
           class="item"
           effect="dark"
-          :content="minTooltipContent()"
+          content="First Rep"
           placement="top"
         >
           <div class="queryCardDetail">
-            <p class="tableHeader">
-              Min/Rep
+            <p>
+              {{ spansSortedByRep[0].duration | fixedMs }} ms
             </p>
-            <p class="text-size-18">
-              {{ minSpan.duration | fixedMs }}/{{ minSpan.rep + 1 | ordinalise }}
+          </div>
+        </el-tooltip>
+
+        <e-chart
+          class="queryRepChart"
+          :autoresize="true"
+          :options="queryCardChartOptions"
+        />
+
+        <el-tooltip
+          class="item"
+          effect="dark"
+          content="Reps"
+          placement="top"
+        >
+          <div class="queryCardDetail">
+            <p>
+              {{ reps }}
             </p>
           </div>
         </el-tooltip>
@@ -43,15 +56,12 @@
         <el-tooltip
           class="item"
           effect="dark"
-          :content="medianTooltipContent()"
+          content="Median"
           placement="top"
         >
           <div class="queryCardDetail">
-            <p class="tableHeader">
-              Median/Reps
-            </p>
-            <p class="text-size-18">
-              {{ median | fixedMs }}/{{ reps }}
+            <p>
+              {{ median | fixedMs }}
             </p>
           </div>
         </el-tooltip>
@@ -59,15 +69,25 @@
         <el-tooltip
           class="item"
           effect="dark"
-          :content="maxTooltipContent()"
+          content="Mean"
           placement="top"
         >
           <div class="queryCardDetail">
-            <p class="tableHeader">
-              Max/Rep
+            <p>
+              {{ mean | fixedMs }}
             </p>
-            <p class="text-size-18">
-              {{ maxSpan.duration | fixedMs }}/{{ maxSpan.rep + 1 | ordinalise }}
+          </div>
+        </el-tooltip>
+
+        <el-tooltip
+          class="item"
+          effect="dark"
+          content="Standard Deviation"
+          placement="top"
+        >
+          <div class="queryCardDetail">
+            <p>
+              {{ stdDeviation | fixedMs }}
             </p>
           </div>
         </el-tooltip>
@@ -77,6 +97,20 @@
         v-if="queryExpanded"
         class="stepsTable"
       >
+        <div class="flexed">
+          <p class="tableHeader">
+            Step
+          </p>
+          <p class="tableHeader">
+            Min/Rep|Member
+          </p>
+          <p class="tableHeader">
+            Median/Reps
+          </p>
+          <p class="tableHeader">
+            Max/Rep
+          </p>
+        </div>
         <template v-for="(stepOrGroup, index) in stepsAndGroups">
           <group-line
             v-if="stepOrGroup.hasOwnProperty('members')"
@@ -102,21 +136,22 @@
 import BenchmarkClient from '@/util/BenchmarkClient';
 import StepLine from './StepLine.vue';
 import GroupLine from './GroupLine.vue';
+import EChart from 'vue-echarts';
+import 'echarts/lib/chart/bar';
+import 'echarts/lib/component/tooltip';
 import EDF from '@/util/ExecutionDataFormatters';
-import ordinal from 'ordinal';
+import utils from './utils';
+
+const { getQueryCardChartOptions } = utils;
 
 const { flattenStepSpans, attachRepsToChildSpans } = EDF;
 
 export default {
-  components: { StepLine, GroupLine },
+  components: { EChart, StepLine, GroupLine },
 
   filters: {
     fixedMs(num) {
       return `${Number(num / 1000).toFixed(3)}`;
-    },
-
-    ordinalise(num) {
-      return ordinal(num);
     },
   },
 
@@ -146,31 +181,39 @@ export default {
       stepsAndGroups: [],
 
       queryExpanded: this.expanded,
+
+      queryCardChartOptions: {},
     };
   },
 
   computed: {
-    sortedSpans() {
+    spansSortedByRep() {
       const sortedSpans = this.querySpans;
-      return sortedSpans.sort((a, b) => (a.duration > b.duration ? 1 : -1));
+      return sortedSpans.sort((a, b) => (a.rep > b.reo ? 1 : -1));
     },
 
-    minSpan() {
-      return this.sortedSpans[0];
-    },
-
-    maxSpan() {
-      return this.sortedSpans[this.sortedSpans.length - 1];
+    spansSortedByDuration() {
+      const spansSortedByDuration = this.querySpans;
+      return spansSortedByDuration.sort((a, b) => (a.duration > b.duration ? 1 : -1));
     },
 
     median() {
-      const lowMiddleIndex = Math.floor((this.sortedSpans.length - 1) / 2);
-      const highMiddleIndex = Math.ceil((this.sortedSpans.length - 1) / 2);
+      const lowMiddleIndex = Math.floor((this.spansSortedByDuration.length - 1) / 2);
+      const highMiddleIndex = Math.ceil((this.spansSortedByDuration.length - 1) / 2);
       return (
-        (this.sortedSpans[lowMiddleIndex].duration
-          + this.sortedSpans[highMiddleIndex].duration)
+        (this.spansSortedByDuration[lowMiddleIndex].duration
+          + this.spansSortedByDuration[highMiddleIndex].duration)
         / 2
       );
+    },
+
+    mean() {
+      return this.querySpans.map(span => span.duration).reduce((a, b) => a + b, 0) / this.querySpans.length;
+    },
+
+    stdDeviation() {
+      const sum = this.querySpans.map(span => (span.duration - this.mean) ** 2).reduce((a, b) => a + b, 0);
+      return Math.sqrt(sum / this.querySpans.length);
     },
 
     reps() {
@@ -182,6 +225,8 @@ export default {
     if (this.expanded) {
       this.fetchStepSpans();
     }
+
+    this.queryCardChartOptions = getQueryCardChartOptions(this.querySpans);
   },
 
   methods: {
@@ -212,7 +257,7 @@ export default {
           ] limit: 10000){ id name duration parentId timestamp tags { childNumber }} }`,
       );
       let stepSpans = stepSpansResp.data.childrenSpans;
-      stepSpans = flattenStepSpans(stepSpans, this.querySpans);
+      stepSpans = flattenStepSpans(stepSpans);
       this.stepSpans = attachRepsToChildSpans(stepSpans, this.querySpans);
 
       this.produceStepsAndGroups();
@@ -232,6 +277,7 @@ export default {
       let currentStep = steps[0];
       let currentSteps = [];
       let i = 0;
+      // debugger;
 
       do {
         if (steps[i].name === currentStep.name) {
@@ -265,27 +311,6 @@ export default {
     filterStepSpans(stepNumber) {
       return this.stepSpans.filter(stepSpan => stepSpan.order === stepNumber);
     },
-
-    minTooltipContent() {
-      const { ordinalise } = this.$options.filters;
-      return `The ${ordinalise(
-        this.minSpan.rep + 1,
-      )} repetition of this query was the FASTEST.`;
-    },
-
-    maxTooltipContent() {
-      const { ordinalise } = this.$options.filters;
-      return `The ${ordinalise(
-        this.maxSpan.rep + 1,
-      )} repetition of this query was the SLOWEST.`;
-    },
-
-    medianTooltipContent() {
-      const { fixedMs } = this.$options.filters;
-      return `Among all ${this.reps} repetitions of this query, the median was ${fixedMs(
-        this.median,
-      )}.`;
-    },
   },
 };
 </script>
@@ -301,34 +326,54 @@ export default {
 <style lang="scss" scoped>
 @import "./src/assets/css/variables.scss";
 
+.queryRepChart {
+  height: 130px;
+  width: 250px;
+}
+
 .queryCardDetails {
   cursor: pointer;
 
   padding: $padding-default;
+}
 
-  .queryCardDetail {
-    text-align: center;
+.queryCardDetail {
+  font-size: 16px;
 
-    &:nth-child(1) {
-      width: 300px;
-    }
-
-    &:nth-child(2) {
-      width: 100px;
-    }
-
-    &:nth-child(3) {
-      width: 100px;
-    }
-
-    &:nth-child(4) {
-      width: 100px;
-    }
+  &:nth-child(1) {
+    width: 300px;
+    font-size: 14px;
+    text-align: left;
   }
 }
 
 .tableHeader {
-  padding-bottom: $padding-less;
+  text-align: center;
+
+  &:nth-child(1) {
+    width: 300px;
+    text-align: left;
+    box-sizing: border-box;
+    padding-left: $padding-default;
+  }
+
+  &:nth-child(2) {
+    width: 100px;
+  }
+
+  &:nth-child(3) {
+    width: 100px;
+  }
+
+  &:nth-child(4) {
+    width: 100px;
+    box-sizing: border-box;
+    padding-right: $padding-default;
+  }
+}
+
+.tableHeader {
+  padding: $padding-less 0;
 
   color: $color-text-gray;
   font-size: $font-size-table-header;
@@ -337,7 +382,6 @@ export default {
 
 .stepsTable {
   background-color: #fafafa;
-  // padding :0 $padding-default;
 
   span {
     text-align: center;
