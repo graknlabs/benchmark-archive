@@ -4,7 +4,7 @@
       type="flex"
       justify="start"
       align="middle"
-      class="queries-action-bar"
+      class="queriesActionBar"
     >
       <p class="graphDescription">
         {{ graphDescription }}
@@ -96,12 +96,9 @@ export default {
 <style scoped lang="scss">
 @import "./src/assets/css/variables.scss";
 
-.queries-action-bar {
+.queriesActionBar {
   color: darken($color-text-gray, 20%);
   padding-bottom: $padding-default;
-
-  .action-item, .graphDescription {
-    padding-right: $padding-default;
-  }
+  justify-content: space-between;
 }
 </style>
