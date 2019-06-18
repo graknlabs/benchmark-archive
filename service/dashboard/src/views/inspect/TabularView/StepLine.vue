@@ -10,36 +10,15 @@
         {{ step | truncate(100) }}
       </span>
 
-      <el-tooltip
-        class="item"
-        effect="dark"
-        :content="minTooltipContent()"
-        placement="top"
-      >
-        <span
-          :class="isFastestMember === true ? 'fastest' : ''"
-        >{{ minSpan.duration | fixedMs }}/{{ minSpan.rep + 1 | ordinalise }}</span>
-      </el-tooltip>
+      <span
+        :class="isFastestMember === true ? 'fastest' : ''"
+      >{{ minSpan.duration | fixedMs }}/{{ minSpan.rep + 1 | ordinalise }}</span>
 
-      <el-tooltip
-        class="item"
-        effect="dark"
-        :content="medianTooltipContent()"
-        placement="top"
-      >
-        <span>{{ median | fixedMs }}/{{ reps }}</span>
-      </el-tooltip>
+      <span>{{ median | fixedMs }}/{{ reps }}</span>
 
-      <el-tooltip
-        class="item"
-        effect="dark"
-        :content="maxTooltipContent()"
-        placement="top"
-      >
-        <span
-          :class="isSlowestMember === true ? 'slowest' : ''"
-        >{{ maxSpan.duration | fixedMs }}/{{ maxSpan.rep + 1 | ordinalise }}</span>
-      </el-tooltip>
+      <span
+        :class="isSlowestMember === true ? 'slowest' : ''"
+      >{{ maxSpan.duration | fixedMs }}/{{ maxSpan.rep + 1 | ordinalise }}</span>
     </div>
     <div v-if="expaned">
       <step-line
@@ -179,27 +158,6 @@ export default {
       return this.childStepSpans.filter(
         childStepSpan => childStepSpan.name === childStepName,
       );
-    },
-
-    minTooltipContent() {
-      const { ordinalise } = this.$options.filters;
-      return `The ${ordinalise(
-        this.minSpan.rep + 1,
-      )} repetition of this step was the FASTEST.`;
-    },
-
-    maxTooltipContent() {
-      const { ordinalise } = this.$options.filters;
-      return `The ${ordinalise(
-        this.maxSpan.rep + 1,
-      )} repetition of this step was the SLOWEST.`;
-    },
-
-    medianTooltipContent() {
-      const { fixedMs } = this.$options.filters;
-      return `Among all ${this.reps} repetitions of this step, the median was ${fixedMs(
-        this.median,
-      )}.`;
     },
   },
 };
