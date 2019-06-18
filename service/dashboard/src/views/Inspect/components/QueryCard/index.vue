@@ -134,15 +134,15 @@
 
 <script>
 import BenchmarkClient from '@/util/BenchmarkClient';
-import StepLine from './StepLine.vue';
-import GroupLine from './GroupLine.vue';
+import StepLine from '../StepLine';
+import GroupLine from '../GroupLine';
 import EChart from 'vue-echarts';
 import 'echarts/lib/chart/bar';
 import 'echarts/lib/component/tooltip';
 import EDF from '@/util/ExecutionDataFormatters';
-import utils from './utils';
+import util from './util';
 
-const { getQueryCardChartOptions } = utils;
+const { getQueryCardChartOptions } = util;
 
 const { flattenStepSpans, attachRepsToChildSpans } = EDF;
 
