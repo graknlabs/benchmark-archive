@@ -226,8 +226,6 @@ export default {
     }
 
     this.queryCardChartOptions = getQueryCardChartOptions(this.querySpans);
-
-    console.log(JSON.stringify(this.querySpans));
   },
 
   methods: {
