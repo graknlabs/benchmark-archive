@@ -242,12 +242,13 @@ public class IgniteConceptStorageTest {
 
         // add 6 of 7 entities as role players too
         Iterator<Concept> iterator = conceptMockKeys.keySet().iterator();
-        for (int i = 0; i < 6; i++) {
-            Concept conceptMock = iterator.next();
-            Long conceptKey = conceptMockKeys.get(conceptMock);
-            Thing thing = conceptMock.asThing();
-            store.addRolePlayerByKey(conceptKey, thing.type().label().toString(), relTypeLabel, "somerole");
-        }
+        conceptMockKeys.keySet().stream()
+                .filter(concept -> concept.asThing().type().label().toString().equals(entityTypeLabel))
+                .limit(6)
+                .forEach(conceptMock -> {
+                    Thing thing = conceptMock.asThing();
+                    store.addRolePlayerByKey(conceptMockKeys.get(conceptMock), thing.type().label().toString(), relTypeLabel, "somerole");
+                });
 
         int orphanEntities = store.totalOrphanEntities();
         assertEquals(1, orphanEntities);
