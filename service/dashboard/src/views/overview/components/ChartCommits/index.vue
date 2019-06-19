@@ -4,21 +4,47 @@
       slot="header"
       class="clearfix"
     >
-      <span>{{ graphType | formatTitle }}</span>
-      <div class="actions">
-        <scale-selector
-          title="Scale"
-          :items="scales.map(scale => ({ text: scale, value: scale }))"
-          :default-item="{ text: scales[0], value: scales[0] }"
-          @item-selected="onScaleSelection"
-        />
-      </div>
+      <el-row
+        type="flex"
+        justify="space-between"
+        align="middle"
+      >
+        <span>{{ graphType | formatTitle }}</span>
+        <el-row
+          type="flex"
+          justify="end"
+          align="middle"
+        >
+          <el-checkbox-group
+            v-model="chartSelectedQueryTypes"
+            class="flexItem"
+            size="mini"
+            @change="toggleChartQueryType"
+          >
+            <el-checkbox-button
+              v-for="queryType in chartQueryTypes"
+              :key="queryType"
+              :label="queryType"
+            >
+              {{ queryType }}
+            </el-checkbox-button>
+          </el-checkbox-group>
+          <scale-selector
+            title="Scale"
+            :items="scales.map(scale => ({ text: scale, value: scale }))"
+            :default-item="{ text: scales[0], value: scales[0] }"
+            class="flexItem"
+            @item-selected="onScaleSelection"
+          />
+        </el-row>
+      </el-row>
+      <e-chart
+        ref="commitsChart"
+        :autoresize="true"
+        :options="chartOoptions"
+        @click="redirectToInspect"
+      />
     </div>
-    <e-chart
-      :autoresize="true"
-      :options="chartOoptions"
-      @click="redirectToInspect"
-    />
   </el-card>
 </template>
 
@@ -34,10 +60,11 @@ import 'echarts/lib/component/dataZoom';
 import ScaleSelector from '@/components/Selector.vue';
 import EDF from '@/util/ExecutionDataFormatters';
 
-const { getLegendsData, getChartData } = Util;
-const { addExecutionIdAndScaleToQuerySpan, flattenQuerySpans } = EDF;
+const { getCommitsChartOptions, getLegendsData } = Util;
+const { flattenQuerySpans } = EDF;
 
 export default {
+  /* eslint-disable guard-for-in */
   components: { EChart, ScaleSelector },
 
   filters: {
@@ -81,6 +108,12 @@ export default {
       querySpans: [],
 
       loading: true,
+
+      commitsChart: null,
+
+      chartSelectedQueryTypes: ['Match', 'Insert', 'MatchInsert', 'Compute'],
+
+      chartQueryTypes: ['Match', 'Insert', 'MatchInsert', 'Compute'],
     };
   },
 
@@ -117,6 +150,10 @@ export default {
     });
   },
 
+  mounted() {
+    this.commitsChart = this.$refs.commitsChart;
+  },
+
   methods: {
     onScaleSelection(scale) {
       this.selectedScale = scale;
@@ -136,120 +173,44 @@ export default {
     },
 
     async drawChart() {
-      const querySpansWithExecutionAndScale = addExecutionIdAndScaleToQuerySpan(
-        this.graphs,
-        this.querySpans,
-      );
-
-      const chartData = getChartData(
-        this.queries,
-        querySpansWithExecutionAndScale,
-        this.executions,
-        this.selectedScale,
-      );
-
       this.legendsData = getLegendsData(this.queries);
-
-      const series = chartData.map((data) => {
-        const maxStdDeviation = 45;
-
-        return {
-          name: this.legendsData[data.query],
-          type: 'line',
-          data: data.times.map(dataItem => ({
-            value: Number(dataItem.avgTime).toFixed(3),
-            symbolSize: Math.min(dataItem.stdDeviation / 10, maxStdDeviation) + 5,
-            symbol: 'circle',
-            stdDeviation: dataItem.stdDeviation,
-            repetitions: dataItem.repetitions,
-            executionId: dataItem.executionId,
-            itemStyle: {
-              // draw the chart node with a different color when its standard deviation exceeds the given maximum amount
-              color: dataItem.stdDeviation / 10 > maxStdDeviation ? '#666' : null,
-            },
-          })),
-          smooth: true,
-          emphasis: { label: { show: false }, itemStyle: { color: 'yellow' } },
-          showAllSymbol: true,
-          tooltip: {
-            formatter: args => `
-                    query: ${args.seriesName}
-                    <br> avgTime: ${Number(args.data.value).toFixed(3)} ms
-                    <br> stdDeviation: ${Number(args.data.stdDeviation).toFixed(3)} ms
-                    <br> repetitions: ${args.data.repetitions}`,
-          },
-        };
-      });
-
-      if (chartData.length) {
-        const xData = chartData[0].times.map(x => ({
-          value: x.commit.substring(0, 15),
-          commit: x.commit,
-        }));
-
-        this.chartOoptions = {
-          tooltip: {
-            show: true,
-            trigger: 'item',
-          },
-          legend: {
-            type: 'scroll',
-            orient: 'horizontal',
-            left: 10,
-            bottom: 0,
-            data: Object.values(this.legendsData).sort(),
-            tooltip: {
-              show: true,
-              showDelay: 500,
-              triggerOn: 'mousemove',
-              formatter: args => Object.keys(this.legendsData).filter(
-                x => this.legendsData[x] === args.name,
-              ),
-            },
-          },
-          calculable: true,
-          xAxis: [
-            {
-              type: 'category',
-              boundaryGap: false,
-              data: xData,
-              triggerEvent: true,
-            },
-          ],
-          yAxis: [
-            {
-              type: 'value',
-              axisLabel: {
-                formatter: '{value} ms',
-              },
-            },
-          ],
-          series,
-          dataZoom: [
-            {
-              type: 'inside',
-              zoomOnMouseWheel: 'ctrl',
-              filterMode: 'none',
-              orient: 'vertical',
-            },
-          ],
-          grid: {
-            left: 70,
-            top: 20,
-            right: 70,
-            bottom: 70,
-          },
-        };
-      }
+      this.chartOoptions = await getCommitsChartOptions(this.graphs, this.querySpans, this.queries, this.executions, this.selectedScale);
       this.loading = false;
+    },
+
+    toggleChartQueryType(selectedQueryTypes) {
+      if (!selectedQueryTypes.length) return;
+      const legends = Object.values(this.legendsData);
+      const selectedLegendQueryTypes = selectedQueryTypes.map(type => `${type.charAt(0).toLowerCase() + type.slice(1)}Query`);
+
+      legends.forEach((legend) => {
+        const legendQueryType = legend.replace(/[0-9]/g, '');
+        if (selectedLegendQueryTypes.includes(legendQueryType)) {
+          this.commitsChart.dispatchAction({
+            type: 'legendSelect',
+            name: legend,
+          });
+        } else {
+          this.commitsChart.dispatchAction({
+            type: 'legendUnSelect',
+            name: legend,
+          });
+        }
+      });
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.actions {
-  float: right;
+@import "./src/assets/css/variables.scss";
+
+.flexItem {
+  margin-right: $margin-default;
+
+  &:last-child {
+    margin: 0;
+  }
 }
 
 .echarts {

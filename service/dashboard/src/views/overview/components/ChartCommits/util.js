@@ -1,3 +1,118 @@
+import EDF from '@/util/ExecutionDataFormatters';
+
+const { addExecutionIdAndScaleToQuerySpan } = EDF;
+
+const getCommitsChartOptions = async (graphs, querySpans, queries, executions, selectedScale) => {
+  const querySpansWithExecutionAndScale = addExecutionIdAndScaleToQuerySpan(
+    graphs,
+    querySpans,
+  );
+
+  const chartData = getChartData(
+    queries,
+    querySpansWithExecutionAndScale,
+    executions,
+    selectedScale,
+  );
+
+  const legendsData = getLegendsData(queries);
+
+  const series = chartData.map((data) => {
+    const maxStdDeviation = 45;
+
+    return {
+      name: legendsData[data.query],
+      type: 'line',
+      data: data.times.map(dataItem => ({
+        value: Number(dataItem.avgTime).toFixed(3),
+        symbolSize:
+            Math.min(dataItem.stdDeviation / 10, maxStdDeviation) + 5,
+        symbol: 'circle',
+        stdDeviation: dataItem.stdDeviation,
+        repetitions: dataItem.repetitions,
+        executionId: dataItem.executionId,
+        itemStyle: {
+          // draw the chart node with a different color when its standard deviation exceeds the given maximum amount
+          color:
+              dataItem.stdDeviation / 10 > maxStdDeviation ? '#666' : null,
+        },
+      })),
+      smooth: true,
+      emphasis: { label: { show: false }, itemStyle: { color: 'yellow' } },
+      showAllSymbol: true,
+      tooltip: {
+        formatter: args => `
+                  query: ${args.seriesName}
+                  <br> avgTime: ${Number(args.data.value).toFixed(3)} ms
+                  <br> stdDeviation: ${Number(args.data.stdDeviation).toFixed(3)} ms
+                  <br> repetitions: ${args.data.repetitions}`,
+      },
+    };
+  });
+
+  if (chartData.length) {
+    const xData = chartData[0].times.map(x => ({
+      value: x.commit.substring(0, 15),
+      commit: x.commit,
+    }));
+
+    return {
+      tooltip: {
+        show: true,
+        trigger: 'item',
+      },
+      legend: {
+        type: 'scroll',
+        orient: 'horizontal',
+        left: 10,
+        bottom: 0,
+        data: Object.values(legendsData).sort(),
+        tooltip: {
+          show: true,
+          showDelay: 500,
+          triggerOn: 'mousemove',
+          formatter: args => Object.keys(legendsData).filter(
+            x => legendsData[x] === args.name,
+          ),
+        },
+      },
+      calculable: true,
+      xAxis: [
+        {
+          type: 'category',
+          boundaryGap: false,
+          data: xData,
+          triggerEvent: true,
+        },
+      ],
+      yAxis: [
+        {
+          type: 'value',
+          axisLabel: {
+            formatter: '{value} ms',
+          },
+        },
+      ],
+      series,
+      dataZoom: [
+        {
+          type: 'inside',
+          zoomOnMouseWheel: 'ctrl',
+          filterMode: 'none',
+          orient: 'vertical',
+        },
+      ],
+      grid: {
+        left: 70,
+        top: 20,
+        right: 70,
+        bottom: 70,
+      },
+    };
+  }
+  return {};
+};
+
 /* eslint-disable no-plusplus */
 function getLegendsData(queries) {
   let matchQuery = 0;
@@ -86,5 +201,5 @@ function getChartData(queries, querySpans, executions, selectedScale) {
 
 export default {
   getLegendsData,
-  getChartData,
+  getCommitsChartOptions,
 };
