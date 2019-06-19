@@ -58,7 +58,7 @@ const getQueryCardChartOptions = (querySpans) => {
   // one single bin (most probably the first one), and the first repetition in the last bin. such histogram won't be insightful.
   let sortedSpansExceptFirst = querySpans;
   sortedSpansExceptFirst.sort((a, b) => (a.duration > b.duration ? 1 : -1));
-  sortedSpansExceptFirst = sortedSpansExceptFirst.slice(0, -1);
+  sortedSpansExceptFirst = sortedSpansExceptFirst.filter(span => span.rep !== 0);
 
   // dynamic calculation of number of bins is a difficult problem. no formula guarantees the "right" number of bins, specially when
   // dealing with small datasets. we may need to readjust this (hard-coded) as we increase the number of repetitions of queries, or
