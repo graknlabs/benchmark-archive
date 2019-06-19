@@ -1,4 +1,4 @@
-const getQueryCardChartOptions = (querySpans) => {
+const getQueryCardChartOptions = (spans) => {
   const queryCardChartOptions = {
     tooltip: {
       show: true,
@@ -51,21 +51,12 @@ const getQueryCardChartOptions = (querySpans) => {
     },
   };
 
-
-  // for the time being, because the first repetition of a query, takes a significantly longer time
-  // we have decided to not include it in populating the histogram.
-  // including it results in a very wide bin size which means every other repetition of that query would sit in
-  // one single bin (most probably the first one), and the first repetition in the last bin. such histogram won't be insightful.
-  let sortedSpansExceptFirst = querySpans;
-  sortedSpansExceptFirst.sort((a, b) => (a.duration > b.duration ? 1 : -1));
-  sortedSpansExceptFirst = sortedSpansExceptFirst.filter(span => span.rep !== 0);
-
   // dynamic calculation of number of bins is a difficult problem. no formula guarantees the "right" number of bins, specially when
   // dealing with small datasets. we may need to readjust this (hard-coded) as we increase the number of repetitions of queries, or
   // perhaps, allow the user to chose it as a parameter of the histogram.
   const numOfBins = 4;
-  const minDuration = Math.floor(sortedSpansExceptFirst[0].duration / 1000);
-  const maxDuration = Math.ceil(sortedSpansExceptFirst[sortedSpansExceptFirst.length - 1].duration / 1000);
+  const minDuration = Math.floor(spans[0].duration / 1000);
+  const maxDuration = Math.ceil(spans[spans.length - 1].duration / 1000);
   const binWidth = (maxDuration - minDuration) / numOfBins;
   const bins = [];
   let binCount = 0;
@@ -84,8 +75,8 @@ const getQueryCardChartOptions = (querySpans) => {
   }
 
   // populate each bin's count and spans
-  for (let i = 0; i < sortedSpansExceptFirst.length; i += 1) {
-    const span = sortedSpansExceptFirst[i];
+  for (let i = 0; i < spans.length; i += 1) {
+    const span = spans[i];
     const duration = span.duration / 1000;
 
     for (let j = 0; j < bins.length; j += 1) {

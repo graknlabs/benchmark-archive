@@ -24,13 +24,16 @@
         <el-tooltip
           class="item"
           effect="dark"
-          content="First Rep"
+          content="Outliers"
           placement="top"
         >
           <div class="queryCardDetail">
-            <p>
-              {{ spanOfFirstRep.duration | fixedMs }} ms
-            </p>
+            <el-row
+              v-for="span in outlierSpans"
+              :key="span.rep"
+            >
+              Rep {{ span.rep + 1 }}: {{ span.duration | fixedMs }} ms
+            </el-row>
           </div>
         </el-tooltip>
 
@@ -111,10 +114,10 @@
             Max/Rep
           </p>
         </div>
-        <template v-for="(stepOrGroup, index) in stepsAndGroups">
+        <template v-for="stepOrGroup in stepsAndGroups">
           <group-line
             v-if="stepOrGroup.hasOwnProperty('members')"
-            :key="index"
+            :key="stepOrGroup.name"
             :members="stepOrGroup.members"
             :padding="20"
           />
@@ -141,6 +144,9 @@ import 'echarts/lib/chart/bar';
 import 'echarts/lib/component/tooltip';
 import EDF from '@/util/ExecutionDataFormatters';
 import util from './util';
+import math from '@/util/math';
+
+const { getMedian, getOutliers } = math;
 
 const { getQueryCardChartOptions } = util;
 
@@ -196,14 +202,20 @@ export default {
       return spansSortedByDuration.sort((a, b) => (a.duration > b.duration ? 1 : -1));
     },
 
+    outlierSpans() {
+      const outliers = getOutliers(this.querySpans.map(span => span.duration)).upper;
+      return this.querySpans.filter(span => outliers.includes(span.duration));
+    },
+
+    histogramSpans() {
+      return this.querySpans
+        .filter(duration => !this.outlierSpans.includes(duration))
+        .sort((a, b) => (a.duration > b.duration ? 1 : -1));
+    },
+
     median() {
-      const lowMiddleIndex = Math.floor((this.spansSortedByDuration.length - 1) / 2);
-      const highMiddleIndex = Math.ceil((this.spansSortedByDuration.length - 1) / 2);
-      return (
-        (this.spansSortedByDuration[lowMiddleIndex].duration
-          + this.spansSortedByDuration[highMiddleIndex].duration)
-        / 2
-      );
+      const durations = this.spansSortedByDuration.map(span => span.duration);
+      return getMedian(durations).value;
     },
 
     mean() {
@@ -225,7 +237,7 @@ export default {
       this.fetchStepSpans();
     }
 
-    this.queryCardChartOptions = getQueryCardChartOptions(this.querySpans);
+    this.queryCardChartOptions = getQueryCardChartOptions(this.histogramSpans);
   },
 
   methods: {
@@ -327,7 +339,7 @@ export default {
 
 .queryRepChart {
   height: 130px;
-  width: 250px;
+  width: 300px;
 }
 
 .queryCardDetails {
@@ -343,6 +355,14 @@ export default {
     width: 300px;
     font-size: 14px;
     text-align: left;
+  }
+
+  .el-row {
+    padding-top: 10px;
+
+    &:nth-child(1) {
+      padding-top: 0;
+    }
   }
 }
 
