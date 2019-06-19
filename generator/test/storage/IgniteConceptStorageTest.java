@@ -201,8 +201,8 @@ public class IgniteConceptStorageTest {
     }
 
     @Test
-    public void whenConceptIsAdded_conceptIdCanBeRetrieved() {
-        Concept aConcept = conceptMockKeys.keySet().iterator().next();
+    public void whenConceptIsAdded_conceptKeyCanBeRetrieved() {
+        Concept aConcept = conceptMockKeys.keySet().stream().filter(concept -> concept.asThing().type().label().toString().equals(entityTypeLabel)).findFirst().get();
         store.addConcept(aConcept, conceptMockKeys.get(aConcept));
         Long aConceptKey = store.getConceptKey(entityTypeLabel, 0); // get 0th offset
         System.out.println("Found key: " + aConceptKey.toString());
@@ -210,7 +210,7 @@ public class IgniteConceptStorageTest {
     }
 
     @Test
-    public void whenGettingIdWithOffset_correctIdIsReturned() {
+    public void whenGettingIdWithOffset_correctKeyIsReturned() {
         int index = 4;
         // Add all of the elements
 
