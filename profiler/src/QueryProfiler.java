@@ -116,6 +116,7 @@ class QueryProfiler implements Runnable {
                     try (Tracer.SpanInScope span = tracer.withSpanInScope(querySpan)) {
                         // open new transaction
                         GraknClient.Transaction tx = session.transaction().write();
+
                         List<? extends Answer> answer = tx.execute(query);
 
                         if (query instanceof GraqlInsert) {
