@@ -27,6 +27,7 @@ import grakn.benchmark.generator.strategy.RolePlayerTypeStrategy;
 import graql.lang.query.GraqlInsert;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -47,7 +48,7 @@ public class RelationGeneratorTest {
 
         RelationStrategy strategy = mock(RelationStrategy.class);
 
-        Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies = new HashSet<>();
+        List<RolePlayerTypeStrategy> rolePlayerTypeStrategies = new ArrayList<>();
         RolePlayerTypeStrategy rolePlayerTypeStrategy = mock(RolePlayerTypeStrategy.class);
         rolePlayerTypeStrategies.add(rolePlayerTypeStrategy);
 
@@ -87,7 +88,7 @@ public class RelationGeneratorTest {
         when(propertyKeyProvider.hasNextN(1)).thenReturn(true).thenReturn(true).thenReturn(false);
         RolePlayerTypeStrategy rolePlayer2 = new RolePlayerTypeStrategy("property", new FixedConstant(1), propertyKeyProvider);
 
-        Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies = new HashSet<>();
+        List<RolePlayerTypeStrategy> rolePlayerTypeStrategies = new ArrayList<>();
         rolePlayerTypeStrategies.add(rolePlayer1);
         rolePlayerTypeStrategies.add(rolePlayer2);
 
@@ -135,7 +136,7 @@ public class RelationGeneratorTest {
         // 1 FRIEND role player contributed here
         RolePlayerTypeStrategy rolePlayer2 = new RolePlayerTypeStrategy("friend", new FixedConstant(1), propertyKeyProvider);
 
-        Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies = new HashSet<>();
+        List<RolePlayerTypeStrategy> rolePlayerTypeStrategies = new ArrayList<>();
         rolePlayerTypeStrategies.add(rolePlayer1);
         rolePlayerTypeStrategies.add(rolePlayer2);
 
@@ -185,7 +186,7 @@ public class RelationGeneratorTest {
         // 1 FRIEND role player contributed here
         RolePlayerTypeStrategy rolePlayer2 = new RolePlayerTypeStrategy("friend", new FixedConstant(1), propertyKeyProvider);
 
-        Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies = new HashSet<>();
+        List<RolePlayerTypeStrategy> rolePlayerTypeStrategies = new ArrayList<>();
         rolePlayerTypeStrategies.add(rolePlayer1);
         rolePlayerTypeStrategies.add(rolePlayer2);
 
@@ -224,7 +225,7 @@ public class RelationGeneratorTest {
         // 1 FRIEND role player contributed here
         RolePlayerTypeStrategy rolePlayer2 = new RolePlayerTypeStrategy("friend", new FixedConstant(1), friendKeyProvider2);
 
-        Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies = new HashSet<>();
+        List<RolePlayerTypeStrategy> rolePlayerTypeStrategies = new ArrayList<>();
         rolePlayerTypeStrategies.add(rolePlayer1);
         rolePlayerTypeStrategies.add(rolePlayer2);
 
