@@ -6,7 +6,7 @@ scales:
   - 2000
   - 4000
   - 8000
-repeatsPerQuery: 5
+repeatsPerQuery: 10
 
 queries: "queries_read.yml"
 deleteInsertedConcepts: true

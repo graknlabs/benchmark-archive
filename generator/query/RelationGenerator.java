@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import static graql.lang.Graql.and;
@@ -54,15 +55,15 @@ public class RelationGenerator implements QueryGenerator {
     @Override
     public Iterator<GraqlInsert> generate() {
 
-        String roles = "(";
+        StringBuilder roles = new StringBuilder("(");
         for (RolePlayerTypeStrategy rolePlayerTypeStrategy : this.strategy.getRolePlayerTypeStrategies()) {
             String role = rolePlayerTypeStrategy.getTypeLabel();
-            roles += role;
-            roles += ",";
+            roles.append(role);
+            roles.append(",");
         }
         LOG.trace("Generating Rel " + strategy.getTypeLabel() + roles + "), target quantity: " + strategy.getNumInstancesPDF().peek());
 
-        Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies = this.strategy.getRolePlayerTypeStrategies();
+        List<RolePlayerTypeStrategy> rolePlayerTypeStrategies = this.strategy.getRolePlayerTypeStrategies();
         for (RolePlayerTypeStrategy rolePlayerTypeStrategy : rolePlayerTypeStrategies) {
             if (rolePlayerTypeStrategy.getConceptKeyProvider() instanceof CentralConceptKeyProvider) {
                 ((CentralConceptKeyProvider) rolePlayerTypeStrategy.getConceptKeyProvider()).resetUniqueness();

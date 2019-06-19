@@ -95,15 +95,6 @@ public class InsertQueryAnalyser {
     public static Map<String, List<Concept>> getRolePlayersAndRoles(GraqlInsert query, List<ConceptMap> answers) {
         Map<String, List<Concept>> rolePlayers = new HashMap<>();
 
-
-        for (Statement statement : query.statements()) {
-            Set<Variable> vars = statement.variables();
-
-
-
-
-        }
-
         for (Statement queryStatements : query.statements()) {
             Optional<RelationProperty> relationshipProperty = queryStatements.getProperty(RelationProperty.class);
             if (relationshipProperty.isPresent()) {

@@ -123,7 +123,7 @@ public class SocialNetworkDefinition implements DataGeneratorDefinition {
                         "friendship",
                         new ScalingBoundedZipf(this.random, () -> storage.getGraphScale(), 0.5, 2.3),
                         globalKeyProvider,
-                        new HashSet<>(Arrays.asList(friendRoleFiller))
+                        Arrays.asList(friendRoleFiller)
                 )
         );
 
@@ -145,7 +145,7 @@ public class SocialNetworkDefinition implements DataGeneratorDefinition {
                         "likes",
                         new ScalingDiscreteGaussian(random, () -> storage.getGraphScale(), 0.05, 0.001),
                         globalKeyProvider,
-                        new HashSet<>(Arrays.asList(likedPageRole, likerPersonRole))
+                        Arrays.asList(likedPageRole, likerPersonRole)
                 )
         );
 
@@ -169,7 +169,7 @@ public class SocialNetworkDefinition implements DataGeneratorDefinition {
                         "@has-name",
                         new ScalingDiscreteGaussian(random, () -> storage.getGraphScale(), 0.1, 0.03),
                         globalKeyProvider,
-                        new HashSet<>(Arrays.asList(nameOwner, nameValue))
+                        Arrays.asList(nameOwner, nameValue)
                 )
         );
     }

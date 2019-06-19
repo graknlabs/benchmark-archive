@@ -137,7 +137,7 @@ public class BiochemicalNetworkDefinition implements DataGeneratorDefinition {
                         "interaction",
                         new FixedDiscreteGaussian(this.random, 50, 25),
                         globalKeyProvider,
-                        new HashSet<>(Arrays.asList(agentRolePlayer, catalystRolePlayer))
+                        Arrays.asList(agentRolePlayer, catalystRolePlayer)
                 )
         );
     }
@@ -170,7 +170,7 @@ public class BiochemicalNetworkDefinition implements DataGeneratorDefinition {
                         "@has-biochem-id",
                         new FixedDiscreteGaussian(random, 24, 6), // more than number of entities being created to compensate for being picked less
                         globalKeyProvider,
-                        new HashSet<>(Arrays.asList(chemicalIdOwner, chemicalIdValue))
+                        Arrays.asList(chemicalIdOwner, chemicalIdValue)
                 )
         );
 
@@ -200,7 +200,7 @@ public class BiochemicalNetworkDefinition implements DataGeneratorDefinition {
                         "@has-biochem-id",
                         new FixedDiscreteGaussian(random, 24, 6), // more than number of entities being created to compensate for being picked less
                         globalKeyProvider,
-                        new HashSet<>(Arrays.asList(enzymeIdOwner, enzymeIdValue))
+                        Arrays.asList(enzymeIdOwner, enzymeIdValue)
                 )
         );
     }

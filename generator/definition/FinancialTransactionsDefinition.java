@@ -119,7 +119,7 @@ public class FinancialTransactionsDefinition implements DataGeneratorDefinition 
                         "transaction",
                         new FixedDiscreteGaussian(this.random, 50, 10), // but fixed number of rels added per iter
                         globalKeyProvider,
-                        new HashSet<>(Arrays.asList(transactorRolePlayer))
+                        Arrays.asList(transactorRolePlayer)
                 )
         );
     }
@@ -151,7 +151,7 @@ public class FinancialTransactionsDefinition implements DataGeneratorDefinition 
                         "@has-quantity",
                         new ScalingDiscreteGaussian(random, () -> storage.getGraphScale(), 0.01, 0.005), // more than number of entities being created to compensate for being picked less
                         globalKeyProvider,
-                        new HashSet<>(Arrays.asList(quantityOwner, quantityValue))
+                        Arrays.asList(quantityOwner, quantityValue)
                 )
         );
 

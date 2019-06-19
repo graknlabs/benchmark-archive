@@ -126,7 +126,7 @@ public class RoadNetworkDefinition implements DataGeneratorDefinition {
                         "intersection",
                         new FixedUniform(random, 20, 100),
                         globalKeyProvider,
-                        new HashSet<>(Arrays.asList(unusedEndpointRoads, anyEndpointRoads))
+                        Arrays.asList(unusedEndpointRoads, anyEndpointRoads)
                 )
         );
 
@@ -167,7 +167,7 @@ public class RoadNetworkDefinition implements DataGeneratorDefinition {
                         "@has-name",
                         new FixedConstant(60),
                         globalKeyProvider,
-                        new HashSet<>(Arrays.asList(nameOwner, nameValue))
+                        Arrays.asList(nameOwner, nameValue)
                 )
         );
     }

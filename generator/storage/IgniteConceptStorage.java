@@ -34,6 +34,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -408,7 +409,7 @@ public class IgniteConceptStorage implements ConceptStorage {
         String roleName = sanitizeString(role);
 
         String sql = "SELECT key, " + columnName + " FROM " + tableName +
-                " WHERE (" + columnName + " IS NULL OR " + columnName + "  NOT LIKE '%" + roleName + "%')";
+                " WHERE (" + columnName + " IS NULL OR " + columnName + "  NOT LIKE '%" + roleName + "%') ORDER BY key";
 
         LinkedList<Long> conceptKeys = new LinkedList<>();
 
@@ -455,14 +456,14 @@ public class IgniteConceptStorage implements ConceptStorage {
 
     private String sqlGetKey(String typeLabel, int offset) {
         String sqlStatement = "SELECT key FROM " + labelToSqlName(typeLabel) +
-                " OFFSET " + offset +
+                " ORDER BY key OFFSET " + offset +
                 " FETCH FIRST ROW ONLY";
         return sqlStatement;
     }
 
     private String sqlGetAttrValue(String typeLabel, int offset) {
         String sqlStatement = "SELECT value FROM " + labelToSqlName(typeLabel) +
-                " OFFSET " + offset +
+                "  ORDER BY key OFFSET " + offset +
                 " FETCH FIRST ROW ONLY";
         return sqlStatement;
     }
@@ -590,10 +591,10 @@ public class IgniteConceptStorage implements ConceptStorage {
      */
     @Override
     public int totalOrphanEntities() {
-        Set<Long> rolePlayerIds = getKeys("roleplayers");
+        Set<Long> rolePlayerIds = new HashSet<>(getKeys("roleplayers"));
         Set<Long> entityIds = new HashSet<>();
         for (String typeLabel : this.entityTypeLabels) {
-            Set<Long> ids = getKeys(labelToSqlName(typeLabel));
+            Set<Long> ids = new HashSet<>(getKeys(labelToSqlName(typeLabel)));
             entityIds.addAll(ids);
         }
         entityIds.removeAll(rolePlayerIds);
@@ -607,10 +608,10 @@ public class IgniteConceptStorage implements ConceptStorage {
      */
     @Override
     public int totalOrphanAttributes() {
-        Set<Long> rolePlayerIds = getKeys("roleplayers");
+        Set<Long> rolePlayerIds = new HashSet<>(getKeys("roleplayers"));
         Set<Long> attributeIds = new HashSet<>();
         for (String typeLabel : this.attributeTypeLabels.keySet()) {
-            Set<Long> ids = getKeys(labelToSqlName(typeLabel));
+            Set<Long> ids = new HashSet<>(getKeys(labelToSqlName(typeLabel)));
             attributeIds.addAll(ids);
         }
         attributeIds.removeAll(rolePlayerIds);
@@ -625,10 +626,10 @@ public class IgniteConceptStorage implements ConceptStorage {
      */
     @Override
     public int totalRelationshipsRolePlayersOverlap() {
-        Set<Long> rolePlayerIds = getKeys("roleplayers");
+        Set<Long> rolePlayerIds = new HashSet<>(getKeys("roleplayers"));
         Set<Long> relationshipIds = new HashSet<>();
         for (String typeLabel : this.relationshipTypeLabels) {
-            Set<Long> ids = getKeys(labelToSqlName(typeLabel));
+            Set<Long> ids = new HashSet<>(getKeys(labelToSqlName(typeLabel)));
             relationshipIds.addAll(ids);
         }
         relationshipIds.retainAll(rolePlayerIds);
@@ -643,9 +644,9 @@ public class IgniteConceptStorage implements ConceptStorage {
         return entities + attributes + relationships;
     }
 
-    private Set<Long> getKeys(String tableName) {
-        String sql = "SELECT key FROM " + tableName;
-        Set<Long> keys = new HashSet<>();
+    private List<Long> getKeys(String tableName) {
+        String sql = "SELECT key FROM " + tableName + " ORDER BY key";
+        List<Long> keys = new ArrayList<>();
         try (Statement stmt = conn.createStatement()) {
             try (ResultSet resultSet = stmt.executeQuery(sql)) {
                 while (resultSet.next()) {
