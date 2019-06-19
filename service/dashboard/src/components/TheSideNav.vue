@@ -6,7 +6,7 @@
       :router="true"
     >
       <div class="logo">
-        <img src="assets/grakn-logo.png">
+        <img src="/assets/grakn-logo.png">
       </div>
       <el-menu-item index="/overview">
         <i class="el-icon-menu" />

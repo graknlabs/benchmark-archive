@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import QueryCard from './QueryCard.vue';
+import QueryCard from './QueryCard';
 
 export default {
   name: 'QueryCards',

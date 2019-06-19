@@ -7,3 +7,4 @@ benchmark-runner/target/
 bazel-*
 .ijwb
 graph_metrics/sample_data
+node_modules

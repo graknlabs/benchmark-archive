@@ -16,7 +16,7 @@
 
 <script>
 import BenchmarkClient from '@/util/BenchmarkClient';
-import CommitsChart from './ChartCommits.vue';
+import CommitsChart from './components/ChartCommits';
 import EDF from '@/util/ExecutionDataFormatters';
 
 const { flattenGraphs } = EDF;

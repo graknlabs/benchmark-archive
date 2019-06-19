@@ -2,18 +2,46 @@ define
 
 baseEntity sub entity,
 	has index,
-    plays Q-from,
-    plays Q-to;
+	has inferredAttribute,
+	has nonInferredAttribute,
+    plays from,
+    plays to,
+    plays someRole,
+    plays anotherRole;
 startEntity sub baseEntity;
 bulkEntity sub baseEntity;
 
-Q sub relation, relates Q-from, relates Q-to;
+nonInferredAttribute sub attribute, datatype string;
+inferredAttribute sub attribute, datatype string, plays anotherRole;
 
-index sub attribute, datatype string;
+transRelation sub relation, relates from, relates to;
+inferredRelation sub relation, has inferredAttribute, relates someRole, relates anotherRole;
+
+index sub attribute, datatype long;
+
+infer-attribute sub rule,
+when {
+$p isa baseEntity;
+not{$p has nonInferredAttribute 'start';};},
+then {
+$p has inferredAttribute 'inferred';};
+
+infer-relation sub rule,
+when {
+$p isa baseEntity, has index < 25;
+$q isa baseEntity, has index < 25, has inferredAttribute $r; $r 'inferred';},
+then {
+(someRole: $p, anotherRole: $q) isa inferredRelation;};
+
+annotate-relation sub rule,
+when {
+$rel (someRole: $p, anotherRole: $q) isa inferredRelation;},
+then {
+$rel has inferredAttribute 'inferredRelation';};
 
 transitivity sub rule,
 when {
-(Q-from: $x, Q-to: $z) isa Q;
-(Q-from: $z, Q-to: $y) isa Q;},
+(from: $x, to: $z) isa transRelation;
+(from: $z, to: $y) isa transRelation;},
 then {
-(Q-from: $x, Q-to: $y) isa Q;};
+(from: $x, to: $y) isa transRelation;};

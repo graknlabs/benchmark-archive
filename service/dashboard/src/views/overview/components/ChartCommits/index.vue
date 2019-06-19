@@ -24,7 +24,7 @@
 
 <script>
 import BenchmarkClient from '@/util/BenchmarkClient';
-import Util from './QueriesUtil';
+import Util from './util';
 import EChart from 'vue-echarts';
 import 'echarts/lib/chart/line';
 import 'echarts/lib/component/tooltip';

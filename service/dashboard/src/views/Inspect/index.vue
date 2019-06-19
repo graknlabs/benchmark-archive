@@ -20,8 +20,8 @@
 
 <script>
 import BenchmarkClient from '@/util/BenchmarkClient';
-import ExecutionCard from '@/views/executions/ExecutionCard.vue';
-import TabularView from './TabularView/TabularView.vue';
+import ExecutionCard from '@/views/Executions/components/ExecutionCard';
+import TabularView from './components/TabularView';
 import EDM from '@/util/ExecutionDataFormatters';
 
 const { flattenGraphs, flattenQuerySpans } = EDM;
@@ -94,7 +94,7 @@ export default {
       const graphsResp = await BenchmarkClient.getSpans(
         `{ executionSpans( executionName: "${
           this.executionId
-        }"){ id name duration tags { graphType executionName graphScale }} }`,
+        }"){ id name duration tags { graphType executionName graphScale description }} }`,
       );
       const graphs = graphsResp.data.executionSpans;
       this.graphs = flattenGraphs(graphs);

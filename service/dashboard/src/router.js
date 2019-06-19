@@ -5,6 +5,7 @@ import Home from './views/Home.vue';
 Vue.use(Router);
 
 export default new Router({
+  mode: 'history',
   routes: [
     { path: '/', redirect: '/overview' },
     {
@@ -14,17 +15,17 @@ export default new Router({
       children: [
         {
           path: 'overview',
-          component: () => import(/* webpackChunkName: "overview" */ './views/overview'),
+          component: () => import(/* webpackChunkName: "overview" */ './views/Overview'),
           meta: { menuIndex: '/overview' },
         },
         {
           path: 'executions',
-          component: () => import(/* webpackChunkName: "executions" */ './views/executions/Executions.vue'),
+          component: () => import(/* webpackChunkName: "executions" */ './views/Executions'),
           meta: { menuIndex: '/executions' },
         },
         {
           path: 'inspect/:executionId',
-          component: () => import(/* webpackChunkName: "inspect" */ './views/inspect/Inspect.vue'),
+          component: () => import(/* webpackChunkName: "inspect" */ './views/Inspect'),
           meta: { menuIndex: '/executions' },
         },
       ],
