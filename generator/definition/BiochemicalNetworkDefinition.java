@@ -69,7 +69,7 @@ public class BiochemicalNetworkDefinition implements DataGeneratorDefinition {
 
         this.metaTypeStrategies = new WeightedPicker<>(random);
         this.metaTypeStrategies.add(1.0, entityStrategies);
-        this.metaTypeStrategies.add(1.0, relationshipStrategies);
+        this.metaTypeStrategies.add(1.5, relationshipStrategies);
         this.metaTypeStrategies.add(1.0, attributeStrategies);
     }
 
@@ -116,7 +116,7 @@ public class BiochemicalNetworkDefinition implements DataGeneratorDefinition {
         RolePlayerTypeStrategy agentRolePlayer = new RolePlayerTypeStrategy(
                 "agent",
                 // high variance in the number of role players
-                new ScalingDiscreteGaussian(random, () -> storage.getGraphScale(), 0.01, 0.005),
+                new ScalingDiscreteGaussian(random, () -> storage.getGraphScale(), 0.005, 0.003),
                 new ConceptKeyStorageProvider(
                         random,
                         this.storage,
@@ -132,7 +132,7 @@ public class BiochemicalNetworkDefinition implements DataGeneratorDefinition {
                         "enzyme")
         );
         this.relationshipStrategies.add(
-                3.0,
+                2.7,
                 new RelationStrategy(
                         "interaction",
                         new FixedDiscreteGaussian(this.random, 50, 25),
@@ -149,26 +149,29 @@ public class BiochemicalNetworkDefinition implements DataGeneratorDefinition {
         RolePlayerTypeStrategy chemicalIdOwner = new RolePlayerTypeStrategy(
                 "@has-biochem-id-owner",
                 new FixedConstant(1),
-                new NotInRelationshipConceptKeyProvider(
+                new ConceptKeyStorageProvider(
                         random,
                         storage,
-                        "chemical", "@has-biochem-id", "@has-biochem-id-owner"
+                        "chemical"
                 )
         );
         RolePlayerTypeStrategy chemicalIdValue = new RolePlayerTypeStrategy(
                 "@has-biochem-id-value",
                 new FixedConstant(1),
-                new NotInRelationshipConceptKeyProvider(
+//                new NotInRelationshipConceptKeyProvider(
+                new ConceptKeyStorageProvider(
                         random,
                         storage,
-                        "biochem-id", "@has-biochem-id", "@has-biochem-id-value"
+                        "biochem-id"
                 )
         );
         this.relationshipStrategies.add(
                 1.0,
                 new RelationStrategy(
                         "@has-biochem-id",
-                        new FixedDiscreteGaussian(random, 24, 6), // more than number of entities being created to compensate for being picked less
+                        // start with a constant bump to the graph size to accelerate the initial growth of the number of
+                        // attribute ownership connections
+                        new ScalingDiscreteGaussian(random, () -> 1500 + storage.getGraphScale(), 0.01, 0.005),
                         globalKeyProvider,
                         Arrays.asList(chemicalIdOwner, chemicalIdValue)
                 )
@@ -179,26 +182,28 @@ public class BiochemicalNetworkDefinition implements DataGeneratorDefinition {
         RolePlayerTypeStrategy enzymeIdOwner = new RolePlayerTypeStrategy(
                 "@has-biochem-id-owner",
                 new FixedConstant(1),
-                new NotInRelationshipConceptKeyProvider(
+                new ConceptKeyStorageProvider(
                         random,
                         storage,
-                        "enzyme", "@has-biochem-id", "@has-biochem-id-owner"
+                        "enzyme"
                 )
         );
         RolePlayerTypeStrategy enzymeIdValue = new RolePlayerTypeStrategy(
                 "@has-biochem-id-value",
                 new FixedConstant(1),
-                new NotInRelationshipConceptKeyProvider(
+                new ConceptKeyStorageProvider(
                         random,
                         storage,
-                        "biochem-id", "@has-biochem-id", "@has-biochem-id-value"
+                        "biochem-id"
                 )
         );
         this.relationshipStrategies.add(
                 1.0,
                 new RelationStrategy(
                         "@has-biochem-id",
-                        new FixedDiscreteGaussian(random, 24, 6), // more than number of entities being created to compensate for being picked less
+                        // start with a constant bump to the graph size to accelerate the initial growth of the number of
+                        // attribute ownership connections
+                        new ScalingDiscreteGaussian(random, () -> 1500 + storage.getGraphScale(), 0.01, 0.005),
                         globalKeyProvider,
                         Arrays.asList(enzymeIdOwner, enzymeIdValue)
                 )

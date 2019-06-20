@@ -18,8 +18,8 @@ queries:
       ($b1, $b2) isa ownership;
       ($b2, $s1) isa ownership;
       $s1 has shape-value 3;
-      $c isa circle;
       ($b1, $c) isa interaction;
+      $c isa circle;
       ($c, $c2) isa sizing;
       $c2 has circle-value 2; get;"
 
