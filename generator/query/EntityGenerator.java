@@ -55,7 +55,7 @@ public class EntityGenerator implements QueryGenerator {
             @Override
             public GraqlInsert next() {
                 queriesGenerated++;
-                return Graql.insert(Graql.var("x").isa(typeLabel));
+                return Graql.insert(Graql.var("x").isa(typeLabel).has("unique-key", strategy.getConceptKeyProvider().next()));
             }
         };
     }

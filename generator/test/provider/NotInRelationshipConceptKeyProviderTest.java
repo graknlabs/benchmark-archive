@@ -16,58 +16,57 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.generator.provider.concept;
+package grakn.benchmark.generator.provider.key;
 
 import grakn.benchmark.generator.storage.ConceptStorage;
-import grakn.core.concept.ConceptId;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ConceptIdStorageProviderTest {
+public class NotInRelationshipConceptKeyProviderTest {
 
     @Test
-    public void whenConceptCountZero_hasNextFalse() {
+    public void whenAllConceptsInRelationship_hasNextFalse() {
         ConceptStorage storage = mock(ConceptStorage.class);
-        when(storage.getConceptCount("person")).thenReturn(0);
+        when(storage.getKeysNotPlayingRole("person", "friendship", "friend")).thenReturn(new LinkedList<>());
         Random random = null;
-        ConceptIdStorageProvider conceptIdProvider = new ConceptIdStorageProvider(random, storage, "person");
+        NotInRelationshipConceptKeyProvider conceptIdProvider = new NotInRelationshipConceptKeyProvider(random, storage, "person", "friendship", "friend");
         assertFalse(conceptIdProvider.hasNext());
     }
 
     @Test
-    public void whenConceptCountNotZero_hasNextTrue() {
+    public void whenNotAllConceptsInRelationship_hasNextTrue() {
         ConceptStorage storage = mock(ConceptStorage.class);
-        when(storage.getConceptCount("person")).thenReturn(1);
+        when(storage.getKeysNotPlayingRole("person", "friendship", "friend")).thenReturn(Arrays.asList(1L));
         Random random = null;
-        ConceptIdStorageProvider conceptIdProvider = new ConceptIdStorageProvider(random, storage, "person");
-        assertTrue(conceptIdProvider.hasNext());
+        NotInRelationshipConceptKeyProvider conceptKeyProvider = new NotInRelationshipConceptKeyProvider(random, storage, "person", "friendship", "friend");
+        assertTrue(conceptKeyProvider.hasNext());
     }
 
     @Test
     public void whenAskForNextId_returnCorrectId() {
         ConceptStorage storage = mock(ConceptStorage.class);
         when(storage.getConceptCount("person")).thenReturn(4);
-        when(storage.getConceptId("person", 0)).thenReturn(ConceptId.of("a"));
-        when(storage.getConceptId("person", 1)).thenReturn(ConceptId.of("b"));
-        when(storage.getConceptId("person", 2)).thenReturn(ConceptId.of("c"));
-        when(storage.getConceptId("person", 3)).thenReturn(ConceptId.of("d"));
+        List<Long> keysNotPlayingRole = Arrays.asList(1L, 2L, 3L, 4L);
+        when(storage.getKeysNotPlayingRole("person", "friendship", "friend")).thenReturn(keysNotPlayingRole);
 
         Random random = mock(Random.class);
         when(random.nextInt(4)).thenReturn(2).thenReturn(0).thenReturn(1).thenReturn(1);
 
-        ConceptIdStorageProvider conceptIdProvider = new ConceptIdStorageProvider(random, storage, "person");
-
-        assertEquals(ConceptId.of("c"), conceptIdProvider.next());
-        assertEquals(ConceptId.of("a"), conceptIdProvider.next());
-        assertEquals(ConceptId.of("b"), conceptIdProvider.next());
-        assertEquals(ConceptId.of("b"), conceptIdProvider.next());
+        NotInRelationshipConceptKeyProvider conceptKeyProvider = new NotInRelationshipConceptKeyProvider(random, storage, "person", "friendship", "friend");
+        assertEquals(3L, (long) conceptKeyProvider.next());
+        assertEquals(1L, (long) conceptKeyProvider.next());
+        assertEquals(2L, (long) conceptKeyProvider.next());
+        assertEquals(2L, (long) conceptKeyProvider.next());
 
     }
 
@@ -75,8 +74,11 @@ public class ConceptIdStorageProviderTest {
     public void whenCheckIfHasNextN_returnCorrectBoolean() {
         ConceptStorage storage = mock(ConceptStorage.class);
         when(storage.getConceptCount("person")).thenReturn(4);
+        List<Long> keysNotPlayingRole = Arrays.asList(1L, 2L, 3L, 4L);
+        when(storage.getKeysNotPlayingRole("person", "friendship", "friend")).thenReturn(keysNotPlayingRole);
+
         Random random = mock(Random.class);
-        ConceptIdStorageProvider conceptIdProvider = new ConceptIdStorageProvider(random, storage, "person");
+        NotInRelationshipConceptKeyProvider conceptIdProvider = new NotInRelationshipConceptKeyProvider(random, storage, "person", "friendship", "friend");
 
         assertTrue(conceptIdProvider.hasNextN(0));
         assertTrue(conceptIdProvider.hasNextN(1));

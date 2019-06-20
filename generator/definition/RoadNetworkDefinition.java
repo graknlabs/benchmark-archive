@@ -20,9 +20,11 @@ package grakn.benchmark.generator.definition;
 
 import grakn.benchmark.generator.probdensity.FixedConstant;
 import grakn.benchmark.generator.probdensity.FixedUniform;
-import grakn.benchmark.generator.provider.concept.CentralConceptProvider;
-import grakn.benchmark.generator.provider.concept.ConceptIdStorageProvider;
-import grakn.benchmark.generator.provider.concept.NotInRelationshipConceptIdProvider;
+import grakn.benchmark.generator.provider.key.CentralConceptKeyProvider;
+import grakn.benchmark.generator.provider.key.ConceptKeyProvider;
+import grakn.benchmark.generator.provider.key.ConceptKeyStorageProvider;
+import grakn.benchmark.generator.provider.key.CountingKeyProvider;
+import grakn.benchmark.generator.provider.key.NotInRelationshipConceptKeyProvider;
 import grakn.benchmark.generator.provider.value.RandomStringProvider;
 import grakn.benchmark.generator.storage.ConceptStorage;
 import grakn.benchmark.generator.strategy.AttributeStrategy;
@@ -57,10 +59,12 @@ public class RoadNetworkDefinition implements DataGeneratorDefinition {
         this.relationshipStrategies = new WeightedPicker<>(random);
         this.attributeStrategies = new WeightedPicker<>(random);
 
-        buildEntityStrategies();
-        buildAttributeStrategies();
-        buildExplicitRelationshipStrategies();
-        buildImplicitRelationshipStrategies();
+        ConceptKeyProvider globalKeyProvider = new CountingKeyProvider(0);
+
+        buildEntityStrategies(globalKeyProvider);
+        buildAttributeStrategies(globalKeyProvider);
+        buildExplicitRelationshipStrategies(globalKeyProvider);
+        buildImplicitRelationshipStrategies(globalKeyProvider);
 
         this.metaTypeStrategies = new WeightedPicker<>(random);
         this.metaTypeStrategies.add(1.0, entityStrategies);
@@ -68,18 +72,19 @@ public class RoadNetworkDefinition implements DataGeneratorDefinition {
         this.metaTypeStrategies.add(1.0, attributeStrategies);
     }
 
-    private void buildEntityStrategies() {
+    private void buildEntityStrategies(ConceptKeyProvider globalKeyProvider) {
         this.entityStrategies.add(
                 1.0,
                 new EntityStrategy(
                         "road",
-                        new FixedUniform(this.random, 10, 40)
+                        new FixedUniform(this.random, 10, 40),
+                        globalKeyProvider
                 )
         );
 
     }
 
-    private void buildAttributeStrategies() {
+    private void buildAttributeStrategies(ConceptKeyProvider globalKeyProvider) {
         RandomStringProvider nameIterator = new RandomStringProvider(random, 6);
 
         this.attributeStrategies.add(
@@ -87,19 +92,20 @@ public class RoadNetworkDefinition implements DataGeneratorDefinition {
                 new AttributeStrategy<>(
                         "name",
                         new FixedUniform(this.random, 10, 30),
+                        globalKeyProvider,
                         nameIterator
                 )
         );
 
     }
 
-    private void buildExplicitRelationshipStrategies() {
+    private void buildExplicitRelationshipStrategies(ConceptKeyProvider globalKeyProvider) {
         RolePlayerTypeStrategy unusedEndpointRoads = new RolePlayerTypeStrategy(
                 "endpoint",
                 new FixedConstant(1),
-                new CentralConceptProvider(
+                new CentralConceptKeyProvider(
                         new FixedUniform(random, 10, 40), // choose 10-40 roads not in relationships
-                        new NotInRelationshipConceptIdProvider(
+                        new NotInRelationshipConceptKeyProvider(
                                 random,
                                 storage,
                                 "road",
@@ -111,7 +117,7 @@ public class RoadNetworkDefinition implements DataGeneratorDefinition {
         RolePlayerTypeStrategy anyEndpointRoads = new RolePlayerTypeStrategy(
                 "endpoint",
                 new FixedUniform(random, 1, 5), // choose 1-5 other role players for an intersection
-                new ConceptIdStorageProvider(random, storage, "road")
+                new ConceptKeyStorageProvider(random, storage, "road")
         );
 
         this.relationshipStrategies.add(
@@ -119,19 +125,20 @@ public class RoadNetworkDefinition implements DataGeneratorDefinition {
                 new RelationStrategy(
                         "intersection",
                         new FixedUniform(random, 20, 100),
-                        new HashSet<>(Arrays.asList(unusedEndpointRoads, anyEndpointRoads))
+                        globalKeyProvider,
+                        Arrays.asList(unusedEndpointRoads, anyEndpointRoads)
                 )
         );
 
     }
 
-    private void buildImplicitRelationshipStrategies() {
+    private void buildImplicitRelationshipStrategies(ConceptKeyProvider globalKeyProvider) {
         // @has-name
         // find some roads that do not have a name and connect them
         RolePlayerTypeStrategy nameOwner = new RolePlayerTypeStrategy(
                 "@has-name-owner",
                 new FixedConstant(1),
-                new NotInRelationshipConceptIdProvider(
+                new NotInRelationshipConceptKeyProvider(
                         random,
                         storage,
                         "road",
@@ -143,9 +150,9 @@ public class RoadNetworkDefinition implements DataGeneratorDefinition {
         RolePlayerTypeStrategy nameValue = new RolePlayerTypeStrategy(
                 "@has-name-value",
                 new FixedConstant(1),
-                new CentralConceptProvider(
+                new CentralConceptKeyProvider(
                         new FixedConstant(60), // take unused names
-                        new NotInRelationshipConceptIdProvider(
+                        new NotInRelationshipConceptKeyProvider(
                                 random,
                                 storage,
                                 "name",
@@ -159,7 +166,8 @@ public class RoadNetworkDefinition implements DataGeneratorDefinition {
                 new RelationStrategy(
                         "@has-name",
                         new FixedConstant(60),
-                        new HashSet<>(Arrays.asList(nameOwner, nameValue))
+                        globalKeyProvider,
+                        Arrays.asList(nameOwner, nameValue)
                 )
         );
     }

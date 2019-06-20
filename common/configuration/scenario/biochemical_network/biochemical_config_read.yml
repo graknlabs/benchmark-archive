@@ -6,7 +6,7 @@ scales:
   - 2000
   - 4000
   - 6000 # large number of role players => slow at large scales
-repeatsPerQuery: 5
+repeatsPerQuery: 10
 
 queries: "queries_read.yml"
 deleteInsertedConcepts: true

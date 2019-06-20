@@ -6,7 +6,7 @@ scales:
   - 2000
   - 4000
   - 6000  # NOTE that because R_out scales, we use a smaller scale since "scale" doesn't include role players of which there are many
-repeatsPerQuery: 5
+repeatsPerQuery: 10
 
 queries: "queries_read.yml"
 deleteInsertedConcepts: true

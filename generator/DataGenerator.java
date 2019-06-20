@@ -25,6 +25,8 @@ import grakn.benchmark.common.analysis.InsertQueryAnalyser;
 import grakn.client.GraknClient;
 import grakn.core.concept.Concept;
 import grakn.core.concept.answer.ConceptMap;
+import grakn.core.concept.thing.Attribute;
+import grakn.core.concept.type.AttributeType;
 import graql.lang.query.GraqlInsert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,7 +106,8 @@ public class DataGenerator {
             timer.endDataGeneratorQuery();
             HashSet<Concept> insertedConcepts = InsertQueryAnalyser.getInsertedConcepts(q, insertions);
 
-            insertedConcepts.forEach(storage::addConcept);
+            AttributeType<Long> uniqueKeyType = tx.getAttributeType("unique-key");
+            insertedConcepts.forEach(concept -> storage.addConcept(concept, (Long)concept.asThing().keys(uniqueKeyType).findFirst().get().value()));
 
             // check if we have to update any roles by first checking if any relationships added
             String relationshipAdded = InsertQueryAnalyser.getRelationshipTypeLabel(q);
@@ -113,9 +116,9 @@ public class DataGenerator {
 
                 rolePlayersAdded.forEach((roleName, conceptList) -> {
                     conceptList.forEach(concept -> {
-                        String rolePlayerId = concept.id().toString();
                         String rolePlayerTypeLabel = concept.asThing().type().label().toString();
-                        storage.addRolePlayer(rolePlayerId, rolePlayerTypeLabel, relationshipAdded, roleName);
+                        Long rolePlayerKey = (Long)concept.asThing().keys(uniqueKeyType).findFirst().get().value();
+                        storage.addRolePlayerByKey(rolePlayerKey, rolePlayerTypeLabel, relationshipAdded, roleName);
                     });
                 });
             }

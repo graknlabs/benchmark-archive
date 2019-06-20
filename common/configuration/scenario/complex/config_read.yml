@@ -5,9 +5,9 @@ schema: "schema.gql"
 scales:
   - 200
   - 400
-  - 600
+#  - 600
 
-repeatsPerQuery: 2
+repeatsPerQuery: 5
 
 queries: "queries_complex_read.yml"
 deleteInsertedConcepts: true

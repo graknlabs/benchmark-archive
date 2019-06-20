@@ -1,15 +1,25 @@
 define
 
+    unique-key sub attribute, datatype long;
+
     # fixed increments
-    name sub attribute, datatype string;
-    region-code sub attribute, datatype long;
+    name sub attribute, datatype string,
+        key unique-key;
+    region-code sub attribute, datatype long,
+        key unique-key;
 
     # fixed increments
     road sub entity,
         plays endpoint,
-        has name; # fixed number of names per road
+        has name, # fixed number of names per road
+        key unique-key;
 
     # fixed increments
     intersection sub relation,
         relates endpoint, # fixed upperbound on number of endpoints
-        has region-code;
+        has region-code,
+        key unique-key;
+
+define
+    @has-name key unique-key;
+    @has-region-code key unique-key;

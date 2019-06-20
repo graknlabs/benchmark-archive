@@ -16,10 +16,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.generator.provider.concept;
+package grakn.benchmark.generator.provider.key;
 
 import grakn.benchmark.generator.probdensity.ProbabilityDensityFunction;
-import grakn.core.concept.ConceptId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,24 +32,24 @@ import java.util.ArrayList;
  * when adding multiple relationships, if the centralConceptsPdf specifies `1`, all relationships
  * will connect to that same Concept in this iteration.
  */
-public class CentralConceptProvider implements ConceptIdProvider {
-    private static final Logger LOG = LoggerFactory.getLogger(CentralConceptProvider.class);
+public class CentralConceptKeyProvider implements ConceptKeyProvider {
+    private static final Logger LOG = LoggerFactory.getLogger(CentralConceptKeyProvider.class);
 
-    private ConceptIdProvider conceptIdProvider;
+    private ConceptKeyProvider conceptKeyProvider;
     private Boolean isReset;
-    private ArrayList<ConceptId> uniqueConceptIdsList;
+    private ArrayList<Long> uniqueConceptKeyList;
     private int consumeFrom = 0;
     private ProbabilityDensityFunction centralConceptsPdf;
 
-    public CentralConceptProvider(ProbabilityDensityFunction centralConceptsPdf, ConceptIdProvider conceptIdProvider) {
-        this.conceptIdProvider = conceptIdProvider;
+    public CentralConceptKeyProvider(ProbabilityDensityFunction centralConceptsPdf, ConceptKeyProvider conceptKeyProvider) {
+        this.conceptKeyProvider = conceptKeyProvider;
         this.isReset = true;
-        this.uniqueConceptIdsList = new ArrayList<>();
+        this.uniqueConceptKeyList = new ArrayList<>();
         this.centralConceptsPdf = centralConceptsPdf;
     }
 
     public void resetUniqueness() {
-        LOG.trace("Resetting central concept provider");
+        LOG.trace("Resetting central key provider");
         isReset = true;
     }
 
@@ -60,7 +59,7 @@ public class CentralConceptProvider implements ConceptIdProvider {
             refillBuffer();
             isReset = false;
         }
-        return !uniqueConceptIdsList.isEmpty();
+        return !uniqueConceptKeyList.isEmpty();
     }
 
     @Override
@@ -71,7 +70,7 @@ public class CentralConceptProvider implements ConceptIdProvider {
     }
 
     @Override
-    public ConceptId next() {
+    public Long next() {
         // Get the same list as used previously, or generate one if not seen before
         // Only create a new stream if resetUniqueness() has been called prior
 
@@ -81,24 +80,24 @@ public class CentralConceptProvider implements ConceptIdProvider {
         }
 
         // construct the circular buffer-reading stream
-        ConceptId value = uniqueConceptIdsList.get(consumeFrom);
-        consumeFrom = (consumeFrom + 1) % uniqueConceptIdsList.size();
+        Long value = uniqueConceptKeyList.get(consumeFrom);
+        consumeFrom = (consumeFrom + 1) % uniqueConceptKeyList.size();
         return value;
     }
 
     private void refillBuffer() {
         // re-fill the internal buffer of conceptIds to be repeated (the centrality aspect)
         int requiredCentralConcepts = centralConceptsPdf.sample();
-        this.uniqueConceptIdsList.clear();
-        LOG.trace("Trying to refill central concept provider with numebr of concepts: " + requiredCentralConcepts);
+        this.uniqueConceptKeyList.clear();
+        LOG.trace("Trying to refill central key provider with numebr of concepts: " + requiredCentralConcepts);
 
         // only if the provider can provide the required number of values
         // do we fill our circular buffer
-        if (conceptIdProvider.hasNextN(requiredCentralConcepts)) {
-            LOG.trace("Refilling central concept provider with number of concepts: " + requiredCentralConcepts);
+        if (conceptKeyProvider.hasNextN(requiredCentralConcepts)) {
+            LOG.trace("Refilling central key provider with number of concepts: " + requiredCentralConcepts);
             int count = 0;
-            while (conceptIdProvider.hasNext() && count < requiredCentralConcepts) {
-                uniqueConceptIdsList.add(conceptIdProvider.next());
+            while (conceptKeyProvider.hasNext() && count < requiredCentralConcepts) {
+                uniqueConceptKeyList.add(conceptKeyProvider.next());
                 count++;
             }
         }

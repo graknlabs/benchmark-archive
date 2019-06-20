@@ -16,15 +16,14 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.generator.provider.concept;
+package grakn.benchmark.generator.provider.key;
 
 import grakn.benchmark.generator.storage.ConceptStorage;
-import grakn.core.concept.ConceptId;
 
 import java.util.List;
 import java.util.Random;
 
-public class NotInRelationshipConceptIdProvider implements ConceptIdProvider {
+public class NotInRelationshipConceptKeyProvider implements ConceptKeyProvider {
 
     private String relationshipLabel;
     private String roleLabel;
@@ -32,11 +31,11 @@ public class NotInRelationshipConceptIdProvider implements ConceptIdProvider {
     private String typeLabel;
     ConceptStorage conceptStorage;
 
-    public NotInRelationshipConceptIdProvider(Random rand,
-                                              ConceptStorage conceptStorage,
-                                              String rolePlayerTypeLabel,
-                                              String relationshipLabel,
-                                              String roleLabel
+    public NotInRelationshipConceptKeyProvider(Random rand,
+                                               ConceptStorage conceptStorage,
+                                               String rolePlayerTypeLabel,
+                                               String relationshipLabel,
+                                               String roleLabel
     ) {
         this.rand = rand;
         this.typeLabel = rolePlayerTypeLabel;
@@ -48,17 +47,17 @@ public class NotInRelationshipConceptIdProvider implements ConceptIdProvider {
 
     @Override
     public boolean hasNext() {
-        return !conceptStorage.getIdsNotPlayingRole(typeLabel, relationshipLabel, roleLabel).isEmpty();
+        return !conceptStorage.getKeysNotPlayingRole(typeLabel, relationshipLabel, roleLabel).isEmpty();
     }
 
     @Override
     public boolean hasNextN(int n) {
-        return conceptStorage.getIdsNotPlayingRole(typeLabel, relationshipLabel, roleLabel).size() >= n;
+        return conceptStorage.getKeysNotPlayingRole(typeLabel, relationshipLabel, roleLabel).size() >= n;
     }
 
     @Override
-    public ConceptId next() {
-        List<ConceptId> notInRelationshipConceptIds = conceptStorage.getIdsNotPlayingRole(typeLabel, relationshipLabel, roleLabel);
+    public Long next() {
+        List<Long> notInRelationshipConceptIds = conceptStorage.getKeysNotPlayingRole(typeLabel, relationshipLabel, roleLabel);
         int randomOffset = rand.nextInt(notInRelationshipConceptIds.size());
         return notInRelationshipConceptIds.get(randomOffset);
     }

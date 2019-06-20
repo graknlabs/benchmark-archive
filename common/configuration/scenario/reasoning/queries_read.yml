@@ -1,19 +1,22 @@
 queries:
 
   # transitive closure
-  - "match (Q-from: $x, Q-to: $y) isa Q; get; limit 3025;"
+  - "match (from: $x, to: $y) isa transRelation; get; limit 3025;"
 
   # transitive closure with relation insertion
-  - "match $r (Q-from: $x, Q-to: $y) isa Q; get; limit 3025;"
+  - "match $r (from: $x, to: $y) isa transRelation; get; limit 3025;"
 
   # exhaustive iterative transitive closure
-  - "match (Q-from: $x, Q-to: $y) isa Q; get;"
+  - "match (from: $x, to: $y) isa transRelation; get;"
 
   # transitive closure with a bound
-  - "match (Q-from: $x, Q-to: $y) isa Q;$x has index 'start'; get;"
+  - "match (from: $x, to: $y) isa transRelation;$x has index 'start'; get;"
 
   # limited transitive closure
-  - "match (Q-from: $x, Q-to: $y) isa Q; get; limit 110;"
+  - "match (from: $x, to: $y) isa transRelation; get; limit 1000;"
+
+  # annotation of inferred relation requiring materialisation of an attribute
+  - "match $rel has inferredAttribute 'inferredRelation'; get;"
 
 
 

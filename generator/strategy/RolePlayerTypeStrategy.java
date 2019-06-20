@@ -19,7 +19,7 @@
 package grakn.benchmark.generator.strategy;
 
 import grakn.benchmark.generator.probdensity.ProbabilityDensityFunction;
-import grakn.benchmark.generator.provider.concept.ConceptIdProvider;
+import grakn.benchmark.generator.provider.key.ConceptKeyProvider;
 
 /**
  * A container for the three things required for how to generate a batch of role players:
@@ -29,15 +29,10 @@ import grakn.benchmark.generator.provider.concept.ConceptIdProvider;
  */
 public class RolePlayerTypeStrategy extends TypeStrategy {
 
-    private ConceptIdProvider conceptIdProvider;
 
-    public RolePlayerTypeStrategy(String roleLabel, ProbabilityDensityFunction numInstancesPDF, ConceptIdProvider conceptIdProvider) {
-        super(roleLabel, numInstancesPDF);
-        this.conceptIdProvider = conceptIdProvider;
+    public RolePlayerTypeStrategy(String roleLabel, ProbabilityDensityFunction numInstancesPDF, ConceptKeyProvider conceptKeyProvider) {
+        super(roleLabel, numInstancesPDF, conceptKeyProvider);
     }
 
-    public ConceptIdProvider getConceptProvider() {
-        return conceptIdProvider;
-    }
 }
 

@@ -81,7 +81,7 @@
 </template>
 
 <script>
-import ExecutionCard from './ExecutionCard.vue';
+import ExecutionCard from './components/ExecutionCard';
 import BenchmarkClient from '@/util/BenchmarkClient';
 import SortbySelector from '@/components/Selector.vue';
 
@@ -136,7 +136,7 @@ export default {
   methods: {
     async fetchExecutions() {
       const executionsResp = await BenchmarkClient.getExecutions(
-        `{ executions { id vmName ${
+        `{ executions (limit: 1000) { id vmName ${
           this.columns.map(item => item.value).join(' ')
         }} }`,
       );

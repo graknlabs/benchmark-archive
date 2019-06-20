@@ -7,7 +7,7 @@ scales:
   - 4000
   - 8000
 
-repeatsPerQuery: 50
+repeatsPerQuery: 5
 
 queries: "queries_write.yml"
 deleteInsertedConcepts: true

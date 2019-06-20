@@ -19,14 +19,15 @@
 package grakn.benchmark.generator.query;
 
 import grakn.benchmark.generator.probdensity.FixedConstant;
-import grakn.benchmark.generator.provider.concept.CentralConceptProvider;
-import grakn.benchmark.generator.provider.concept.ConceptIdProvider;
+import grakn.benchmark.generator.provider.key.CentralConceptKeyProvider;
+import grakn.benchmark.generator.provider.key.ConceptKeyProvider;
+import grakn.benchmark.generator.provider.key.CountingKeyProvider;
 import grakn.benchmark.generator.strategy.RelationStrategy;
 import grakn.benchmark.generator.strategy.RolePlayerTypeStrategy;
-import grakn.core.concept.ConceptId;
 import graql.lang.query.GraqlInsert;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -47,25 +48,25 @@ public class RelationGeneratorTest {
 
         RelationStrategy strategy = mock(RelationStrategy.class);
 
-        Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies = new HashSet<>();
+        List<RolePlayerTypeStrategy> rolePlayerTypeStrategies = new ArrayList<>();
         RolePlayerTypeStrategy rolePlayerTypeStrategy = mock(RolePlayerTypeStrategy.class);
         rolePlayerTypeStrategies.add(rolePlayerTypeStrategy);
 
         when(strategy.getRolePlayerTypeStrategies()).thenReturn(rolePlayerTypeStrategies);
         when(strategy.getTypeLabel()).thenReturn("friendship");
         when(strategy.getNumInstancesPDF()).thenReturn(new FixedConstant(2));
+        when(strategy.getConceptKeyProvider()).thenReturn(new CountingKeyProvider(0));
 
-        List<ConceptId> conceptIdList = Arrays.asList(ConceptId.of("a"));
-        CentralConceptProvider centralConceptProvider = mock(CentralConceptProvider.class); //(new FixedConstant(3), conceptIdList.iterator());
-        when(rolePlayerTypeStrategy.getConceptProvider()).thenReturn(centralConceptProvider);
-        when(centralConceptProvider.hasNext()).thenReturn(true);
-        when(centralConceptProvider.next()).thenReturn(conceptIdList.get(0));
-
+        List<Long> conceptKeyList = Arrays.asList(1L);
+        CentralConceptKeyProvider centralConceptKeyProvider = mock(CentralConceptKeyProvider.class); //(new FixedConstant(3), conceptIdList.iterator());
+        when(rolePlayerTypeStrategy.getConceptKeyProvider()).thenReturn(centralConceptKeyProvider);
+        when(centralConceptKeyProvider.hasNext()).thenReturn(true);
+        when(centralConceptKeyProvider.next()).thenReturn(conceptKeyList.get(0));
 
         RelationGenerator relationshipQueryGenerator = new RelationGenerator(strategy);
         Iterator<GraqlInsert> queries = relationshipQueryGenerator.generate();
 
-        verify(centralConceptProvider, times(1)).resetUniqueness();
+        verify(centralConceptKeyProvider, times(1)).resetUniqueness();
     }
 
     @Test
@@ -73,27 +74,28 @@ public class RelationGeneratorTest {
 
         RelationStrategy strategy = mock(RelationStrategy.class);
 
-        List<ConceptId> ownerRolePlayers = Arrays.asList(ConceptId.of("a"), ConceptId.of("b"));
-        ConceptIdProvider ownerIdProvider = mock(ConceptIdProvider.class);
-        when(ownerIdProvider.next()).thenReturn(ownerRolePlayers.get(0)).thenReturn(ownerRolePlayers.get(1));
-        when(ownerIdProvider.hasNext()).thenReturn(true);
-        when(ownerIdProvider.hasNextN(1)).thenReturn(true).thenReturn(true).thenReturn(false);
-        RolePlayerTypeStrategy rolePlayer1 = new RolePlayerTypeStrategy("owner", new FixedConstant(1), ownerIdProvider);
+        List<Long> ownerRolePlayerKeys = Arrays.asList(1L, 2L);
+        ConceptKeyProvider ownerKeyProvider = mock(ConceptKeyProvider.class);
+        when(ownerKeyProvider.next()).thenReturn(ownerRolePlayerKeys.get(0)).thenReturn(ownerRolePlayerKeys.get(1));
+        when(ownerKeyProvider.hasNext()).thenReturn(true);
+        when(ownerKeyProvider.hasNextN(1)).thenReturn(true).thenReturn(true).thenReturn(false);
+        RolePlayerTypeStrategy rolePlayer1 = new RolePlayerTypeStrategy("owner", new FixedConstant(1), ownerKeyProvider);
 
-        List<ConceptId> propertyRolePlayers = Arrays.asList(ConceptId.of("c"), ConceptId.of("d"));
-        ConceptIdProvider propertyIdProvider = mock(ConceptIdProvider.class);
-        when(propertyIdProvider.next()).thenReturn(propertyRolePlayers.get(0)).thenReturn(propertyRolePlayers.get(1));
-        when(propertyIdProvider.hasNext()).thenReturn(true);
-        when(propertyIdProvider.hasNextN(1)).thenReturn(true).thenReturn(true).thenReturn(false);
-        RolePlayerTypeStrategy rolePlayer2 = new RolePlayerTypeStrategy("property", new FixedConstant(1), propertyIdProvider);
+        List<Long> propertyRolePlayerKeys = Arrays.asList(3L, 4L);
+        ConceptKeyProvider propertyKeyProvider = mock(ConceptKeyProvider.class);
+        when(propertyKeyProvider.next()).thenReturn(propertyRolePlayerKeys.get(0)).thenReturn(propertyRolePlayerKeys.get(1));
+        when(propertyKeyProvider.hasNext()).thenReturn(true);
+        when(propertyKeyProvider.hasNextN(1)).thenReturn(true).thenReturn(true).thenReturn(false);
+        RolePlayerTypeStrategy rolePlayer2 = new RolePlayerTypeStrategy("property", new FixedConstant(1), propertyKeyProvider);
 
-        Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies = new HashSet<>();
+        List<RolePlayerTypeStrategy> rolePlayerTypeStrategies = new ArrayList<>();
         rolePlayerTypeStrategies.add(rolePlayer1);
         rolePlayerTypeStrategies.add(rolePlayer2);
 
         when(strategy.getRolePlayerTypeStrategies()).thenReturn(rolePlayerTypeStrategies);
         when(strategy.getTypeLabel()).thenReturn("ownership");
         when(strategy.getNumInstancesPDF()).thenReturn(new FixedConstant(2));
+        when(strategy.getConceptKeyProvider()).thenReturn(new CountingKeyProvider(0));
 
 
         RelationGenerator queryGenerator = new RelationGenerator(strategy);
@@ -102,14 +104,14 @@ public class RelationGeneratorTest {
         assertTrue(queries.hasNext());
         GraqlInsert firstInsert = queries.next();
         String queryString = firstInsert.toString();
-        assertTrue(queryString.contains("owner: ") && queryString.contains("id a"));
-        assertTrue(queryString.contains("property: ") && queryString.contains("id c"));
+        assertTrue(queryString.contains("owner: ") && queryString.contains("unique-key 1"));
+        assertTrue(queryString.contains("property: ") && queryString.contains("unique-key 3"));
 
         assertTrue(queries.hasNext());
         GraqlInsert secondInsert = queries.next();
         queryString = secondInsert.toString();
-        assertTrue(queryString.contains("owner: ") && queryString.contains("id b"));
-        assertTrue(queryString.contains("property: ") && queryString.contains("id d"));
+        assertTrue(queryString.contains("owner: ") && queryString.contains("unique-key 2"));
+        assertTrue(queryString.contains("property: ") && queryString.contains("unique-key 4"));
 
         assertFalse(queries.hasNext());
     }
@@ -118,29 +120,30 @@ public class RelationGeneratorTest {
     public void whenRepeatedRole_roleIsRepeatedInQuery() {
         RelationStrategy strategy = mock(RelationStrategy.class);
 
-        List<ConceptId> friendRolePlayers1 = Arrays.asList(ConceptId.of("a"), ConceptId.of("b"));
-        ConceptIdProvider ownerIdProvider = mock(ConceptIdProvider.class);
-        when(ownerIdProvider.next()).thenReturn(friendRolePlayers1.get(0)).thenReturn(friendRolePlayers1.get(1));
-        when(ownerIdProvider.hasNext()).thenReturn(true);
-        when(ownerIdProvider.hasNextN(2)).thenReturn(true).thenReturn(false);
+        List<Long> friendRolePlayerKeys1 = Arrays.asList(1L, 2L);
+        ConceptKeyProvider ownerKeyProvider = mock(ConceptKeyProvider.class);
+        when(ownerKeyProvider.next()).thenReturn(friendRolePlayerKeys1.get(0)).thenReturn(friendRolePlayerKeys1.get(1));
+        when(ownerKeyProvider.hasNext()).thenReturn(true);
+        when(ownerKeyProvider.hasNextN(2)).thenReturn(true).thenReturn(false);
         // 2 FRIEND role players contributed here
-        RolePlayerTypeStrategy rolePlayer1 = new RolePlayerTypeStrategy("friend", new FixedConstant(2), ownerIdProvider);
+        RolePlayerTypeStrategy rolePlayer1 = new RolePlayerTypeStrategy("friend", new FixedConstant(2), ownerKeyProvider);
 
-        List<ConceptId> friendRolePlayers2 = Arrays.asList(ConceptId.of("c"));
-        ConceptIdProvider propertyIdProvider = mock(ConceptIdProvider.class);
-        when(propertyIdProvider.next()).thenReturn(friendRolePlayers2.get(0));
-        when(propertyIdProvider.hasNext()).thenReturn(true);
-        when(propertyIdProvider.hasNextN(1)).thenReturn(true).thenReturn(false);
+        List<Long> friendRolePlayerKeys2 = Arrays.asList(3L);
+        ConceptKeyProvider propertyKeyProvider = mock(ConceptKeyProvider.class);
+        when(propertyKeyProvider.next()).thenReturn(friendRolePlayerKeys2.get(0));
+        when(propertyKeyProvider.hasNext()).thenReturn(true);
+        when(propertyKeyProvider.hasNextN(1)).thenReturn(true).thenReturn(false);
         // 1 FRIEND role player contributed here
-        RolePlayerTypeStrategy rolePlayer2 = new RolePlayerTypeStrategy("friend", new FixedConstant(1), propertyIdProvider);
+        RolePlayerTypeStrategy rolePlayer2 = new RolePlayerTypeStrategy("friend", new FixedConstant(1), propertyKeyProvider);
 
-        Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies = new HashSet<>();
+        List<RolePlayerTypeStrategy> rolePlayerTypeStrategies = new ArrayList<>();
         rolePlayerTypeStrategies.add(rolePlayer1);
         rolePlayerTypeStrategies.add(rolePlayer2);
 
         when(strategy.getRolePlayerTypeStrategies()).thenReturn(rolePlayerTypeStrategies);
         when(strategy.getTypeLabel()).thenReturn("friendship");
         when(strategy.getNumInstancesPDF()).thenReturn(new FixedConstant(1));
+        when(strategy.getConceptKeyProvider()).thenReturn(new CountingKeyProvider(0));
 
         RelationGenerator queryGenerator = new RelationGenerator(strategy);
         Iterator<GraqlInsert> queries = queryGenerator.generate();
@@ -148,7 +151,7 @@ public class RelationGeneratorTest {
         assertTrue(queries.hasNext());
         GraqlInsert firstInsert = queries.next();
         String queryString = firstInsert.toString();
-        assertTrue(queryString.contains("id a") && queryString.contains("id b") && queryString.contains("id c"));
+        assertTrue(queryString.contains("unique-key 1") && queryString.contains("unique-key 2") && queryString.contains("unique-key 3"));
         // want to check that "friend" occurs three times in the string
         int firstIndex = queryString.indexOf("friend:", 0);
         int secondIndex = queryString.indexOf("friend:", firstIndex + 7);
@@ -167,23 +170,23 @@ public class RelationGeneratorTest {
         RelationStrategy strategy = mock(RelationStrategy.class);
 
         // this RolePlayer filler will only have enough for ONE relationship with two role players
-        List<ConceptId> friendRolePlayers1 = Arrays.asList(ConceptId.of("a"), ConceptId.of("b"));
-        ConceptIdProvider ownerIdProvider = mock(ConceptIdProvider.class);
-        when(ownerIdProvider.next()).thenReturn(friendRolePlayers1.get(0)).thenReturn(friendRolePlayers1.get(1));
-        when(ownerIdProvider.hasNext()).thenReturn(true).thenReturn(true).thenReturn(false);
-        when(ownerIdProvider.hasNextN(2)).thenReturn(true).thenReturn(false);
+        List<Long> friendRolePlayerKeys1 = Arrays.asList(1L, 2L);
+        ConceptKeyProvider ownerKeyProvider = mock(ConceptKeyProvider.class);
+        when(ownerKeyProvider.next()).thenReturn(friendRolePlayerKeys1.get(0)).thenReturn(friendRolePlayerKeys1.get(1));
+        when(ownerKeyProvider.hasNext()).thenReturn(true).thenReturn(true).thenReturn(false);
+        when(ownerKeyProvider.hasNextN(2)).thenReturn(true).thenReturn(false);
         // 2 FRIEND role players contributed here
-        RolePlayerTypeStrategy rolePlayer1 = new RolePlayerTypeStrategy("friend", new FixedConstant(2), ownerIdProvider);
+        RolePlayerTypeStrategy rolePlayer1 = new RolePlayerTypeStrategy("friend", new FixedConstant(2), ownerKeyProvider);
 
-        List<ConceptId> friendRolePlayers2 = Arrays.asList(ConceptId.of("c"), ConceptId.of("d"));
-        ConceptIdProvider propertyIdProvider = mock(ConceptIdProvider.class);
-        when(propertyIdProvider.next()).thenReturn(friendRolePlayers2.get(0)).thenReturn(friendRolePlayers2.get(1));
-        when(propertyIdProvider.hasNext()).thenReturn(true);
-        when(propertyIdProvider.hasNextN(1)).thenReturn(true).thenReturn(true).thenReturn(false);
+        List<Long> friendRolePlayerKeys2 = Arrays.asList(3L, 4L);
+        ConceptKeyProvider propertyKeyProvider = mock(ConceptKeyProvider.class);
+        when(propertyKeyProvider.next()).thenReturn(friendRolePlayerKeys2.get(0)).thenReturn(friendRolePlayerKeys2.get(1));
+        when(propertyKeyProvider.hasNext()).thenReturn(true);
+        when(propertyKeyProvider.hasNextN(1)).thenReturn(true).thenReturn(true).thenReturn(false);
         // 1 FRIEND role player contributed here
-        RolePlayerTypeStrategy rolePlayer2 = new RolePlayerTypeStrategy("friend", new FixedConstant(1), propertyIdProvider);
+        RolePlayerTypeStrategy rolePlayer2 = new RolePlayerTypeStrategy("friend", new FixedConstant(1), propertyKeyProvider);
 
-        Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies = new HashSet<>();
+        List<RolePlayerTypeStrategy> rolePlayerTypeStrategies = new ArrayList<>();
         rolePlayerTypeStrategies.add(rolePlayer1);
         rolePlayerTypeStrategies.add(rolePlayer2);
 
@@ -191,6 +194,7 @@ public class RelationGeneratorTest {
         when(strategy.getTypeLabel()).thenReturn("friendship");
         // target: generate two relationships
         when(strategy.getNumInstancesPDF()).thenReturn(new FixedConstant(2));
+        when(strategy.getConceptKeyProvider()).thenReturn(new CountingKeyProvider(0));
 
         RelationGenerator queryGenerator = new RelationGenerator(strategy);
         Iterator<GraqlInsert> queries = queryGenerator.generate();
@@ -205,23 +209,23 @@ public class RelationGeneratorTest {
         RelationStrategy strategy = mock(RelationStrategy.class);
 
         // this RolePlayer filler will only have enough for 1.5 relationship with two role players
-        List<ConceptId> friendRolePlayers1 = Arrays.asList(ConceptId.of("a"), ConceptId.of("b"), ConceptId.of("e"));
-        ConceptIdProvider friendIdProvider = mock(ConceptIdProvider.class);
-        when(friendIdProvider.next()).thenReturn(friendRolePlayers1.get(0)).thenReturn(friendRolePlayers1.get(1)).thenReturn(friendRolePlayers1.get(2));
-        when(friendIdProvider.hasNextN(2)).thenReturn(true).thenReturn(false);
-        when(friendIdProvider.hasNext()).thenReturn(true).thenReturn(true).thenReturn(true).thenReturn(false);
+        List<Long> friendRolePlayerKeys1 = Arrays.asList(1L, 2L, 5L);
+        ConceptKeyProvider friendKeyProvider = mock(ConceptKeyProvider.class);
+        when(friendKeyProvider.next()).thenReturn(friendRolePlayerKeys1.get(0)).thenReturn(friendRolePlayerKeys1.get(1)).thenReturn(friendRolePlayerKeys1.get(2));
+        when(friendKeyProvider.hasNextN(2)).thenReturn(true).thenReturn(false);
+        when(friendKeyProvider.hasNext()).thenReturn(true).thenReturn(true).thenReturn(true).thenReturn(false);
         // 2 FRIEND role players contributed here
-        RolePlayerTypeStrategy rolePlayer1 = new RolePlayerTypeStrategy("friend", new FixedConstant(2), friendIdProvider);
+        RolePlayerTypeStrategy rolePlayer1 = new RolePlayerTypeStrategy("friend", new FixedConstant(2), friendKeyProvider);
 
-        List<ConceptId> friendRolePlayers2 = Arrays.asList(ConceptId.of("c"), ConceptId.of("d"));
-        ConceptIdProvider friendIdProvider2 = mock(ConceptIdProvider.class);
-        when(friendIdProvider2.next()).thenReturn(friendRolePlayers2.get(0)).thenReturn(friendRolePlayers2.get(1));
-        when(friendIdProvider2.hasNextN(1)).thenReturn(true).thenReturn(true).thenReturn(false);
-        when(friendIdProvider2.hasNext()).thenReturn(true).thenReturn(true).thenReturn(false);
+        List<Long> friendRolePlayerKeys2 = Arrays.asList(3L, 4L);
+        ConceptKeyProvider friendKeyProvider2 = mock(ConceptKeyProvider.class);
+        when(friendKeyProvider2.next()).thenReturn(friendRolePlayerKeys2.get(0)).thenReturn(friendRolePlayerKeys2.get(1));
+        when(friendKeyProvider2.hasNextN(1)).thenReturn(true).thenReturn(true).thenReturn(false);
+        when(friendKeyProvider2.hasNext()).thenReturn(true).thenReturn(true).thenReturn(false);
         // 1 FRIEND role player contributed here
-        RolePlayerTypeStrategy rolePlayer2 = new RolePlayerTypeStrategy("friend", new FixedConstant(1), friendIdProvider2);
+        RolePlayerTypeStrategy rolePlayer2 = new RolePlayerTypeStrategy("friend", new FixedConstant(1), friendKeyProvider2);
 
-        Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies = new HashSet<>();
+        List<RolePlayerTypeStrategy> rolePlayerTypeStrategies = new ArrayList<>();
         rolePlayerTypeStrategies.add(rolePlayer1);
         rolePlayerTypeStrategies.add(rolePlayer2);
 
@@ -229,6 +233,7 @@ public class RelationGeneratorTest {
         when(strategy.getTypeLabel()).thenReturn("friendship");
         // target: generate two relationships
         when(strategy.getNumInstancesPDF()).thenReturn(new FixedConstant(2));
+        when(strategy.getConceptKeyProvider()).thenReturn(new CountingKeyProvider(0));
 
         RelationGenerator queryGenerator = new RelationGenerator(strategy);
         Iterator<GraqlInsert> queries = queryGenerator.generate();

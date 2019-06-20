@@ -1,23 +1,33 @@
 define
 
+    unique-key sub attribute, datatype long;
+
     # fixed increments
-    name sub attribute, datatype string;
+    name sub attribute, datatype string,
+        key unique-key;
 
     # fixed increments
     person sub entity,
         plays friend,
         plays liker,
-        has name; # increasing number of names added each iter - people will have many names
+        has name, # increasing number of names added each iter - people will have many names
+        key unique-key;
 
     # fixed increments
     page sub entity,
-        plays liked;
+        plays liked,
+        key unique-key;
 
     # scaling increments
     friendship sub relation,
-        relates friend; # 2 friends in a friendship only
+        relates friend, # 2 friends in a friendship only
+        key unique-key;
 
     # scaling increments
     likes sub relation,
         relates liked, # only 1 liked per like
-        relates liker; # only 1 liker per like
+        relates liker, # only 1 liker per like
+        key unique-key;
+
+define
+    @has-name key unique-key;

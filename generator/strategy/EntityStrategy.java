@@ -19,6 +19,7 @@
 package grakn.benchmark.generator.strategy;
 
 import grakn.benchmark.generator.probdensity.ProbabilityDensityFunction;
+import grakn.benchmark.generator.provider.key.ConceptKeyProvider;
 
 /**
  * A container for the two things required for how to generate a new batch of entities:
@@ -26,7 +27,7 @@ import grakn.benchmark.generator.probdensity.ProbabilityDensityFunction;
  * - A PDF that can be sampled to indicate how big the new batch of entities is going to be
  */
 public class EntityStrategy extends TypeStrategy {
-    public EntityStrategy(String typeLabel, ProbabilityDensityFunction numInstancesPDF) {
-        super(typeLabel, numInstancesPDF);
+    public EntityStrategy(String typeLabel, ProbabilityDensityFunction numInstancesPDF, ConceptKeyProvider entityKeyProvider) {
+        super(typeLabel, numInstancesPDF, entityKeyProvider);
     }
 }

@@ -19,6 +19,7 @@
 package grakn.benchmark.generator.query;
 
 import grakn.benchmark.generator.probdensity.FixedConstant;
+import grakn.benchmark.generator.provider.key.CountingKeyProvider;
 import grakn.benchmark.generator.provider.value.RandomStringProvider;
 import grakn.benchmark.generator.provider.value.UniqueIntegerProvider;
 import grakn.benchmark.generator.strategy.AttributeStrategy;
@@ -42,6 +43,7 @@ public class AttributeGeneratorTest {
         when(strategy.getValueProvider()).thenReturn(intProvider);
         when(strategy.getTypeLabel()).thenReturn("age");
         when(strategy.getNumInstancesPDF()).thenReturn(new FixedConstant(3)); // always generate 3
+        when(strategy.getConceptKeyProvider()).thenReturn(new CountingKeyProvider(0));
 
         AttributeGenerator<Integer> insertAttributeQueryGenerator = new AttributeGenerator<>(strategy);
 
@@ -66,6 +68,7 @@ public class AttributeGeneratorTest {
         when(strategy.getValueProvider()).thenReturn(stringProvider);
         when(strategy.getTypeLabel()).thenReturn("name");
         when(strategy.getNumInstancesPDF()).thenReturn(new FixedConstant(3)); // always generate 3 insert queries
+        when(strategy.getConceptKeyProvider()).thenReturn(new CountingKeyProvider(0));
 
         AttributeGenerator<String> insertAttributeQueryGenerator = new AttributeGenerator<>(strategy);
 

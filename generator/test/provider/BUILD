@@ -1,6 +1,6 @@
 java_test(
     name = "central-stream-provider-test",
-    test_class = "grakn.benchmark.generator.provider.concept.CentralConceptProviderTest",
+    test_class = "grakn.benchmark.generator.provider.key.CentralConceptProviderTest",
     srcs = ["CentralConceptProviderTest.java"],
     deps = [
         "@graknlabs_grakn_core//concept:concept",
@@ -11,8 +11,8 @@ java_test(
 
 java_test(
     name = "conceptid-storage-provider-test",
-    test_class = "grakn.benchmark.generator.provider.concept.ConceptIdStorageProviderTest",
-    srcs = ["ConceptIdStorageProviderTest.java"],
+    test_class = "grakn.benchmark.generator.provider.key.ConceptKeyStorageProviderTest",
+    srcs = ["ConceptKeyStorageProviderTest.java"],
     deps = [
         "@graknlabs_grakn_core//concept:concept",
         "//generator:data-generator",
@@ -22,8 +22,8 @@ java_test(
 
 java_test(
      name = "not-in-relationship-conceptid-storage-provider-test",
-     test_class = "grakn.benchmark.generator.provider.concept.NotInRelationshipConceptIdProviderTest",
-     srcs = ["NotInRelationshipConceptIdProviderTest.java"],
+     test_class = "grakn.benchmark.generator.provider.key.NotInRelationshipConceptKeyProviderTest",
+     srcs = ["NotInRelationshipConceptKeyProviderTest.java"],
      deps = [
         "@graknlabs_grakn_core//concept:concept",
         "//generator:data-generator",

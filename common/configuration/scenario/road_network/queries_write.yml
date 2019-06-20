@@ -2,16 +2,16 @@ queries:
 
   # --- single vertex or 1 hop write queries ---
   # insert 1 concept
-  - "insert $x isa road;"
+  - "insert $x isa road, has unique-key $k; $k -1;"
   # insert 1 concept
-  - "insert $x isa region-code; $x -100;"
+  - "insert $x isa region-code, has unique-key $k; $k -2; $x -100;"
   # insert 1 concept
-  - "insert $x isa name; $x \"helloworld\";"
+  - "insert $x isa name, has unique-key $k; $k -3; $x \"helloworld\";"
   # insert 3 concepts, 2 role players
   - "insert
-          $r (endpoint: $road1, endpoint: $road2) isa intersection;
-          $road1 isa road;
-          $road2 isa road;"
+          $r (endpoint: $road1, endpoint: $road2) isa intersection, has unique-key $k; $k -4;
+          $road1 isa road, has unique-key $k1; $k1 -5;
+          $road2 isa road, has unique-key $k2; $k2 -6;"
 
 
   # --- more complex write queries ---
@@ -20,22 +20,22 @@ queries:
       $intersection8 (
         endpoint: $r1, endpoint: $r2, endpoint: $r3, endpoint: $r4,
         endpoint: $r5, endpoint: $r6, endpoint: $r7, endpoint: $r8
-      ) isa intersection;
-      $r1 isa road; $r2 isa road; $r3 isa road; $r4 isa road;
-      $r5 isa road; $r6 isa road; $r7 isa road; $r8 isa road; "
+      ) isa intersection, has unique-key $k0; $k0 -7;
+      $r1 isa road, has unique-key $k1; $k1 -8; $r2 isa road, has unique-key $k2; $k2 -9; $r3 isa road, has unique-key $k3; $k3 -10; $r4 isa road, has unique-key $k4; $k4 -11;
+      $r5 isa road, has unique-key $k5; $k5 -12; $r6 isa road, has unique-key $k6; $k6 -13; $r7 isa road, has unique-key $k7; $k7 -14; $r8 isa road, has unique-key $k8; $k8 -15; "
 
   # 16 role players
-  - " insert
+  - "insert
       $intersection16 (
         endpoint: $r1, endpoint: $r2, endpoint: $r3, endpoint: $r4,
         endpoint: $r5, endpoint: $r6, endpoint: $r7, endpoint: $r8,
         endpoint: $r9, endpoint: $r10, endpoint: $r11, endpoint: $r12,
         endpoint: $r13, endpoint: $r14, endpoint: $r15, endpoint: $r16
-      ) isa intersection;
-      $r1 isa road; $r2 isa road; $r3 isa road; $r4 isa road;
-      $r5 isa road; $r6 isa road; $r7 isa road; $r8 isa road;
-      $r9 isa road; $r10 isa road; $r11 isa road; $r12 isa road;
-      $r13 isa road; $r14 isa road; $r15 isa road; $r16 isa road;"
+      ) isa intersection, has unique-key $k1; $k1 -16;
+      $r1 isa road, has unique-key $k2; $k2 -17; $r2 isa road, has unique-key $k3; $k3 -18; $r3 isa road, has unique-key $k5; $k5 -19; $r4 isa road, has unique-key $k6; $k6 -20;
+      $r5 isa road, has unique-key $k7; $k7 -21; $r6 isa road, has unique-key $k8; $k8 -22; $r7 isa road, has unique-key $k9; $k9 -23; $r8 isa road, has unique-key $k10; $k10 -24;
+      $r9 isa road, has unique-key $k11; $k11 -25; $r10 isa road, has unique-key $k12; $k12 -26; $r11 isa road, has unique-key $k13; $k13 -27; $r12 isa road, has unique-key $k14; $k14 -28;
+      $r13 isa road, has unique-key $k15; $k15 -29; $r14 isa road, has unique-key $k16; $k16 -30; $r15 isa road, has unique-key $k17; $k17 -201; $r16 isa road, has unique-key $k18; $k18 -31;"
 
 
   # 32 role players
@@ -49,15 +49,15 @@ queries:
         endpoint: $r21, endpoint: $r22, endpoint: $r23, endpoint: $r24,
         endpoint: $r25, endpoint: $r26, endpoint: $r27, endpoint: $r28,
         endpoint: $r29, endpoint: $r30, endpoint: $r31, endpoint: $r32
-      ) isa intersection;
-      $r1 isa road; $r2 isa road; $r3 isa road; $r4 isa road;
-      $r5 isa road; $r6 isa road; $r7 isa road; $r8 isa road;
-      $r9 isa road; $r10 isa road; $r11 isa road; $r12 isa road;
-      $r13 isa road; $r14 isa road; $r15 isa road; $r16 isa road;
-      $r17 isa road; $r18 isa road; $r19 isa road; $r20 isa road;
-      $r21 isa road; $r22 isa road; $r23 isa road; $r24 isa road;
-      $r25 isa road; $r26 isa road; $r27 isa road; $r28 isa road;
-      $r29 isa road; $r30 isa road; $r31 isa road; $r32 isa road;"
+      ) isa intersection, has unique-key $k1; $k1 -32;
+      $r1 isa road, has unique-key $k2; $k2 -33; $r2 isa road, has unique-key $k3; $k3 -34; $r3 isa road, has unique-key $k4; $k4 -35; $r4 isa road, has unique-key $k5; $k5 -36;
+      $r5 isa road, has unique-key $k6; $k6 -37; $r6 isa road, has unique-key $k7; $k7 -38; $r7 isa road, has unique-key $k8; $k8 -39; $r8 isa road, has unique-key $k9; $k9 -40;
+      $r9 isa road, has unique-key $k10; $k10 -41; $r10 isa road, has unique-key $k11; $k11 -42; $r11 isa road, has unique-key $k12; $k12 -43; $r12 isa road, has unique-key $k13; $k13 -44;
+      $r13 isa road, has unique-key $k14; $k14 -45; $r14 isa road, has unique-key $k15; $k15 -46; $r15 isa road, has unique-key $k16; $k16 -47; $r16 isa road, has unique-key $k17; $k17 -48;
+      $r17 isa road, has unique-key $k18; $k18 -49; $r18 isa road, has unique-key $k19; $k19 -50; $r19 isa road, has unique-key $k20; $k20 -51; $r20 isa road, has unique-key $k21; $k21 -52;
+      $r21 isa road, has unique-key $k22; $k22 -53; $r22 isa road, has unique-key $k23; $k23 -54; $r23 isa road, has unique-key $k24; $k24 -55; $r24 isa road, has unique-key $k25; $k25 -56;
+      $r25 isa road, has unique-key $k26; $k26 -57; $r26 isa road, has unique-key $k27; $k27 -58; $r27 isa road, has unique-key $k28; $k28 -59; $r28 isa road, has unique-key $k29; $k29 -60;
+      $r29 isa road, has unique-key $k30; $k30 -61; $r30 isa road, has unique-key $k31; $k31 -62; $r31 isa road, has unique-key $k32; $k32 -63; $r32 isa road, has unique-key $k33; $k33 -64;"
 
   # 64 role players
   - "insert
@@ -78,32 +78,34 @@ queries:
         endpoint: $road53, endpoint: $road54, endpoint: $road55, endpoint: $road56,
         endpoint: $road57, endpoint: $road58, endpoint: $road59, endpoint: $road60,
         endpoint: $road61, endpoint: $road62, endpoint: $road63, endpoint: $road64
-      ) isa intersection;
-      $road1 isa road; $road2 isa road; $road3 isa road; $road4 isa road;
-      $road5 isa road; $road6 isa road; $road7 isa road; $road8 isa road;
-      $road9 isa road; $road10 isa road; $road11 isa road; $road12 isa road;
-      $road13 isa road; $road14 isa road; $road15 isa road; $road16 isa road;
-      $road17 isa road; $road18 isa road; $road19 isa road; $road20 isa road;
-      $road21 isa road; $road22 isa road; $road23 isa road; $road24 isa road;
-      $road25 isa road; $road26 isa road; $road27 isa road; $road28 isa road;
-      $road29 isa road; $road30 isa road; $road31 isa road; $road32 isa road;
-      $road33 isa road; $road34 isa road; $road35 isa road; $road36 isa road;
-      $road37 isa road; $road38 isa road; $road39 isa road; $road40 isa road;
-      $road41 isa road; $road42 isa road; $road43 isa road; $road44 isa road;
-      $road45 isa road; $road46 isa road; $road47 isa road; $road48 isa road;
-      $road49 isa road; $road50 isa road; $road51 isa road; $road52 isa road;
-      $road53 isa road; $road54 isa road; $road55 isa road; $road56 isa road;
-      $road57 isa road; $road58 isa road; $road59 isa road; $road60 isa road;
-      $road61 isa road; $road62 isa road; $road63 isa road; $road64 isa road;"
+      ) isa intersection, has unique-key $k0; $k0 -65;
+      $road1 isa road, has unique-key $k1; $k1 -66; $road2 isa road, has unique-key $k2; $k2 -67; $road3 isa road, has unique-key $k3; $k3 -68; $road4 isa road, has unique-key $k4; $k4 -268;
+      $road5 isa road, has unique-key $k5; $k5 -69; $road6 isa road, has unique-key $k6; $k6 -70; $road7 isa road, has unique-key $k7; $k7 -270; $road8 isa road, has unique-key $k8; $k8 -71;
+      $road9 isa road, has unique-key $k9; $k9 -72; $road10 isa road, has unique-key $k10; $k10 -73; $road11 isa road, has unique-key $k11; $k11 -74; $road12 isa road, has unique-key $k12; $k12 -75;
+      $road13 isa road, has unique-key $k13; $k13 -76; $road14 isa road, has unique-key $k14; $k14 -77; $road15 isa road, has unique-key $k15; $k15 -78; $road16 isa road, has unique-key $k16; $k16 -79;
+      $road17 isa road, has unique-key $k17; $k17 -80; $road18 isa road, has unique-key $k18; $k18 -81; $road19 isa road, has unique-key $k19; $k19 -82; $road20 isa road, has unique-key $k20; $k20 -83;
+      $road21 isa road, has unique-key $k21; $k21 -84; $road22 isa road, has unique-key $k22; $k22 -85; $road23 isa road, has unique-key $k23; $k23 -86; $road24 isa road, has unique-key $k24; $k24 -87;
+      $road25 isa road, has unique-key $k25; $k25 -88; $road26 isa road, has unique-key $k26; $k26 -89; $road27 isa road, has unique-key $k27; $k27 -90; $road28 isa road, has unique-key $k28; $k28 -91;
+      $road29 isa road, has unique-key $k29; $k29 -92; $road30 isa road, has unique-key $k30; $k30 -93; $road31 isa road, has unique-key $k31; $k31 -94; $road32 isa road, has unique-key $k32; $k32 -95;
+      $road33 isa road, has unique-key $k33; $k33 -96; $road34 isa road, has unique-key $k34; $k34 -97; $road35 isa road, has unique-key $k35; $k35 -98; $road36 isa road, has unique-key $k36; $k36 -99;
+      $road37 isa road, has unique-key $k37; $k37 -100; $road38 isa road, has unique-key $k38; $k38 -101; $road39 isa road, has unique-key $k39; $k39 -102; $road40 isa road, has unique-key $k40; $k40 -103;
+      $road41 isa road, has unique-key $k41; $k41 -104; $road42 isa road, has unique-key $k42; $k42 -105; $road43 isa road, has unique-key $k43; $k43 -106; $road44 isa road, has unique-key $k44; $k44 -107;
+      $road45 isa road, has unique-key $k45; $k45 -108; $road46 isa road, has unique-key $k46; $k46 -109; $road47 isa road, has unique-key $k47; $k47 -110; $road48 isa road, has unique-key $k48; $k48 -111;
+      $road49 isa road, has unique-key $k49; $k49 -112; $road50 isa road, has unique-key $k50; $k50 -113; $road51 isa road, has unique-key $k51; $k51 -114; $road52 isa road, has unique-key $k52; $k52 -115;
+      $road53 isa road, has unique-key $k53; $k53 -116; $road54 isa road, has unique-key $k54; $k54 -117; $road55 isa road, has unique-key $k55; $k55 -118; $road56 isa road, has unique-key $k56; $k56 -119;
+      $road57 isa road, has unique-key $k57; $k57 -120; $road58 isa road, has unique-key $k58; $k58 -121; $road59 isa road, has unique-key $k59; $k59 -122; $road60 isa road, has unique-key $k60; $k60 -123;
+      $road61 isa road, has unique-key $k61; $k61 -124; $road62 isa road, has unique-key $k62; $k62 -125; $road63 isa road, has unique-key $k63; $k63 -126; $road64 isa road, has unique-key $k64; $k64 -127;"
 
   # insert 12 explicit concepts including two relationships, four entities and six attributes,
   # plus six implicit attribute relationships
   - "insert
-      $intersection1 (endpoint: $r1, endpoint: $r2, endpoint: $r3) isa intersection, has region-code $rc via $imp1;
-      $rc -1000;
-      $r1 isa road, has name $n1 via $imp2; $n1 \"Street\";
-      $r2 isa road, has name $n2 via $imp3; $n2 \"Avenue\";
-      $r3 isa road, has name $n3 via $imp4; $n3 \"Boulevard\";
-      $intersection2 (endpoint: $r1, endpoint: $r4) isa intersection, has region-code $rc2 via $imp5;
-      $rc2 -2000;
-      $r4 isa road, has name $n4 via $imp6; $n4 \"Alice\";"
+      $intersection1 (endpoint: $r1, endpoint: $r2, endpoint: $r3) isa intersection, has unique-key $k1, has region-code $rc via $imp1; $k1 -128;
+      $imp1 has unique-key $k2; $k2 -129;
+      $rc -1000; $rc has unique-key $k3; $k3 -130;
+      $r1 isa road, has unique-key $k4, has name $n1 via $imp2; $k4 -131 ;$n1 \"Street\"; $n1 has unique-key $k5; $k5 -132; $imp2 has unique-key $k6; $k6 -133;
+      $r2 isa road, has unique-key $k7, has name $n2 via $imp3; $k7 -134; $n2 \"Avenue\"; $n2 has unique-key $k107; $k107 -135; $imp3 has unique-key $k8; $k8 -136;
+      $r3 isa road, has unique-key $k9, has name $n3 via $imp4; $k9 -137; $n3 \"Boulevard\"; $n3 has unique-key $k10; $k10 -138; $imp4 has unique-key $k11; $k11 -139;
+      $intersection2 (endpoint: $r1, endpoint: $r4) isa intersection, has region-code $rc2 via $imp5, has unique-key $k12; $k12 -140;
+      $imp5 has unique-key $k13; $k13 -141;
+      $rc2 -2000; $rc2 has unique-key $k14; $k14 -142;
+      $r4 isa road, has unique-key $k15, has name $n4 via $imp6; $k15 -143; $n4 \"Alice\"; $n4 has unique-key $k16; $k16 -144; $imp6 has unique-key $k17; $k17 -145;"

@@ -22,7 +22,9 @@ import grakn.benchmark.generator.probdensity.FixedConstant;
 import grakn.benchmark.generator.probdensity.FixedDiscreteGaussian;
 import grakn.benchmark.generator.probdensity.ScalingBoundedZipf;
 import grakn.benchmark.generator.probdensity.ScalingDiscreteGaussian;
-import grakn.benchmark.generator.provider.concept.ConceptIdStorageProvider;
+import grakn.benchmark.generator.provider.key.ConceptKeyProvider;
+import grakn.benchmark.generator.provider.key.ConceptKeyStorageProvider;
+import grakn.benchmark.generator.provider.key.CountingKeyProvider;
 import grakn.benchmark.generator.provider.value.RandomStringProvider;
 import grakn.benchmark.generator.storage.ConceptStorage;
 import grakn.benchmark.generator.strategy.AttributeStrategy;
@@ -57,10 +59,11 @@ public class SocialNetworkDefinition implements DataGeneratorDefinition {
         this.relationshipStrategies = new WeightedPicker<>(random);
         this.attributeStrategies = new WeightedPicker<>(random);
 
-        buildEntityStrategies();
-        buildAttributeStrategies();
-        buildExplicitRelationshipStrategies();
-        buildImplicitRelationshipStrategies();
+        CountingKeyProvider globalKeyProvider = new CountingKeyProvider(0);
+        buildEntityStrategies(globalKeyProvider);
+        buildAttributeStrategies(globalKeyProvider);
+        buildExplicitRelationshipStrategies(globalKeyProvider);
+        buildImplicitRelationshipStrategies(globalKeyProvider);
 
         this.metaTypeStrategies = new WeightedPicker<>(random);
         this.metaTypeStrategies.add(1.0, entityStrategies);
@@ -68,26 +71,28 @@ public class SocialNetworkDefinition implements DataGeneratorDefinition {
         this.metaTypeStrategies.add(1.0, attributeStrategies);
     }
 
-    private void buildEntityStrategies() {
+    private void buildEntityStrategies(ConceptKeyProvider globalKeyProvider) {
 
         this.entityStrategies.add(
                 1.0,
                 new EntityStrategy(
                         "person",
-                        new FixedDiscreteGaussian(this.random, 25, 10))
+                        new FixedDiscreteGaussian(this.random, 25, 10),
+                        globalKeyProvider)
         );
 
         this.entityStrategies.add(
                 1.0,
                 new EntityStrategy(
                         "page",
-                        new FixedDiscreteGaussian(this.random, 5, 1)
+                        new FixedDiscreteGaussian(this.random, 5, 1),
+                        globalKeyProvider
                 )
         );
 
     }
 
-    private void buildAttributeStrategies() {
+    private void buildAttributeStrategies(ConceptKeyProvider globalKeyProvider) {
         RandomStringProvider nameStream = new RandomStringProvider(random, 6);
 
         this.attributeStrategies.add(
@@ -95,18 +100,19 @@ public class SocialNetworkDefinition implements DataGeneratorDefinition {
                 new AttributeStrategy<>(
                         "name",
                         new FixedDiscreteGaussian(this.random, 18, 3),
+                        globalKeyProvider,
                         nameStream
                 )
         );
     }
 
-    private void  buildExplicitRelationshipStrategies() {
+    private void  buildExplicitRelationshipStrategies(ConceptKeyProvider globalKeyProvider) {
 
         // friendship
         RolePlayerTypeStrategy friendRoleFiller = new RolePlayerTypeStrategy(
                 "friend",
                 new FixedConstant(2),
-                new ConceptIdStorageProvider(
+                new ConceptKeyStorageProvider(
                         random,
                         this.storage,
                         "person")
@@ -116,7 +122,8 @@ public class SocialNetworkDefinition implements DataGeneratorDefinition {
                 new RelationStrategy(
                         "friendship",
                         new ScalingBoundedZipf(this.random, () -> storage.getGraphScale(), 0.5, 2.3),
-                        new HashSet<>(Arrays.asList(friendRoleFiller))
+                        globalKeyProvider,
+                        Arrays.asList(friendRoleFiller)
                 )
         );
 
@@ -125,42 +132,44 @@ public class SocialNetworkDefinition implements DataGeneratorDefinition {
         RolePlayerTypeStrategy likedPageRole = new RolePlayerTypeStrategy(
                 "liked",
                 new FixedConstant(1),
-                new ConceptIdStorageProvider(random, storage, "page")
+                new ConceptKeyStorageProvider(random, storage, "page")
         );
         RolePlayerTypeStrategy likerPersonRole = new RolePlayerTypeStrategy(
                 "liker",
                 new FixedConstant(1),
-                new ConceptIdStorageProvider(random, storage, "person")
+                new ConceptKeyStorageProvider(random, storage, "person")
         );
         this.relationshipStrategies.add(
                 1.0,
                 new RelationStrategy(
                         "likes",
                         new ScalingDiscreteGaussian(random, () -> storage.getGraphScale(), 0.05, 0.001),
-                        new HashSet<>(Arrays.asList(likedPageRole, likerPersonRole))
+                        globalKeyProvider,
+                        Arrays.asList(likedPageRole, likerPersonRole)
                 )
         );
 
     }
 
-    private void buildImplicitRelationshipStrategies() {
+    private void buildImplicitRelationshipStrategies(ConceptKeyProvider globalKeyProvider) {
         // @has-name
         RolePlayerTypeStrategy nameOwner = new RolePlayerTypeStrategy(
                 "@has-name-owner",
                 new FixedConstant(1),
-                new ConceptIdStorageProvider(random, storage, "person")
+                new ConceptKeyStorageProvider(random, storage, "person")
         );
         RolePlayerTypeStrategy nameValue = new RolePlayerTypeStrategy(
                 "@has-name-value",
                 new FixedConstant(1),
-                new ConceptIdStorageProvider(random, storage, "name")
+                new ConceptKeyStorageProvider(random, storage, "name")
         );
         this.relationshipStrategies.add(
                 1.0,
                 new RelationStrategy(
                         "@has-name",
                         new ScalingDiscreteGaussian(random, () -> storage.getGraphScale(), 0.1, 0.03),
-                        new HashSet<>(Arrays.asList(nameOwner, nameValue))
+                        globalKeyProvider,
+                        Arrays.asList(nameOwner, nameValue)
                 )
         );
     }

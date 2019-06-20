@@ -19,8 +19,9 @@
 package grakn.benchmark.generator.strategy;
 
 import grakn.benchmark.generator.probdensity.ProbabilityDensityFunction;
+import grakn.benchmark.generator.provider.key.ConceptKeyProvider;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * A container for the three things required for how to generate a new batch of relationships:
@@ -30,14 +31,14 @@ import java.util.Set;
  */
 public class RelationStrategy extends TypeStrategy {
 
-    private Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies;
+    private List<RolePlayerTypeStrategy> rolePlayerTypeStrategies;
 
-    public <P extends ProbabilityDensityFunction> RelationStrategy(String typeLabel, P numInstancesPDF, Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies) {
-        super(typeLabel, numInstancesPDF);
+    public <P extends ProbabilityDensityFunction> RelationStrategy(String typeLabel, P numInstancesPDF, ConceptKeyProvider relationKeyProvider, List<RolePlayerTypeStrategy> rolePlayerTypeStrategies) {
+        super(typeLabel, numInstancesPDF, relationKeyProvider);
         this.rolePlayerTypeStrategies = rolePlayerTypeStrategies;
     }
 
-    public Set<RolePlayerTypeStrategy> getRolePlayerTypeStrategies() {
+    public List<RolePlayerTypeStrategy> getRolePlayerTypeStrategies() {
         return rolePlayerTypeStrategies;
     }
 }

@@ -16,14 +16,12 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.generator.provider.concept;
+package grakn.benchmark.generator.provider.key;
 
 import grakn.benchmark.generator.probdensity.FixedConstant;
-import grakn.core.concept.ConceptId;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -40,16 +38,16 @@ public class CentralConceptProviderTest {
     public void whenSingleCentralObject_objectIsRepeated() {
         FixedConstant one = new FixedConstant(1);
 
-        List<ConceptId> conceptIds = IntStream.range(0, 10).mapToObj(i -> ConceptId.of(Integer.toString(i))).collect(Collectors.toList());
-        ConceptIdProvider conceptIdProvider = mock(ConceptIdProvider.class);
-        when(conceptIdProvider.hasNext()).thenReturn(true);
-        when(conceptIdProvider.hasNextN(1)).thenReturn(true);
-        when(conceptIdProvider.next()).thenReturn(conceptIds.get(0), conceptIds.get(1), conceptIds.get(2), conceptIds.get(3), conceptIds.get(4));
+        List<Long> conceptKeys = IntStream.range(0, 10).mapToLong(e->e).boxed().collect(Collectors.toList());
+        ConceptKeyProvider conceptKeyProvider = mock(ConceptKeyProvider.class);
+        when(conceptKeyProvider.hasNext()).thenReturn(true);
+        when(conceptKeyProvider.hasNextN(1)).thenReturn(true);
+        when(conceptKeyProvider.next()).thenReturn(conceptKeys.get(0), conceptKeys.get(1), conceptKeys.get(2), conceptKeys.get(3), conceptKeys.get(4));
 
-        CentralConceptProvider centralConceptProvider = new CentralConceptProvider(one, conceptIdProvider);
+        CentralConceptKeyProvider centralConceptKeyProvider = new CentralConceptKeyProvider(one, conceptKeyProvider);
 
         for (int i = 0; i < 5; i++) {
-            assertEquals(ConceptId.of(Integer.toString(0)), centralConceptProvider.next());
+            assertEquals(0L, (long)centralConceptKeyProvider.next());
         }
     }
 
@@ -57,18 +55,18 @@ public class CentralConceptProviderTest {
     public void whenMultipleCentralObject_objectsCyclicallyRepeated() {
         FixedConstant three = new FixedConstant(3);
 
-        List<ConceptId> conceptIds = IntStream.range(0, 10).mapToObj(i -> ConceptId.of(Integer.toString(i))).collect(Collectors.toList());
-        ConceptIdProvider conceptIdProvider = mock(ConceptIdProvider.class);
-        when(conceptIdProvider.hasNext()).thenReturn(true);
-        when(conceptIdProvider.hasNextN(3)).thenReturn(true);
-        when(conceptIdProvider.next()).thenReturn(conceptIds.get(0), conceptIds.get(1), conceptIds.get(2), conceptIds.get(3), conceptIds.get(4));
+        List<Long> conceptKeys = IntStream.range(0, 10).mapToLong(e->e).boxed().collect(Collectors.toList());
+        ConceptKeyProvider conceptKeyProvider = mock(ConceptKeyProvider.class);
+        when(conceptKeyProvider.hasNext()).thenReturn(true);
+        when(conceptKeyProvider.hasNextN(3)).thenReturn(true);
+        when(conceptKeyProvider.next()).thenReturn(conceptKeys.get(0), conceptKeys.get(1), conceptKeys.get(2), conceptKeys.get(3), conceptKeys.get(4));
 
 
-        CentralConceptProvider centralConceptProvider = new CentralConceptProvider(three, conceptIdProvider);
+        CentralConceptKeyProvider centralConceptKeyProvider = new CentralConceptKeyProvider(three, conceptKeyProvider);
 
-        List<ConceptId> expectedIds = Arrays.asList(0, 1, 2, 0, 1).stream().map(i -> ConceptId.of(Integer.toString(i))).collect(Collectors.toList());
-        for (ConceptId expectedId : expectedIds) {
-            assertEquals(expectedId, centralConceptProvider.next());
+        List<Long> expectedKeys = Arrays.asList(0L, 1L, 2L, 0L, 1L);
+        for (Long expectedKey : expectedKeys) {
+            assertEquals(expectedKey, centralConceptKeyProvider.next());
         }
     }
 
@@ -77,22 +75,22 @@ public class CentralConceptProviderTest {
 
         FixedConstant three = new FixedConstant(3);
 
-        List<ConceptId> conceptIds = IntStream.range(0, 10).mapToObj(i -> ConceptId.of(Integer.toString(i))).collect(Collectors.toList());
-        ConceptIdProvider conceptIdProvider = mock(ConceptIdProvider.class);
-        when(conceptIdProvider.hasNext()).thenReturn(true);
-        when(conceptIdProvider.hasNextN(3)).thenReturn(true);
-        when(conceptIdProvider.next()).thenReturn(conceptIds.get(0), conceptIds.get(1), conceptIds.get(2), conceptIds.get(3), conceptIds.get(4));
+        List<Long> conceptKeys = IntStream.range(0, 10).mapToLong(e->e).boxed().collect(Collectors.toList());
+        ConceptKeyProvider conceptKeyProvider = mock(ConceptKeyProvider.class);
+        when(conceptKeyProvider.hasNext()).thenReturn(true);
+        when(conceptKeyProvider.hasNextN(3)).thenReturn(true);
+        when(conceptKeyProvider.next()).thenReturn(conceptKeys.get(0), conceptKeys.get(1), conceptKeys.get(2), conceptKeys.get(3), conceptKeys.get(4));
 
-        CentralConceptProvider centralConceptProvider = new CentralConceptProvider(three, conceptIdProvider);
+        CentralConceptKeyProvider centralConceptKeyProvider = new CentralConceptKeyProvider(three, conceptKeyProvider);
 
-        List<ConceptId> expectedIds = Arrays.asList(0, 1, 2, 0, 1).stream().map(i -> ConceptId.of(Integer.toString(i))).collect(Collectors.toList());
-        for (ConceptId expectedId : expectedIds) {
-            assertEquals(expectedId, centralConceptProvider.next());
+        List<Long> expectedKeys = Arrays.asList(0L, 1L, 2L, 0L, 1L);
+        for (Long expectedKey : expectedKeys) {
+            assertEquals(expectedKey, centralConceptKeyProvider.next());
         }
 
-        expectedIds = Arrays.asList(2, 0, 1, 2, 0).stream().map(i -> ConceptId.of(Integer.toString(i))).collect(Collectors.toList());
-        for (ConceptId expectedId : expectedIds) {
-            assertEquals(expectedId, centralConceptProvider.next());
+        expectedKeys = Arrays.asList(2L, 0L, 1L, 2L, 0L);
+        for (Long expectedKey : expectedKeys) {
+            assertEquals(expectedKey, centralConceptKeyProvider.next());
         }
     }
 
@@ -102,50 +100,50 @@ public class CentralConceptProviderTest {
 
         FixedConstant three = new FixedConstant(3);
 
-        List<ConceptId> conceptIds = IntStream.range(0, 10).mapToObj(i -> ConceptId.of(Integer.toString(i))).collect(Collectors.toList());
-        ConceptIdProvider conceptIdProvider = mock(ConceptIdProvider.class);
-        when(conceptIdProvider.hasNext()).thenReturn(true);
-        when(conceptIdProvider.hasNextN(3)).thenReturn(true);
-        when(conceptIdProvider.next()).thenReturn(conceptIds.get(0), conceptIds.get(1), conceptIds.get(2), conceptIds.get(3), conceptIds.get(4), conceptIds.get(5));
-        CentralConceptProvider centralConceptProvider = new CentralConceptProvider(three, conceptIdProvider);
+        List<Long> conceptKeys = IntStream.range(0, 10).mapToLong(e->e).boxed().collect(Collectors.toList());
+        ConceptKeyProvider conceptKeyProvider = mock(ConceptKeyProvider.class);
+        when(conceptKeyProvider.hasNext()).thenReturn(true);
+        when(conceptKeyProvider.hasNextN(3)).thenReturn(true);
+        when(conceptKeyProvider.next()).thenReturn(conceptKeys.get(0), conceptKeys.get(1), conceptKeys.get(2), conceptKeys.get(3), conceptKeys.get(4), conceptKeys.get(5));
+        CentralConceptKeyProvider centralConceptKeyProvider = new CentralConceptKeyProvider(three, conceptKeyProvider);
 
-        List<ConceptId> expectedIds = Arrays.asList(0, 1, 2, 0, 1).stream().map(i -> ConceptId.of(Integer.toString(i))).collect(Collectors.toList());
-        for (ConceptId expectedInteger : expectedIds) {
-            assertEquals(expectedInteger, centralConceptProvider.next());
+        List<Long> expectedKeys = Arrays.asList(0L, 1L, 2L, 0L, 1L);
+        for (Long expectedKey : expectedKeys) {
+            assertEquals(expectedKey, centralConceptKeyProvider.next());
         }
 
-        centralConceptProvider.resetUniqueness();
+        centralConceptKeyProvider.resetUniqueness();
 
-        List<ConceptId> expectedIdsAfterReset = Arrays.asList(3, 4, 5, 3, 4).stream().map(i -> ConceptId.of(Integer.toString(i))).collect(Collectors.toList());
-        for (ConceptId expectedId : expectedIdsAfterReset) {
-            assertEquals(expectedId, centralConceptProvider.next());
+        List<Long> expectedKeysAfterReset = Arrays.asList(3L, 4L, 5L, 3L, 4L);
+        for (Long expectedKey : expectedKeysAfterReset) {
+            assertEquals(expectedKey, centralConceptKeyProvider.next());
         }
     }
 
     @Test
     public void whenCentralObjectIsNotEmpty_hasNextNTrue() {
         FixedConstant three = new FixedConstant(3);
-        List<ConceptId> conceptIds = IntStream.range(0, 10).mapToObj(i -> ConceptId.of(Integer.toString(i))).collect(Collectors.toList());
-        ConceptIdProvider conceptIdProvider = mock(ConceptIdProvider.class);
-        when(conceptIdProvider.hasNext()).thenReturn(true);
-        when(conceptIdProvider.hasNextN(3)).thenReturn(true);
-        when(conceptIdProvider.next()).thenReturn(conceptIds.get(0), conceptIds.get(1), conceptIds.get(2), conceptIds.get(3), conceptIds.get(4));
-        CentralConceptProvider centralConceptProvider = new CentralConceptProvider(three, conceptIdProvider);
-        assertTrue(centralConceptProvider.hasNextN(1));
-        assertTrue(centralConceptProvider.hasNextN(100));
+        List<Long> conceptKeys = IntStream.range(0, 10).mapToLong(e->e).boxed().collect(Collectors.toList());
+        ConceptKeyProvider conceptKeyProvider = mock(ConceptKeyProvider.class);
+        when(conceptKeyProvider.hasNext()).thenReturn(true);
+        when(conceptKeyProvider.hasNextN(3)).thenReturn(true);
+        when(conceptKeyProvider.next()).thenReturn(conceptKeys.get(0), conceptKeys.get(1), conceptKeys.get(2), conceptKeys.get(3), conceptKeys.get(4));
+        CentralConceptKeyProvider centralConceptKeyProvider = new CentralConceptKeyProvider(three, conceptKeyProvider);
+        assertTrue(centralConceptKeyProvider.hasNextN(1));
+        assertTrue(centralConceptKeyProvider.hasNextN(100));
     }
 
     @Test
     public void whenCentralObjectIsEmpty_hasNextNFalse() {
         FixedConstant three = new FixedConstant(3);
-        List<ConceptId> conceptIds = IntStream.range(0, 10).mapToObj(i -> ConceptId.of(Integer.toString(i))).collect(Collectors.toList());
-        ConceptIdProvider conceptIdProvider = mock(ConceptIdProvider.class);
-        when(conceptIdProvider.hasNext()).thenReturn(false);
-        when(conceptIdProvider.hasNextN(3)).thenReturn(false);
-        when(conceptIdProvider.next()).thenReturn(conceptIds.get(0), conceptIds.get(1), conceptIds.get(2), conceptIds.get(3), conceptIds.get(4));
+        List<Long> conceptKeys = IntStream.range(0, 10).mapToLong(e->e).boxed().collect(Collectors.toList());
+        ConceptKeyProvider conceptKeyProvider = mock(ConceptKeyProvider.class);
+        when(conceptKeyProvider.hasNext()).thenReturn(false);
+        when(conceptKeyProvider.hasNextN(3)).thenReturn(false);
+        when(conceptKeyProvider.next()).thenReturn(conceptKeys.get(0), conceptKeys.get(1), conceptKeys.get(2), conceptKeys.get(3), conceptKeys.get(4));
 
-        CentralConceptProvider centralConceptProvider = new CentralConceptProvider(three, conceptIdProvider);
-        assertFalse(centralConceptProvider.hasNextN(1));
-        assertFalse(centralConceptProvider.hasNextN(100));
+        CentralConceptKeyProvider centralConceptKeyProvider = new CentralConceptKeyProvider(three, conceptKeyProvider);
+        assertFalse(centralConceptKeyProvider.hasNextN(1));
+        assertFalse(centralConceptKeyProvider.hasNextN(100));
     }
 }

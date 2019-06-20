@@ -39,7 +39,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -60,8 +59,8 @@ public class IgniteConceptStorageTest {
 
     private IgniteConceptStorage store;
     private HashSet<String> typeLabelsSet;
-    private ArrayList<ConceptId> conceptIds;
-    private ArrayList<Concept> conceptMocks;
+    private HashMap<ConceptId, Long> conceptIdKeys;
+    private HashMap<Concept, Long> conceptMockKeys;
     private String entityTypeLabel;
     HashSet<String> entityTypes;
 
@@ -92,31 +91,33 @@ public class IgniteConceptStorageTest {
         entityTypes = new HashSet<>();
         entityTypes.add("person");
 
-        conceptIds = new ArrayList<>();
-        conceptIds.add(ConceptId.of("V123456"));
-        conceptIds.add(ConceptId.of("V298345"));
-        conceptIds.add(ConceptId.of("V380325"));
-        conceptIds.add(ConceptId.of("V4"));
-        conceptIds.add(ConceptId.of("V5"));
-        conceptIds.add(ConceptId.of("V6"));
-        conceptIds.add(ConceptId.of("V7"));
+        conceptIdKeys = new HashMap<>();
+        conceptIdKeys.put(ConceptId.of("V123456"), 1L);
+        conceptIdKeys.put(ConceptId.of("V298345"), 2L);
+        conceptIdKeys.put(ConceptId.of("V380325"), 3L);
+        conceptIdKeys.put(ConceptId.of("V4"), 4L);
+        conceptIdKeys.put(ConceptId.of("V5"), 5L);
+        conceptIdKeys.put(ConceptId.of("V6"), 6L);
+        conceptIdKeys.put(ConceptId.of("V7"), 7L);
 
-        conceptMocks = new ArrayList<>();
+        conceptMockKeys = new HashMap<>();
 
-        Iterator<ConceptId> idIterator = conceptIds.iterator();
+        Iterator<ConceptId> idIterator = conceptIdKeys.keySet().iterator();
 
         while (idIterator.hasNext()) {
+            ConceptId conceptId = idIterator.next();
+            Long conceptKey = conceptIdKeys.get(conceptId);
 
             // Concept
             Concept conceptMock = mock(Concept.class);
-            this.conceptMocks.add(conceptMock);
+            conceptMockKeys.put(conceptMock, conceptKey);
 
             // Thing
             Thing thingMock = mock(Thing.class);
             when(conceptMock.asThing()).thenReturn(thingMock);
 
             // ConceptID
-            ConceptId conceptId = idIterator.next();
+
             when(thingMock.id()).thenReturn(conceptId);
 
             // Concept Type
@@ -139,11 +140,11 @@ public class IgniteConceptStorageTest {
         attributeTypes.put(attrTypeLabel, AttributeType.DataType.LONG);
 
         Concept conceptMock = mock(Concept.class);
-        conceptMocks.add(conceptMock);
+        conceptMockKeys.put(conceptMock, 8L);
         Thing thingMock = mock(Thing.class);
         when(conceptMock.asThing()).thenReturn(thingMock); // Thing
         when(thingMock.id()).thenReturn(ConceptId.of("V8")); // Concept Id
-        conceptIds.add(thingMock.id());
+        conceptIdKeys.put(thingMock.id(), 8L);
         Type conceptTypeMock = mock(Type.class);
         when(thingMock.type()).thenReturn(conceptTypeMock); // Concept Type
         when(conceptTypeMock.label()).thenReturn(Label.of(attrTypeLabel)); // Type label
@@ -161,11 +162,11 @@ public class IgniteConceptStorageTest {
         relationshipTypes.add(relTypeLabel);
 
         Concept relConceptMock = mock(Concept.class);
-        conceptMocks.add(relConceptMock);
+        conceptMockKeys.put(relConceptMock, 9L);
         Thing relThingMock = mock(Thing.class);
         when(relConceptMock.asThing()).thenReturn(relThingMock); // Thing
         when(relThingMock.id()).thenReturn(ConceptId.of("V9")); // Concept Id
-        conceptIds.add(relThingMock.id());
+        conceptIdKeys.put(relThingMock.id(), 9L);
         Type relConceptTypeMock = mock(Type.class);
         when(relThingMock.type()).thenReturn(relConceptTypeMock); // Concept Type
         when(relConceptTypeMock.label()).thenReturn(Label.of("friendship")); // Type label
@@ -174,21 +175,21 @@ public class IgniteConceptStorageTest {
         when(schemaLabels.entityLabels()).thenReturn(entityTypes);
         when(schemaLabels.relationLabels()).thenReturn(relationshipTypes);
         // create new ignite store
-        this.store = new IgniteConceptStorage(schemaLabels);
+        store = new IgniteConceptStorage(schemaLabels);
     }
 
     @Test
     public void whenConceptIdsAreAdded_conceptIdsAreInTheDB() throws SQLException {
         // Add all of the elements
-        for (Concept conceptMock : this.conceptMocks) {
-            this.store.addConcept(conceptMock);
+        for (Concept conceptMock : conceptMockKeys.keySet()) {
+            store.addConcept(conceptMock, conceptMockKeys.get(conceptMock));
         }
 
         int counter = 0;
         // Check objects were added to the db
         Connection conn = DriverManager.getConnection("jdbc:ignite:thin://127.0.0.1/");
         try (Statement stmt = conn.createStatement()) {
-            try (ResultSet rs = stmt.executeQuery("SELECT * FROM " + this.entityTypeLabel + "_entity")) {
+            try (ResultSet rs = stmt.executeQuery("SELECT * FROM " + entityTypeLabel + "_entity")) {
                 while (rs.next()) {
                     counter++;
                 }
@@ -200,157 +201,166 @@ public class IgniteConceptStorageTest {
     }
 
     @Test
-    public void whenConceptIsAdded_conceptIdCanBeRetrieved() {
-        int index = 0;
-        this.store.addConcept(this.conceptMocks.get(index));
-        ConceptId personConceptId = this.store.getConceptId(this.entityTypeLabel, index);
-        System.out.println("Found id: " + personConceptId.toString());
-        assertEquals(personConceptId, this.conceptIds.get(index));
+    public void whenConceptIsAdded_conceptKeyCanBeRetrieved() {
+        Concept aConcept = conceptMockKeys.keySet().stream().filter(concept -> concept.asThing().type().label().toString().equals(entityTypeLabel)).findFirst().get();
+        store.addConcept(aConcept, conceptMockKeys.get(aConcept));
+        Long aConceptKey = store.getConceptKey(entityTypeLabel, 0); // get 0th offset
+        System.out.println("Found key: " + aConceptKey.toString());
+        assertEquals(aConceptKey, conceptMockKeys.get(aConcept));
     }
 
     @Test
-    public void whenGettingIdWithOffset_correctIdIsReturned() {
+    public void whenGettingIdWithOffset_correctKeyIsReturned() {
         int index = 4;
         // Add all of the elements
 
-        for (Concept conceptMock : this.conceptMocks) {
-            this.store.addConcept(conceptMock);
+        for (Concept conceptMock : conceptMockKeys.keySet()) {
+            store.addConcept(conceptMock, conceptMockKeys.get(conceptMock));
         }
 
-        ConceptId personConceptId = this.store.getConceptId(this.entityTypeLabel, index);
-        System.out.println("Found id: " + personConceptId.toString());
-        assertEquals(this.conceptIds.get(index), personConceptId);
+        long personConceptKey = store.getConceptKey(entityTypeLabel, index);
+        System.out.println("Found key: " + personConceptKey);
+        assertEquals(5L, personConceptKey);
     }
 
     @Test
     public void whenCountingTypeInstances_resultIsCorrect() {
-        for (Concept conceptMock : this.conceptMocks) {
-            this.store.addConcept(conceptMock);
+        for (Concept conceptMock : conceptMockKeys.keySet()) {
+            store.addConcept(conceptMock, conceptMockKeys.get(conceptMock));
         }
 
-        int count = this.store.getConceptCount(this.entityTypeLabel);
+        int count = store.getConceptCount(entityTypeLabel);
         assertEquals(7, count);
     }
 
     @Test
     public void whenAllButOnePlayingRole_orphanEntitiesCorrect() {
         // add all concepts to store
-        for (Concept conceptMock : this.conceptMocks) {
-            this.store.addConcept(conceptMock);
+        for (Concept conceptMock : conceptMockKeys.keySet()) {
+            store.addConcept(conceptMock, conceptMockKeys.get(conceptMock));
         }
 
         // add 6 of 7 entities as role players too
-        for (int i = 0; i < 6; i++) {
-            Concept conceptMock = this.conceptMocks.get(i);
-            Thing thing = conceptMock.asThing();
-            this.store.addRolePlayer(thing.id().toString(), thing.type().label().toString(), relTypeLabel, "somerole");
-        }
+        Iterator<Concept> iterator = conceptMockKeys.keySet().iterator();
+        conceptMockKeys.keySet().stream()
+                .filter(concept -> concept.asThing().type().label().toString().equals(entityTypeLabel))
+                .limit(6)
+                .forEach(conceptMock -> {
+                    Thing thing = conceptMock.asThing();
+                    store.addRolePlayerByKey(conceptMockKeys.get(conceptMock), thing.type().label().toString(), relTypeLabel, "somerole");
+                });
 
-        int orphanEntities = this.store.totalOrphanEntities();
+        int orphanEntities = store.totalOrphanEntities();
         assertEquals(1, orphanEntities);
     }
 
     @Test
     public void whenAllButOnePlayingRole_orphanAttributesCorrect() {
         // add all concepts to store
-        for (Concept conceptMock : this.conceptMocks) {
-            this.store.addConcept(conceptMock);
+        for (Concept conceptMock : conceptMockKeys.keySet()) {
+            store.addConcept(conceptMock, conceptMockKeys.get(conceptMock));
         }
 
-        // ad all but the attribute and relationship
-        for (int i = 0; i < conceptMocks.size() - 2; i++) {
-            Concept conceptMock = this.conceptMocks.get(i);
+        for (Concept conceptMock : conceptMockKeys.keySet()) {
+            String conceptType = conceptMock.asThing().type().label().toString();
+            if (relationshipTypes.contains(conceptType) || attributeTypes.containsKey(conceptType)) {
+                // add all but the attribute and relationship, so skip these
+                continue;
+            }
             Thing thing = conceptMock.asThing();
-            this.store.addRolePlayer(thing.id().toString(), thing.type().label().toString(), relTypeLabel, "somerole");
+            store.addRolePlayerByKey(conceptMockKeys.get(conceptMock), thing.type().label().toString(), relTypeLabel, "somerole");
         }
 
-        int orphanAttributes = this.store.totalOrphanAttributes();
+        int orphanAttributes = store.totalOrphanAttributes();
         assertEquals(1, orphanAttributes);
     }
 
     @Test
     public void whenRelationshipsDoNotOverlap_overlapEmpty() {
         // add all concepts to store
-        for (Concept conceptMock : this.conceptMocks) {
-            this.store.addConcept(conceptMock);
+        for (Concept conceptMock : conceptMockKeys.keySet()) {
+            store.addConcept(conceptMock, conceptMockKeys.get(conceptMock));
         }
 
-        // add all but the relationship (last element)
-        for (int i = 0; i < conceptMocks.size() - 1; i++) {
-            Concept conceptMock = this.conceptMocks.get(i);
+        for (Concept conceptMock : conceptMockKeys.keySet()) {
+            if (relationshipTypes.contains(conceptMock.asThing().type().label().toString())) {
+                // add all but the relation concept, so skip these
+                continue;
+            }
             Thing thing = conceptMock.asThing();
-            this.store.addRolePlayer(thing.id().toString(), thing.type().label().toString(), relTypeLabel, "somerole");
+            store.addRolePlayerByKey(conceptMockKeys.get(conceptMock), thing.type().label().toString(), relTypeLabel, "somerole");
         }
 
-        int relationshipDoubleCounts = this.store.totalRelationshipsRolePlayersOverlap();
+        int relationshipDoubleCounts = store.totalRelationshipsRolePlayersOverlap();
         assertEquals(0, relationshipDoubleCounts);
     }
 
     @Test
     public void whenRelationshipPlaysRole_overlapOne() {
         // add all concepts to store
-        for (Concept conceptMock : this.conceptMocks) {
-            this.store.addConcept(conceptMock);
+        for (Concept conceptMock : conceptMockKeys.keySet()) {
+            store.addConcept(conceptMock, conceptMockKeys.get(conceptMock));
         }
 
         // add all as role players
-        for (int i = 0; i < conceptMocks.size(); i++) {
-            Concept conceptMock = this.conceptMocks.get(i);
+        Iterator<Concept> iterator = conceptMockKeys.keySet().iterator();
+        for (Concept conceptMock : conceptMockKeys.keySet()) {
             Thing thing = conceptMock.asThing();
-            this.store.addRolePlayer(thing.id().toString(), thing.type().label().toString(), relTypeLabel, "somerole");
+            store.addRolePlayerByKey(conceptMockKeys.get(conceptMock), thing.type().label().toString(), relTypeLabel, "somerole");
         }
 
-        int relationshipDoubleCounts = this.store.totalRelationshipsRolePlayersOverlap();
+        int relationshipDoubleCounts = store.totalRelationshipsRolePlayersOverlap();
         assertEquals(1, relationshipDoubleCounts);
     }
 
     @Test
     public void whenEntitiesDoNotPlayRoles_allEntitiesReturned() {
-        for (Concept conceptMock : this.conceptMocks) {
-            this.store.addConcept(conceptMock);
+        for (Concept conceptMock : conceptMockKeys.keySet()) {
+            store.addConcept(conceptMock, conceptMockKeys.get(conceptMock));
         }
         String typeLabel = "person"; // we have 7 mocked people
-        List<ConceptId> peopleNotPlayingRoles = this.store.getIdsNotPlayingRole(typeLabel, relTypeLabel, "aRole");
+        List<Long> peopleNotPlayingRoles = store.getKeysNotPlayingRole(typeLabel, relTypeLabel, "aRole");
         assertEquals(7, peopleNotPlayingRoles.size());
 
     }
 
     @Test
     public void whenEntityPlaysSpecificRole_notReturnedWhenAskingForEntitiesNotPlayingRole() {
-        for (Concept conceptMock : this.conceptMocks) {
-            this.store.addConcept(conceptMock);
+        for (Concept conceptMock : conceptMockKeys.keySet()) {
+            store.addConcept(conceptMock, conceptMockKeys.get(conceptMock));
         }
-        Concept aPerson = this.conceptMocks.get(0);
+        Concept aPerson = conceptMockKeys.keySet().stream().filter(concept -> concept.asThing().type().label().toString().equals("person")).findFirst().get();
         String personTypeLabel = aPerson.asThing().type().label().toString(); // follow what's implemented in mocks
         String relationshipType = relationshipTypes.stream().findFirst().get();
         String role = "some-role"; // test the string safety conversion too by including -
 
-        this.store.addRolePlayer(aPerson.asThing().id().toString(), personTypeLabel, relationshipType, role);
+        store.addRolePlayerByKey(conceptMockKeys.get(aPerson), personTypeLabel, relationshipType, role);
 
-        List<ConceptId> entitiesNotPlayingRole = store.getIdsNotPlayingRole(personTypeLabel, relationshipType, role);
+        List<Long> entitiesNotPlayingRole = store.getKeysNotPlayingRole(personTypeLabel, relationshipType, role);
         assertEquals(6, entitiesNotPlayingRole.size());
     }
 
     @Test
     public void whenEntityPlaysSpecificTwoRoles_notReturnedWhenAskingForEntitiesNotPlayingEitherRole() {
-        for (Concept conceptMock : this.conceptMocks) {
-            this.store.addConcept(conceptMock);
+        for (Concept conceptMock : conceptMockKeys.keySet()) {
+            store.addConcept(conceptMock, conceptMockKeys.get(conceptMock));
         }
-        Concept aPerson = this.conceptMocks.get(0);
+        Concept aPerson = conceptMockKeys.keySet().stream().filter(concept -> concept.asThing().type().label().toString().equals("person")).findFirst().get();
         String personTypeLabel = aPerson.asThing().type().label().toString(); // follow what's implemented in mocks
         String relationshipType = relationshipTypes.stream().findFirst().get();
         String role1 = "some-role-1"; // test the string safety conversion too by including -
         String role2 = "some-role-2"; // test the string safety conversion too by including -
 
-        this.store.addRolePlayer(aPerson.asThing().id().toString(), personTypeLabel, relationshipType, role1);
-        this.store.addRolePlayer(aPerson.asThing().id().toString(), personTypeLabel, relationshipType, role2);
+        store.addRolePlayerByKey(conceptMockKeys.get(aPerson), personTypeLabel, relationshipType, role1);
+        store.addRolePlayerByKey(conceptMockKeys.get(aPerson), personTypeLabel, relationshipType, role2);
 
-        List<ConceptId> entitiesNotPlayingRole1 = store.getIdsNotPlayingRole(personTypeLabel, relationshipType, role1);
-        List<ConceptId> entitiesNotPlayingRole2 = store.getIdsNotPlayingRole(personTypeLabel, relationshipType, role2);
+        List<Long> entitiesNotPlayingRole1 = store.getKeysNotPlayingRole(personTypeLabel, relationshipType, role1);
+        List<Long> entitiesNotPlayingRole2 = store.getKeysNotPlayingRole(personTypeLabel, relationshipType, role2);
 
-        ConceptId[] correctEntities = this.conceptMocks.subList(1, 7).stream()
-                .map(concept -> concept.asThing().id())
-                .collect(Collectors.toList()).toArray(new ConceptId[]{});
+        Long[] correctEntities = conceptMockKeys.entrySet().stream()
+                .filter(entry -> entry.getKey().asThing().type().label().toString().equals("person") && !entry.getKey().asThing().id().equals(aPerson.asThing().id()))
+                .map(entry -> entry.getValue())
+                .collect(Collectors.toList()).toArray(new Long[]{});
 
         // assert matches in any order, casting to force hamcrest to use the right
         assertThat(entitiesNotPlayingRole1, containsInAnyOrder(correctEntities));
@@ -360,41 +370,40 @@ public class IgniteConceptStorageTest {
 
     @Test
     public void whenEntityPlaysRole_countIsCorrect() {
-        for (Concept conceptMock : this.conceptMocks) {
-            this.store.addConcept(conceptMock);
+        for (Concept conceptMock : conceptMockKeys.keySet()) {
+            store.addConcept(conceptMock, conceptMockKeys.get(conceptMock));
         }
-        Concept aPerson = this.conceptMocks.get(0);
+        Concept aPerson = conceptMockKeys.keySet().stream().filter(concept -> concept.asThing().type().label().toString().equals("person")).findFirst().get();
         String personTypeLabel = aPerson.asThing().type().label().toString(); // follow what's implemented in mocks
         String relationshipType = relationshipTypes.stream().findFirst().get();
         String role = "some-role"; // test the string safety conversion too by including -
 
-        this.store.addRolePlayer(aPerson.asThing().id().toString(), personTypeLabel, relationshipType, role);
+        store.addRolePlayerByKey(conceptMockKeys.get(aPerson), personTypeLabel, relationshipType, role);
 
-        int entitiesNotPlayingRole = this.store.numIdsNotPlayingRole(personTypeLabel, relationshipType, role);
+        int entitiesNotPlayingRole = store.numIdsNotPlayingRole(personTypeLabel, relationshipType, role);
         assertEquals(6, entitiesNotPlayingRole);
     }
 
     @Test
     public void whenAttributePlaysNoRole_orphanCountIsCorrect() {
-        for (Concept conceptMock : this.conceptMocks) {
-            this.store.addConcept(conceptMock);
+        for (Concept conceptMock : conceptMockKeys.keySet()) {
+            store.addConcept(conceptMock, conceptMockKeys.get(conceptMock));
         }
-        int orphanAttributes = this.store.totalOrphanAttributes();
+        int orphanAttributes = store.totalOrphanAttributes();
         assertEquals(1, orphanAttributes);
     }
 
     @Test
     public void whenAttributePlaysRole_orphanCountIsCorrect() {
-        for (Concept conceptMock : this.conceptMocks) {
-            this.store.addConcept(conceptMock);
+        for (Concept conceptMock : conceptMockKeys.keySet()) {
+            store.addConcept(conceptMock, conceptMockKeys.get(conceptMock));
         }
 
-        Concept anAge = this.conceptMocks.get(7);
-        String ageId = anAge.asThing().id().toString();
+        Concept anAge = conceptMockKeys.keySet().stream().filter(concept -> concept.asThing().type().label().toString().equals("age")).findFirst().get();
         String ageLabel = anAge.asThing().type().label().toString();
-        this.store.addRolePlayer(ageId, ageLabel, "@has-" + ageLabel, "@has-" + ageLabel + "-value");
+        store.addRolePlayerByKey(conceptMockKeys.get(anAge), ageLabel, "@has-" + ageLabel, "@has-" + ageLabel + "-value");
 
-        int orphanAttributes = this.store.totalOrphanAttributes();
+        int orphanAttributes = store.totalOrphanAttributes();
         assertEquals(0, orphanAttributes);
     }
 

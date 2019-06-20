@@ -16,12 +16,10 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.generator.provider.concept;
-
-import grakn.core.concept.ConceptId;
+package grakn.benchmark.generator.provider.key;
 
 import java.util.Iterator;
 
-public interface ConceptIdProvider extends Iterator<ConceptId> {
+public interface ConceptKeyProvider extends Iterator<Long> {
     boolean hasNextN(int n);
 }

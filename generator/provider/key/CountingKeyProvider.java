@@ -16,16 +16,18 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.generator.provider.value;
+package grakn.benchmark.generator.provider.key;
 
-/**
- * Implements a unique integer provider via simple incrementing
- */
-public class UniqueIntegerProvider implements ValueProvider<Integer> {
-    private int n;
+public class CountingKeyProvider implements ConceptKeyProvider {
+    private long n;
 
-    public UniqueIntegerProvider(int start) {
+    public CountingKeyProvider(int start) {
         n = start - 1;
+    }
+
+    @Override
+    public boolean hasNextN(int n) {
+        return true;
     }
 
     @Override
@@ -34,9 +36,8 @@ public class UniqueIntegerProvider implements ValueProvider<Integer> {
     }
 
     @Override
-    public Integer next() {
+    public Long next() {
         n++;
         return n;
     }
-
 }

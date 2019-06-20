@@ -1,19 +1,29 @@
 define
 
+    unique-key sub attribute, datatype long;
+
     # fixed increments
-    biochem-id sub attribute, datatype long;
+    biochem-id sub attribute, datatype long,
+        key unique-key;
 
     # fixed increments
     chemical sub entity,
         plays agent,
-        has biochem-id; # append uniquely (1 name per chemical)
+        has biochem-id, # append uniquely (1 name per chemical)
+        key unique-key;
 
     # fixed increments
     enzyme sub entity,
         plays catalyst,
-        has biochem-id; # append unique (1 per enzyme)
+        has biochem-id, # append unique (1 per enzyme)
+        key unique-key;
 
     # fixed increments
     interaction sub relation,
         relates agent, # scale number of agents over time
-        relates catalyst; # scale number of catalysts over time
+        relates catalyst, # scale number of catalysts over time
+        key unique-key;
+
+define
+    @has-biochem-id key unique-key;
+

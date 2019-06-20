@@ -18,10 +18,9 @@
 
 package grakn.benchmark.generator.query;
 
-import grakn.benchmark.generator.provider.concept.CentralConceptProvider;
+import grakn.benchmark.generator.provider.key.CentralConceptKeyProvider;
 import grakn.benchmark.generator.strategy.RelationStrategy;
 import grakn.benchmark.generator.strategy.RolePlayerTypeStrategy;
-import grakn.core.concept.ConceptId;
 import graql.lang.Graql;
 import graql.lang.pattern.Pattern;
 import graql.lang.query.GraqlInsert;
@@ -31,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import static graql.lang.Graql.and;
@@ -55,18 +55,18 @@ public class RelationGenerator implements QueryGenerator {
     @Override
     public Iterator<GraqlInsert> generate() {
 
-        String roles = "(";
+        StringBuilder roles = new StringBuilder("(");
         for (RolePlayerTypeStrategy rolePlayerTypeStrategy : this.strategy.getRolePlayerTypeStrategies()) {
             String role = rolePlayerTypeStrategy.getTypeLabel();
-            roles += role;
-            roles += ",";
+            roles.append(role);
+            roles.append(",");
         }
         LOG.trace("Generating Rel " + strategy.getTypeLabel() + roles + "), target quantity: " + strategy.getNumInstancesPDF().peek());
 
-        Set<RolePlayerTypeStrategy> rolePlayerTypeStrategies = this.strategy.getRolePlayerTypeStrategies();
+        List<RolePlayerTypeStrategy> rolePlayerTypeStrategies = this.strategy.getRolePlayerTypeStrategies();
         for (RolePlayerTypeStrategy rolePlayerTypeStrategy : rolePlayerTypeStrategies) {
-            if (rolePlayerTypeStrategy.getConceptProvider() instanceof CentralConceptProvider) {
-                ((CentralConceptProvider) rolePlayerTypeStrategy.getConceptProvider()).resetUniqueness();
+            if (rolePlayerTypeStrategy.getConceptKeyProvider() instanceof CentralConceptKeyProvider) {
+                ((CentralConceptKeyProvider) rolePlayerTypeStrategy.getConceptKeyProvider()).resetUniqueness();
             }
         }
 
@@ -82,7 +82,7 @@ public class RelationGenerator implements QueryGenerator {
 
             private boolean haveRequiredRolePlayers() {
                 return strategy.getRolePlayerTypeStrategies().stream()
-                        .map(s -> s.getConceptProvider().hasNextN(s.getNumInstancesPDF().peek()))
+                        .map(s -> s.getConceptKeyProvider().hasNextN(s.getNumInstancesPDF().peek()))
                         .allMatch(b -> b);
             }
 
@@ -126,20 +126,20 @@ public class RelationGenerator implements QueryGenerator {
                     String roleLabel = rolePlayerTypeStrategy.getTypeLabel();
 
                     // Find random role-players matching this type
-                    // Pick ids from the list of concept ids
-                    Iterator<ConceptId> conceptProvider = rolePlayerTypeStrategy.getConceptProvider();
+                    // Pick ids from the list of keys
+                    Iterator<Long> conceptProvider = rolePlayerTypeStrategy.getConceptKeyProvider();
                     int rolePlayersRequired = rolePlayerTypeStrategy.getNumInstancesPDF().sample();
 
                     // Build the match insert query
                     int rolePlayersAssigned = 0;
                     while (conceptProvider.hasNext() && rolePlayersAssigned < rolePlayersRequired) {
-                        ConceptId conceptId = conceptProvider.next();
-                        // Add the concept to the query
+                        Long conceptKey = conceptProvider.next();
+                        // Add the key to the query
                         Variable v = new Variable().asReturnedVar();
                         if (matchVarPattern == null) {
-                            matchVarPattern = var(v).id(conceptId.toString());
+                            matchVarPattern = var(v).has("unique-key", conceptKey);
                         } else {
-                            Pattern varPattern = var(v).id(conceptId.toString());
+                            Pattern varPattern = var(v).has("unique-key", conceptKey);
                             matchVarPattern = and(matchVarPattern, varPattern);
                         }
                         insertVarPattern = insertVarPattern.rel(roleLabel, var(v));
@@ -147,7 +147,7 @@ public class RelationGenerator implements QueryGenerator {
                     }
                 }
                 queriesGenerated++;
-                return Graql.match(matchVarPattern).insert(insertVarPattern);
+                return Graql.match(matchVarPattern).insert(insertVarPattern.has("unique-key", strategy.getConceptKeyProvider().next()));
             }
         };
     }

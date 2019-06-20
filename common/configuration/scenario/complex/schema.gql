@@ -1,11 +1,15 @@
 define
+
+    unique-key sub attribute, datatype long;
+
     blob sub entity,
         plays blobber,
         plays bigger,
         plays smaller,
         plays owner,
         plays owned,
-        has blob-value;
+        has blob-value,
+        key unique-key;
 
     square sub entity,
         plays squarer,
@@ -13,7 +17,8 @@ define
         plays smaller,
         plays owner,
         plays owned,
-        has square-value;
+        has square-value,
+        key unique-key;
 
     circle sub entity,
         plays circler,
@@ -21,58 +26,79 @@ define
         plays smaller,
         plays owner,
         plays owned,
-        has circle-value;
+        has circle-value,
+        key unique-key;
 
 
     interaction sub relation,
         relates blobber,
         relates circler,
         relates squarer,
-        has interaction-value;
+        has interaction-value,
+        key unique-key;
 
     ownership sub relation,
         relates owner,
         relates owned,
-        has ownership-cost;
+        has ownership-cost,
+        key unique-key;
 
 
     ownership-of-square sub ownership,
         relates owner,
-        relates owned;
+        relates owned,
+        key unique-key;
 
     ownership-of-circle sub ownership,
         relates owner,
-        relates owned;
+        relates owned,
+        key unique-key;
 
     ownership-of-blob sub ownership,
         relates owner,
-        relates owned;
+        relates owned,
+        key unique-key;
 
 
     sizing sub relation,
         relates bigger,
-        relates smaller;
+        relates smaller,
+        key unique-key;
 
     sizing-blob sub sizing,
         relates bigger,
-        relates smaller;
+        relates smaller,
+        key unique-key;
 
     sizing-circle sub sizing,
         relates bigger,
-        relates smaller;
+        relates smaller,
+        key unique-key;
 
     sizing-square sub sizing,
         relates bigger,
-        relates smaller;
+        relates smaller,
+        key unique-key;
 
-    shape-value sub attribute, datatype long;
-    blob-value sub shape-value;
-    circle-value sub shape-value;
-    square-value sub shape-value;
+    shape-value sub attribute, datatype long,
+        key unique-key;
+    blob-value sub shape-value,
+        key unique-key;
+    circle-value sub shape-value,
+        key unique-key;
+    square-value sub shape-value,
+        key unique-key;
 
-    interaction-value sub attribute, datatype long;
-    ownership-cost sub attribute, datatype long;
+    interaction-value sub attribute, datatype long,
+        key unique-key;
+    ownership-cost sub attribute, datatype long,
+        key unique-key;
 
-
+define @has-shape-value key unique-key;
+    @has-blob-value key unique-key;
+    @has-circle-value key unique-key;
+    @has-square-value key unique-key;
+    @has-interaction-value key unique-key;
+    @has-ownership-cost key unique-key;
 
 

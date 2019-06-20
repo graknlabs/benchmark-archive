@@ -9,32 +9,11 @@
         {{ groupName | truncate(100) }}
       </span>
 
-      <el-tooltip
-        class="item"
-        effect="dark"
-        :content="minTooltipContent()"
-        placement="top"
-      >
-        <span>{{ minSpan.duration | fixedMs }}/<a :href="'#' + groupName + indexOfMinSpan">{{ indexOfMinSpan | ordinalise }}</a></span>
-      </el-tooltip>
+      <span>{{ minSpan.duration | fixedMs }}/<a :href="'#' + groupName + indexOfMinSpan">{{ indexOfMinSpan | ordinalise }}</a></span>
 
-      <el-tooltip
-        class="item"
-        effect="dark"
-        :content="medianTooltipContent()"
-        placement="top"
-      >
-        <span>{{ median | fixedMs }}/{{ reps }}</span>
-      </el-tooltip>
+      <span>{{ median | fixedMs }}/{{ reps }}</span>
 
-      <el-tooltip
-        class="item"
-        effect="dark"
-        :content="maxTooltipContent()"
-        placement="top"
-      >
-        <span>{{ maxSpan.duration | fixedMs }}/<a :href="'#' + groupName + indexOfMaxSpan">{{ indexOfMaxSpan | ordinalise }}</a></span>
-      </el-tooltip>
+      <span>{{ maxSpan.duration | fixedMs }}/<a :href="'#' + groupName + indexOfMaxSpan">{{ indexOfMaxSpan | ordinalise }}</a></span>
     </div>
     <div v-if="expaned">
       <step-line
@@ -156,27 +135,6 @@ export default {
 
     isSpanSlowest(order) {
       return this.indexOfMaxSpan === order - this.firstMemberOrder + 1;
-    },
-
-    minTooltipContent() {
-      const { ordinalise } = this.$options.filters;
-      return `The ${ordinalise(
-        this.minSpan.rep + 1,
-      )} step in this group was the FASTEST.`;
-    },
-
-    maxTooltipContent() {
-      const { ordinalise } = this.$options.filters;
-      return `The ${ordinalise(
-        this.maxSpan.rep + 1,
-      )} step in this group was the SLOWEST.`;
-    },
-
-    medianTooltipContent() {
-      const { fixedMs } = this.$options.filters;
-      return `Among all ${Object.keys(this.members).length} members of this group, the median was ${fixedMs(
-        this.median,
-      )}.`;
     },
   },
 };

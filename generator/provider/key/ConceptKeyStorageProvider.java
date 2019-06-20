@@ -16,20 +16,19 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.generator.provider.concept;
+package grakn.benchmark.generator.provider.key;
 
 import grakn.benchmark.generator.storage.ConceptStorage;
-import grakn.core.concept.ConceptId;
 
 import java.util.Random;
 
-public class ConceptIdStorageProvider implements ConceptIdProvider {
+public class ConceptKeyStorageProvider implements ConceptKeyProvider {
 
     private final Random rand;
     ConceptStorage conceptStorage;
     protected String typeLabel;
 
-    public ConceptIdStorageProvider(Random rand, ConceptStorage conceptStorage, String typeLabel) {
+    public ConceptKeyStorageProvider(Random rand, ConceptStorage conceptStorage, String typeLabel) {
         this.rand = rand;
         this.conceptStorage = conceptStorage;
         this.typeLabel = typeLabel;
@@ -46,10 +45,10 @@ public class ConceptIdStorageProvider implements ConceptIdProvider {
     }
 
     @Override
-    public ConceptId next() {
+    public Long next() {
         int conceptCount = this.conceptStorage.getConceptCount(this.typeLabel);
         int randomOffset = rand.nextInt(conceptCount);
-        return conceptStorage.getConceptId(typeLabel, randomOffset);
+        return conceptStorage.getConceptKey(typeLabel, randomOffset);
     }
 
 }
