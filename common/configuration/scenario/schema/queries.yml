@@ -1,0 +1,18 @@
+queries:
+  - "define
+      newEntity sub entity,
+        plays newRole,
+        plays newOtherRole,
+        has newAttribute;
+      newRelation sub relation,
+        relates newRole, newOtherRole;
+      newAttribute sub attribute, datatype string;"
+  - "undefine newRole sub role; newOtherRole sub role; newRelation sub relation; newEntity sub entity; newAttribute sub attribute;"
+  - "match $x sub entity; get;"
+  - "match $x sub! entity; get;"
+  - "match $x plays tagged-in; get;"
+  - "match $x relates partner; get;"
+  - "match $x has name; get;"
+  - "match $x sub role; get;"
+  - "match $x sub rule; get;"
+

@@ -53,6 +53,12 @@ assemble_zip(
         "//common/configuration/scenario:rule_scaling/config_read.yml": "scenario/rule_scaling/config_read.yml",
         "//common/configuration/scenario:rule_scaling/rule_scaling_schema.gql": "scenario/rule_scaling/rule_scaling_schema.gql",
 
+        "//common/configuration/scenario:schema/data_definition_config.yml": "scenario/schema/data_definition_config.yml",
+        "//common/configuration/scenario:schema/data_definition_schema.gql": "scenario/schema/data_definition_schema.gql",
+        "//common/configuration/scenario:schema/queries.yml": "scenario/data_definition/queries.yml",
+
+
+
         # External dependencies: Elasticsearch and Zipkin
         "//profiler:setup.sh": "external-dependencies/setup.sh",
         "@external-dependencies-zipkin//file": "external-dependencies/zipkin.jar",
