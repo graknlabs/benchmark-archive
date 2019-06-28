@@ -21,10 +21,11 @@ function displayStream(stream) {
 }
 const GRABL_TOKEN = process.env.GITHUB_GRABL_TOKEN;
 const orgOctokit = new Octokit({ auth: GRABL_TOKEN });
-const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
-const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
 
 const getGithubUserAccessToken = async (oauthCode) => {
+    const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+    const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+
     const accessTokenResp = await orgOctokit.request('POST https://github.com/login/oauth/access_token', {
         headers: { Accept: "application/json" },
         client_id: CLIENT_ID,
