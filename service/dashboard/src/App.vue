@@ -11,6 +11,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import "./src/assets/css/fonts.scss";
 @import "./src/assets/css/reset.scss";
 @import "./src/assets/css/base.scss";
 @import "./src/assets/css/overrides.scss";
