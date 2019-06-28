@@ -22,6 +22,8 @@ const spans = new SpansController(esClient);
 
 const app = module.exports = express();
 
+utils.checkForEnvVariables();
+
 const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
 
