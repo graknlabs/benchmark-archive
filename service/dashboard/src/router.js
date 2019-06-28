@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-// import axios from 'axios';
 import Home from './views/Home.vue';
 import BenchmarkClient from '@/util/BenchmarkClient';
 

@@ -1,7 +1,7 @@
 <template>
   <div class="welcomeSplash">
     <h2>Grakn Benchmark</h2>
-    <a href="https://github.com/login/oauth/authorize?scope=user:email&client_id=32444fe44bb74176e9ed">
+    <a href="https://github.com/login/oauth/authorize?scope=user:email&client_id=ae839e841f2aa0d0bf2d">
       <div class="githubLoginBtn">
         <font-awesome-icon :icon="['fab', 'github']" />
         <span>Sign in with GitHub</span>
