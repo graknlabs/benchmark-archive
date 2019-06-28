@@ -51,8 +51,7 @@ const isUserGraknLabsMember = async (userId) => {
     try {
         const membersResp = await orgOctokit.orgs.listMembers({ org: 'graknlabs' });
         const members = membersResp.data;
-        const isUserMember = members.find((member) => member.id === userId);
-        return isUserMember ? true : false;
+        return members.some((member) => member.id === userId);
     } catch (err) {
         throw(err)
     }
