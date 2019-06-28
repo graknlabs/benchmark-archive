@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import axios from 'axios';
+// import axios from 'axios';
 import Home from './views/Home.vue';
+import BenchmarkClient from '@/util/BenchmarkClient';
 
 Vue.use(Router);
 
@@ -50,7 +51,7 @@ const router = new Router({
 router.beforeEach(async (to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     try {
-      await axios.get('/auth/verify');
+      await BenchmarkClient.verifyIdentity();
     } catch {
       next({ path: '/login' });
     }
