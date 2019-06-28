@@ -38,7 +38,7 @@
   },
   "vue": {
     "devServer": {
-      "proxy": "http://127.0.0.1:4567"
+      "proxy": "http://35.231.146.169:4567"
     },
     "lintOnSave": true
   }
