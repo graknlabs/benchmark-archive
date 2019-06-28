@@ -16,16 +16,23 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-workspace(name = "benchmark")
+workspace(name = "graknlabs_benchmark")
 
 ###########################
 # Grakn Labs dependencies #
 ###########################
 
-load("//dependencies/graknlabs:dependencies.bzl", "graknlabs_grakn_core", "graknlabs_build_tools", "graknlabs_client_java")
+load(
+    "//dependencies/graknlabs:dependencies.bzl",
+    "graknlabs_build_tools",
+    "graknlabs_grakn_core",
+    "graknlabs_client_java",
+    "graknlabs_protocol"
+)
 graknlabs_build_tools()
 graknlabs_grakn_core()
 graknlabs_client_java()
+graknlabs_protocol()
 
 load("@graknlabs_build_tools//distribution:dependencies.bzl", "graknlabs_bazel_distribution")
 graknlabs_bazel_distribution()
@@ -86,18 +93,9 @@ maven_dependencies()
 # Load Grakn Core dependencies #
 ################################
 
-# This is not needed but it makes more explicit the fact that grakn core depends on a specific version
-# of Grakn Benchmark and with this we instruct Bazel to pull dependencies for that specific version
-load("@graknlabs_grakn_core//dependencies/graknlabs:dependencies.bzl", "graknlabs_benchmark")
-graknlabs_benchmark()
-
 load("@graknlabs_grakn_core//dependencies/maven:dependencies.bzl",
 graknlabs_grakn_core_maven_dependencies = "maven_dependencies")
 graknlabs_grakn_core_maven_dependencies()
-
-load("@graknlabs_benchmark//dependencies/maven:dependencies.bzl",
-graknlabs_benchmark_maven_dependencies = "maven_dependencies")
-graknlabs_benchmark_maven_dependencies()
 
 load("@graknlabs_build_tools//bazel:dependencies.bzl", "bazel_rules_docker")
 bazel_rules_docker()
