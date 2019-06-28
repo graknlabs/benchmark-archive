@@ -1,7 +1,7 @@
 const Octokit = require('@octokit/rest');
 const { spawn } = require('child_process');
 
-function displayStream(stream){
+function displayStream(stream) {
     return new Promise((resolve, reject) => {
         stream.stdout.on('data', (data) => {
             console.log(`${data}`);
@@ -12,7 +12,7 @@ function displayStream(stream){
         });
 
         stream.on('close', (code) => {
-            if(code !== 0){
+            if (code !== 0) {
                 console.error(`Script terminated with code ${code}`);
             }
         });
@@ -36,31 +36,23 @@ const getGithubUserAccessToken = async (oauthCode) => {
 
 const getGithubUserId = async (accessToken) => {
     const userOctokit = new Octokit({ auth: accessToken });
-    try {
-        const userResp = await userOctokit.request('Get https://api.github.com/user', {
-            headers: { Accept: "application/json" },
-            access_token: accessToken,
-        });
-        return userResp.data.id
-    } catch (err) {
-        throw err;
-    }
+    const userResp = await userOctokit.request('Get https://api.github.com/user', {
+        headers: { Accept: "application/json" },
+        access_token: accessToken,
+    });
+    return userResp.data.id
 }
 
 const isUserGraknLabsMember = async (userId) => {
-    try {
-        const membersResp = await orgOctokit.orgs.listMembers({ org: 'graknlabs' });
-        const members = membersResp.data;
-        return members.some((member) => member.id === userId);
-    } catch (err) {
-        throw(err)
-    }
+    const membersResp = await orgOctokit.orgs.listMembers({ org: 'graknlabs' });
+    const members = membersResp.data;
+    return members.some((member) => member.id === userId);
 }
 
 module.exports = {
-    parseMergedPR(req){
+    parseMergedPR(req) {
         return {
-            id : req.body.pull_request.merge_commit_sha + Date.now(),
+            id: req.body.pull_request.merge_commit_sha + Date.now(),
             commit: req.body.pull_request.merge_commit_sha,
             repoUrl: req.body.repository.html_url,
             prMergedAt: req.body.pull_request.merged_at,
@@ -68,24 +60,24 @@ module.exports = {
             prNumber: req.body.pull_request.number,
             executionInitialisedAt: new Date().toISOString(),
             status: 'INITIALISING',
-            vmName: 'benchmark-executor-'+ req.body.pull_request.merge_commit_sha.trim()
+            vmName: 'benchmark-executor-' + req.body.pull_request.merge_commit_sha.trim()
         }
     },
-    createExecutionObject(req){
+    createExecutionObject(req) {
         return {
-            id : req.body.commit + Date.now(),
+            id: req.body.commit + Date.now(),
             commit: req.body.commit,
             repoUrl: req.body.repoUrl,
             executionInitialisedAt: new Date().toISOString(),
             status: 'INITIALISING',
-            vmName: 'benchmark-executor-'+ req.body.commit.trim()
+            vmName: 'benchmark-executor-' + req.body.commit.trim()
         }
     },
-    startBenchmarking(scriptPath, execution){
+    startBenchmarking(scriptPath, execution) {
         const ls = spawn('bash', [scriptPath, execution.repoUrl, execution.id, execution.commit, execution.vmName])
         displayStream(ls);
     },
-    deleteInstance(scriptPath, vmName){
+    deleteInstance(scriptPath, vmName) {
         const ls = spawn('bash', [scriptPath, vmName])
         displayStream(ls);
     },

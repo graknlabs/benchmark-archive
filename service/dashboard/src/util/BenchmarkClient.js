@@ -1,4 +1,4 @@
-const fetchDefaults = {
+const requestDefaults = {
   // Default options are marked with *
   mode: 'cors', // no-cors, cors, *same-origin
   cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -16,24 +16,23 @@ const checkStatus = (response) => {
   throw error;
 };
 
-function postData(url = '', data = {}) {
+function postData(url, data = {}) {
   // Default options are marked with *
   return fetch(url, {
-    ...fetchDefaults,
+    ...requestDefaults,
     method: 'POST',
     body: JSON.stringify(data), // body data type must match "Content-Type" header
   })
     .then(response => response.json());
 }
 
-function getData(url = '') {
+function getData(url) {
   return fetch(url, {
-    ...fetchDefaults,
+    ...requestDefaults,
     method: 'GET',
   })
     .then(checkStatus)
-    .then(response => response.json())
-    .catch((err) => { throw err; });
+    .then(response => response.json());
 }
 
 function getSpans(query) {
