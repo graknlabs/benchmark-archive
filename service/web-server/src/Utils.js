@@ -19,8 +19,8 @@ function displayStream(stream){
     })
 
 }
-const ORG_TOKEN = process.env.GITHUB_ORG_TOKEN;
-const orgOctokit = new Octokit({ auth: ORG_TOKEN });
+const GRABL_TOKEN = process.env.GITHUB_GRABL_TOKEN;
+const orgOctokit = new Octokit({ auth: GRABL_TOKEN });
 const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
 

@@ -32,7 +32,7 @@ app.set('trust proxy', true)
 
 app.use(cookieSession({
     name: 'session', // set as key on the req object
-    secret: CLIENT_SECRET, // used as a key in signing and verifying cookie values
+    keys: [CLIENT_SECRET], // used as a key in signing and verifying cookie values
 }));
 
 // parse application/json
