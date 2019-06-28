@@ -2,7 +2,7 @@ const Octokit = require('@octokit/rest');
 const { spawn } = require('child_process');
 
 const checkForEnvVariables = () => {
-    const { GITHUB_GRABL_TOKEN, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } = prosses.env;
+    const { GITHUB_GRABL_TOKEN, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } = process.env;
     if (!GITHUB_GRABL_TOKEN || !GITHUB_CLIENT_ID || !GITHUB_CLIENT_SECRET) {
         console.error(`
         At least one of the required environmental variables is missing.
