@@ -102,10 +102,10 @@ java_library(
     runtime_deps = [
         "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl",
         "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl-dnn",
-        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl-dnn-jar-linux-x86-64",
-        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl-jar-linux-x86-64",
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl-dnn-jar-macosx-x86-64",
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl-jar-macosx-x86-64",
         "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:openblas",
-        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:openblas-jar-linux-x86-64",
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:openblas-jar-macosx-x86-64",
         "//dependencies/maven/artifacts/org/bytedeco:javacpp",
         ":nd4j-api",
         ":nd4j-native-api"
@@ -142,10 +142,10 @@ java_library(
     runtime_deps = [
         "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl",
         "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl-dnn",
-        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl-dnn-jar-linux-x86-64",
-        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl-jar-linux-x86-64",
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl-dnn-jar-macosx-x86-64",
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl-jar-macosx-x86-64",
         "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:openblas",
-        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:openblas-jar-linux-x86-64",
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:openblas-jar-macosx-x86-64",
         "//dependencies/maven/artifacts/org/bytedeco:javacpp",
         ":nd4j-api",
         ":nd4j-native-api"
@@ -165,10 +165,10 @@ java_library(
     runtime_deps = [
         "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl",
         "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl-dnn",
-        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl-dnn-jar-linux-x86-64",
-        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl-jar-linux-x86-64",
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl-dnn-jar-macosx-x86-64",
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:mkl-jar-macosx-x86-64",
         "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:openblas",
-        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:openblas-jar-linux-x86-64",
+        "//dependencies/maven/artifacts/org/bytedeco/javacpp-presets:openblas-jar-macosx-x86-64",
         "//dependencies/maven/artifacts/org/bytedeco:javacpp",
         ":nd4j-api",
         ":nd4j-native-api"
@@ -177,3 +177,5 @@ java_library(
         "//visibility:public"
     ]
 )
+
+

@@ -29,9 +29,9 @@ java_library(
 
 
 java_library(
-    name = "mkl-dnn-jar-linux-x86-64",
+    name = "mkl-dnn-jar-macosx-x86-64",
     exports = [
-        "//external:jar/org/bytedeco/javacpp-presets/mkl-dnn-jar-linux-x86-64"
+        "//external:jar/org/bytedeco/javacpp-presets/mkl-dnn-jar-macosx-x86-64"
     ],
     runtime_deps = [
         "//dependencies/maven/artifacts/org/bytedeco:javacpp"
@@ -44,9 +44,9 @@ java_library(
 
 
 java_library(
-    name = "mkl-jar-linux-x86-64",
+    name = "mkl-jar-macosx-x86-64",
     exports = [
-        "//external:jar/org/bytedeco/javacpp-presets/mkl-jar-linux-x86-64"
+        "//external:jar/org/bytedeco/javacpp-presets/mkl-jar-macosx-x86-64"
     ],
     runtime_deps = [
         "//dependencies/maven/artifacts/org/bytedeco:javacpp"
@@ -74,9 +74,9 @@ java_library(
 
 
 java_library(
-    name = "openblas-jar-linux-x86-64",
+    name = "openblas-jar-macosx-x86-64",
     exports = [
-        "//external:jar/org/bytedeco/javacpp-presets/openblas-jar-linux-x86-64"
+        "//external:jar/org/bytedeco/javacpp-presets/openblas-jar-macosx-x86-64"
     ],
     runtime_deps = [
         "//dependencies/maven/artifacts/org/bytedeco:javacpp"
@@ -85,3 +85,5 @@ java_library(
         "//dependencies/maven/artifacts:__subpackages__"
     ]
 )
+
+
