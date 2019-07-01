@@ -191,7 +191,8 @@ function checkPullRequestIsMerged(req, res, next) {
 
 // Start http server only when invoked by script
 if (!module.parent) {
-    app.listen(config.web.port, () => console.log(`Grakn Benchmark Service listening on port ${config.web.port}!`));
+    // specifying the hostname, 2nd argument, forces the server to accept connections on IPv4 address
+    app.listen(config.web.port, "0.0.0.0", () => console.log(`Grakn Benchmark Service listening on port ${config.web.port}!`));
 }
 // Register shutdown hook to properly terminate connection to ES
 process.on('exit', () => { esClient.close(); });
