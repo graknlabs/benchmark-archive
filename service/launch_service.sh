@@ -16,7 +16,7 @@ gcloud compute instances create $INSTANCE_NAME          \
     --machine-type n1-standard-1                        \
     --boot-disk-size 500GB                              \
     --zone $ZONE                                        \
-    --tags elastic-tcp-9200,benchmark-service-tcp-4567  \
+    --tags elastic-tcp-9200,http-server,https-server    \
     --service-account grakn-benchmark-189@grakn-dev.iam.gserviceaccount.com \
     --scopes https://www.googleapis.com/auth/cloud-platform
 
