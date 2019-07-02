@@ -15,7 +15,6 @@ const LAUNCH_EXECUTOR_SCRIPT_PATH = __dirname + '/../../launch_executor_server.s
 const DELETE_INSTANCE_SCRIPT_PATH = __dirname + '/../../delete_instance.sh';
 
 const esClient = new elasticsearch.Client({ host: ES_URI });
-utils.checkESIsRunning(esClient);
 const executionsController = new ExecController(esClient);
 const spans = new SpansController(esClient);
 
@@ -26,7 +25,6 @@ if (process.env.NODE_ENV === "development")
     require('dotenv').config({ path: '../.env' });
 else
     require('dotenv').config({ path: '/home/ubuntu/.env' });
-utils.checkForEnvVariables();
 
 const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
@@ -49,15 +47,6 @@ app.use(bodyParser.json())
  * Authentication end-points and middleware
  */
 const { getGraknLabsMembers, getGithubUserId, getGithubUserAccessToken } = utils;
-
-let graknLabsMembers;
-const fetchGraknLabsMembersRepeatedly = async (intervalInSeconds) => {
-    graknLabsMembers = await getGraknLabsMembers(GRABL_TOKEN);
-    setInterval(async () => {
-        graknLabsMembers = await getGraknLabsMembers();
-    }, intervalInSeconds * 60 * 1000);
-}
-fetchGraknLabsMembersRepeatedly(10);
 
 // middleware to determine if the user is authenticated and
 // is a member of the graknlabs Github organisation
@@ -200,6 +189,43 @@ function checkPullRequestIsMerged(req, res, next) {
     } else {
         res.status(200).json({ triggered: false });
     }
+}
+
+/**
+ * Checking if all is well before starting the server
+ *  */
+
+// Are the environment variables all set up?
+const { GITHUB_GRABL_TOKEN, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, SERVER_CERTIFICATE, SERVER_KEY } = process.env;
+if (!GITHUB_GRABL_TOKEN || !GITHUB_CLIENT_ID || !GITHUB_CLIENT_SECRET || !SERVER_CERTIFICATE || !SERVER_KEY) {
+    console.error(`
+    At least one of the required environmental variables is missing.
+    To troubleshoot this:
+        1. check the implementation of the function that is the source of this message, to find out what environmental variables are required.
+        2. ensure that all required environmental variables are defined within /etc/environment on the machine that runs the web-server.
+        3. get in touch with the team to obtain the required values to update /etc/environment
+    `)
+    process.exit(1);
+}
+
+// Is the ElasticSearch server running?
+esClient.ping((err) => {
+    if (err) {
+        console.error("Elastic Search Server is down. Makes sure it's up and running before starting the web-server.");
+        process.exit(1);
+    }
+})
+
+// Are the graknlabs members fetched successfully?
+let graknLabsMembers;
+getGraknLabsMembers(GRABL_TOKEN).then((members) => graknLabsMembers = members).catch((err) => { printMembersFetchError(err) });
+setInterval(async () => {
+    getGraknLabsMembers(GRABL_TOKEN).then((members) => graknLabsMembers = members).catch((err) => { printMembersFetchError(err) });
+}, config.auth.intervalInMinutesToFetchGraknLabsMembers * 60 * 1000);
+
+const printMembersFetchError = (err) => {
+    console.error("There was a problem fetching members of Grakn Labs Github organisation for the purpose of authentication:", err);
+    process.exit(1);
 }
 
 const KEY = process.env.SERVER_KEY;
