@@ -1,14 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const elasticsearch = require('elasticsearch');
-
+const http = require('http');
+const https = require('https');
 const config = require('./config');
 const utils = require('./Utils');
 const ExecController = require('./ExecutionsController');
 const SpansController = require('./SpansController');
-
 const history = require('connect-history-api-fallback');
-
 const Octokit = require('@octokit/rest');
 const cookieSession = require('cookie-session');
 
@@ -17,15 +16,22 @@ const LAUNCH_EXECUTOR_SCRIPT_PATH = __dirname + '/../../launch_executor_server.s
 const DELETE_INSTANCE_SCRIPT_PATH = __dirname + '/../../delete_instance.sh';
 
 const esClient = new elasticsearch.Client({ host: ES_URI });
+utils.checkESIsRunning(esClient);
 const executionsController = new ExecController(esClient);
 const spans = new SpansController(esClient);
 
 const app = module.exports = express();
 
+// setup and check for environment variables
+if (process.env.NODE_ENV === "development")
+    require('dotenv').config({ path: '../.env' });
+else
+    require('dotenv').config({ path: '/home/ubuntu/.env' });
 utils.checkForEnvVariables();
 
 const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+const GRABL_TOKEN = process.env.GITHUB_GRABL_TOKEN;
 
 // with the following setting, we are allowing the cookie middleware to trust the X-Forwarded-Proto header and
 // allow secure cookies being sent over plain HTTP, provided that X-Forwarded-Proto is set to https
@@ -43,14 +49,22 @@ app.use(bodyParser.json())
 /**
  * Authentication end-points and middleware
  */
+const { getGraknLabsMembers, getGithubUserId, getGithubUserAccessToken } = utils;
 
-const { getGithubUserAccessToken, getGithubUserId, isUserGraknLabsMember } = utils;
+let graknLabsMembers;
+const fetchGraknLabsMembersRepeatedly = async (intervalInSeconds) => {
+    graknLabsMembers = await getGraknLabsMembers(GRABL_TOKEN);
+    setInterval(async () => {
+        graknLabsMembers = await getGraknLabsMembers();
+    }, intervalInSeconds * 60 * 1000);
+}
+fetchGraknLabsMembersRepeatedly(10);
 
 // middleware to determine if the user is authenticated and
 // is a member of the graknlabs Github organisation
-const verifyIdentity = async (req, res, next) => {
+const verifyIdentity = (req, res, next) => {
     const userId = req.session.userId;
-    const isVerified = userId && (await isUserGraknLabsMember(userId));
+    const isVerified = userId && graknLabsMembers.some((member) => member.id === userId);
     if (isVerified) next();
     else res.status(401).json({ authorised: false });
 }
@@ -59,9 +73,9 @@ app.get('/auth/callback', async (req, res) => {
 
     try {
         const oauthCode = req.query.code;
-        const accessToken = await getGithubUserAccessToken(oauthCode);
+        const accessToken = await getGithubUserAccessToken(CLIENT_ID, CLIENT_SECRET, GRABL_TOKEN, oauthCode);
         const userId = await getGithubUserId(accessToken);
-        const isAuthorised = await isUserGraknLabsMember(userId);
+        const isAuthorised = graknLabsMembers.some((member) => member.id === userId);
 
         if (isAuthorised) {
             req.session.userId = userId;
@@ -84,7 +98,7 @@ app.get('/auth/callback', async (req, res) => {
     }
 });
 
-app.get('/auth/verify', verifyIdentity, async (req, res) => {
+app.get('/auth/verify', verifyIdentity, (req, res) => {
     res.status(200).json({ authorised: true });
 });
 
@@ -189,9 +203,22 @@ function checkPullRequestIsMerged(req, res, next) {
     }
 }
 
+const KEY = process.env.SERVER_KEY;
+const CERTIFICATE = process.env.SERVER_CERTIFICATE;
+const credentials = { key: KEY, cert: CERTIFICATE };
+const httpServer = http.createServer();
+const httpsServer = https.createServer(credentials, app);
+
+
 // Start http server only when invoked by script
 if (!module.parent) {
+<<<<<<< Updated upstream
     app.listen(config.web.port, () => console.log(`Grakn Benchmark Service listening on port ${config.web.port}!`));
+=======
+    // specifying the hostname, 2nd argument, forces the server to accept connections on IPv4 address
+    httpServer.listen(config.web.port.http, "0.0.0.0", () => console.log(`Grakn Benchmark Service listening on port ${config.web.port.http}!`));
+    httpsServer.listen(config.web.port.https, "0.0.0.0", () => console.log(`Grakn Benchmark Service listening on port ${config.web.port.https}!`));
+>>>>>>> Stashed changes
 }
 // Register shutdown hook to properly terminate connection to ES
 process.on('exit', () => { esClient.close(); });

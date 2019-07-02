@@ -2,8 +2,8 @@ const Octokit = require('@octokit/rest');
 const { spawn } = require('child_process');
 
 const checkForEnvVariables = () => {
-    const { GITHUB_GRABL_TOKEN, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } = process.env;
-    if (!GITHUB_GRABL_TOKEN || !GITHUB_CLIENT_ID || !GITHUB_CLIENT_SECRET) {
+    const { GITHUB_GRABL_TOKEN, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, SERVER_CERTIFICATE, SERVER_KEY } = process.env;
+    if (!GITHUB_GRABL_TOKEN || !GITHUB_CLIENT_ID || !GITHUB_CLIENT_SECRET || !SERVER_CERTIFICATE || !SERVER_KEY) {
         console.error(`
         At least one of the required environmental variables is missing.
         To troubleshoot this:
@@ -14,6 +14,15 @@ const checkForEnvVariables = () => {
         process.exit(1);
     }
 };
+
+const checkESIsRunning = (esClient) => {
+    esClient.ping((err) => {
+        if (err) {
+            console.error("Elastic Search Server is down. Makes use it's up and running before starting the web-server.");
+            process.exit(1);
+        }
+    })
+}
 
 function displayStream(stream) {
     return new Promise((resolve, reject) => {
@@ -33,17 +42,14 @@ function displayStream(stream) {
     })
 
 }
-const GRABL_TOKEN = process.env.GITHUB_GRABL_TOKEN;
-const orgOctokit = new Octokit({ auth: GRABL_TOKEN });
 
-const getGithubUserAccessToken = async (oauthCode) => {
-    const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
-    const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+const getGithubUserAccessToken = async (client_id, client_secret, grabl_token, oauthCode) => {
+    const orgOctokit = new Octokit({ auth: grabl_token });
 
     const accessTokenResp = await orgOctokit.request('POST https://github.com/login/oauth/access_token', {
         headers: { Accept: "application/json" },
-        client_id: CLIENT_ID,
-        client_secret: CLIENT_SECRET,
+        client_id,
+        client_secret,
         code: oauthCode
     });
     return accessTokenResp.data.access_token;
@@ -58,14 +64,20 @@ const getGithubUserId = async (accessToken) => {
     return userResp.data.id
 }
 
-const isUserGraknLabsMember = async (userId) => {
-    const membersResp = await orgOctokit.orgs.listMembers({ org: 'graknlabs' });
-    const members = membersResp.data;
-    return members.some((member) => member.id === userId);
+const getGraknLabsMembers = async (grabl_token) => {
+    const orgOctokit = new Octokit({ auth: grabl_token });
+    try {
+        const membersResp = await orgOctokit.orgs.listMembers({ org: 'graknlabs' });
+        return membersResp.data;
+    } catch (err) {
+        console.error("There was a problem fetching members of Grakn Labs Github organisation for the purpose of authentication:", err);
+        process.exit(1);
+    }
 }
 
 module.exports = {
     checkForEnvVariables,
+    checkESIsRunning,
     parseMergedPR(req) {
         return {
             id: req.body.pull_request.merge_commit_sha + Date.now(),
@@ -99,5 +111,5 @@ module.exports = {
     },
     getGithubUserAccessToken,
     getGithubUserId,
-    isUserGraknLabsMember
+    getGraknLabsMembers,
 }

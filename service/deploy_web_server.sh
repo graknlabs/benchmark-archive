@@ -14,8 +14,8 @@ fi
 
 echo "Getting to a clean web-server state on $INSTANCE_NAME..."
 
-# gcloud compute ssh ubuntu@$INSTANCE_NAME --zone=$ZONE --command='pkill node'
-gcloud compute ssh ubuntu@$INSTANCE_NAME --zone=$ZONE --command='rm -rf ~/service/web-server/'
+gcloud compute ssh ubuntu@$INSTANCE_NAME --zone=$ZONE --command='sudo pkill node'
+gcloud compute ssh ubuntu@$INSTANCE_NAME --zone=$ZONE --command='sudo rm -rf ~/service/web-server/'
 
 echo "Uploading web-server files to $INSTANCE_NAME..."
 
