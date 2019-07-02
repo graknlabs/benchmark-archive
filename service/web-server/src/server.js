@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const elasticsearch = require('elasticsearch');
-const http = require('http');
 const https = require('https');
 const config = require('./config');
 const utils = require('./Utils');
@@ -206,14 +205,11 @@ function checkPullRequestIsMerged(req, res, next) {
 const KEY = process.env.SERVER_KEY;
 const CERTIFICATE = process.env.SERVER_CERTIFICATE;
 const credentials = { key: KEY, cert: CERTIFICATE };
-const httpServer = http.createServer();
 const httpsServer = https.createServer(credentials, app);
-
 
 // Start http server only when invoked by script
 if (!module.parent) {
     // specifying the hostname, 2nd argument, forces the server to accept connections on IPv4 address
-    httpServer.listen(config.web.port.http, "0.0.0.0", () => console.log(`Grakn Benchmark Service listening on port ${config.web.port.http}!`));
     httpsServer.listen(config.web.port.https, "0.0.0.0", () => console.log(`Grakn Benchmark Service listening on port ${config.web.port.https}!`));
 }
 // Register shutdown hook to properly terminate connection to ES

@@ -24,4 +24,4 @@ gcloud compute scp --recurse web-server/src ubuntu@$INSTANCE_NAME:~/service/web-
 gcloud compute scp web-server/package.json ubuntu@$INSTANCE_NAME:~/service/web-server/ --zone=$ZONE
 
 echo "Start the updated web-server"
-gcloud compute ssh ubuntu@$INSTANCE_NAME --zone=$ZONE --command='cd ~/service/web-server && npm install && node ~/service/web-server/src/server.js 2>&1 | tee -a ~/logs/node_server.log'
+gcloud compute ssh ubuntu@$INSTANCE_NAME --zone=$ZONE --command='cd ~/service/web-server && npm install && sudo node ~/service/web-server/src/server.js 2>&1 | tee -a ~/logs/node_server.log'
