@@ -212,13 +212,9 @@ const httpsServer = https.createServer(credentials, app);
 
 // Start http server only when invoked by script
 if (!module.parent) {
-<<<<<<< Updated upstream
-    app.listen(config.web.port, () => console.log(`Grakn Benchmark Service listening on port ${config.web.port}!`));
-=======
     // specifying the hostname, 2nd argument, forces the server to accept connections on IPv4 address
     httpServer.listen(config.web.port.http, "0.0.0.0", () => console.log(`Grakn Benchmark Service listening on port ${config.web.port.http}!`));
     httpsServer.listen(config.web.port.https, "0.0.0.0", () => console.log(`Grakn Benchmark Service listening on port ${config.web.port.https}!`));
->>>>>>> Stashed changes
 }
 // Register shutdown hook to properly terminate connection to ES
 process.on('exit', () => { esClient.close(); });
