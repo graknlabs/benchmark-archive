@@ -1,7 +1,7 @@
 <template>
   <div class="welcomeSplash">
     <h2>Grakn Benchmark</h2>
-    <a href="https://github.com/login/oauth/authorize?scope=user:email&client_id=ae839e841f2aa0d0bf2d">
+    <a :href="'https://github.com/login/oauth/authorize?scope=user:email&client_id=' + authAppClientId">
       <div class="githubLoginBtn">
         <font-awesome-icon :icon="['fab', 'github']" />
         <span>Sign in with GitHub</span>
@@ -9,6 +9,16 @@
     </a>
   </div>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      authAppClientId: process.env.VUE_APP_GITHUB_CLIENT_ID,
+    };
+  },
+};
+</script>
 
 <style lang="scss" scoped>
 .welcomeSplash {
