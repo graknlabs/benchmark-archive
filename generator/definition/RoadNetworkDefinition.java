@@ -26,6 +26,7 @@ import grakn.benchmark.generator.provider.key.ConceptKeyStorageProvider;
 import grakn.benchmark.generator.provider.key.CountingKeyProvider;
 import grakn.benchmark.generator.provider.key.NotInRelationshipConceptKeyProvider;
 import grakn.benchmark.generator.provider.value.RandomStringProvider;
+import grakn.benchmark.generator.provider.value.UniqueIntegerProvider;
 import grakn.benchmark.generator.storage.ConceptStorage;
 import grakn.benchmark.generator.strategy.AttributeStrategy;
 import grakn.benchmark.generator.strategy.EntityStrategy;
@@ -34,6 +35,7 @@ import grakn.benchmark.generator.strategy.RolePlayerTypeStrategy;
 import grakn.benchmark.generator.strategy.TypeStrategy;
 import grakn.benchmark.generator.util.WeightedPicker;
 
+import javax.management.relation.Relation;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
@@ -94,6 +96,70 @@ public class RoadNetworkDefinition implements DataGeneratorDefinition {
                         new FixedUniform(this.random, 10, 30),
                         globalKeyProvider,
                         nameIterator
+                )
+        );
+
+        this.attributeStrategies.add(
+                0.1,
+                new AttributeStrategy<>(
+                        "long-1",
+                        new FixedUniform(this.random, 10, 30),
+                        globalKeyProvider,
+                        new UniqueIntegerProvider(0)
+                )
+        );
+        this.attributeStrategies.add(
+                0.1,
+                new AttributeStrategy<>(
+                        "long-2",
+                        new FixedUniform(this.random, 10, 30),
+                        globalKeyProvider,
+                        new UniqueIntegerProvider(0)
+                )
+        );
+        this.attributeStrategies.add(
+                0.1,
+                new AttributeStrategy<>(
+                        "long-3",
+                        new FixedUniform(this.random, 10, 30),
+                        globalKeyProvider,
+                        new UniqueIntegerProvider(0)
+                )
+        );
+        this.attributeStrategies.add(
+                0.1,
+                new AttributeStrategy<>(
+                        "long-4",
+                        new FixedUniform(this.random, 10, 30),
+                        globalKeyProvider,
+                        new UniqueIntegerProvider(0)
+                )
+        );
+        this.attributeStrategies.add(
+                0.1,
+                new AttributeStrategy<>(
+                        "long-5",
+                        new FixedUniform(this.random, 10, 30),
+                        globalKeyProvider,
+                        new UniqueIntegerProvider(0)
+                )
+        );
+        this.attributeStrategies.add(
+                0.1,
+                new AttributeStrategy<>(
+                        "long-6",
+                        new FixedUniform(this.random, 10, 30),
+                        globalKeyProvider,
+                        new UniqueIntegerProvider(0)
+                )
+        );
+        this.attributeStrategies.add(
+                0.1,
+                new AttributeStrategy<>(
+                        "long-7",
+                        new FixedUniform(this.random, 10, 30),
+                        globalKeyProvider,
+                        new UniqueIntegerProvider(0)
                 )
         );
 
@@ -162,12 +228,92 @@ public class RoadNetworkDefinition implements DataGeneratorDefinition {
                 )
         );
         this.relationshipStrategies.add(
-                1.0,
+                3.0,
                 new RelationStrategy(
                         "@has-name",
-                        new FixedConstant(60),
+                        new FixedConstant(120),
                         globalKeyProvider,
                         Arrays.asList(nameOwner, nameValue)
+                )
+        );
+
+
+        RolePlayerTypeStrategy long1Owner = new RolePlayerTypeStrategy("@has-long-1-owner", new FixedConstant(1), new ConceptKeyStorageProvider(random, storage, "road"));
+        RolePlayerTypeStrategy long1Value = new RolePlayerTypeStrategy("@has-long-1-value", new FixedConstant(1), new ConceptKeyStorageProvider(random, storage, "long-1"));
+        this.relationshipStrategies.add(
+                0.5,
+                new RelationStrategy(
+                        "@has-long-1",
+                        new FixedConstant(30),
+                        globalKeyProvider,
+                        Arrays.asList(long1Owner, long1Value)
+                )
+        );
+
+        RolePlayerTypeStrategy long2Owner = new RolePlayerTypeStrategy("@has-long-2-owner", new FixedConstant(1), new ConceptKeyStorageProvider(random, storage, "road"));
+        RolePlayerTypeStrategy long2Value = new RolePlayerTypeStrategy("@has-long-2-value", new FixedConstant(1), new ConceptKeyStorageProvider(random, storage, "long-2"));
+        this.relationshipStrategies.add(
+                0.5,
+                new RelationStrategy(
+                        "@has-long-2",
+                        new FixedConstant(30),
+                        globalKeyProvider,
+                        Arrays.asList(long2Owner, long2Value)
+                )
+        );
+        RolePlayerTypeStrategy long3Owner = new RolePlayerTypeStrategy("@has-long-3-owner", new FixedConstant(1), new ConceptKeyStorageProvider(random, storage, "road"));
+        RolePlayerTypeStrategy long3Value = new RolePlayerTypeStrategy("@has-long-3-value", new FixedConstant(1), new ConceptKeyStorageProvider(random, storage, "long-3"));
+        this.relationshipStrategies.add(
+                0.5,
+                new RelationStrategy(
+                        "@has-long-3",
+                        new FixedConstant(30),
+                        globalKeyProvider,
+                        Arrays.asList(long3Owner, long3Value)
+                )
+        );
+        RolePlayerTypeStrategy long4Owner = new RolePlayerTypeStrategy("@has-long-4-owner", new FixedConstant(1), new ConceptKeyStorageProvider(random, storage, "road"));
+        RolePlayerTypeStrategy long4Value = new RolePlayerTypeStrategy("@has-long-4-value", new FixedConstant(1), new ConceptKeyStorageProvider(random, storage, "long-4"));
+        this.relationshipStrategies.add(
+                0.5,
+                new RelationStrategy(
+                        "@has-long-4",
+                        new FixedConstant(30),
+                        globalKeyProvider,
+                        Arrays.asList(long4Owner, long4Value)
+                )
+        );
+        RolePlayerTypeStrategy long5Owner = new RolePlayerTypeStrategy("@has-long-5-owner", new FixedConstant(1), new ConceptKeyStorageProvider(random, storage, "road"));
+        RolePlayerTypeStrategy long5Value = new RolePlayerTypeStrategy("@has-long-5-value", new FixedConstant(1), new ConceptKeyStorageProvider(random, storage, "long-5"));
+        this.relationshipStrategies.add(
+                0.5,
+                new RelationStrategy(
+                        "@has-long-5",
+                        new FixedConstant(30),
+                        globalKeyProvider,
+                        Arrays.asList(long5Owner, long5Value)
+                )
+        );
+        RolePlayerTypeStrategy long6Owner = new RolePlayerTypeStrategy("@has-long-6-owner", new FixedConstant(1), new ConceptKeyStorageProvider(random, storage, "road"));
+        RolePlayerTypeStrategy long6Value = new RolePlayerTypeStrategy("@has-long-6-value", new FixedConstant(1), new ConceptKeyStorageProvider(random, storage, "long-6"));
+        this.relationshipStrategies.add(
+                0.5,
+                new RelationStrategy(
+                        "@has-long-6",
+                        new FixedConstant(30),
+                        globalKeyProvider,
+                        Arrays.asList(long6Owner, long6Value)
+                )
+        );
+        RolePlayerTypeStrategy long7Owner = new RolePlayerTypeStrategy("@has-long-7-owner", new FixedConstant(1), new ConceptKeyStorageProvider(random, storage, "road"));
+        RolePlayerTypeStrategy long7Value = new RolePlayerTypeStrategy("@has-long-7-value", new FixedConstant(1), new ConceptKeyStorageProvider(random, storage, "long-7"));
+        this.relationshipStrategies.add(
+                0.5,
+                new RelationStrategy(
+                        "@has-long-7",
+                        new FixedConstant(30),
+                        globalKeyProvider,
+                        Arrays.asList(long7Owner, long7Value)
                 )
         );
     }
