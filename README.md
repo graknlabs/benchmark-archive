@@ -7,4 +7,4 @@ This repository contains components used for benchmarking and profiling Grakn.
 * `metric`: implementations of various more complex graph analysis metrics, compatible with Grakn or standard graphs fed from files (currently not used)
 * `profiler`: the core of `benchmark-ci` that takes scenarios, generates data, and profiles queries being executed into Elasticsearch using Zipkin tracing.
 * `report`: a very simplified version of `benchmark-ci` without tracing that measures high level performance of Grakn from the client side and can compile a report as a text file.
-* `service`: the dashboard and scripts required to run `benchmark-ci`.
+* `service`: the [dashboard](./service/dashboard), [web-server](./service/web-server) and scripts required to run `benchmark-ci`.
