@@ -3,7 +3,8 @@ package grakn.benchmark.generator.definition;
 import grakn.benchmark.generator.probdensity.FixedDiscreteGaussian;
 import grakn.benchmark.generator.provider.key.CountingKeyProvider;
 import grakn.benchmark.generator.provider.value.RandomStringProvider;
-import grakn.benchmark.generator.provider.value.ScalingGaussianIntegerProvider;
+import grakn.benchmark.generator.provider.value.ScalingGaussianDoubleProvider;
+import grakn.benchmark.generator.provider.value.UniqueIntegerProvider;
 import grakn.benchmark.generator.storage.ConceptStorage;
 import grakn.benchmark.generator.strategy.AttributeStrategy;
 import grakn.benchmark.generator.strategy.TypeStrategy;
@@ -46,31 +47,33 @@ public class AttributeDefinition implements DataGeneratorDefinition {
                 )
         );
 
-//
-//        // TODO a double value provider
-//        this.attributeStrategies.add(
-//                1.0,
-//                new AttributeStrategy<>(
-//                        "decimal",
-//                        new FixedDiscreteGaussian(this.random, 20, 5),
-//                        globalKeyProvider,
-//                        null
-//                )
-//        );
+
+        ScalingGaussianDoubleProvider doubleProvider = new ScalingGaussianDoubleProvider(1.0);
+        this.attributeStrategies.add(
+                1.0,
+                new AttributeStrategy<>(
+                        "decimal",
+                        new FixedDiscreteGaussian(this.random, 20, 5),
+                        globalKeyProvider,
+                        doubleProvider
+                )
+        );
 
 
-        ScalingGaussianIntegerProvider integerProvider = new ScalingGaussianIntegerProvider(1.0);
+//        ScalingGaussianIntegerProvider integerProvider = new ScalingGaussianIntegerProvider(1.0);
+        UniqueIntegerProvider integerProvider = new UniqueIntegerProvider(-1000);
         this.attributeStrategies.add(
                 2.0,
                 new AttributeStrategy<>(
                         "anInteger",
-                        new FixedDiscreteGaussian(this.random, 30, 10),
+                        new FixedDiscreteGaussian(this.random, 50, 20),
                         globalKeyProvider,
                         integerProvider
                 )
         );
 
-        ScalingGaussianIntegerProvider smallIntegerProvider = new ScalingGaussianIntegerProvider(0.2);
+//        ScalingGaussianIntegerProvider smallIntegerProvider = new ScalingGaussianIntegerProvider(0.2);
+        UniqueIntegerProvider smallIntegerProvider = new UniqueIntegerProvider(0);
         this.attributeStrategies.add(
                 2.0,
                 new AttributeStrategy<>(
@@ -82,7 +85,8 @@ public class AttributeDefinition implements DataGeneratorDefinition {
         );
 
 
-        ScalingGaussianIntegerProvider biggerIntegerProvider = new ScalingGaussianIntegerProvider(2.0);
+//        ScalingGaussianIntegerProvider biggerIntegerProvider = new ScalingGaussianIntegerProvider(2.0);
+        UniqueIntegerProvider biggerIntegerProvider = new UniqueIntegerProvider(1000);
         this.attributeStrategies.add(
                 1.0,
                 new AttributeStrategy<>(

@@ -1,11 +1,11 @@
-name: "Attributes - Data Querying"
+name: "Attributes - Data operations"
 description: "Benchmark Grakn's performance when operating on only data, no entities or relations (beyond keys) included"
-dataGenerator: "attributes"
-schema: "attributes_schema.gql"
+dataGenerator: "attribute"
+schema: "attribute_schema.gql"
 scales:
-  - 2000
-  - 6000
-  - 10000
+  - 1000
+  - 3000
+  - 5000
 repeatsPerQuery: 10
 
 queries: "queries_read.yml"

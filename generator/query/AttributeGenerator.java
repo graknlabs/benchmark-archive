@@ -69,6 +69,8 @@ public class AttributeGenerator<Datatype> implements QueryGenerator {
                     attributeValue = attributeValue.val((Integer) value);
                 } else if (value instanceof String) {
                     attributeValue = attributeValue.val((String) value);
+                } else if (value instanceof Double) {
+                    attributeValue = attributeValue.val((Double) value);
                 } else {
                     throw new DataGeneratorException("Unimplemented data type " + value.getClass());
                 }

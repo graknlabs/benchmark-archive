@@ -57,6 +57,9 @@ assemble_zip(
         "//common/configuration/scenario:schema/data_definition_schema.gql": "scenario/schema/data_definition_schema.gql",
         "//common/configuration/scenario:schema/queries.yml": "scenario/schema/queries.yml",
 
+        "//common/configuration/scenario:attribute/attribute_read_config.yml": "scenario/attribute/attribute_read_config.yml",
+        "//common/configuration/scenario:attribute/attribute_schema.gql": "scenario/attribute/attribute_schema.gql",
+        "//common/configuration/scenario:attribute/queries_read.yml": "scenario/attribute/queries_read.yml",
 
 
         # External dependencies: Elasticsearch and Zipkin
