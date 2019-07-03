@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const elasticsearch = require('elasticsearch');
+const http = require('http');
 const https = require('https');
 const config = require('./config');
 const utils = require('./Utils');
@@ -20,10 +21,12 @@ const spans = new SpansController(esClient);
 
 const app = module.exports = express();
 
+const currentEnv = process.env.NODE_ENV || "production"
+
 // setup and check for environment variables
-if (process.env.NODE_ENV === "development")
-    require('dotenv').config({ path: '../.env' });
-else
+if (currentEnv === "development")
+    require('dotenv').config({ path: __dirname + '/../.env' });
+else if (currentEnv === "production")
     require('dotenv').config({ path: '/home/ubuntu/.env' });
 
 const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
@@ -196,14 +199,22 @@ function checkPullRequestIsMerged(req, res, next) {
  *  */
 
 // Are the environment variables all set up?
-const { GITHUB_GRABL_TOKEN, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, SERVER_CERTIFICATE, SERVER_KEY } = process.env;
-if (!GITHUB_GRABL_TOKEN || !GITHUB_CLIENT_ID || !GITHUB_CLIENT_SECRET || !SERVER_CERTIFICATE || !SERVER_KEY) {
+const requiredEnvVariables = {
+    development: ["GITHUB_GRABL_TOKEN", "GITHUB_CLIENT_ID", "GITHUB_CLIENT_SECRET"],
+    production: ["GITHUB_GRABL_TOKEN", "GITHUB_CLIENT_ID", "GITHUB_CLIENT_SECRET", "SERVER_CERTIFICATE", "SERVER_KEY"],
+};
+const undefinedEnvVariables = []
+const envSpecificVariables = requiredEnvVariables[currentEnv];
+envSpecificVariables.forEach(envVar => {
+    if (process.env[envVar] === undefined)
+        undefinedEnvVariables.push(envVar);
+});
+
+if (undefinedEnvVariables.length) {
     console.error(`
-    At least one of the required environmental variables is missing.
-    To troubleshoot this:
-        1. check the implementation of the function that is the source of this message, to find out what environmental variables are required.
-        2. ensure that all required environmental variables are defined within /etc/environment on the machine that runs the web-server.
-        3. get in touch with the team to obtain the required values to update /etc/environment
+    You are running in ${currentEnv} and the following environment variables are missing from the .env file.
+    ${undefinedEnvVariables}
+    Get in touch with the team to obtain the missing environment variables.
     `)
     process.exit(1);
 }
@@ -228,15 +239,21 @@ const printMembersFetchError = (err) => {
     process.exit(1);
 }
 
-const KEY = process.env.SERVER_KEY;
-const CERTIFICATE = process.env.SERVER_CERTIFICATE;
-const credentials = { key: KEY, cert: CERTIFICATE };
-const httpsServer = https.createServer(credentials, app);
 
 // Start http server only when invoked by script
 if (!module.parent) {
-    // specifying the hostname, 2nd argument, forces the server to accept connections on IPv4 address
-    httpsServer.listen(config.web.port.https, "0.0.0.0", () => console.log(`Grakn Benchmark Service listening on port ${config.web.port.https}!`));
+    if (currentEnv === "development") {
+        const httpServer = http.createServer(app);
+        httpServer.listen(config.web.port.http, "0.0.0.0", () => console.log(`Grakn Benchmark Service listening on port ${config.web.port.http}!`));
+    } else if (currentEnv === "production") {
+        const KEY = process.env.SERVER_KEY;
+        const CERTIFICATE = process.env.SERVER_CERTIFICATE;
+        const credentials = { key: KEY, cert: CERTIFICATE };
+        const httpsServer = https.createServer(credentials, app);
+
+        // specifying the hostname, 2nd argument, forces the server to accept connections on IPv4 address
+        httpsServer.listen(config.web.port.https, "0.0.0.0", () => console.log(`Grakn Benchmark Service listening on port ${config.web.port.https}!`));
+    }
 }
 // Register shutdown hook to properly terminate connection to ES
 process.on('exit', () => { esClient.close(); });
