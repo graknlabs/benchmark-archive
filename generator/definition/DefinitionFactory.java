@@ -32,9 +32,10 @@ public class DefinitionFactory {
                 return new BiochemicalNetworkDefinition(random, storage);
             case "generic_uniform_network":
                 return new GenericUniformNetworkDefinition(random, storage);
+            case "attributes":
+                return new AttributeDefinition(random, storage);
             default:
                 throw new RuntimeException("Unknown specific schema generation strategy name: " + name);
         }
     }
 }
-

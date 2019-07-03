@@ -951,4 +951,5 @@ define
 			(shared-content: $sc, shared-by: $sb) isa sharing;
 			$pu isa public-user;
 		}, then {
-(permitted-content: $sc, permission-grantee: $sb) isa permitted-to-see;
+            (permitted-content: $sc, permission-grantee: $sb) isa permitted-to-see;
+        };

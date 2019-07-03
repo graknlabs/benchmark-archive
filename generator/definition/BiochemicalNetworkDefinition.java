@@ -106,8 +106,6 @@ public class BiochemicalNetworkDefinition implements DataGeneratorDefinition {
                         idGenerator
                 )
         );
-
-
     }
 
     private void buildExplicitRelationshipStrategies(CountingKeyProvider globalKeyProvider) {

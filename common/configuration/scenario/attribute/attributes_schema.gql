@@ -1,0 +1,24 @@
+define
+
+    unique-key sub attribute, datatype long;
+
+    name sub attribute, datatype string,
+        key unique-key;
+
+    decimal sub attribute, datatype double,
+        key unique-key;
+
+    anInteger sub attribute, datatype long,
+        key unique-key;
+
+    anotherInteger sub attribute, datatype long,
+        key unique-key;
+
+    thirdInteger sub attribute, datatype long,
+        key unique-key;
+
+    fourthInteger sub attribute, datatype long,
+        key unique-key;
+
+    fifthInteger sub attribute, datatype long,
+        key unique-key;

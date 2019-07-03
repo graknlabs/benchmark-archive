@@ -68,8 +68,8 @@ class QueryProfiler implements Runnable {
         executionName = config.executionName();
         deleteInsertedConcepts = config.deleteInsertedConcepts();
         traceDeleteInsertedConcepts = config.traceDeleteInsertedConcepts();
-        dataGenerator = config.generateData() ? config.dataGenerator() : null;
-        dataImport = config.staticDataImport() ? config.staticDataImportFilePath() : null;
+        dataGenerator = config.generateData() ? config.dataGenerator() : "";
+        dataImport = config.staticDataImport() ? config.staticDataImportFilePath() : "";
         this.concurrentId = concurrentId;
         this.tracer = tracer;
         this.queries = queries;

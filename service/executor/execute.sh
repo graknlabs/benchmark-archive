@@ -81,6 +81,7 @@ curl --header "Content-Type: application/json" \
 ./benchmark --config ./scenario/complex/config_read.yml                          --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200 --keyspace generic_uniform_network_read
 ./benchmark --config ./scenario/reasoning/config_read.yml                        --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200 --keyspace reasoner --load-schema --static-data-import
 ./benchmark --config ./scenario/rule_scaling/config_read.yml                     --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200 --keyspace rule_scaling --load-schema --static-data-import
+./benchmark --config ./scenario/schema/data_definition_config.yml                --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200 --keyspace schema --load-schema --no-data-generation
 # TODO report log files
 
 # Call completed hook on the service

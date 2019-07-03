@@ -5,9 +5,13 @@ queries:
         plays newOtherRole,
         has newAttribute;
       newRelation sub relation,
-        relates newRole, newOtherRole;
+        relates newRole, relates newOtherRole;
       newAttribute sub attribute, datatype string;"
-  - "undefine newRole sub role; newOtherRole sub role; newRelation sub relation; newEntity sub entity; newAttribute sub attribute;"
+  - "undefine
+      newEntity sub entity, plays newRole, plays newOtherRole, has newAttribute;
+      newRelation sub relation, relates newRole, relates newOtherRole;
+      newRole sub role; newOtherRole sub role;
+      newAttribute sub attribute;"
   - "match $x sub entity; get;"
   - "match $x sub! entity; get;"
   - "match $x plays tagged-in; get;"

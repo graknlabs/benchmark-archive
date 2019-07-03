@@ -55,7 +55,7 @@ assemble_zip(
 
         "//common/configuration/scenario:schema/data_definition_config.yml": "scenario/schema/data_definition_config.yml",
         "//common/configuration/scenario:schema/data_definition_schema.gql": "scenario/schema/data_definition_schema.gql",
-        "//common/configuration/scenario:schema/queries.yml": "scenario/data_definition/queries.yml",
+        "//common/configuration/scenario:schema/queries.yml": "scenario/schema/queries.yml",
 
 
 

@@ -1,7 +1,8 @@
 name: "Data Definition"
 description: "Test defining, undefining, and querying schema elements against a 1k line schema (from docs)"
+dataGenerator: "none"
 schema: "data_definition_schema.gql"
-repeatsPerQuery: 10
+repeatsPerQuery: 30
 
 queries: "queries.yml"
 deleteInsertedConcepts: true
