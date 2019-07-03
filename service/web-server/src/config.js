@@ -4,7 +4,7 @@ config.es = {};
 config.web = {};
 config.auth = {};
 
-config.es.host = '0.0.0.0';
+config.es.host = '35.237.252.2';
 config.es.port = 9200;
 config.web.port = {
     http: 80,
