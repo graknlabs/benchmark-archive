@@ -2,6 +2,7 @@ queries:
   - "match {$x isa anInteger;} or {$x isa anotherInteger;}; get; sort $x asc;"
   - "match $x isa name; $x contains \"ab\"; get;"
   - "match $x isa thirdInteger; $y isa anotherInteger; $x < $y; get;"
+  - "match $x isa name; get; count $x;"
   - "match $x isa decimal; get; mean $x;"
   - "match $x isa fourthInteger; get; max $x;"
   - "match $x isa fifthInteger; get; sum $x;"

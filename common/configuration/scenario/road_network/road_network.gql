@@ -12,6 +12,13 @@ define
     road sub entity,
         plays endpoint,
         has name, # fixed number of names per road
+        has long-1,
+        has long-2,
+        has long-3,
+        has long-4,
+        has long-5,
+        has long-6,
+        has long-7,
         key unique-key;
 
     # fixed increments
@@ -20,6 +27,28 @@ define
         has region-code,
         key unique-key;
 
+    long-1 sub attribute, datatype long,
+        key unique-key;
+    long-2 sub attribute, datatype long,
+        key unique-key;
+    long-3 sub attribute, datatype long,
+        key unique-key;
+    long-4 sub attribute, datatype long,
+        key unique-key;
+    long-5 sub attribute, datatype long,
+        key unique-key;
+    long-6 sub attribute, datatype long,
+        key unique-key;
+    long-7 sub attribute, datatype long,
+        key unique-key;
+
 define
     @has-name key unique-key;
     @has-region-code key unique-key;
+    @has-long-1 key unique-key;
+    @has-long-2 key unique-key;
+    @has-long-3 key unique-key;
+    @has-long-4 key unique-key;
+    @has-long-5 key unique-key;
+    @has-long-6 key unique-key;
+    @has-long-7 key unique-key;

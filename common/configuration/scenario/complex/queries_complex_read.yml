@@ -1,4 +1,8 @@
 queries:
+  # test having multiple role players as starting points
+  - "match $r (blobber: $b, squarer: $s, circler: $c); get;"
+  # test having multiple role players are starting points, plus a label for the relation (this should be inferrable at some point)
+  - "match $r (blobber: $b, squarer: $s, circler: $c); $r isa interaction; get;"
 
   # linear chain of 3, each possible different starting type
   # should test the starting point statistics
@@ -23,7 +27,6 @@ queries:
       ($c, $c2) isa sizing;
       $c2 has circle-value 2; get;"
 
-
   # branching from one entity, width 3, depth 1
   - "match
       $b1 isa blob;
@@ -34,11 +37,8 @@ queries:
       $s isa square;
       ($b1, $s) isa interaction;
       get; limit 5;"
-#
-#  # branching from one entity, width 3, depth 3
-#  # -
-#
-#  # star, 6 role players, half with attribute values
+
+  # star, 6 role players, half with attribute values
   - "match
       ($b1, $b2, $c1, $c2, $s1, $s2) isa interaction;
       $b1 isa blob, has blob-value 1;

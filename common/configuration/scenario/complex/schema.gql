@@ -94,11 +94,15 @@ define
     ownership-cost sub attribute, datatype long,
         key unique-key;
 
-define @has-shape-value key unique-key;
+
+
+define
+    @has-shape-value key unique-key;
     @has-blob-value key unique-key;
     @has-circle-value key unique-key;
     @has-square-value key unique-key;
     @has-interaction-value key unique-key;
     @has-ownership-cost key unique-key;
+
 
 
