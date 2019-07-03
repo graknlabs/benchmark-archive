@@ -1,4 +1,4 @@
-# Benchmark Dashboard
+# Benchmark Web Server
 
 ## Install Prerequisits
 
@@ -23,38 +23,34 @@ $ yarn install
 ```
 
 ## Get Started
-Before serving the dashboard, [start the Web Server](../web-server#start-the-web-server).
 
 ### Clone
 ```shell
 $ git clone git@github.com:graknlabs/benchmark.git
-$ cd benchmark/service/dashboard
+$ cd benchmark/service/web-server
 ```
 
 #### Set Up Environment Variables
-Get in touch with the team to obtain a copy of `.env` file and place it at `dashboard/`.
+Get in touch with the team to obtain a copy of `.env` file and place it at `web-server/`.
 
-### Compile and Serve With Hot-reload (for development)
+### Start the Web Server
 ```shell
-$ yarn serve
+$ NODE_ENV=development yarn start
 ```
-
-### Compile and Minify (for production)
-```shell
-$ yarn build
-```
-
-### Apply Lint
-```shell
-$ yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ## Deploy
-While inside `dashboard/`, run:
+While inside `web-server/`, run:
 
 ```shell
-$ ../deploy_dashboard.sh
+$ ../deploy_web_server.sh
+```
+
+## Stop the Production Web Server
+```shell
+gcloud compute ssh ubuntu@benchmark-service --zone=us-east1-b --command='sudo pkill node'
+```
+
+## Start the Production Web Server
+```shell
+gcloud compute ssh ubuntu@benchmark-service --zone=us-east1-b --command='cd ~/service/web-server && yarn start'
 ```
