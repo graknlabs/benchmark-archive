@@ -116,24 +116,26 @@ const getCommitsChartOptions = async (graphs, querySpans, queries, executions, s
 /* eslint-disable no-plusplus */
 function getLegendsData(queries) {
   let matchQuery = 0;
-  let matchInsertQuery = 0;
+  // const matchInsertQuery = 0;
   let insertQuery = 0;
-  let computeQuery = 0;
-  let otherQuery = 0;
+  // const computeQuery = 0;
+  // const otherQuery = 0;
   const queriesMap = {};
   queries.forEach((query) => {
     let value;
-    if (query.includes('compute')) {
-      value = `computeQuery${++computeQuery}`;
-    } else if (query.includes('insert') && query.includes('match')) {
-      value = `matchInsertQuery${++matchInsertQuery}`;
-    } else if (query.includes('insert')) {
+    // if (query.includes('compute')) {
+    //   value = `computeQuery${++computeQuery}`;
+    // } else if (query.includes('insert') && query.includes('match')) {
+    // value = `matchInsertQuery${++matchInsertQuery}`;
+    /* } else */
+    if (query.includes('insert')) {
       value = `insertQuery${++insertQuery}`;
     } else if (query.includes('match')) {
       value = `matchQuery${++matchQuery}`;
-    } else {
-      value = `query${++otherQuery}`;
     }
+    // else {
+    //   value = `query${++otherQuery}`;
+    // }
     queriesMap[query] = value;
   });
   return queriesMap;

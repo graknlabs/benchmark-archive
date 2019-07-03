@@ -111,9 +111,9 @@ export default {
 
       commitsChart: null,
 
-      chartSelectedQueryTypes: ['Match', 'Insert', 'MatchInsert', 'Compute'],
+      chartSelectedQueryTypes: ['Match', 'Insert'],
 
-      chartQueryTypes: ['Match', 'Insert', 'MatchInsert', 'Compute'],
+      chartQueryTypes: ['Match', 'Insert'],
     };
   },
 
@@ -179,7 +179,6 @@ export default {
     },
 
     toggleChartQueryType(selectedQueryTypes) {
-      if (!selectedQueryTypes.length) return;
       const legends = Object.values(this.legendsData);
       const selectedLegendQueryTypes = selectedQueryTypes.map(type => `${type.charAt(0).toLowerCase() + type.slice(1)}Query`);
 

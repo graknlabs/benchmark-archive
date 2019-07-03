@@ -24,7 +24,7 @@ import brave.Tracer;
 import brave.Tracing;
 import brave.propagation.TraceContext;
 import grakn.benchmark.lib.util.GrpcMessageConversion;
-import grakn.core.protocol.SessionProto;
+import grakn.protocol.session.SessionProto;
 import zipkin2.reporter.AsyncReporter;
 import zipkin2.reporter.urlconnection.URLConnectionSender;
 

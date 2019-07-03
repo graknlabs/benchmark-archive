@@ -18,7 +18,7 @@
 
 package grakn.benchmark.lib.instrumentation;
 
-import grakn.core.protocol.SessionProto;
+import grakn.protocol.session.SessionProto;
 import brave.Span;
 import brave.Tracer;
 import brave.Tracing;

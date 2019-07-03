@@ -4,7 +4,8 @@ report_failure() {
   curl --header "Content-Type: application/json" \
     --request POST \
     --data "{\"executionId\":\"$EXECUTION_ID\" }" \
-    http://$SERVICE_IP:4567/execution/failed
+    --insecure \
+    https://$SERVICE_IP/execution/failed
 
   exit 1
 }
@@ -69,7 +70,8 @@ echo "Notifying Benchmark Service /start"
 curl --header "Content-Type: application/json" \
     --request POST \
     --data "{\"executionId\":\"$EXECUTION_ID\" }" \
-    http://$SERVICE_IP:4567/execution/start
+    --insecure \
+    https://$SERVICE_IP/execution/start
 
 # -- write queries --
 ./benchmark --config ./scenario/road_network/road_config_write.yml --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200
@@ -88,4 +90,5 @@ curl --header "Content-Type: application/json" \
 curl --header "Content-Type: application/json" \
     --request POST \
     --data "{\"executionId\":\"$EXECUTION_ID\", \"vmName\": \"$INSTANCE_NAME\"}" \
-    http://$SERVICE_IP:4567/execution/completed
+    --insecure \
+    https://$SERVICE_IP/execution/completed

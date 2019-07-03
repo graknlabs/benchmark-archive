@@ -1,13 +1,18 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Home from './views/Home.vue';
+import BenchmarkClient from '@/util/BenchmarkClient';
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
   mode: 'history',
   routes: [
-    { path: '/', redirect: '/overview' },
+    {
+      path: '/login',
+      component: () => import('./views/Login'),
+    },
+    { path: '/', redirect: '/overview', meta: { requiresAuth: true } },
     {
       path: '/',
       name: 'home',
@@ -16,17 +21,17 @@ export default new Router({
         {
           path: 'overview',
           component: () => import(/* webpackChunkName: "overview" */ './views/Overview'),
-          meta: { menuIndex: '/overview' },
+          meta: { menuIndex: '/overview', requiresAuth: true },
         },
         {
           path: 'executions',
           component: () => import(/* webpackChunkName: "executions" */ './views/Executions'),
-          meta: { menuIndex: '/executions' },
+          meta: { menuIndex: '/executions', requiresAuth: true },
         },
         {
           path: 'inspect/:executionId',
           component: () => import(/* webpackChunkName: "inspect" */ './views/Inspect'),
-          meta: { menuIndex: '/executions' },
+          meta: { menuIndex: '/executions', requiresAuth: true },
         },
       ],
     },
@@ -41,3 +46,17 @@ export default new Router({
     // }
   ],
 });
+
+router.beforeEach(async (to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    try {
+      await BenchmarkClient.verifyIdentity();
+    } catch {
+      next({ path: '/login' });
+    }
+  }
+  next();
+});
+
+
+export default router;
