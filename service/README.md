@@ -25,3 +25,10 @@ Grakn. It is spawned and deleted transparently by the `service` and so does not 
 to be interacted with directly.
 
 
+## Starting the ElasticSearch Server
+
+```shell
+$ sudo sysctl -w vm.max_map_count=262144
+$ cd /home/ubuntu/elastic/elasticsearch-6.3.2/
+$ ./bin/elasticsearch  -E path.logs=data/elasticsearch/logs -E path.data=data/elasticsearch/data -E network.host=0.0.0.0 &
+```
