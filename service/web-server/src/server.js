@@ -11,7 +11,12 @@ const history = require('connect-history-api-fallback');
 const Octokit = require('@octokit/rest');
 const cookieSession = require('cookie-session');
 
-const ES_URI = config.es.host + ":" + config.es.port;
+const currentEnv = process.env.NODE_ENV || "production"
+
+const ES_URI = currentEnv === "production" ?
+               (config.es.host + ":" + config.es.port)
+               :
+               ("35.237.252.2:" + config.es.port);
 const LAUNCH_EXECUTOR_SCRIPT_PATH = __dirname + '/../../launch_executor_server.sh';
 const DELETE_INSTANCE_SCRIPT_PATH = __dirname + '/../../delete_instance.sh';
 
@@ -21,7 +26,6 @@ const spans = new SpansController(esClient);
 
 const app = module.exports = express();
 
-const currentEnv = process.env.NODE_ENV || "production"
 
 // setup and check for environment variables
 if (currentEnv === "development")
