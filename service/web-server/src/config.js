@@ -4,7 +4,7 @@ config.es = {};
 config.web = {};
 config.auth = {};
 
-config.es.host= process.env.NODE_ENV === "production" ? "localhost" : "35.237.252.3";
+config.es.host= process.env.NODE_ENV === "production" ? "localhost" : "35.237.252.2";
 config.es.port = 9200;
 config.web.port = {
     http: 80,
