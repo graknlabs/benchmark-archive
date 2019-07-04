@@ -187,12 +187,14 @@ export default {
       stepsAndGroups: [],
 
       queryExpanded: this.expanded,
-
-      queryCardChartOptions: {},
     };
   },
 
   computed: {
+    queryCardChartOptions() {
+      return getQueryCardChartOptions(this.histogramSpans);
+    },
+
     spanOfFirstRep() {
       return this.querySpans.filter(span => span.rep === 0)[0];
     },
@@ -236,8 +238,6 @@ export default {
     if (this.expanded) {
       this.fetchStepSpans();
     }
-
-    this.queryCardChartOptions = getQueryCardChartOptions(this.histogramSpans);
   },
 
   methods: {
