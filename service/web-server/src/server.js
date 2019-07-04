@@ -199,16 +199,11 @@ function checkPullRequestIsMerged(req, res, next) {
  *  */
 
 // Are the environment variables all set up?
-const requiredEnvVariables = {
+const envVariables = {
     development: ["GITHUB_GRABL_TOKEN", "GITHUB_CLIENT_ID", "GITHUB_CLIENT_SECRET"],
     production: ["GITHUB_GRABL_TOKEN", "GITHUB_CLIENT_ID", "GITHUB_CLIENT_SECRET", "SERVER_CERTIFICATE", "SERVER_KEY"],
 };
-const undefinedEnvVariables = []
-const envSpecificVariables = requiredEnvVariables[currentEnv];
-envSpecificVariables.forEach(envVar => {
-    if (process.env[envVar] === undefined)
-        undefinedEnvVariables.push(envVar);
-});
+const undefinedEnvVariables = envVariables[currentEnv].filter(envVar => process.env[envVar] === undefined)
 
 if (undefinedEnvVariables.length) {
     console.error(`
