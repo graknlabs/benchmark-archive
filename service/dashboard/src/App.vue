@@ -11,6 +11,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import 'node_modules/bootstrap/scss/bootstrap';
+@import 'node_modules/bootstrap-vue/src/index.scss';
 @import "./src/assets/css/fonts.scss";
 @import "./src/assets/css/reset.scss";
 @import "./src/assets/css/base.scss";

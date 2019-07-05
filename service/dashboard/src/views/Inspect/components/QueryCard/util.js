@@ -44,10 +44,10 @@ const getQueryCardChartOptions = (spans) => {
       },
     ],
     grid: {
-      left: 50,
-      top: 30,
+      left: 40,
+      top: 10,
       right: 10,
-      bottom: 40,
+      bottom: 42,
     },
   };
 

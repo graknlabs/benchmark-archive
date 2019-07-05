@@ -13,6 +13,8 @@
     "@fortawesome/free-regular-svg-icons": "^5.8.1",
     "@fortawesome/free-solid-svg-icons": "^5.8.1",
     "@fortawesome/vue-fontawesome": "^0.1.6",
+    "bootstrap": "^4.3.1",
+    "bootstrap-vue": "^2.0.0-rc.25",
     "copy-to-clipboard": "^3.1.0",
     "echarts": "4.1.0",
     "element-ui": "^2.4.11",

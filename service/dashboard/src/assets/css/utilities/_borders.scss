@@ -1,0 +1,7 @@
+@import "node_modules/bootstrap/scss/utilities/borders";
+
+.border {
+    &-primary, &-secondary, &-success, &-danger, &-warning, &-info, &-light, &-dark, &-white {
+        @extend .border;
+    }
+}

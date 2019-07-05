@@ -1,136 +1,95 @@
 <template>
-  <div class="queryCard card">
+  <div
+    class="queryCard card"
+    @click="toggleStepsTable()"
+  >
     <el-card v-loading="loading">
-      <div
-        class="queryCardDetails flexed"
-        @click="toggleStepsTable()"
+      <el-tooltip
+        class="item"
+        effect="dark"
+        :content="query"
+        placement="top"
       >
-        <el-tooltip
-          class="item"
-          effect="dark"
-          :content="query"
-          placement="top"
-        >
-          <div
-            class="queryCardDetail"
-            style="padding: 0;"
-          >
-            <p>
-              {{ query | truncate(100) }}
-            </p>
-          </div>
-        </el-tooltip>
-
-        <el-tooltip
-          class="item"
-          effect="dark"
-          content="Outliers"
-          placement="top"
-        >
-          <div class="queryCardDetail">
-            <el-row
-              v-for="span in outlierSpans"
-              :key="span.rep"
-            >
-              Rep {{ span.rep + 1 }}: {{ span.duration | fixedMs }} ms
-            </el-row>
-          </div>
-        </el-tooltip>
-
-        <e-chart
-          class="queryRepChart"
-          :autoresize="true"
-          :options="queryCardChartOptions"
-        />
-
-        <el-tooltip
-          class="item"
-          effect="dark"
-          content="Reps"
-          placement="top"
-        >
-          <div class="queryCardDetail">
-            <p>
-              {{ reps }}
-            </p>
-          </div>
-        </el-tooltip>
-
-        <el-tooltip
-          class="item"
-          effect="dark"
-          content="Median"
-          placement="top"
-        >
-          <div class="queryCardDetail">
-            <p>
-              {{ median | fixedMs }}
-            </p>
-          </div>
-        </el-tooltip>
-
-        <el-tooltip
-          class="item"
-          effect="dark"
-          content="Mean"
-          placement="top"
-        >
-          <div class="queryCardDetail">
-            <p>
-              {{ mean | fixedMs }}
-            </p>
-          </div>
-        </el-tooltip>
-
-        <el-tooltip
-          class="item"
-          effect="dark"
-          content="Standard Deviation"
-          placement="top"
-        >
-          <div class="queryCardDetail">
-            <p>
-              {{ stdDeviation | fixedMs }}
-            </p>
-          </div>
-        </el-tooltip>
-      </div>
-
-      <section
-        v-if="queryExpanded"
-        class="stepsTable"
-      >
-        <div class="flexed">
-          <p class="tableHeader">
-            Step
-          </p>
-          <p class="tableHeader">
-            Min/Rep|Member
-          </p>
-          <p class="tableHeader">
-            Median/Reps
-          </p>
-          <p class="tableHeader">
-            Max/Rep
+        <div class="query-graql">
+          <p>
+            {{ query | truncate(180) }}
           </p>
         </div>
-        <template v-for="stepOrGroup in stepsAndGroups">
-          <group-line
-            v-if="stepOrGroup.hasOwnProperty('members')"
-            :key="stepOrGroup.name"
-            :members="stepOrGroup.members"
-            :padding="20"
-          />
+      </el-tooltip>
+      <el-row class="p-3">
+        <el-col :span="12">
+          <div class="histogram-chart-wrapper">
+            <e-chart
+              class="histogram-chart"
+              :autoresize="true"
+              :options="queryCardChartOptions"
+            />
+            <div class="outliers">
+              <header>
+                <p>Outliers</p>
+              </header>
+              <p
+                v-for="span in outlierSpans"
+                :key="span.rep"
+              >
+                Rep {{ span.rep + 1 }}: {{ span.duration | fixedMs }} ms
+              </p>
+            </div>
+          </div>
+        </el-col>
+        <el-col :span="12">
+          <div class="query-details">
+            <el-row
+              v-for="(row, rowIindex) in queryDetails"
+              :key="rowIindex"
+            >
+              <el-col
+                v-for="detail in row"
+                :key="detail.label"
+                :span="24/row.length"
+              >
+                <p>{{ detail.label }} {{ detail.label ? ':' : '' }} {{ detail.value }}</p>
+              </el-col>
+            </el-row>
+          </div>
 
-          <step-line
-            v-if="!stepOrGroup.hasOwnProperty('members')"
-            :key="stepOrGroup.name"
-            :step="stepOrGroup.name"
-            :step-spans="filterStepSpans(stepOrGroup.order)"
-            :padding="20"
-          />
-        </template>
-      </section>
+          <section
+            v-if="queryExpanded"
+            class="stepsTable"
+          >
+            <div class="flexed">
+              <p class="tableHeader">
+                Step
+              </p>
+              <p class="tableHeader">
+                Min/Rep|Member
+              </p>
+              <p class="tableHeader">
+                Median/Reps
+              </p>
+              <p class="tableHeader">
+                Max/Rep
+              </p>
+            </div>
+            <template v-for="stepOrGroup in stepsAndGroups">
+              <group-line
+                v-if="stepOrGroup.hasOwnProperty('members')"
+                :key="stepOrGroup.name"
+                :members="stepOrGroup.members"
+                :padding="20"
+              />
+
+              <step-line
+                v-if="!stepOrGroup.hasOwnProperty('members')"
+                :key="stepOrGroup.name"
+                :step="stepOrGroup.name"
+                :step-spans="filterStepSpans(stepOrGroup.order)"
+                :padding="20"
+              />
+            </template>
+          </section>
+        </el-col>
+      </el-row>
     </el-card>
   </div>
 </template>
@@ -191,6 +150,33 @@ export default {
   },
 
   computed: {
+    queryDetails() {
+      return [
+        [
+          // row 1
+          {
+            label: 'REP',
+            value: this.reps,
+          },
+          {
+            label: 'AVG',
+            value: `${this.fixedMs(this.mean)} ms`,
+          },
+        ],
+        [
+          // row 2
+          {
+            label: 'SD',
+            value: `${this.fixedMs(this.stdDeviation)} ms`,
+          },
+          {
+            label: 'MED',
+            value: `${this.fixedMs(this.median)} ms`,
+          },
+        ],
+      ];
+    },
+
     queryCardChartOptions() {
       return getQueryCardChartOptions(this.histogramSpans);
     },
@@ -205,7 +191,8 @@ export default {
     },
 
     outlierSpans() {
-      const outliers = getOutliers(this.querySpans.map(span => span.duration)).upper;
+      const outliers = getOutliers(this.querySpans.map(span => span.duration))
+        .upper;
       return this.querySpans.filter(span => outliers.includes(span.duration));
     },
 
@@ -221,11 +208,16 @@ export default {
     },
 
     mean() {
-      return this.querySpans.map(span => span.duration).reduce((a, b) => a + b, 0) / this.querySpans.length;
+      return (
+        this.querySpans.map(span => span.duration).reduce((a, b) => a + b, 0)
+        / this.querySpans.length
+      );
     },
 
     stdDeviation() {
-      const sum = this.querySpans.map(span => (span.duration - this.mean) ** 2).reduce((a, b) => a + b, 0);
+      const sum = this.querySpans
+        .map(span => (span.duration - this.mean) ** 2)
+        .reduce((a, b) => a + b, 0);
       return Math.sqrt(sum / this.querySpans.length);
     },
 
@@ -241,6 +233,10 @@ export default {
   },
 
   methods: {
+    fixedMs(num) {
+      return `${Number(num / 1000).toFixed(3)}`;
+    },
+
     async toggleStepsTable() {
       this.loading = true;
 
@@ -336,34 +332,52 @@ export default {
 
 <style lang="scss" scoped>
 @import "./src/assets/css/variables.scss";
+@import "./src/assets/css/utilities/index.scss";
 
-.queryRepChart {
-  height: 130px;
-  width: 300px;
+.query-graql {
+  @extend .pt-3;
+  @extend .px-3;
+  @extend .text-size-14;
 }
 
-.queryCardDetails {
-  cursor: pointer;
+$histogram-chart-width: 300px;
+$histogram-chart-height: 130px;
+$outliers-width: 150px;
 
-  padding: $padding-default;
-}
+.histogram-chart-wrapper {
+  width: calc(#{$histogram-chart-width} + #{$outliers-width});
+  display: flex;
 
-.queryCardDetail {
-  font-size: 16px;
+  .histogram-chart {
+    width: $histogram-chart-width;
+    height: $histogram-chart-height;
 
-  &:nth-child(1) {
-    width: 300px;
-    font-size: 14px;
-    text-align: left;
+    @extend .border-secondary;
+    @extend .p-1;
   }
 
-  .el-row {
-    padding-top: 10px;
+  .outliers {
+    width: $outliers-width;
+    @extend .border-secondary;
+    border-left: none !important;
 
-    &:nth-child(1) {
-      padding-top: 0;
+    p {
+      @extend .p-2;
+    }
+
+    header {
+      @extend .bg-dark;
+      p {
+        @extend .text-size-13;
+        @extend .text-white;
+        line-height: 1.2;
+      }
     }
   }
+}
+
+.query-details {
+  p { @extend .text-size-16; }
 }
 
 .tableHeader {
