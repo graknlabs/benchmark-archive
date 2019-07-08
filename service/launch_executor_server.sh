@@ -12,6 +12,7 @@ REPO_URL=$1
 EXECUTION_ID=$2
 COMMIT=$3
 INSTANCE_NAME=$4
+INSTANCE_IP="35.237.252.2"
 
 LOG=~/logs/launch_executor_$INSTANCE_NAME.log
 
@@ -41,10 +42,6 @@ done
 echo "Copying executor files to $INSTANCE_NAME..." | tee -a $LOG
 gcloud compute scp --recurse ~/executor ubuntu@$INSTANCE_NAME:~ --zone=$ZONE 2>&1 | tee -a $LOG
 
-# collect this instance's IP
-echo "Retrieving this instance's IP..." | tee -a $LOG
-THIS_IP=`curl -H "Metadata-Flavor: Google" http://169.254.169.254/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip`
-
 # install tmux so we can detach and set script execution permissions
 echo "Initialising new instance..." | tee -a $LOG
 gcloud compute ssh ubuntu@$INSTANCE_NAME --zone=$ZONE --command='chmod +x ~/executor/execute.sh && mkdir -p ~/logs' 2>&1 | tee -a $LOG
@@ -53,5 +50,5 @@ gcloud compute ssh ubuntu@$INSTANCE_NAME --zone=$ZONE --command='chmod +x ~/exec
 echo "Starting benchmark..." | tee -a $LOG
 gcloud compute ssh ubuntu@$INSTANCE_NAME --zone=$ZONE --command=" \
     tmux new -d -s execute      \
-        \" ~/executor/execute.sh $REPO_URL $COMMIT $THIS_IP $INSTANCE_NAME $EXECUTION_ID 2>&1 | tee -a ~/logs/executor.log \" \
+        \" ~/executor/execute.sh $REPO_URL $COMMIT $INSTANCE_IP $INSTANCE_NAME $EXECUTION_ID 2>&1 | tee -a ~/logs/executor.log \" \
     "
