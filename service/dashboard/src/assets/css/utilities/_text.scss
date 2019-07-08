@@ -1,4 +1,6 @@
-@import "node_modules/bootstrap/scss/utilities/text";
+@import "./bootstrap_utilities";
+@import "../variables";
+@import "../vendors/bootstrap-4.0.0/scss/utilities/text";
 
 // font-sizes
 .text-size {
@@ -26,8 +28,4 @@
   &-24 {
     font-size: 24px;
   }
-}
-
-p {
-  line-height: 1.5;
 }

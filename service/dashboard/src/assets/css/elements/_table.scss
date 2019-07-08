@@ -1,0 +1,24 @@
+@import "./src/assets/css/utilities/spacing";
+@import "./src/assets/css/utilities/background";
+@import "./src/assets/css/utilities/borders";
+@import "./src/assets/css/utilities/text";
+
+.table {
+  width: 100%;
+
+  &-row, &-head {
+    display: flex;
+    @extend .p-2;
+  }
+
+  &-head {
+    @extend .bg-dark;
+    @extend .text-white;
+  }
+
+  &-cell {
+    text-align: center;
+    flex: 1;
+    box-sizing: border-box;
+  }
+}

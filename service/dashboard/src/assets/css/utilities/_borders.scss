@@ -1,7 +1,26 @@
-@import "node_modules/bootstrap/scss/utilities/borders";
+@import "./bootstrap_utilities";
+@import "../vendors/bootstrap-4.0.0/scss/utilities/borders";
 
-.border {
-    &-primary, &-secondary, &-success, &-danger, &-warning, &-info, &-light, &-dark, &-white {
-        @extend .border;
-    }
+@mixin border-radius($radius-top-left: 5px, $radius-top-right: 5px, $radius-bottom-right: 5px, $radius-bottom-left: 5px) {
+  -webkit-border-top-left-radius: $radius-top-left;
+  border-top-left-radius: $radius-top-left;
+  -webkit-border-top-left-radius: $radius-top-left;
+  border-top-left-radius: $radius-top-left;
+
+  -webkit-border-top-right-radius: $radius-top-right;
+  border-top-right-radius: $radius-top-right;
+  -webkit-border-top-right-radius: $radius-top-right;
+  border-top-right-radius: $radius-top-right;
+
+  -webkit-border-bottom-right-radius: $radius-bottom-right;
+  border-bottom-right-radius: $radius-bottom-right;
+  -webkit-border-bottom-right-radius: $radius-bottom-right;
+  border-bottom-right-radius: $radius-bottom-right;
+
+  -webkit-border-bottom-left-radius: $radius-bottom-left;
+  border-bottom-left-radius: $radius-bottom-left;
+  -webkit-border-bottom-left-radius: $radius-bottom-left;
+  border-bottom-left-radius: $radius-bottom-left;
+
+  background-clip: padding-box;
 }

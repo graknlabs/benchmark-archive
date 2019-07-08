@@ -1,0 +1,17 @@
+@import "./variables";
+@import "./fonts.scss";
+@import "./reset.scss";
+@import "./overrides.scss";
+
+p {
+  line-height: 1.5;
+}
+
+h2 {
+  color: #555;
+}
+
+a {
+  color: $color-link-default;
+  text-decoration: none;
+}
