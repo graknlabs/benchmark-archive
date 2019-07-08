@@ -13,7 +13,7 @@
         {{ step | truncate(100) }}
       </p>
 
-      <p :class="'table-cell ' + (isFastestMember === true ? 'fastest' : '')">
+      <p :class="'table-cell ' + (isFastestMember ? 'fastest' : '')">
         {{ minSpan.duration | fixedMs }}/{{ minSpan.rep + 1 | ordinalise }}
       </p>
 
@@ -21,7 +21,7 @@
         {{ median | fixedMs }}/{{ reps }}
       </p>
 
-      <p :class="'table-cell ' + (isSlowestMember === true ? 'slowest' : '')">
+      <p :class="'table-cell ' + (isSlowestMember ? 'slowest' : '')">
         {{ maxSpan.duration | fixedMs }}/{{ maxSpan.rep + 1 | ordinalise }}
       </p>
     </div>

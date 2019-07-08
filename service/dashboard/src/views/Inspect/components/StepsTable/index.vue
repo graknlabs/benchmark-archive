@@ -73,10 +73,15 @@ export default {
     },
   },
 
+  data() {
+    return {
+      theadHeight: 39,
+    };
+  },
+
   computed: {
     tbodyMaxHeight() {
-      const theadHeight = 39;
-      return this.maxHeight - theadHeight;
+      return this.maxHeight - this.theadHeight;
     },
   },
 
