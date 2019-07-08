@@ -12,7 +12,7 @@ REPO_URL=$1
 EXECUTION_ID=$2
 COMMIT=$3
 INSTANCE_NAME=$4
-INSTANCE_IP="35.237.252.2"
+INSTANCE_IP="htttps://benchmark.grakn.ai"
 
 LOG=~/logs/launch_executor_$INSTANCE_NAME.log
 
