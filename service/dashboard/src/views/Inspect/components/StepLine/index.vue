@@ -2,25 +2,30 @@
   <div>
     <div
       :id="anchorId"
-      :class="'flexed tableRow ' + (expaned ? 'expanded' : '')"
+      :class="'table-row ' + (expaned ? 'expanded' : '')"
       @click="toggleChildSteps()"
     >
-      <span :style="'text-align: left; padding-left:' + padding + 'px;'">
+      <p
+        class="table-cell"
+        :style="'padding-left:' + padding + 'px;'"
+      >
         <i class="el-icon el-icon-arrow-right" />
         {{ step | truncate(100) }}
-      </span>
+      </p>
 
-      <span
-        :class="isFastestMember === true ? 'fastest' : ''"
-      >{{ minSpan.duration | fixedMs }}/{{ minSpan.rep + 1 | ordinalise }}</span>
+      <p :class="'table-cell ' + (isFastestMember === true ? 'fastest' : '')">
+        {{ minSpan.duration | fixedMs }}/{{ minSpan.rep + 1 | ordinalise }}
+      </p>
 
-      <span>{{ median | fixedMs }}/{{ reps }}</span>
+      <p class="table-cell">
+        {{ median | fixedMs }}/{{ reps }}
+      </p>
 
-      <span
-        :class="isSlowestMember === true ? 'slowest' : ''"
-      >{{ maxSpan.duration | fixedMs }}/{{ maxSpan.rep + 1 | ordinalise }}</span>
+      <p :class="'table-cell ' + (isSlowestMember === true ? 'slowest' : '')">
+        {{ maxSpan.duration | fixedMs }}/{{ maxSpan.rep + 1 | ordinalise }}
+      </p>
     </div>
-    <div v-if="expaned">
+    <template v-if="expaned">
       <step-line
         v-for="childStepName in childStepNames"
         :key="childStepName"
@@ -28,7 +33,7 @@
         :step-spans="filterChildStepSpans(childStepName)"
         :padding="padding + 20"
       />
-    </div>
+    </template>
   </div>
 </template>
 
@@ -77,11 +82,13 @@ export default {
     isFastestMember: {
       type: Boolean,
       required: false,
+      default: false,
     },
 
     isSlowestMember: {
       type: Boolean,
       required: false,
+      default: false,
     },
   },
 
@@ -163,58 +170,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-@import "./src/assets/css/variables.scss";
-
-.tableRow {
-  background-color: #fafafa;
-  border-bottom: 1px solid $color-border-light;
-  cursor: pointer;
-
-  &.expanded {
-    .el-icon {
-      transform: rotate(90deg);
-    }
-  }
-
-  span {
-    text-align: center;
-    padding: $padding-more/2 0;
-
-    &:nth-child(1) {
-      width: 300px;
-      box-sizing: border-box;
-    }
-
-    &:nth-child(2) {
-      width: 100px;
-    }
-
-    &:nth-child(3) {
-      width: 100px;
-    }
-
-    &:nth-child(4) {
-      width: 100px;
-      box-sizing: border-box;
-      padding-right: 20px;
-    }
-  }
-
-  .fastest {
-    color: #27ae60;
-  }
-
-  .slowest {
-    color: #c0392b;
-  }
-
-  &:last-child {
-    border-bottom: none;
-  }
-
-  &:hover {
-    background-color: $color-bg-table-hover;
-  }
-}
-</style>
+<style lang="scss" scopped src="./style.scss"></style>

@@ -1,0 +1,107 @@
+@import "./src/assets/css/utilities/text";
+@import "./src/assets/css/utilities/spacing";
+@import "./src/assets/css/utilities/borders";
+@import "./src/assets/css/utilities/background";
+
+@import "./src/assets/css/elements/card";
+
+
+$summary-expanded-width: 485px;
+$histogram-chart-width: 300px;
+$histogram-chart-height: 130px;
+$outliers-width: 150px;
+
+.card {
+  @extend .mb-4;
+  @extend .border-secondary;
+
+  &.expanded {
+    .query-summary {
+      width: $summary-expanded-width;
+    }
+
+    .query-expanded-section {
+      width: calc(100% - #{$summary-expanded-width});
+      // overflow-y: scroll;
+    }
+
+    .query-chart, .query-details {
+      width: 100%;
+    }
+
+    .query-summary {
+      @extend .border-right;
+      @extend .border-dark;
+    }
+
+    .query-details {
+      @extend .mt-3;
+    }
+  }
+}
+
+.query-summary {
+  @extend .p-3;
+}
+
+.query-graql {
+  @extend .text-size-14;
+  @extend .pb-3;
+}
+
+.histogram-chart-wrapper {
+  width: calc(#{$histogram-chart-width} + #{$outliers-width});
+  display: flex;
+
+  .histogram-chart {
+    width: $histogram-chart-width;
+    height: $histogram-chart-height;
+
+    @extend .border;
+    @extend .border-secondary;
+    @extend .rounded-left;
+
+    @extend .p-1;
+  }
+
+  .outliers {
+    width: $outliers-width;
+
+    @extend .border;
+    @extend .border-secondary;
+    border-left: none !important;
+    @extend .rounded-right;
+
+    p {
+      @extend .p-2;
+    }
+
+    header {
+      @extend .bg-dark;
+      p {
+        @extend .text-size-13;
+        @extend .text-white;
+        line-height: 1.2;
+      }
+    }
+  }
+}
+
+.query-details {
+  p {
+    @extend .text-size-16;
+    line-height: 2.5;
+  }
+  .label {
+    @extend .font-weight-bold;
+    @extend .text-secondary;
+    @extend .text-size-14;
+  }
+  .value {
+    @extend .font-weight-bold;
+    @extend .text-size-16;
+    @extend .text-dark;
+
+    @extend .ml-2;
+  }
+}

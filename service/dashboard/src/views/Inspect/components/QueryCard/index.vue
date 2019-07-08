@@ -1,9 +1,14 @@
 <template>
-  <div
-    class="queryCard card"
-    @click="toggleStepsTable()"
+  <el-row
+    ref="expanded"
+    :class="'card ' + (queryExpanded ? 'expanded' : '')"
   >
-    <el-card v-loading="loading">
+    <el-col
+      v-loading="loading"
+      :span="24"
+      class="query-summary"
+      @click.native="toggleStepsTable()"
+    >
       <el-tooltip
         class="item"
         effect="dark"
@@ -16,8 +21,11 @@
           </p>
         </div>
       </el-tooltip>
-      <el-row class="p-3">
-        <el-col :span="12">
+      <el-row>
+        <el-col
+          class="query-chart"
+          :span="12"
+        >
           <div class="histogram-chart-wrapper">
             <e-chart
               class="histogram-chart"
@@ -37,67 +45,46 @@
             </div>
           </div>
         </el-col>
-        <el-col :span="12">
-          <div class="query-details">
-            <el-row
-              v-for="(row, rowIindex) in queryDetails"
-              :key="rowIindex"
-            >
-              <el-col
-                v-for="detail in row"
-                :key="detail.label"
-                :span="24/row.length"
-              >
-                <p>{{ detail.label }} {{ detail.label ? ':' : '' }} {{ detail.value }}</p>
-              </el-col>
-            </el-row>
-          </div>
-
-          <section
-            v-if="queryExpanded"
-            class="stepsTable"
+        <el-col
+          class="query-details"
+          :span="12"
+        >
+          <el-row
+            v-for="(row, rowIindex) in queryDetails"
+            :key="rowIindex"
           >
-            <div class="flexed">
-              <p class="tableHeader">
-                Step
+            <el-col
+              v-for="detail in row"
+              :key="detail.label"
+              :span="24/row.length"
+            >
+              <p>
+                <span class="label">{{ detail.label }}</span>
+                <span class="value">{{ detail.value }}</span>
               </p>
-              <p class="tableHeader">
-                Min/Rep|Member
-              </p>
-              <p class="tableHeader">
-                Median/Reps
-              </p>
-              <p class="tableHeader">
-                Max/Rep
-              </p>
-            </div>
-            <template v-for="stepOrGroup in stepsAndGroups">
-              <group-line
-                v-if="stepOrGroup.hasOwnProperty('members')"
-                :key="stepOrGroup.name"
-                :members="stepOrGroup.members"
-                :padding="20"
-              />
-
-              <step-line
-                v-if="!stepOrGroup.hasOwnProperty('members')"
-                :key="stepOrGroup.name"
-                :step="stepOrGroup.name"
-                :step-spans="filterStepSpans(stepOrGroup.order)"
-                :padding="20"
-              />
-            </template>
-          </section>
+            </el-col>
+          </el-row>
         </el-col>
       </el-row>
-    </el-card>
-  </div>
+    </el-col>
+
+    <el-col
+      v-if="queryExpanded && stepSpans"
+      class="query-expanded-section"
+    >
+      <steps-table
+        v-if="queryExpanded"
+        :steps-and-groups="stepsAndGroups"
+        :step-spans="stepSpans"
+        :max-height="expandedSummaryHeight"
+      />
+    </el-col>
+  </el-row>
 </template>
 
 <script>
 import BenchmarkClient from '@/util/BenchmarkClient';
-import StepLine from '../StepLine';
-import GroupLine from '../GroupLine';
+import StepsTable from '../StepsTable';
 import EChart from 'vue-echarts';
 import 'echarts/lib/chart/bar';
 import 'echarts/lib/component/tooltip';
@@ -112,7 +99,7 @@ const { getQueryCardChartOptions } = util;
 const { flattenStepSpans, attachRepsToChildSpans } = EDF;
 
 export default {
-  components: { EChart, StepLine, GroupLine },
+  components: { EChart, StepsTable },
 
   filters: {
     fixedMs(num) {
@@ -141,11 +128,13 @@ export default {
     return {
       loading: false,
 
-      stepSpans: null,
+      stepSpans: [],
 
       stepsAndGroups: [],
 
       queryExpanded: this.expanded,
+
+      expandedSummaryHeight: 0,
     };
   },
 
@@ -226,6 +215,16 @@ export default {
     },
   },
 
+  watch: {
+    queryExpanded() {
+      this.$nextTick(() => {
+        if (this.queryExpanded && this.$refs.expanded) {
+          this.expandedSummaryHeight = this.$refs.expanded.$el.offsetHeight;
+        }
+      });
+    },
+  },
+
   created() {
     if (this.expanded) {
       this.fetchStepSpans();
@@ -240,15 +239,11 @@ export default {
     async toggleStepsTable() {
       this.loading = true;
 
-      this.queryExpanded = !this.queryExpanded;
-      if (!this.queryExpanded) {
-        this.loading = false;
-        return;
-      }
-
       if (!this.stepsAndGroups.length) {
         await this.fetchStepSpans();
       }
+
+      this.queryExpanded = !this.queryExpanded;
 
       this.loading = false;
     },
@@ -284,7 +279,6 @@ export default {
       let currentStep = steps[0];
       let currentSteps = [];
       let i = 0;
-      // debugger;
 
       do {
         if (steps[i].name === currentStep.name) {
@@ -322,106 +316,12 @@ export default {
 };
 </script>
 
+<style lang="scss" scoped src="./style.scss"></style>
+
 <style lang="scss">
 .queryCard {
   .el-card__body {
     padding: 0;
   }
-}
-</style>
-
-<style lang="scss" scoped>
-@import "./src/assets/css/variables.scss";
-@import "./src/assets/css/utilities/index.scss";
-
-.query-graql {
-  @extend .pt-3;
-  @extend .px-3;
-  @extend .text-size-14;
-}
-
-$histogram-chart-width: 300px;
-$histogram-chart-height: 130px;
-$outliers-width: 150px;
-
-.histogram-chart-wrapper {
-  width: calc(#{$histogram-chart-width} + #{$outliers-width});
-  display: flex;
-
-  .histogram-chart {
-    width: $histogram-chart-width;
-    height: $histogram-chart-height;
-
-    @extend .border-secondary;
-    @extend .p-1;
-  }
-
-  .outliers {
-    width: $outliers-width;
-    @extend .border-secondary;
-    border-left: none !important;
-
-    p {
-      @extend .p-2;
-    }
-
-    header {
-      @extend .bg-dark;
-      p {
-        @extend .text-size-13;
-        @extend .text-white;
-        line-height: 1.2;
-      }
-    }
-  }
-}
-
-.query-details {
-  p { @extend .text-size-16; }
-}
-
-.tableHeader {
-  text-align: center;
-
-  &:nth-child(1) {
-    width: 300px;
-    text-align: left;
-    box-sizing: border-box;
-    padding-left: $padding-default;
-  }
-
-  &:nth-child(2) {
-    width: 100px;
-  }
-
-  &:nth-child(3) {
-    width: 100px;
-  }
-
-  &:nth-child(4) {
-    width: 100px;
-    box-sizing: border-box;
-    padding-right: $padding-default;
-  }
-}
-
-.tableHeader {
-  padding: $padding-less 0;
-
-  color: $color-text-gray;
-  font-size: $font-size-table-header;
-  font-weight: 600;
-}
-
-.stepsTable {
-  background-color: #fafafa;
-
-  span {
-    text-align: center;
-  }
-}
-
-.spans {
-  margin-top: $margin-default;
 }
 </style>

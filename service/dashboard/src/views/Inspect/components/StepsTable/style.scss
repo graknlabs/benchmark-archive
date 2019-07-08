@@ -1,0 +1,20 @@
+@import "./src/assets/css/elements/table";
+@import "./src/assets/css/utilities/borders";
+
+.steps-table {
+  @extend .table;
+
+  .table-head {
+    @include border-radius(0, 0.25rem, 0, 0);
+  }
+
+  .table-body {
+    overflow-y: scroll;
+  }
+
+  .table-cell:first-child {
+    width: 150px;
+    text-align: left;
+    flex: auto;
+  }
+}
