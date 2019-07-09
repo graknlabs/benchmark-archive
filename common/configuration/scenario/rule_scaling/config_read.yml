@@ -1,4 +1,4 @@
-name: "Rule Scaling Test"
+name: "Rule Scaling"
 description: "Tests for query execution on graphs with large number of rules"
 schema: "rule_scaling_schema.gql"
 dataImportFile: "rule_scaling_data.gql"

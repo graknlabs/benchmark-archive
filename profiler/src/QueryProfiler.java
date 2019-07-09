@@ -68,8 +68,9 @@ class QueryProfiler implements Runnable {
         executionName = config.executionName();
         deleteInsertedConcepts = config.deleteInsertedConcepts();
         traceDeleteInsertedConcepts = config.traceDeleteInsertedConcepts();
-        dataGenerator = config.generateData() ? config.dataGenerator() : "";
-        dataImport = config.staticDataImport() ? config.staticDataImportFilePath() : "";
+        dataGenerator = config.generateData() ? config.dataGenerator() : null;
+        dataImport = config.staticDataImport() ? config.staticDataImportFilePath() : null;
+
         this.concurrentId = concurrentId;
         this.tracer = tracer;
         this.queries = queries;
@@ -87,10 +88,9 @@ class QueryProfiler implements Runnable {
             concurrentExecutionSpan.tag("description", description);
             concurrentExecutionSpan.tag("executionName", executionName);
             concurrentExecutionSpan.tag("concurrentClient", Integer.toString(concurrentId));
-            concurrentExecutionSpan.tag("graphType", dataGenerator != null? dataGenerator : dataImport);
+            concurrentExecutionSpan.tag("graphType", dataGenerator != null ? dataGenerator : dataImport);
             concurrentExecutionSpan.tag("queryRepetitions", Integer.toString(repetitions));
             concurrentExecutionSpan.tag("graphScale", Integer.toString(numConcepts));
-            concurrentExecutionSpan.tag("configurationName", configName);
             concurrentExecutionSpan.start();
 
             System.out.println("Executing queries");

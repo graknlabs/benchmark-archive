@@ -1,4 +1,4 @@
-name: "Transitive Closure - Read"
+name: "Transitive Closure"
 description: "Simple chain of transitive relations"
 schema: "transitivity_schema.gql"
 dataImportFile: "transitivity_data.gql"

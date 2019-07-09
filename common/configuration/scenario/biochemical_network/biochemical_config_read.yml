@@ -1,5 +1,5 @@
-name: "Biochemical Network - Read"
-description: "Benchmark relatively simple and dense biochemical network with: Increasing C_in, Increasing R_out, and Increasing A_out"
+name: "Biochemical Network"
+description: "Benchmark simple and dense biochemical network with: Increasing C_in, Increasing R_out, and Increasing A_out"
 dataGenerator: "biochemical_network"
 schema: "biochemical_network.gql"
 scales:
