@@ -1,5 +1,10 @@
-@import "../vendors/bootstrap-4.0.0/scss/card";
+@import "../vendors/bootstrap-4.3.1/scss/card";
+
 
 .card {
     display: block;
+
+    &-secondary {
+        @extend .border-secondary;
+    }
 }

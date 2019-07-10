@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Home from './views/Home.vue';
+import Home from './views/Home';
 import BenchmarkClient from '@/util/BenchmarkClient';
 
 Vue.use(Router);

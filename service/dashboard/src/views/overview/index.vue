@@ -1,17 +1,18 @@
 <template>
-  <el-container class="is-vertical overview-section">
-    <el-row
+  <b-container fluid>
+    <b-row
       v-for="graphType in graphTypes"
       :key="graphType"
-      class="panel"
+      class="overview-graph"
+      no-gutters
     >
       <commits-chart
         :graph-type="graphType"
         :executions="completedExecutions"
         :graphs="filterGraphs(graphType)"
       />
-    </el-row>
-  </el-container>
+    </b-row>
+  </b-container>
 </template>
 
 <script>
@@ -64,18 +65,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-@import "./src/assets/css/variables.scss";
-
-.el-container {
-  min-height: 100%;
-}
-
-.panel {
-  margin-bottom: $margin-default;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-</style>
+<style lang="scss" scopped src="./style.scss"></style>

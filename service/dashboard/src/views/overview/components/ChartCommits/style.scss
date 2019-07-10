@@ -1,0 +1,26 @@
+.chart-card {
+    width: 100%;
+    @extend .p-3;
+    box-sizing: border-box;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .chart-actionbar {
+        display: flex;
+        align-content: flex-end;
+        align-items: center;
+
+        .chart-action {
+            @extend .ml-3;
+        }
+    }
+}
+
+.echarts {
+    width: 100%;
+    height: 500px;
+}

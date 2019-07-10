@@ -1,5 +1,5 @@
 <template>
-  <section class="steps-table">
+  <section class="steps-table table">
     <div class="table-head">
       <p class="table-cell">
         Step

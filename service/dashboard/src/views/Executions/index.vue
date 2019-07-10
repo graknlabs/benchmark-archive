@@ -1,7 +1,7 @@
 <template>
   <section
     v-loading="loading"
-    class="el-container is-vertical page-container"
+    class="content is-vertical"
   >
     <!-- <el-row>
         <el-popover
@@ -44,28 +44,29 @@
         <el-button type="success" circle icon="el-icon-plus"></el-button>
     </el-row>-->
 
-    <el-header>
-      <sortby-selector
-        title="Sort by"
-        :items="columns"
-        :default-item="{ text: 'Initialised At', value: 'executionInitialisedAt'}"
-        @item-selected="sortExecutions"
-      />
-      <el-radio-group
-        v-model="sortType"
-        size="mini"
-        @change="onSortTypeSelection"
-      >
-        <el-radio-button
-          name="sort-type"
-          label="Asc"
-        />
-        <el-radio-button
-          name="sort-type"
-          label="Desc"
-        />
-      </el-radio-group>
-    </el-header>
+    <div class="header">
+      <b-button-toolbar>
+        <div class="toolbar-item">
+          <sortby-selector
+            title="Sort by"
+            :items="columns"
+            :default-item="{ text: 'Initialised At', value: 'executionInitialisedAt'}"
+            @item-selected="sortExecutions"
+          />
+        </div>
+
+        <div class="toolbar-item">
+          <b-form-radio-group
+            v-model="sortType"
+            :options="sortOptions"
+            size="sm"
+            buttons
+            button-variant="outline-primary"
+            @change="onSortTypeSelection"
+          />
+        </div>
+      </b-button-toolbar>
+    </div>
 
     <div class="cards-list executions-list">
       <execution-card
@@ -98,7 +99,12 @@ export default {
 
       sortColumn: 'executionInitialisedAt',
 
-      sortType: 'Desc',
+      sortType: 'desc',
+
+      sortOptions: [
+        { text: 'Asc', value: 'asc' },
+        { text: 'Desc', value: 'desc' },
+      ],
 
       columns: [
         {
@@ -154,8 +160,8 @@ export default {
         if (x === null) return 1;
         if (y === null) return -1;
         if (x === y) return 0;
-        if (sortType === 'Asc') return x < y ? -1 : 1;
-        if (sortType === 'Desc') return x < y ? 1 : -1;
+        if (sortType === 'asc') return x < y ? -1 : 1;
+        if (sortType === 'desc') return x < y ? 1 : -1;
         return false;
       });
     },
@@ -184,32 +190,13 @@ export default {
 };
 </script>
 
+<style lang="scss" src="./style.scss"></style>
+
+
 <style scoped lang="scss">
-@import "./src/assets/css/variables.scss";
+// @import "./src/assets/css/variables.scss";
 
 .executions-list {
   margin-top: $height-topBar;
-}
-
-.el-header {
-  height: $height-topBar;
-  width: 100%;
-
-  background-color: $color-bg-default;
-  border-bottom: 1px solid $color-border-light;
-
-  align-items: center;
-  display: flex;
-  margin-top: -$margin-default;
-  margin-right: -$margin-default;
-  margin-bottom: $margin-default;
-  margin-left: -$margin-default;
-  position: fixed;
-  padding: $padding-default;
-  z-index: 2;
-
-  .el-radio-group {
-    margin-left: $margin-default;
-  }
 }
 </style>

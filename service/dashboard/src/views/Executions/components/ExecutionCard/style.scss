@@ -1,0 +1,18 @@
+.execution-card {
+  cursor: pointer;
+  @extend .mb-3;
+  &:last-child {
+      @extend .mb-0;
+  }
+}
+
+.execution-details {
+  @extend .p-3;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  
+  .status {
+    @extend .text-size-12;
+  }
+}

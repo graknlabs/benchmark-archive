@@ -1,0 +1,44 @@
+.main {
+  width: calc(100% - #{$width-sideNav});
+  @extend .p-3;
+  overflow-y: auto;
+  box-sizing: border-box;
+  margin-left: $width-sideNav;
+}
+
+.sidebar {
+  width: $width-sideNav !important;
+  height: 100%;
+
+  border-right: 1px solid $color-border-light;
+
+  box-sizing: border-box;
+  position: fixed;
+
+  * { box-sizing: border-box; }
+
+  &-heading {
+    box-sizing: border-box;
+    border-bottom: 1px solid $color-border-light;
+    display: flex;
+    align-items: center;
+
+    height: $height-sideNav-logo;
+    padding-left: $padding-default;
+
+    img {
+      width: 130px;
+    }
+  }
+
+  .list-group-item {
+    @include border-radius(0, 0, 0, 0);
+    border: none;
+    border-bottom: 1px solid $color-border-light;
+    margin-top: 1px;
+
+    .icon {
+      @extend .mr-2;
+    }
+  }
+}

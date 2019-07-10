@@ -8,7 +8,7 @@
       />
     </div>
 
-    <tabular-view
+    <graph-tabs
       :graphs="graphs"
       :query-spans="querySpans"
       :pre-selected-graph-type="preSelectedGraphType"
@@ -21,13 +21,13 @@
 <script>
 import BenchmarkClient from '@/util/BenchmarkClient';
 import ExecutionCard from '@/views/Executions/components/ExecutionCard';
-import TabularView from './components/TabularView';
+import GraphTabs from './components/GraphTabs';
 import EDM from '@/util/ExecutionDataFormatters';
 
 const { flattenGraphs, flattenQuerySpans } = EDM;
 
 export default {
-  components: { TabularView, ExecutionCard },
+  components: { GraphTabs, ExecutionCard },
 
   data() {
     return {
@@ -114,18 +114,12 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "./src/assets/css/variables.scss";
+// @import "./src/assets/css/variables.scss";
 
 .el-container {
   background-color: #f4f3ef;
 }
 h2 {
   margin-bottom: 10px;
-}
-.query-select {
-  min-width: 400px;
-}
-.scale-select {
-  max-width: 100px;
 }
 </style>

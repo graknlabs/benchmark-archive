@@ -1,31 +1,33 @@
 <template>
-  <el-row
+  <!-- <b-container fluid> -->
+  <div
     ref="expanded"
-    :class="'card ' + (queryExpanded ? 'expanded' : '')"
+    :class="'query-card ' + (queryExpanded ? 'expanded' : '')"
   >
-    <el-col
+    <div
       v-loading="loading"
-      :span="24"
       class="query-summary"
-      @click.native="toggleStepsTable()"
+      @click="toggleStepsTable()"
     >
-      <el-tooltip
-        class="item"
-        effect="dark"
-        :content="query"
-        placement="top"
+      <div
+        :id="query"
+        :title="query"
+        class="query-graql"
       >
-        <div class="query-graql">
-          <p>
-            {{ query | truncate(180) }}
-          </p>
-        </div>
-      </el-tooltip>
-      <el-row>
-        <el-col
-          class="query-chart"
-          :span="12"
-        >
+        <p>
+          {{ query | truncate(180) }}
+        </p>
+      </div>
+
+      <b-tooltip
+        v-if="query.length > 180"
+        custom="query-tooltip"
+        :target="query"
+        :title="query"
+      />
+
+      <div class="query-chart-details-wrapper">
+        <div class="query-chart">
           <div class="histogram-chart-wrapper">
             <e-chart
               class="histogram-chart"
@@ -44,31 +46,29 @@
               </p>
             </div>
           </div>
-        </el-col>
-        <el-col
-          class="query-details"
-          :span="12"
-        >
-          <el-row
+        </div>
+        <div class="query-details">
+          <b-row
             v-for="(row, rowIindex) in queryDetails"
             :key="rowIindex"
+            no-gutters
           >
-            <el-col
+            <b-col
               v-for="detail in row"
               :key="detail.label"
-              :span="24/row.length"
+              :cols="12/row.length"
             >
               <p>
                 <span class="label">{{ detail.label }}</span>
                 <span class="value">{{ detail.value }}</span>
               </p>
-            </el-col>
-          </el-row>
-        </el-col>
-      </el-row>
-    </el-col>
+            </b-col>
+          </b-row>
+        </div>
+      </div>
+    </div>
 
-    <el-col
+    <div
       v-if="queryExpanded && stepSpans"
       class="query-expanded-section"
     >
@@ -78,8 +78,9 @@
         :step-spans="stepSpans"
         :max-height="expandedSummaryHeight"
       />
-    </el-col>
-  </el-row>
+    </div>
+  </div>
+  <!-- </b-container> -->
 </template>
 
 <script>
@@ -217,9 +218,10 @@ export default {
 
   watch: {
     queryExpanded() {
+      console.log('aaa');
       this.$nextTick(() => {
         if (this.queryExpanded && this.$refs.expanded) {
-          this.expandedSummaryHeight = this.$refs.expanded.$el.offsetHeight;
+          this.expandedSummaryHeight = this.$refs.expanded.offsetHeight;
         }
       });
     },
@@ -317,11 +319,3 @@ export default {
 </script>
 
 <style lang="scss" scoped src="./style.scss"></style>
-
-<style lang="scss">
-.queryCard {
-  .el-card__body {
-    padding: 0;
-  }
-}
-</style>

@@ -1,17 +1,28 @@
-@import "./variables";
+@import "./utilities/index";
 @import "./fonts.scss";
 @import "./reset.scss";
 @import "./overrides.scss";
+@import "./elements/index";
 
-p {
-  line-height: 1.5;
-}
+p { line-height: 1.5; }
 
-h2 {
-  color: #555;
-}
+h2 { color: #555; }
 
 a {
   color: $color-link-default;
   text-decoration: none;
+}
+
+*:focus {
+  outline: none;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+
+  .is-vertical {
+    flex-direction: column;
+  }
 }

@@ -1,56 +1,77 @@
-@import "./src/assets/css/utilities/text";
-@import "./src/assets/css/utilities/spacing";
-@import "./src/assets/css/utilities/borders";
-@import "./src/assets/css/utilities/background";
-
-@import "./src/assets/css/elements/card";
-
-
 $summary-expanded-width: 485px;
 $histogram-chart-width: 300px;
 $histogram-chart-height: 130px;
 $outliers-width: 150px;
 
-.card {
+.query-card {
   @extend .mb-4;
+  @include border-radius(0.25rem);
+  @extend .border;
   @extend .border-secondary;
 
+  * { box-sizing: border-box; }
+
+  &:last-child {
+    @extend .mb-0;
+  }
+
   &.expanded {
+    display: flex;
+
     .query-summary {
       width: $summary-expanded-width;
-    }
 
-    .query-expanded-section {
-      width: calc(100% - #{$summary-expanded-width});
-      // overflow-y: scroll;
-    }
-
-    .query-chart, .query-details {
-      width: 100%;
-    }
-
-    .query-summary {
       @extend .border-right;
       @extend .border-dark;
     }
 
+    .query-chart-details-wrapper {
+      display: block !important;
+    }
+
+    .query-chart-details-wrapper, .query-chart, .query-details {
+      width: 100% !important;
+    }
+
     .query-details {
       @extend .mt-3;
+      padding-left: 0 !important;
+    }
+
+    .query-expanded-section {
+      width: calc(100% - #{$summary-expanded-width});
     }
   }
 }
 
 .query-summary {
   @extend .p-3;
-}
+  box-sizing: border-box;
 
-.query-graql {
-  @extend .text-size-14;
-  @extend .pb-3;
+  .query-graql {
+    width: 100%;
+    @extend .text-size-14;
+    @extend .pb-3;
+  }
+
+  $query-chart-width: $histogram-chart-width + $outliers-width;
+
+  .query-chart-details-wrapper {
+    display: flex;
+
+    .query-chart {
+      width: $query-chart-width;
+    }
+
+    .query-details {
+      width: calc(100% - #{$query-chart-width} - 50px);
+      @extend .pl-5;
+    }
+  }
 }
 
 .histogram-chart-wrapper {
-  width: calc(#{$histogram-chart-width} + #{$outliers-width});
+  width: 100%;
   display: flex;
 
   .histogram-chart {
@@ -74,6 +95,7 @@ $outliers-width: 150px;
 
     p {
       @extend .p-2;
+      @extend .text-size-14;
     }
 
     header {
@@ -93,15 +115,19 @@ $outliers-width: 150px;
     line-height: 2.5;
   }
   .label {
-    @extend .font-weight-bold;
+    font-weight: bold;
     @extend .text-secondary;
     @extend .text-size-14;
   }
   .value {
-    @extend .font-weight-bold;
+    font-weight: bold;
     @extend .text-size-16;
     @extend .text-dark;
 
     @extend .ml-2;
   }
+}
+
+.query-tooltip {
+  text-align: left;
 }

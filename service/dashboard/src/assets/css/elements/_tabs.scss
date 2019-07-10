@@ -1,0 +1,17 @@
+@import "../vendors/bootstrap-4.3.1/scss/nav";
+
+.nav-tabs {
+    a.nav-link {
+        color: $text-muted;
+        &.active {
+            color: $primary;
+        }
+    }
+
+}
+
+.tab-content {
+    @extend .p-4;
+    @extend .border;
+    border-top: none !important;
+}

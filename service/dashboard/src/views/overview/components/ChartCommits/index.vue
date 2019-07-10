@@ -1,51 +1,38 @@
 <template>
-  <el-card v-loading="loading">
-    <div
-      slot="header"
-      class="clearfix"
-    >
-      <el-row
-        type="flex"
-        justify="space-between"
-        align="middle"
-      >
-        <span>{{ graphType | formatTitle }}</span>
-        <el-row
-          type="flex"
-          justify="end"
-          align="middle"
-        >
-          <el-checkbox-group
+  <div
+    v-loading="loading"
+    class="card chart-card"
+  >
+    <div class="chart-header">
+      <span>{{ graphType | formatTitle }}</span>
+      <div class="chart-actionbar">
+        <div class="chart-action">
+          <b-form-checkbox-group
             v-model="chartSelectedQueryTypes"
-            class="flexItem"
-            size="mini"
+            :options="queryTypeSelectorOptions"
+            buttons
+            button-variant="primary"
+            size="sm"
             @change="toggleChartQueryType"
-          >
-            <el-checkbox-button
-              v-for="queryType in chartQueryTypes"
-              :key="queryType"
-              :label="queryType"
-            >
-              {{ queryType }}
-            </el-checkbox-button>
-          </el-checkbox-group>
+          />
+        </div>
+        <div class="chart-action">
           <scale-selector
             title="Scale"
             :items="scales.map(scale => ({ text: scale, value: scale }))"
             :default-item="{ text: scales[0], value: scales[0] }"
-            class="flexItem"
             @item-selected="onScaleSelection"
           />
-        </el-row>
-      </el-row>
-      <e-chart
-        ref="commitsChart"
-        :autoresize="true"
-        :options="chartOoptions"
-        @click="redirectToInspect"
-      />
+        </div>
+      </div>
     </div>
-  </el-card>
+    <e-chart
+      ref="commitsChart"
+      :autoresize="true"
+      :options="chartOoptions"
+      @click="redirectToInspect"
+    />
+  </div>
 </template>
 
 <script>
@@ -113,7 +100,10 @@ export default {
 
       chartSelectedQueryTypes: ['Match', 'Insert'],
 
-      chartQueryTypes: ['Match', 'Insert'],
+      queryTypeSelectorOptions: [
+        { text: 'Match', value: 'Match' },
+        { text: 'Insert', value: 'Insert' },
+      ],
     };
   },
 
@@ -174,13 +164,21 @@ export default {
 
     async drawChart() {
       this.legendsData = getLegendsData(this.queries);
-      this.chartOoptions = await getCommitsChartOptions(this.graphs, this.querySpans, this.queries, this.executions, this.selectedScale);
+      this.chartOoptions = await getCommitsChartOptions(
+        this.graphs,
+        this.querySpans,
+        this.queries,
+        this.executions,
+        this.selectedScale,
+      );
       this.loading = false;
     },
 
     toggleChartQueryType(selectedQueryTypes) {
       const legends = Object.values(this.legendsData);
-      const selectedLegendQueryTypes = selectedQueryTypes.map(type => `${type.charAt(0).toLowerCase() + type.slice(1)}Query`);
+      const selectedLegendQueryTypes = selectedQueryTypes.map(
+        type => `${type.charAt(0).toLowerCase() + type.slice(1)}Query`,
+      );
 
       legends.forEach((legend) => {
         const legendQueryType = legend.replace(/[0-9]/g, '');
@@ -201,19 +199,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-@import "./src/assets/css/variables.scss";
-
-.flexItem {
-  margin-right: $margin-default;
-
-  &:last-child {
-    margin: 0;
-  }
-}
-
-.echarts {
-  width: 100%;
-  height: 500px;
-}
-</style>
+<style lang="scss" scopped src="./style.scss"></style>

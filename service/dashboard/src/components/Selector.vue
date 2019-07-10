@@ -1,24 +1,20 @@
 <template>
-  <el-dropdown>
-    <span class="el-dropdown-link">
-      <span>{{ title }}</span>
-      <span v-if="currentItem">: </span>
-      <span>{{ currentItem }}</span>
-      <i class="el-icon-arrow-down el-icon--right" />
-    </span>
-    <el-dropdown-menu
-      slot="dropdown"
-      trigger="hover"
+  <div>
+    <b-dropdown
+      :text="getSelectorText()"
+      size="sm"
+      variant="primary"
+      right
     >
-      <el-dropdown-item
+      <b-dropdown-item
         v-for="item in items"
         :key="item.value"
         @click.native="updateItem(item)"
       >
         <span>{{ item.text }}</span>
-      </el-dropdown-item>
-    </el-dropdown-menu>
-  </el-dropdown>
+      </b-dropdown-item>
+    </b-dropdown>
+  </div>
 </template>
 
 <script>
@@ -48,6 +44,14 @@ export default {
   },
 
   methods: {
+    getSelectorText() {
+      let text = this.title;
+      if (this.currentItem) {
+        text += `: ${this.currentItem}`;
+      }
+      return text;
+    },
+
     updateItem(selectedItem) {
       this.currentItem = selectedItem.text;
       this.$emit('item-selected', selectedItem.value);
