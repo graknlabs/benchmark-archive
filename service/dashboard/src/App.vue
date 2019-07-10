@@ -11,8 +11,6 @@ export default {
 </script>
 
 <style lang="scss">
-// @import "./src/assets/css/global";
-
 #app {
   font-family: "Roboto", sans-serif;
   height: 100vh;
