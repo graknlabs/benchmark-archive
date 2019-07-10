@@ -218,7 +218,6 @@ export default {
 
   watch: {
     queryExpanded() {
-      console.log('aaa');
       this.$nextTick(() => {
         if (this.queryExpanded && this.$refs.expanded) {
           this.expandedSummaryHeight = this.$refs.expanded.offsetHeight;

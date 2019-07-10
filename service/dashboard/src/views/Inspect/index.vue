@@ -114,11 +114,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-// @import "./src/assets/css/variables.scss";
-
-.el-container {
-  background-color: #f4f3ef;
-}
 h2 {
   margin-bottom: 10px;
 }

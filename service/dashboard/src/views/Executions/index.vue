@@ -194,8 +194,6 @@ export default {
 
 
 <style scoped lang="scss">
-// @import "./src/assets/css/variables.scss";
-
 .executions-list {
   margin-top: $height-topBar;
 }
