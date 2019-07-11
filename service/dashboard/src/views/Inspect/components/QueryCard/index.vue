@@ -84,9 +84,9 @@
 </template>
 
 <script>
+import EChart from 'vue-echarts';
 import BenchmarkClient from '@/util/BenchmarkClient';
 import StepsTable from '../StepsTable';
-import EChart from 'vue-echarts';
 import 'echarts/lib/chart/bar';
 import 'echarts/lib/component/tooltip';
 import EDF from '@/util/ExecutionDataFormatters';

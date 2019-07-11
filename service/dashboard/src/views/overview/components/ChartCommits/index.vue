@@ -21,7 +21,7 @@
             title="Scale"
             :items="scales.map(scale => ({ text: scale, value: scale }))"
             :default-item="{ text: scales[0], value: scales[0] }"
-            @item-selected="onScaleSelection"
+            @update:current-item="onScaleSelection"
           />
         </div>
       </div>
@@ -36,9 +36,9 @@
 </template>
 
 <script>
+import EChart from 'vue-echarts';
 import BenchmarkClient from '@/util/BenchmarkClient';
 import Util from './util';
-import EChart from 'vue-echarts';
 import 'echarts/lib/chart/line';
 import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/legend';

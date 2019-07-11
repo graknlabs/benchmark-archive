@@ -7,7 +7,7 @@
           title="Scale"
           :items="scales.map(scale => ({ text: scale, value: scale }))"
           :default-item="{ text: selectedScale, value: selectedScale }"
-          @item-selected="(scale) => { selectedScale = scale; }"
+          @update:selected-item="(scale) => { selectedScale = scale; }"
         />
       </div>
     </div>

@@ -51,7 +51,7 @@
             title="Sort by"
             :items="columns"
             :default-item="{ text: 'Initialised At', value: 'executionInitialisedAt'}"
-            @item-selected="sortExecutions"
+            @update:selected-item="sortExecutions"
           />
         </div>
 
