@@ -91,7 +91,10 @@ export default {
   components: { SortbySelector, ExecutionCard },
   data() {
     return {
-      loading: true,
+      loading: {
+        show: true,
+        fullscreen: true,
+      },
 
       // popoverVisible: false,
 
@@ -148,7 +151,7 @@ export default {
       );
       this.executions = executionsResp.data.executions;
       this.sortExecutions(this.sortColumn);
-      this.loading = false;
+      this.loading.show = false;
     },
 
     sortExecutions(column) {

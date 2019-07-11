@@ -94,7 +94,10 @@ export default {
 
       querySpans: [],
 
-      loading: true,
+      loading: {
+        show: true,
+        fullscreen: true,
+      },
 
       commitsChart: null,
 
@@ -147,7 +150,7 @@ export default {
   methods: {
     onScaleSelection(scale) {
       this.selectedScale = scale;
-      this.loading = true;
+      this.loading.show = true;
     },
 
     redirectToInspect(args) {
@@ -171,7 +174,7 @@ export default {
         this.executions,
         this.selectedScale,
       );
-      this.loading = false;
+      this.loading.show = false;
     },
 
     toggleChartQueryType(selectedQueryTypes) {
