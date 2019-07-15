@@ -38,11 +38,10 @@
 </template>
 
 <script>
-import BenchmarkClient from '@/util/BenchmarkClient';
-import EDF from '@/util/ExecutionDataFormatters';
 import ordinal from 'ordinal';
-
-const { flattenStepSpans, attachRepsToChildSpans } = EDF;
+import BenchmarkClient from '@/util/BenchmarkClient';
+import { flattenStepSpans, attachRepsToChildSpans } from '@/util/ExecutionDataFormatters';
+import { getMedian } from '@/util/math';
 
 export default {
   name: 'StepLine',
@@ -115,13 +114,8 @@ export default {
     },
 
     median() {
-      const lowMiddleIndex = Math.floor((this.sortedSpans.length - 1) / 2);
-      const highMiddleIndex = Math.ceil((this.sortedSpans.length - 1) / 2);
-      return (
-        (this.sortedSpans[lowMiddleIndex].duration
-          + this.sortedSpans[highMiddleIndex].duration)
-        / 2
-      );
+      const dueations = this.sortedSpans.map(span => span.duration);
+      return getMedian(dueations).value;
     },
 
     reps() {

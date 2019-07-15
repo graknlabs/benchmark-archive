@@ -43,6 +43,7 @@
 <script>
 import ordinal from 'ordinal';
 import StepLine from '../StepLine';
+import { getMedian } from '@/util/math';
 
 export default {
   name: 'GroupLine',
@@ -122,13 +123,8 @@ export default {
     },
 
     median() {
-      const lowMiddleIndex = Math.floor((this.durationSortedMemberSpans.length - 1) / 2);
-      const highMiddleIndex = Math.ceil((this.durationSortedMemberSpans.length - 1) / 2);
-      return (
-        (this.durationSortedMemberSpans[lowMiddleIndex].duration
-          + this.durationSortedMemberSpans[highMiddleIndex].duration)
-        / 2
-      );
+      const dueations = this.memberSpans.map(span => span.duration);
+      return getMedian(dueations).value;
     },
   },
 
