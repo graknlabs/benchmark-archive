@@ -251,51 +251,7 @@ export default {
       stepSpans = flattenStepSpans(stepSpans);
       this.stepSpans = attachRepsToChildSpans(stepSpans, this.querySpans);
 
-      this.produceStepsAndGroups();
-    },
-
-    /**
-     * iterates over fetched stepSpans to find out which spans should belong to a "group"
-     * the group object has one key i.e. 'members'
-     * 'members' is an object where:
-     *    - keys are the distinct 'order' of its members
-     *    - values are array of span objects
-     */
-    produceStepsAndGroups() {
-      const steps = this.stepSpans.filter(span => span.rep === 0);
-      steps.sort((a, b) => a.order - b.order);
-
-      let currentStep = steps[0];
-      let currentSteps = [];
-      let i = 0;
-
-      do {
-        if (steps[i].name === currentStep.name) {
-          currentSteps.push(steps[i]);
-          i += 1;
-        } else {
-          const stepOrGroup = this.buildStepOrGroup(currentSteps);
-          this.stepsAndGroups.push(stepOrGroup);
-          currentStep = steps[i];
-          currentSteps = [];
-        }
-      } while (i < steps.length);
-
-      // last step is not a group. insert it.
-      this.stepsAndGroups.push(steps[steps.length - 1]);
-    },
-
-    buildStepOrGroup(grouppedSteps) {
-      if (grouppedSteps.length > 1) {
-        const group = { members: {} };
-        grouppedSteps.forEach((grouppedStep) => {
-          group.members[grouppedStep.order] = this.filterStepSpans(
-            grouppedStep.order,
-          );
-        });
-        return group;
-      }
-      return grouppedSteps[0];
+      produceStepsAndGroups(this.stepSpans, this.stepsAndGroups, this.filterStepSpans);
     },
 
     filterStepSpans(stepNumber) {

@@ -110,3 +110,49 @@ export const getQueryCardChartOptions = (spans) => {
 
   return queryCardChartOptions;
 };
+
+
+/**
+ * iterates over fetched stepSpans to find out which spans should belong to a "group"
+ * the group object has one key i.e. 'members'
+ * 'members' is an object where:
+ *    - keys are the distinct 'order' of its members
+ *    - values are array of span objects
+ */
+
+export const produceStepsAndGroups = (stepSpans, stepsAndGroups, filterStepSpans) => {
+  const steps = stepSpans.filter(span => span.rep === 0);
+  steps.sort((a, b) => a.order - b.order);
+
+  let currentStep = steps[0];
+  let currentSteps = [];
+  let i = 0;
+
+  do {
+    if (steps[i].name === currentStep.name) {
+      currentSteps.push(steps[i]);
+      i += 1;
+    } else {
+      const stepOrGroup = buildStepOrGroup(currentSteps, filterStepSpans);
+      stepsAndGroups.push(stepOrGroup);
+      currentStep = steps[i];
+      currentSteps = [];
+    }
+  } while (i < steps.length);
+
+  // last step is not a group. insert it.
+  stepsAndGroups.push(steps[steps.length - 1]);
+};
+
+const buildStepOrGroup = (grouppedSteps, filterStepSpans) => {
+  if (grouppedSteps.length > 1) {
+    const group = { members: {} };
+    grouppedSteps.forEach((grouppedStep) => {
+      group.members[grouppedStep.order] = filterStepSpans(
+        grouppedStep.order,
+      );
+    });
+    return group;
+  }
+  return grouppedSteps[0];
+};
