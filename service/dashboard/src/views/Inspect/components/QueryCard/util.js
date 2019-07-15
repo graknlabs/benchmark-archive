@@ -1,4 +1,4 @@
-const getQueryCardChartOptions = (spans) => {
+export const getQueryCardChartOptions = (spans) => {
   const queryCardChartOptions = {
     tooltip: {
       show: true,
@@ -109,9 +109,4 @@ const getQueryCardChartOptions = (spans) => {
   queryCardChartOptions.xAxis.data = xData;
 
   return queryCardChartOptions;
-};
-
-
-export default {
-  getQueryCardChartOptions,
 };

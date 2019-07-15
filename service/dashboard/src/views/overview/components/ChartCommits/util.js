@@ -2,7 +2,7 @@ import EDF from '@/util/ExecutionDataFormatters';
 
 const { addExecutionIdAndScaleToQuerySpan } = EDF;
 
-const getCommitsChartOptions = async (graphs, querySpans, queries, executions, selectedScale) => {
+export const getCommitsChartOptions = async (graphs, querySpans, queries, executions, selectedScale) => {
   const querySpansWithExecutionAndScale = addExecutionIdAndScaleToQuerySpan(
     graphs,
     querySpans,
@@ -114,7 +114,7 @@ const getCommitsChartOptions = async (graphs, querySpans, queries, executions, s
 };
 
 /* eslint-disable no-plusplus */
-function getLegendsData(queries) {
+export const getLegendsData = (queries) => {
   let matchQuery = 0;
   // const matchInsertQuery = 0;
   let insertQuery = 0;
@@ -139,18 +139,16 @@ function getLegendsData(queries) {
     queriesMap[query] = value;
   });
   return queriesMap;
-}
+};
 
-function computeAvgTime(spans) {
-  return spans.reduce((a, b) => a + b.duration, 0) / spans.length;
-}
+const computeAvgTime = spans => spans.reduce((a, b) => a + b.duration, 0) / spans.length;
 
-function computeStdDeviation(spans, avgTime) {
+const computeStdDeviation = (spans, avgTime) => {
   const sum = spans
     .map(span => (span.duration - avgTime) ** 2)
     .reduce((a, b) => a + b, 0);
   return Math.sqrt(sum / spans.length);
-}
+};
 
 /**
  * Produces the data required for populating commit charts.
@@ -178,30 +176,23 @@ function computeStdDeviation(spans, avgTime) {
  *
  * @return {Object[]} the data required to populate the commit charts.
  */
-function getChartData(queries, querySpans, executions, selectedScale) {
-  return queries.map((query) => {
-    const targetQuerySpans = querySpans.filter(querySpan => querySpan.value === query);
-    const times = executions.map((execution) => {
-      const executionQuerySpans = targetQuerySpans.filter(
-        targetQuerySpan => targetQuerySpan.executionId === execution.id && targetQuerySpan.scale === selectedScale,
-      );
-      const avgTime = computeAvgTime(executionQuerySpans);
-      const stdDeviation = computeStdDeviation(executionQuerySpans, avgTime);
+export const getChartData = (queries, querySpans, executions, selectedScale) => queries.map((query) => {
+  const targetQuerySpans = querySpans.filter(querySpan => querySpan.value === query);
+  const times = executions.map((execution) => {
+    const executionQuerySpans = targetQuerySpans.filter(
+      targetQuerySpan => targetQuerySpan.executionId === execution.id && targetQuerySpan.scale === selectedScale,
+    );
+    const avgTime = computeAvgTime(executionQuerySpans);
+    const stdDeviation = computeStdDeviation(executionQuerySpans, avgTime);
 
-      return {
-        commit: execution.commit,
-        executionId: execution.id,
-        avgTime: avgTime / 1000,
-        stdDeviation: stdDeviation / 1000,
-        repetitions: executionQuerySpans.length,
-      };
-    });
-
-    return { query, times };
+    return {
+      commit: execution.commit,
+      executionId: execution.id,
+      avgTime: avgTime / 1000,
+      stdDeviation: stdDeviation / 1000,
+      repetitions: executionQuerySpans.length,
+    };
   });
-}
 
-export default {
-  getLegendsData,
-  getCommitsChartOptions,
-};
+  return { query, times };
+});

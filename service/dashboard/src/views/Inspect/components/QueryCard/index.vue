@@ -1,7 +1,7 @@
 <template>
   <!-- <b-container fluid> -->
   <div
-    ref="expanded"
+    :ref="queryExpanded ? 'expanded' : ''"
     :class="'query-card ' + (queryExpanded ? 'expanded' : '')"
   >
     <div
@@ -84,20 +84,15 @@
 </template>
 
 <script>
+import EChart from 'vue-echarts';
 import BenchmarkClient from '@/util/BenchmarkClient';
 import StepsTable from '../StepsTable';
-import EChart from 'vue-echarts';
 import 'echarts/lib/chart/bar';
 import 'echarts/lib/component/tooltip';
-import EDF from '@/util/ExecutionDataFormatters';
-import util from './util';
-import math from '@/util/math';
+import { flattenStepSpans, attachRepsToChildSpans } from '@/util/ExecutionDataFormatters';
+import { getQueryCardChartOptions } from './util';
+import { getMedian, getOutliers } from '@/util/math';
 
-const { getMedian, getOutliers } = math;
-
-const { getQueryCardChartOptions } = util;
-
-const { flattenStepSpans, attachRepsToChildSpans } = EDF;
 
 export default {
   components: { EChart, StepsTable },
@@ -127,7 +122,7 @@ export default {
 
   data() {
     return {
-      loading: false,
+      loading: { show: false },
 
       stepSpans: [],
 

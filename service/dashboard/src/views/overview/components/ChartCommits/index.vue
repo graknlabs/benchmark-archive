@@ -36,19 +36,16 @@
 </template>
 
 <script>
-import BenchmarkClient from '@/util/BenchmarkClient';
-import Util from './util';
 import EChart from 'vue-echarts';
+import BenchmarkClient from '@/util/BenchmarkClient';
+import { getCommitsChartOptions, getLegendsData } from './util';
 import 'echarts/lib/chart/line';
 import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/legend';
 import 'echarts/lib/component/legendScroll';
 import 'echarts/lib/component/dataZoom';
 import ScaleSelector from '@/components/Selector.vue';
-import EDF from '@/util/ExecutionDataFormatters';
-
-const { getCommitsChartOptions, getLegendsData } = Util;
-const { flattenQuerySpans } = EDF;
+import { flattenQuerySpans } from '@/util/ExecutionDataFormatters';
 
 export default {
   /* eslint-disable guard-for-in */
