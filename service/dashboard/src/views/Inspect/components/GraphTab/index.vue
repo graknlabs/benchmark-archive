@@ -80,8 +80,14 @@ export default {
   },
 
   created() {
-    this.scales = [...new Set(this.graphs.map(graph => graph.scale))].sort((a, b) => a - b);
+    this.scales = this.getScales();
     this.selectedScale = this.preSelectedScale || this.scales[0];
+  },
+
+  methods: {
+    getScales() {
+      return [...new Set(this.graphs.map(graph => graph.scale))].sort();
+    },
   },
 };
 </script>

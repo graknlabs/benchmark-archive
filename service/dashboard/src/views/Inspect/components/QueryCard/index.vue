@@ -42,7 +42,7 @@
                 v-for="span in outlierSpans"
                 :key="span.rep"
               >
-                Rep {{ span.rep + 1 }}: {{ span.duration | fixedMs }} ms
+                Rep {{ span.rep + 1 }}: {{ fixedMs(span.duration) }} ms
               </p>
             </div>
           </div>
@@ -99,12 +99,6 @@ import {
 export default {
   components: { EChart, StepsTable },
 
-  filters: {
-    fixedMs(num) {
-      return `${Number(num / 1000).toFixed(3)}`;
-    },
-  },
-
   props: {
     query: {
       type: String,
@@ -132,6 +126,7 @@ export default {
 
       queryExpanded: this.expanded,
 
+      // used within the component that fills the right-side panel (e.g. stepsTable) to be set as the max-height of the relevant element
       expandedSummaryHeight: 0,
     };
   },
@@ -164,12 +159,14 @@ export default {
       ];
     },
 
-    queryCardChartOptions() {
-      return getQueryCardChartOptions(this.histogramSpans);
+    histogramSpans() {
+      return this.querySpans
+        .filter(duration => !this.outlierSpans.includes(duration))
+        .sort((a, b) => (a.duration > b.duration ? 1 : -1));
     },
 
-    spanOfFirstRep() {
-      return this.querySpans.filter(span => span.rep === 0)[0];
+    queryCardChartOptions() {
+      return getQueryCardChartOptions(this.histogramSpans);
     },
 
     spansSortedByDuration() {

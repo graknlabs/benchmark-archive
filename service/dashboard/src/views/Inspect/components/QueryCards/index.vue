@@ -4,7 +4,7 @@
       v-for="query in queries"
       :key="query"
       :query="query"
-      :query-spans="getQuerySpans(query)"
+      :query-spans="filterQuerySpans(query)"
       :expanded="query === preSelectedQuery"
     />
   </div>
@@ -38,7 +38,7 @@ export default {
   },
 
   methods: {
-    getQuerySpans(queryValue) {
+    filterQuerySpans(queryValue) {
       return this.scaledQuerySpans.filter(querySpan => querySpan.value === queryValue);
     },
   },

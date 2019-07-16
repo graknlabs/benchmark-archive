@@ -41,11 +41,14 @@ export default {
 
   async created() {
     await this.fetchGraphs();
-    this.graphTypes = [...new Set(this.graphs.map(graph => graph.type))];
+    this.graphTypes = this.getGraphTypes();
   },
 
   methods: {
-    // fetch the last n executions for which, we'd like to populate the charts
+    getGraphTypes() {
+      return [...new Set(this.graphs.map(graph => graph.type))];
+    },
+
     async fetchGraphs() {
       this.completedExecutions = (await BenchmarkClient.getLatestCompletedExecutions(
         this.numberOfCompletedExecutions,

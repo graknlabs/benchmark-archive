@@ -2,19 +2,20 @@
   <section>
     <div v-if="execution">
       <execution-card
-        class="execution-card"
         :execution="execution"
         :columns="executionColumns"
       />
     </div>
 
-    <graph-tabs
-      :graphs="graphs"
-      :query-spans="querySpans"
-      :pre-selected-graph-type="preSelectedGraphType"
-      :pre-selected-query="preSelectedQuery"
-      :pre-selected-scale="preSelectedScale"
-    />
+    <div v-if="graphs && querySpans">
+      <graph-tabs
+        :graphs="graphs"
+        :query-spans="querySpans"
+        :pre-selected-graph-type="preSelectedGraphType"
+        :pre-selected-query="preSelectedQuery"
+        :pre-selected-scale="preSelectedScale"
+      />
+    </div>
   </section>
 </template>
 

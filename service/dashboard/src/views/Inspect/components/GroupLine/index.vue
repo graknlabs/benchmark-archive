@@ -97,17 +97,17 @@ export default {
       return Object.values(this.members).flat();
     },
 
-    firstMemberOrder() { // used in finding the correct index of a span among all members
-      return Object.keys(this.members).sort((a, b) => (parseInt(a, 0) > parseInt(b, 0) ? 1 : -1))[0];
+    orderOfFirstMember() {
+      return Object.keys(this.members).map(key => parseInt(key, 0)).sort()[0] + 1;
     },
 
-    durationSortedMemberSpans() {
+    memberSpansSortedByDuration() {
       const spans = this.memberSpans;
       return spans.sort((a, b) => (a.duration > b.duration ? 1 : -1));
     },
 
     minSpan() {
-      return this.durationSortedMemberSpans[0];
+      return this.memberSpansSortedByDuration[0];
     },
 
     indexOfMinSpan() {
@@ -115,7 +115,7 @@ export default {
     },
 
     maxSpan() {
-      return this.durationSortedMemberSpans[this.durationSortedMemberSpans.length - 1];
+      return this.memberSpansSortedByDuration[this.memberSpansSortedByDuration.length - 1];
     },
 
     indexOfMaxSpan() {
@@ -136,15 +136,15 @@ export default {
     },
 
     getIndexForSpan(order) {
-      return order - this.firstMemberOrder + 1;
+      return order - this.orderOfFirstMember;
     },
 
     isSpanFastest(order) {
-      return this.indexOfMinSpan === order - this.firstMemberOrder + 1;
+      return this.indexOfMinSpan === order - this.orderOfFirstMember;
     },
 
     isSpanSlowest(order) {
-      return this.indexOfMaxSpan === order - this.firstMemberOrder + 1;
+      return this.indexOfMaxSpan === order - this.orderOfFirstMember;
     },
   },
 };

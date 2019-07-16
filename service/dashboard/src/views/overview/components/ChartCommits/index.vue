@@ -112,29 +112,12 @@ export default {
   },
 
   async created() {
-    // get the set of scales to populaste the scale selector of the chart
-    this.scales = [...new Set(this.graphs.map(graph => graph.scale))].sort(
-      (a, b) => a - b,
-    );
+    this.scales = this.getScales();
     this.selectedScale = this.scales[0];
+    this.querySpans = await this.getQuerySpans();
+    this.queries = this.getQueries();
 
-    // fetch querySpans to use in processing the chart's data
-    const querySpansResp = await Promise.all(
-      this.graphs.map(graph => BenchmarkClient.getSpans(
-        `{ querySpans( parentId: "${
-          graph.id
-        }" limit: 500){ id parentId name duration tags { query type repetition repetitions }} }`,
-      )),
-    );
-    const querySpans = querySpansResp.map(resp => resp.data.querySpans);
-    this.querySpans = flattenQuerySpans(querySpans);
-
-    // extract the query values to use in processing cahrt's data and legends
-    this.queries = [...new Set(this.querySpans.map(query => query.value))];
-
-    this.$nextTick(() => {
-      this.drawChart();
-    });
+    this.$nextTick(() => { this.drawChart(); });
   },
 
   mounted() {
@@ -142,6 +125,10 @@ export default {
   },
 
   methods: {
+    getScales() {
+      return [...new Set(this.graphs.map(graph => graph.scale))].sort();
+    },
+
     onScaleSelection(scale) {
       this.selectedScale = scale;
       this.loading = true;
@@ -157,6 +144,23 @@ export default {
           this.selectedScale
         }&query=${currentQuery}`,
       });
+    },
+
+    async getQuerySpans() {
+      const querySpansResp = await Promise.all(
+        this.graphs.map(graph => BenchmarkClient.getSpans(
+          `{ querySpans( parentId: "${
+            graph.id
+          }" limit: 500){ id parentId name duration tags { query type repetition repetitions }} }`,
+        )),
+      );
+
+      const querySpans = querySpansResp.map(resp => resp.data.querySpans);
+      return flattenQuerySpans(querySpans);
+    },
+
+    getQueries() {
+      return [...new Set(this.querySpans.map(query => query.value))];
     },
 
     async drawChart() {

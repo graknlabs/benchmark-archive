@@ -1,14 +1,11 @@
 <template>
-  <div
-    v-if="graphs && querySpans"
-    class="graph-tabs-wrapper"
-  >
+  <div class="graph-tabs-wrapper">
     <b-tabs>
       <b-tab
         v-for="graphType in graphTypes"
         :key="graphType"
         :title="graphType"
-        :active="graphType === activeGraph"
+        :active="graphType === activeGraphType"
       >
         <graph-tab
           :query-spans="filterQuerySpans(graphType)"
@@ -33,14 +30,12 @@ export default {
   props: {
     graphs: {
       type: Array,
-      required: false,
-      default: null,
+      required: true,
     },
 
     querySpans: {
       type: Array,
-      required: false,
-      default: null,
+      required: true,
     },
 
     preSelectedGraphType: {
@@ -64,13 +59,10 @@ export default {
 
   computed: {
     graphTypes() {
-      const uniqueGraphTypes = [
-        ...new Set(this.graphs.map(graph => graph.type)),
-      ];
-      return uniqueGraphTypes;
+      return [...new Set(this.graphs.map(graph => graph.type))];
     },
 
-    activeGraph() {
+    activeGraphType() {
       return this.preSelectedGraphType || this.graphTypes[0];
     },
   },
@@ -95,15 +87,11 @@ export default {
     },
 
     getPreSelectedScale(graphType) {
-      if (this.preSelectedGraphType === graphType) return this.preSelectedScale;
-      return null;
+      return (this.preSelectedGraphType === graphType ? this.preSelectedScale : null);
     },
 
     getPreSelectedQuery(graphType) {
-      if (this.preSelectedGraphType === graphType) {
-        return this.preSelectedQuery;
-      }
-      return null;
+      return ((this.preSelectedGraphType === graphType) ? this.preSelectedQuery : null);
     },
   },
 };
