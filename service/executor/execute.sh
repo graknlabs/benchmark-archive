@@ -62,7 +62,7 @@ unzip profiler.zip
 cd profiler
 
 # --- run zipkin ---
-tmux new-session -d -s zipkin "STORAGE_TYPE=elasticsearch ES_HOSTS=$SERVICE_ADDR:9200 ES_INDEX=benchmark java -jar external-dependencies/zipkin.jar"
+tmux new-session -d -s zipkin "STORAGE_TYPE=elasticsearch ES_HOSTS=http://$SERVICE_ADDR:9200 ES_INDEX=benchmark java -jar external-dependencies/zipkin.jar"
 
 
 # notify benchmark service about start
