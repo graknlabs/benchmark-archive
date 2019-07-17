@@ -59,10 +59,10 @@ function updateExecutionStatus(execution, doc) {
 const typeDefs = `
   type Query {
     executions(
-      status: [String], 
-      orderBy: String, 
+      status: [String],
+      orderBy: String,
       order: String,
-      offset: Int, 
+      offset: Int,
       limit: Int): [Execution]
 
     executionById(id: String!): Execution
@@ -100,12 +100,13 @@ function limitQuery(offset, limit){
 
 // The root provides a resolver function for each API endpoint
 const root = {
+  // eslint-disable-next-line no-unused-vars
   executions: (object, args, context, info) => {
     let body = {};
     // If a status is provided, only retrieve executions with given status/es
     if(args.status) {
       Object.assign(body, queryFilteredByStatus(args.status));
-    } 
+    }
     // If ordeBy is provided, order results by field
     if(args.orderBy){
       Object.assign(body, sortResults(args.orderBy, args.order));

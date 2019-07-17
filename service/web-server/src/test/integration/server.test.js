@@ -1,7 +1,7 @@
 const request = require('supertest');
 require('iconv-lite/encodings'); // dont remove: https://stackoverflow.com/questions/49141927/express-body-parser-utf-8-error-in-test
 const graphqlHTTP = require('express-graphql');
-const utils = require('../../src/Utils');
+const utils = require('../../Utils');
 
 
 const executionsControllerMocked = {
@@ -12,7 +12,7 @@ const executionsControllerMocked = {
   queryExecutions: jest.fn().mockImplementation(() => graphqlHTTP({})),
 };
 mockExecutionController(); // mock it before calling server.js
-const app = require('../../src/server'); 
+const app = require('../../server'); 
 
 beforeEach(()=>{ jest.clearAllMocks(); })
 
@@ -114,7 +114,7 @@ describe('/execution/completed Tests', () => {
 
 
 function mockExecutionController(){
-  let execController = require('../../src/ExecutionsController');
+  let execController = require('../../ExecutionsController');
   jest.mock('../../src/ExecutionsController');
   execController.mockImplementation(() => executionsControllerMocked); 
 }
