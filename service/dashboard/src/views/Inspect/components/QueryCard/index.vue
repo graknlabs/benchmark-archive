@@ -84,9 +84,9 @@
 </template>
 
 <script>
+import EChart from 'vue-echarts';
 import BenchmarkClient from '@/util/BenchmarkClient';
 import StepsTable from '../StepsTable';
-import EChart from 'vue-echarts';
 import 'echarts/lib/chart/bar';
 import 'echarts/lib/component/tooltip';
 import EDF from '@/util/ExecutionDataFormatters';
@@ -127,7 +127,9 @@ export default {
 
   data() {
     return {
-      loading: false,
+      loading: {
+        show: false,
+      },
 
       stepSpans: [],
 
@@ -238,7 +240,7 @@ export default {
     },
 
     async toggleStepsTable() {
-      this.loading = true;
+      this.loading.show = true;
 
       if (!this.stepsAndGroups.length) {
         await this.fetchStepSpans();
@@ -246,7 +248,7 @@ export default {
 
       this.queryExpanded = !this.queryExpanded;
 
-      this.loading = false;
+      this.loading.show = false;
     },
 
     async fetchStepSpans() {

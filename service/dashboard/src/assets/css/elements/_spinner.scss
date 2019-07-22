@@ -1,0 +1,13 @@
+@import "../vendors/bootstrap-4.3.1/scss/spinners";
+
+.spinner-grow, .spinner-border {
+    &.centered {
+        margin-top: calc(-#{$spinner-height} / 2);
+        margin-left: calc(-#{$spinner-width} / 2);
+    }
+
+    &-sm.centered {
+        margin-top: calc(-#{$spinner-height-sm} / 2);
+        margin-left: calc(-#{$spinner-width-sm} / 2);
+    }
+}

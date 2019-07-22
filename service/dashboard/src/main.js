@@ -4,6 +4,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import { faTachometerAlt, faListAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import loadingDirective from '@/plugins/vue-loading';
 import App from './App.vue';
 import router from './router';
 import './util/filters';
@@ -13,6 +14,7 @@ library.add(faGithub, faTachometerAlt, faListAlt);
 
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.use(BootstrapVue);
+Vue.use(loadingDirective);
 
 Vue.config.productionTip = false;
 
