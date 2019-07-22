@@ -13,6 +13,112 @@ const graphql_tools_1 = require("graphql-tools");
 const instance_1 = require("./instance");
 class ExecutionController {
     constructor(esClient) {
+        this.create = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { commit, repoUrl } = req.body;
+            const execution = {
+                commit,
+                repoUrl,
+                // id: commit + Date.now(),
+                id: 'a0d7349e809b1b56b59245d561033c68e00c6d5c1563382456916',
+                executionInitialisedAt: new Date().toISOString(),
+                status: 'INITIALISING',
+                vmName: `benchmark-executor-${commit.trim()}`,
+            };
+            try {
+                // await this.client.create({
+                //   ... this.getDefaultEsClientPayload(),
+                //   id: execution.id,
+                //   body: {
+                //     commit: execution.commit,
+                //     prMergedAt: execution.prMergedAt,
+                //     prUrl: execution.prUrl,
+                //     prNumber: execution.prNumber,
+                //     repoUrl: execution.repoUrl,
+                //     executionInitialisedAt: execution.executionInitialisedAt,
+                //     executionStartedAt: execution.executionStartedAt,
+                //     executionCompletedAt: execution.executionCompletedAt,
+                //     status: execution.status,
+                //     vmName: execution.vmName,
+                //   },
+                // });
+                console.log('New execution added to ES.');
+                const instanceController = new instance_1.InstanceController(execution);
+                // const operation = await instanceController.start();
+                // operation.on('complete', () => {
+                // the executor VM has been launched and is ready to be benchmarked
+                instanceController.runZipkin(execution.vmName, () => __awaiter(this, void 0, void 0, function* () {
+                    try {
+                        yield this.updateStatus(execution, 'STARTED');
+                    }
+                    catch (error) {
+                        console.log(error.body.error);
+                    }
+                    instanceController.runBenchmark(execution.vmName, execution.id, () => __awaiter(this, void 0, void 0, function* () {
+                        try {
+                            yield this.updateStatus(execution, 'COMPLETED');
+                            // operation.removeAllListeners();
+                        }
+                        catch (error) {
+                            console.log(error.body.error);
+                        }
+                    }));
+                }));
+                // });
+                res.status(200).json({ triggered: true });
+            }
+            catch (error) {
+                console.error(error);
+                res.status(500).json({ triggered: false, error: true });
+            }
+        });
+        this.destroy = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const execution = req.body;
+                // await this.client.delete({
+                //   ... this.getDefaultEsClientPayload(),
+                //   id: execution.id,
+                // } as RequestParams.Delete);
+                const instanceController = new instance_1.InstanceController(execution);
+                yield instanceController.delete();
+                console.log('Execution deleted.');
+                res.status(200).json({});
+            }
+            catch (error) {
+                res.status(500).json({});
+                console.error(error);
+            }
+        });
+        this.updateStatusRouteHandler = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const newStatus = req.local.newStatus;
+                yield this.updateStatus(req.body.execution, newStatus);
+                res.status(200).json({});
+            }
+            catch (error) {
+                console.error(error);
+                res.status(500).json({});
+            }
+        });
+        this.updateStatus = (execution, newStatus) => __awaiter(this, void 0, void 0, function* () {
+            yield this.client.update(Object.assign({}, this.getDefaultEsClientPayload(), { id: execution.id, body: {
+                    doc: {
+                        status: newStatus,
+                        executionCompletedAt: new Date().toISOString(),
+                    },
+                } }));
+            const deleteRequiringStatuses = ['COMPLETED', 'FAILED', 'STOPPED'];
+            if (deleteRequiringStatuses.includes(newStatus)) {
+                const instanceController = new instance_1.InstanceController(execution);
+                instanceController.delete();
+            }
+            console.log(`Execution marked as ${newStatus}.`);
+        });
+        this.getGraphqlServer = () => {
+            return graphqlHTTP({
+                schema: this.getSchema(),
+                context: { client: this.client },
+            });
+        };
         this.getSchema = () => {
             const typeDefs = `
       type Query {
@@ -42,9 +148,7 @@ class ExecutionController {
       }`;
             const resolvers = {
                 Query: {
-                    // eslint-disable-next-line no-unused-vars
                     executions: (object, args, context, info) => __awaiter(this, void 0, void 0, function* () {
-                        console.log('executions ..........');
                         const body = {};
                         if (args.status)
                             Object.assign(body, this.filterResultsByStatus(args.status));
@@ -52,12 +156,9 @@ class ExecutionController {
                             Object.assign(body, this.sortResults(args.orderBy, args.order));
                         Object.assign(body, this.limitResults(args.offset, args.limit));
                         const queryObject = Object.assign({}, this.getDefaultEsClientPayload(), { body });
-                        console.log(queryObject);
-                        // return context.client.search(queryObject).then(result => result.hits.hits.map(res => Object.assign(res._source, { id: res._id })))
                         try {
                             const results = yield context.client.search(queryObject);
-                            console.log('success');
-                            return results.body.hits.hits.map(res => Object.assign(res._source, { id: res._id }));
+                            return results.body.hits.hits.map(hit => Object.assign(hit._source, { id: hit._id }));
                         }
                         catch (error) {
                             // Return empty response as this exception only means there are no Executions in ES yet.
@@ -65,107 +166,22 @@ class ExecutionController {
                                 return [];
                             throw error;
                         }
-                        return false;
-                        // return context.client.search(queryObject)
-                        //   .then(result => result.hits.hits.map(res => Object.assign(res._source, { id: res._id })))
-                        //   .catch((error) => {
-                        //     // Return empty response as this exception only means there are no Executions in ES yet.
-                        //     // if (error.body.error.type === 'index_not_found_exception') return [];
-                        //     throw error;
-                        //   });
                     }),
-                    executionById: (object, args, context) => {
-                        return context.client.get(Object.assign({}, this.getDefaultEsClientPayload(), { id: args.id }))
-                            .then(res => Object.assign(res._source, { id: res._id }));
-                    },
+                    executionById: (object, args, context) => __awaiter(this, void 0, void 0, function* () {
+                        try {
+                            const result = yield context.client.get(Object.assign({}, this.getDefaultEsClientPayload(), { id: args.id }));
+                            return Object.assign(result.body._source, { id: result.body._id });
+                        }
+                        catch (error) {
+                            throw error;
+                        }
+                    }),
                 },
             };
             const schema = graphql_tools_1.makeExecutableSchema({ typeDefs, resolvers });
             return schema;
-            // console.log(schema);
-        };
-        this.getGraphqlServer = () => {
-            console.log(this.getSchema());
-            return graphqlHTTP({
-                schema: this.getSchema(),
-                context: { client: this.client },
-            });
         };
         this.client = esClient;
-    }
-    create(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { commit, repoUrl } = req.body;
-            const execution = {
-                commit,
-                repoUrl,
-                id: commit + Date.now(),
-                executionInitialisedAt: new Date().toISOString(),
-                status: 'INITIALISING',
-                vmName: `'benchmark-executor-${commit.trim()}`,
-            };
-            try {
-                yield this.client.create(Object.assign({}, this.getDefaultEsClientPayload(), { id: execution.id, body: {
-                        commit: execution.commit,
-                        prMergedAt: execution.prMergedAt,
-                        prUrl: execution.prUrl,
-                        prNumber: execution.prNumber,
-                        repoUrl: execution.repoUrl,
-                        executionInitialisedAt: execution.executionInitialisedAt,
-                        executionStartedAt: execution.executionStartedAt,
-                        executionCompletedAt: execution.executionCompletedAt,
-                        status: execution.status,
-                        vmName: execution.vmName,
-                    } }));
-                const instanceController = new instance_1.InstanceController(execution);
-                instanceController.start();
-                console.log('New execution added to ES.');
-                res.status(200).json({ triggered: true });
-            }
-            catch (error) {
-                console.error(error);
-                res.status(500).json({ triggered: false, error: true });
-            }
-        });
-    }
-    destroy(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const execution = req.body;
-                yield this.client.delete(Object.assign({}, this.getDefaultEsClientPayload, { id: execution.id }));
-                const instanceController = new instance_1.InstanceController(execution);
-                instanceController.delete();
-                console.log('Execution deleted.');
-                res.status(200).json({});
-            }
-            catch (error) {
-                res.status(500).json({});
-                console.error(error);
-            }
-        });
-    }
-    updateStatus(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { execution } = req.body;
-            const { newStatus } = req.locals;
-            try {
-                yield this.client.update(Object.assign({}, this.getDefaultEsClientPayload(), { id: execution.id, body: {
-                        status: newStatus,
-                        executionCompletedAt: new Date().toISOString(),
-                    } }));
-                const deleteRequiringStatuses = ['COMPLETED', 'FAILED', 'STOPPED'];
-                if (deleteRequiringStatuses.includes(newStatus)) {
-                    const instanceController = new instance_1.InstanceController(execution);
-                    instanceController.delete();
-                }
-                console.log(`Execution marked as ${newStatus}.`);
-                res.status(200).json({});
-            }
-            catch (error) {
-                console.error(error);
-                res.status(500).json({});
-            }
-        });
     }
     getDefaultEsClientPayload() {
         return { index: 'grakn-benchmark', type: 'execution' };

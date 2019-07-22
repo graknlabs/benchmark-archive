@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 /* tslint:disable max-line-length */
 const express = require("express");
-// import bodyParser from 'body-parser';
+const bodyParser = require("body-parser");
 // import * as elasticsearch from '@elastic/elasticsearch';
 const http = require("http");
 const https = require("https");
@@ -17,6 +17,8 @@ const execution_1 = require("./routes/execution");
 const utils_1 = require("./utils");
 const app = express();
 const esClient = utils_1.getEsClient();
+// parse application/json
+app.use(bodyParser.json());
 app.use('/execution', execution_1.getExecutionRoutes(esClient));
 // app.use('/execution/query', controller.getGraphqlServer());
 // const SpansController = require('./SpansController');
@@ -46,8 +48,6 @@ else if (currentEnv === 'production') {
 //   name: 'session', // set as key on the req object
 //   keys: [CLIENT_SECRET], // used as a key in signing and verifying cookie values
 // }));
-// // parse application/json
-// app.use(bodyParser.json());
 // /**
 //  * Authentication end-points and middleware
 //  */
@@ -216,7 +216,7 @@ else if (currentEnv === 'production') {
 if (!module.parent) {
     if (currentEnv === 'development') {
         const httpServer = http.createServer(app);
-        httpServer.listen(config_1.default.web.port.http, '0.0.0.0', () => console.log(`Grakn Benchmark Service listening on port ${config_1.default.web.port.http}!`));
+        httpServer.listen(config_1.config.web.port, '0.0.0.0', () => console.log(`Grakn Benchmark Service listening on port ${config_1.config.web.port}!`));
     }
     else if (currentEnv === 'production') {
         const KEY = process.env.SERVER_KEY;
@@ -224,8 +224,8 @@ if (!module.parent) {
         const credentials = { key: KEY, cert: CERTIFICATE };
         const httpsServer = https.createServer(credentials, app);
         // specifying the hostname, 2nd argument, forces the server to accept connections on IPv4 address
-        httpsServer.listen(config_1.default.web.port.https, '0.0.0.0', () => console.log(`Grakn Benchmark Service listening on port ${config_1.default.web.port.https}!`));
-        httpsServer.listen(config_1.default.web.port.https, '0.0.0.0', () => console.log(`Grakn Benchmark Service listening on port ${config_1.default.web.port.https}!`));
+        httpsServer.listen(config_1.config.web.port, '0.0.0.0', () => console.log(`Grakn Benchmark Service listening on port ${config_1.config.web.port}!`));
+        httpsServer.listen(config_1.config.web.port, '0.0.0.0', () => console.log(`Grakn Benchmark Service listening on port ${config_1.config.web.port}!`));
     }
 }
 // Register shutdown hook to properly terminate connection to ES

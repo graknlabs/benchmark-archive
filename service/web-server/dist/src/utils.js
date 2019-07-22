@@ -4,9 +4,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const elasticsearch_1 = require("@elastic/elasticsearch");
 const config_1 = require("./config");
 exports.getEsClient = () => {
-    const ES_URI = `${config_1.default.es.host}:${config_1.default.es.port}`;
+    const esUri = `${config_1.config.es.host}:${config_1.config.es.port}`;
     const esClientOptions = {
-        node: ES_URI,
+        node: esUri,
     };
     return new elasticsearch_1.Client(esClientOptions);
 };

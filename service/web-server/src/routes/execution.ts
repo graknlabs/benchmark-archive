@@ -16,8 +16,8 @@ export const getExecutionRoutes = (esClient: IEsClient) => {
   router.post('/delete', controller.destroy);
 
   router.post('/start',
-              (req, res, next) => { res.locals.newStatus = 'START'; next(); },
-              controller.updateStatus);
+              (req, res, next) => { res.locals.newStatus = 'RUNNING'; next(); },
+              controller.updateStatusRouteHandler);
 
   router.post('/completed',
               (req, res, next) => { res.locals.newStatus = 'COMPLETED'; next(); },
@@ -28,7 +28,7 @@ export const getExecutionRoutes = (esClient: IEsClient) => {
               controller.updateStatus);
 
   router.post('/failed',
-              (req, res, next) => { res.locals.newStatus = 'FAILED'; next(); },
+              (req, res, next) => { console.log('failed'); res.locals.newStatus = 'FAILED'; next(); },
               controller.updateStatus);
 
   router.post('/query', controller.getGraphqlServer());

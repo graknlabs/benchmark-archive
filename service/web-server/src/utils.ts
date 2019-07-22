@@ -1,11 +1,11 @@
 // const Octokit = require('@octokit/rest');
 import { Client as EsClient, ClientOptions } from '@elastic/elasticsearch';
-import config from './config';
+import { config } from './config';
 
 export const getEsClient = (): EsClient => {
-  const ES_URI: string = `${config.es.host}:${config.es.port}`;
+  const esUri: string = `${config.es.host}:${config.es.port}`;
   const esClientOptions: ClientOptions = {
-    node: ES_URI,
+    node: esUri,
   };
   return new EsClient(esClientOptions);
 };

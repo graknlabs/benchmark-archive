@@ -1,29 +1,28 @@
 import * as graphqlHTTP from 'express-graphql';
-import {
-  makeExecutableSchema, IResolvers,
-} from 'graphql-tools';
-import { Client as EsClient, RequestParams } from '@elastic/elasticsearch';
-import { InstanceController } from './instance';
-import { IExecution, TStatus, TStatuses } from '../types';
+import { makeExecutableSchema, IResolvers } from 'graphql-tools';
+import { Client as IEsClient, RequestParams } from '@elastic/elasticsearch';
+import { VmController } from '../vm';
+import { IExecution, TStatus, TStatuses } from '../../types';
 import { GraphQLSchema } from 'graphql/type';
 
 export class ExecutionController {
-  client: EsClient;
+  private client: IEsClient;
 
-  constructor(esClient: EsClient) {
+  constructor(esClient: IEsClient) {
     this.client = esClient;
   }
 
-  async create(req, res): Promise<void> {
+  create = async (req, res): Promise<void> => {
     const { commit, repoUrl } = req.body;
 
     const execution: IExecution = {
       commit,
       repoUrl,
       id: commit + Date.now(),
+      // id: 'a0d7349e809b1b56b59245d561033c68e00c6d5c1563382456916',
       executionInitialisedAt: new Date().toISOString(),
       status: 'INITIALISING',
-      vmName: `'benchmark-executor-${commit.trim()}`,
+      vmName: `benchmark-executor-${commit.trim()}`,
     };
 
     try {
@@ -44,28 +43,57 @@ export class ExecutionController {
         },
       });
 
-      const instanceController = new InstanceController(execution);
-      instanceController.start();
-
       console.log('New execution added to ES.');
-      res.status(200).json({ triggered: true });
+
+      const vmController = new VmController(execution);
+
+      const operation = await vmController.start();
+      operation.on('complete', () => {
+        // the executor VM has been launched and is ready to be benchmarked
+
+        vmController.runZipkin(execution.vmName, async () => {
+          try {
+            await this.updateStatus(execution, 'RUNNING');
+          } catch (error) {
+            throw error.body.error;
+          }
+
+          vmController.runBenchmark(execution.vmName, execution.id, async () => {
+            try {
+              await this.updateStatus(execution, 'COMPLETED');
+              operation.removeAllListeners();
+              res.status(200).json({ triggered: true });
+            } catch (error) {
+              throw error.body.error;
+            }
+          });
+        });
+
+        operation.on('error', async (error) => {
+          try {
+            await this.updateStatus(execution, 'FAILED');
+            throw error;
+          } catch (error) {
+            throw error.body.error;
+          }
+        });
+      });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ triggered: false, error: true });
+      res.status(500).json({ triggered: false, error });
     }
   }
 
-  async destroy(req, res): Promise<void> {
+  destroy = async (req, res): Promise<void> => {
     try {
       const execution: IExecution = req.body;
 
       await this.client.delete({
-        ... this.getDefaultEsClientPayload,
+        ... this.getDefaultEsClientPayload(),
         id: execution.id,
       } as RequestParams.Delete);
 
-      const instanceController = new InstanceController(execution);
-      instanceController.delete();
+      const vmController = new VmController(execution);
+      await vmController.delete();
 
       console.log('Execution deleted.');
       res.status(200).json({});
@@ -75,32 +103,46 @@ export class ExecutionController {
     }
   }
 
-  async updateStatus(req, res): Promise<void> {
-    const { execution } = req.body;
-    const { newStatus }: { newStatus: TStatus } = req.locals;
-
+  updateStatusRouteHandler = async (req, res) => {
     try {
-      await this.client.update({
-        ... this.getDefaultEsClientPayload(),
-        id: execution.id,
-        body: {
-          status: newStatus,
-          executionCompletedAt: new Date().toISOString(),
-        },
-      });
-
-      const deleteRequiringStatuses: TStatuses = ['COMPLETED', 'FAILED', 'STOPPED'];
-      if (deleteRequiringStatuses.includes(newStatus)) {
-        const instanceController = new InstanceController(execution);
-        instanceController.delete();
-      }
-
-      console.log(`Execution marked as ${newStatus}.`);
+      const newStatus: TStatus = req.local.newStatus;
+      await this.updateStatus(req.body.execution, newStatus);
       res.status(200).json({});
     } catch (error) {
       console.error(error);
       res.status(500).json({});
     }
+  }
+
+  // since updating the status of an execution needs to be done both internally (in the process of running the benchmark)
+  // and externally, we need this method which is called directly for internal use, and through updateStatusRouteHandler
+  // for external use
+  updateStatus = async (execution: IExecution, newStatus: TStatus): Promise<void> => {
+    await this.client.update({
+      ... this.getDefaultEsClientPayload(),
+      id: execution.id,
+      body: {
+        doc: {
+          status: newStatus,
+          executionCompletedAt: new Date().toISOString(),
+        },
+      },
+    });
+
+    const deleteRequiringStatuses: TStatuses = ['COMPLETED', 'FAILED', 'STOPPED'];
+    if (deleteRequiringStatuses.includes(newStatus)) {
+      const vmController = new VmController(execution);
+      vmController.delete();
+    }
+
+    console.log(`Execution marked as ${newStatus}.`);
+  }
+
+  getGraphqlServer = () => {
+    return graphqlHTTP({
+      schema: this.getSchema(),
+      context: { client: this.client },
+    });
   }
 
   private getSchema = (): GraphQLSchema => {
@@ -133,7 +175,6 @@ export class ExecutionController {
 
     const resolvers: IResolvers = {
       Query: {
-        // eslint-disable-next-line no-unused-vars
         executions: async (object, args, context, info) => {
           const body = {};
           if (args.status) Object.assign(body, this.filterResultsByStatus(args.status));
@@ -150,25 +191,19 @@ export class ExecutionController {
             throw error;
           }
         },
-        executionById: (object, args, context) => {
-          return context.client.get(Object.assign({}, this.getDefaultEsClientPayload(), { id: args.id }))
-            .then(res => Object.assign(res._source, { id: res._id }));
+        executionById: async (object, args, context) => {
+          try {
+            const result = await context.client.get(Object.assign({}, this.getDefaultEsClientPayload(), { id: args.id }));
+            return Object.assign(result.body._source, { id: result.body._id });
+          } catch (error) {
+            throw error;
+          }
         },
       },
     };
 
     const schema: GraphQLSchema = makeExecutableSchema({ typeDefs, resolvers });
     return schema;
-    // console.log(schema);
-  }
-
-  getGraphqlServer = () => {
-    console.log(this.getSchema());
-
-    return graphqlHTTP({
-      schema: this.getSchema(),
-      context: { client: this.client },
-    });
   }
 
   private getDefaultEsClientPayload(): { index: string, type: string } {
