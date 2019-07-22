@@ -48,6 +48,7 @@ export class ExecutionController {
       const vmController = new VmController(execution);
 
       const operation = await vmController.start();
+
       operation.on('complete', () => {
         // the executor VM has been launched and is ready to be benchmarked
 
@@ -79,7 +80,7 @@ export class ExecutionController {
         });
       });
     } catch (error) {
-      res.status(500).json({ triggered: false, error });
+      res.status(500).json({ error, triggered: false });
     }
   }
 

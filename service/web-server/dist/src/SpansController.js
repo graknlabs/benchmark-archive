@@ -1,26 +1,25 @@
 const graphqlHTTP = require('express-graphql');
 const { makeExecutableSchema } = require('graphql-tools');
-const Utils = require('../utils');
-
-const esClient = Utils.getEsClient();
-
+function SpansController(esClient) {
+    this.client = esClient;
+}
 const typeDefs = `
   type Query {
     querySpans(
         parentId: String,
-        offset: Int,
+        offset: Int, 
         limit: Int): [QuerySpan]
 
     executionSpans(
         executionName: String,
         graphType: String,
-        offset: Int,
+        offset: Int, 
         limit: Int
     ): [ExecutionSpan]
 
     childrenSpans(
         parentId: [String],
-        offset: Int,
+        offset: Int, 
         limit: Int
     ): [ChildSpan]
   }
@@ -70,9 +69,7 @@ const typeDefs = `
     repetitions: Int
   }
 `;
-
-
-const filterExecutionSpans = (args) => {
+function filterExecutionSpans(args) {
     const must = [{ term: { name: "concurrent-execution" } }];
     if (args.graphType) {
         must.push({ match: { "tags.graphType": args.graphType } });
@@ -81,31 +78,26 @@ const filterExecutionSpans = (args) => {
         must.push({ match: { "tags.executionName": args.executionName } });
     }
     return { query: { bool: { must } } };
-};
-
-const limitQuery = (offset, limit) => {
+}
+function limitQuery(offset, limit) {
     return { from: offset || 0, size: limit || 50 };
-};
-
-const filterQuerySpans = (args) => {
+}
+function filterQuerySpans(args) {
     const must = [{ term: { name: "query" } }];
     if (args.parentId) {
         must.push({ match: { "parentId": args.parentId } });
     }
     return { query: { bool: { must } } };
-};
-
-const filterChildrenSpans = (args) => {
+}
+function filterChildrenSpans(args) {
     let should = [];
     if (args.parentId) {
         should = args.parentId.map(parentId => ({ match: { parentId } }));
     }
     return { query: { bool: { should } } };
-};
-
+}
 const resolvers = {
     Query: {
-        // eslint-disable-next-line no-unused-vars
         querySpans: (object, args, context, info) => {
             let body = {};
             Object.assign(body, limitQuery(args.offset, args.limit));
@@ -113,7 +105,6 @@ const resolvers = {
             const queryObject = Object.assign({ index: "benchmark*", type: "span" }, { body });
             return context.client.search(queryObject).then(result => result.hits.hits.map(res => res._source));
         },
-        // eslint-disable-next-line no-unused-vars
         executionSpans: (object, args, context, info) => {
             let body = {};
             Object.assign(body, limitQuery(args.offset, args.limit));
@@ -121,7 +112,6 @@ const resolvers = {
             const queryObject = Object.assign({ index: "benchmark*", type: "span" }, { body });
             return context.client.search(queryObject).then(result => result.hits.hits.map(res => res._source));
         },
-        // eslint-disable-next-line no-unused-vars
         childrenSpans: (object, args, context, info) => {
             let body = {};
             Object.assign(body, limitQuery(args.offset, args.limit));
@@ -130,15 +120,12 @@ const resolvers = {
             return context.client.search(queryObject).then(result => result.hits.hits.map(res => res._source));
         }
     }
-}
-
-const schema = makeExecutableSchema({ typeDefs, resolvers })
-
-const query = () => {
+};
+const schema = makeExecutableSchema({ typeDefs, resolvers });
+SpansController.prototype.query = function query() {
     return graphqlHTTP({
         schema,
-        context: { client: esClient },
+        context: { client: this.client },
     });
-}
-
-module.exports = query;
+};
+module.exports = SpansController;

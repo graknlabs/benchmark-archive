@@ -3,9 +3,9 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "bash": "copyfiles src/**/*.sh dist/",
+        "bash": "copyfiles src/**/*.sh dist/ && copyfiles .env dist/",
         "prebuild": "tslint -c tslint.js -p tsconfig.json --fix",
-        "build": "node_modules/typescript/bin/tsc -p tsconfig.json && yarn bash",
+        "build": "rm -rf dist && node_modules/typescript/bin/tsc -p tsconfig.json && yarn bash",
         "prestart": "yarn build",
         "start": "node dist/src/server.js",
         "test": "node node_modules/jest/bin/jest.js"

@@ -1,9 +1,7 @@
 const graphqlHTTP = require('express-graphql');
 const { makeExecutableSchema } = require('graphql-tools');
 const Utils = require('../utils');
-
 const esClient = Utils.getEsClient();
-
 const typeDefs = `
   type Query {
     querySpans(
@@ -70,8 +68,6 @@ const typeDefs = `
     repetitions: Int
   }
 `;
-
-
 const filterExecutionSpans = (args) => {
     const must = [{ term: { name: "concurrent-execution" } }];
     if (args.graphType) {
@@ -82,11 +78,9 @@ const filterExecutionSpans = (args) => {
     }
     return { query: { bool: { must } } };
 };
-
 const limitQuery = (offset, limit) => {
     return { from: offset || 0, size: limit || 50 };
 };
-
 const filterQuerySpans = (args) => {
     const must = [{ term: { name: "query" } }];
     if (args.parentId) {
@@ -94,7 +88,6 @@ const filterQuerySpans = (args) => {
     }
     return { query: { bool: { must } } };
 };
-
 const filterChildrenSpans = (args) => {
     let should = [];
     if (args.parentId) {
@@ -102,7 +95,6 @@ const filterChildrenSpans = (args) => {
     }
     return { query: { bool: { should } } };
 };
-
 const resolvers = {
     Query: {
         // eslint-disable-next-line no-unused-vars
@@ -130,15 +122,12 @@ const resolvers = {
             return context.client.search(queryObject).then(result => result.hits.hits.map(res => res._source));
         }
     }
-}
-
-const schema = makeExecutableSchema({ typeDefs, resolvers })
-
+};
+const schema = makeExecutableSchema({ typeDefs, resolvers });
 const query = () => {
     return graphqlHTTP({
         schema,
         context: { client: esClient },
     });
-}
-
+};
 module.exports = query;

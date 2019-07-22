@@ -1,7 +1,7 @@
 const request = require('supertest');
 require('iconv-lite/encodings'); // dont remove: https://stackoverflow.com/questions/49141927/express-body-parser-utf-8-error-in-test
 const graphqlHTTP = require('express-graphql');
-const utils = require('../../Utils');
+const utils = require('../../utils');
 
 
 const executionsControllerMocked = {

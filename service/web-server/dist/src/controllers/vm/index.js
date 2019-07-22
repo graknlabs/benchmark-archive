@@ -11,8 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const ComputeClient = require("@google-cloud/compute");
 const child_process_promise_1 = require("child-process-promise");
-const config_1 = require("../config");
-class InstanceController {
+const config_1 = require("../../config");
+class VmController {
     constructor(execution) {
         this.start = () => __awaiter(this, void 0, void 0, function* () {
             const { id, repoUrl, commit, vmName } = this.execution;
@@ -34,32 +34,23 @@ class InstanceController {
       # navigate to home
       cd /home/ubuntu
 
-      # build grakn
+      # build and unzip grakn
       git clone ${repoUrl}
       cd grakn
       sudo git checkout ${commit}
       sudo bazel build //:assemble-linux-targz
-
-      # unzip grakn
       cd bazel-genfiles
       sudo tar -xf grakn-core-all-linux.tar.gz
 
-      # start grakn
-      # cd grakn-core-all-linux
-      # sudo ./grakn server start --benchmark
-
-      # build benchmark
+      # build and unzip benchmark
       cd /home/ubuntu
       git clone https://github.com/graknlabs/benchmark.git
       cd benchmark
       bazel build //:profiler-distribution
-
-      # unzip benchmark
       cd bazel-genfiles
       unzip profiler.zip
     `;
-            console.log(`Starting the ${vmName} instance`);
-            const createVMResp = yield this.gcClient.zone(this.zone).createVM(vmName, {
+            const config = {
                 machineType: 'n1-standard-16',
                 disks: [{
                         boot: true,
@@ -73,26 +64,28 @@ class InstanceController {
                         },
                     ],
                 },
+                // this config assigns an external IP to the VM instance which is required for ssh access
                 networkInterfaces: [{ accessConfigs: [{}] }],
-            });
+            };
+            console.log(`Starting the ${vmName} VM instance`);
+            const createVMResp = yield this.client.zone(this.zone).createVM(vmName, config);
             const operation = createVMResp[1];
             return operation;
         });
         this.delete = () => __awaiter(this, void 0, void 0, function* () {
             const vmName = this.execution.vmName;
-            const vm = this.gcClient.zone(this.zone).vm(vmName);
-            const [operation] = yield vm.delete();
-            yield operation.promise();
-            console.log(`${vmName} instance was successfully deleted.`);
+            const vm = this.client.zone(this.zone).vm(vmName);
+            yield vm.delete();
+            console.log(`${vmName} VM instance was successfully deleted.`);
         });
         this.runZipkin = (vmName, callback) => {
             console.log('Running Zipkin.');
-            const bashFile = `${__dirname}/zipkin.sh`;
+            const bashFile = `${__dirname}/srcipts/zipkin.sh`;
             this.executeBashOnVm(bashFile, vmName, callback);
         };
         this.runBenchmark = (vmName, executionId, callback) => {
             console.log('Running benchmark.');
-            const bashFile = `${__dirname}/benchmark.sh`;
+            const bashFile = `${__dirname}/srcipts/benchmark.sh`;
             this.executeBashOnVm(bashFile, vmName, callback, [executionId, this.esUri]);
         };
         this.executeBashOnVm = (bashFile, vmName, callback, options = []) => __awaiter(this, void 0, void 0, function* () {
@@ -105,10 +98,10 @@ class InstanceController {
                 .catch((error) => { console.error('[spawn] ERROR: ', error); });
         });
         this.execution = execution;
-        this.gcClient = new ComputeClient();
+        this.client = new ComputeClient();
         this.zone = 'us-east1-b';
         this.project = 'grakn-dev';
         this.esUri = `${config_1.config.es.host}:${config_1.config.es.port}`;
     }
 }
-exports.InstanceController = InstanceController;
+exports.VmController = VmController;

@@ -6,7 +6,7 @@
         "module": "commonjs",
         "lib": [ "es5", "es6", ],
         "moduleResolution": "node",
-        // "allowJs": true,
+        "allowJs": true,
         "allowSyntheticDefaultImports": true,
         "rootDir": ".",
         "forceConsistentCasingInFileNames": true,
@@ -19,5 +19,5 @@
         "typeRoots": ["./node_modules/@types", "./src/types.ts"]
     },
     // "include": [ "src/**/*" ],
-    "exclude": [ "node_modules"]
+    "exclude": [ "node_modules", "src/test", "test"]
 }
