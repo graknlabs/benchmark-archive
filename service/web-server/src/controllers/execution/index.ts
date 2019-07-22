@@ -19,7 +19,6 @@ export class ExecutionController {
       commit,
       repoUrl,
       id: commit + Date.now(),
-      // id: 'a0d7349e809b1b56b59245d561033c68e00c6d5c1563382456916',
       executionInitialisedAt: new Date().toISOString(),
       status: 'INITIALISING',
       vmName: `benchmark-executor-${commit.trim()}`,
