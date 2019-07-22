@@ -12,7 +12,7 @@ REPO_URL=$1
 EXECUTION_ID=$2
 COMMIT=$3
 INSTANCE_NAME=$4
-INSTANCE_IP="htttps://benchmark.grakn.ai"
+SERVICE_ADDR="benchmark.grakn.ai"
 
 LOG=~/logs/launch_executor_$INSTANCE_NAME.log
 
@@ -50,5 +50,5 @@ gcloud compute ssh ubuntu@$INSTANCE_NAME --zone=$ZONE --command='chmod +x ~/exec
 echo "Starting benchmark..." | tee -a $LOG
 gcloud compute ssh ubuntu@$INSTANCE_NAME --zone=$ZONE --command=" \
     tmux new -d -s execute      \
-        \" ~/executor/execute.sh $REPO_URL $COMMIT $INSTANCE_IP $INSTANCE_NAME $EXECUTION_ID 2>&1 | tee -a ~/logs/executor.log \" \
+        \" ~/executor/execute.sh $REPO_URL $COMMIT $SERVICE_ADDR $INSTANCE_NAME $EXECUTION_ID 2>&1 | tee -a ~/logs/executor.log \" \
     "
