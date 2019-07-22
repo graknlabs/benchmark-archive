@@ -26,3 +26,10 @@ a {
     flex-direction: column;
   }
 }
+
+.centered {
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}

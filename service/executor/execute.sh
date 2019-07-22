@@ -5,7 +5,7 @@ report_failure() {
     --request POST \
     --data "{\"executionId\":\"$EXECUTION_ID\" }" \
     --insecure \
-    https://$SERVICE_IP/execution/failed
+    https://$SERVICE_ADDR/execution/failed
 
   exit 1
 }
@@ -21,7 +21,7 @@ fi
 
 GRAKN_REPOSITORY_URL=$1
 COMMIT=$2
-SERVICE_IP=$3
+SERVICE_ADDR=$3
 INSTANCE_NAME=$4
 EXECUTION_ID=$5
 
@@ -32,7 +32,7 @@ git clone $GRAKN_REPOSITORY_URL
 
 # build grakn
 cd grakn
-git checkout $COMMIT 
+git checkout $COMMIT
 
 bazel build //:assemble-linux-targz
 
@@ -62,7 +62,7 @@ unzip profiler.zip
 cd profiler
 
 # --- run zipkin ---
-tmux new-session -d -s zipkin "STORAGE_TYPE=elasticsearch ES_HOSTS=http://$SERVICE_IP:9200 ES_INDEX=benchmark java -jar external-dependencies/zipkin.jar"
+tmux new-session -d -s zipkin "STORAGE_TYPE=elasticsearch ES_HOSTS=http://$SERVICE_ADDR:9200 ES_INDEX=benchmark java -jar external-dependencies/zipkin.jar"
 
 
 # notify benchmark service about start
@@ -71,20 +71,20 @@ curl --header "Content-Type: application/json" \
     --request POST \
     --data "{\"executionId\":\"$EXECUTION_ID\" }" \
     --insecure \
-    https://$SERVICE_IP/execution/start
+    https://$SERVICE_ADDR/execution/start
 
 # -- write queries --
-./benchmark --config ./scenario/road_network/road_config_write.yml --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200
-./benchmark --config ./scenario/complex/config_write.yml --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200
+./benchmark --config ./scenario/road_network/road_config_write.yml --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_ADDR:9200
+./benchmark --config ./scenario/complex/config_write.yml --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_ADDR:9200
 
 # -- read queries --
-./benchmark --config ./scenario/road_network/road_config_read.yml                --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200 --keyspace road_network_read
-./benchmark --config ./scenario/biochemical_network/biochemical_config_read.yml  --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200
-./benchmark --config ./scenario/complex/config_read.yml                          --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200 --keyspace generic_uniform_network_read
-./benchmark --config ./scenario/reasoning/config_read.yml                        --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200 --keyspace reasoner --load-schema --static-data-import
-./benchmark --config ./scenario/rule_scaling/config_read.yml                     --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200 --keyspace rule_scaling --load-schema --static-data-import
-./benchmark --config ./scenario/schema/data_definition_config.yml                --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200 --keyspace schema --load-schema --no-data-generation
-./benchmark --config ./scenario/attribute/attribute_read_config.yml              --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_IP:9200 --keyspace attribute
+./benchmark --config ./scenario/road_network/road_config_read.yml                --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_ADDR:9200 --keyspace road_network_read
+./benchmark --config ./scenario/biochemical_network/biochemical_config_read.yml  --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_ADDR:9200
+./benchmark --config ./scenario/complex/config_read.yml                          --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_ADDR:9200 --keyspace generic_uniform_network_read
+./benchmark --config ./scenario/reasoning/config_read.yml                        --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_ADDR:9200 --keyspace reasoner --load-schema --static-data-import
+./benchmark --config ./scenario/rule_scaling/config_read.yml                     --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_ADDR:9200 --keyspace rule_scaling --load-schema --static-data-import
+./benchmark --config ./scenario/schema/data_definition_config.yml                --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_ADDR:9200 --keyspace schema --load-schema --no-data-generation
+./benchmark --config ./scenario/attribute/attribute_read_config.yml              --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_ADDR:9200 --keyspace attribute
 
 # TODO report log files
 
@@ -93,4 +93,4 @@ curl --header "Content-Type: application/json" \
     --request POST \
     --data "{\"executionId\":\"$EXECUTION_ID\", \"vmName\": \"$INSTANCE_NAME\"}" \
     --insecure \
-    https://$SERVICE_IP/execution/completed
+    https://$SERVICE_ADDR/execution/completed

@@ -223,7 +223,7 @@ export default {
     },
 
     async toggleStepsTable() {
-      this.loading = true;
+      this.loading.show = true;
 
       if (!this.stepsAndGroups.length) {
         await this.fetchStepSpans();
@@ -231,7 +231,7 @@ export default {
 
       this.queryExpanded = !this.queryExpanded;
 
-      this.loading = false;
+      this.loading.show = false;
     },
 
     async fetchStepSpans() {
