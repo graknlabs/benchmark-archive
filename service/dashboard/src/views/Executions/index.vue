@@ -175,7 +175,6 @@ export default {
     },
 
     removeExecution(executionId) {
-      console.log('removeExecution', executionId);
       this.executions = this.executions.filter(execution => execution.id !== executionId);
     },
 
