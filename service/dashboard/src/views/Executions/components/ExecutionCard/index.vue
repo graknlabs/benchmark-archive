@@ -89,8 +89,8 @@
 </template>
 
 <script>
-import BenchmarkClient from '@/util/BenchmarkClient';
 import copy from 'copy-to-clipboard';
+import BenchmarkClient from '@/util/BenchmarkClient';
 
 export default {
   filters: {
@@ -155,9 +155,7 @@ export default {
                   message: 'The execution was deleted successfully.',
                   type: 'success',
                 });
-                // have the parent component re-fetch all executions which should now exclude
-                // this deleted execution
-                this.$emit('reload-required');
+                this.$emit('remove:execution', execution.id);
               })
               .catch(() => {
                 this.$message({
@@ -183,9 +181,7 @@ export default {
                   message: 'The execution was stopped successfully.',
                   type: 'success',
                 });
-                // have the parent component re-fetch all executions which should now have
-                // the updated status for this execution
-                this.$emit('reload-required');
+                this.$emit('stop:execution', execution.id);
               })
               .catch(() => {
                 this.$message({

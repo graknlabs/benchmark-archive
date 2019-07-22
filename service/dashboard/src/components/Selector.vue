@@ -39,22 +39,22 @@ export default {
 
   data() {
     return {
-      currentItem: this.defaultItem ? this.defaultItem.text : undefined,
+      selectedItem: this.defaultItem ? this.defaultItem.text : undefined,
     };
   },
 
   methods: {
     getSelectorText() {
       let text = this.title;
-      if (this.currentItem) {
-        text += `: ${this.currentItem}`;
+      if (this.selectedItem) {
+        text += `: ${this.selectedItem}`;
       }
       return text;
     },
 
     updateItem(selectedItem) {
-      this.currentItem = selectedItem.text;
-      this.$emit('item-selected', selectedItem.value);
+      this.selectedItem = selectedItem.text;
+      this.$emit('update:selected-item', selectedItem.value);
     },
   },
 };

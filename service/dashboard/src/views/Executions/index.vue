@@ -51,7 +51,7 @@
             title="Sort by"
             :items="columns"
             :default-item="{ text: 'Initialised At', value: 'executionInitialisedAt'}"
-            @item-selected="sortExecutions"
+            @update:selected-item="sortExecutions"
           />
         </div>
 
@@ -75,7 +75,8 @@
         :execution="exec"
         :columns="columns"
         :click-path="'inspect/' + exec.id"
-        @reload-required="fetchExecutions"
+        @remove:execution="removeExecution"
+        @stop:execution="stopExecution"
       />
     </div>
   </section>
@@ -171,6 +172,15 @@ export default {
 
     onSortTypeSelection() {
       this.executions.reverse();
+    },
+
+    removeExecution(executionId) {
+      this.executions = this.executions.filter(execution => execution.id !== executionId);
+    },
+
+    stopExecution(executionId) {
+      const execIndex = this.executions.findIndex(execution => execution.id === executionId);
+      this.executions[execIndex].status = 'STOPPED';
     },
     // triggerExecution() {
     //   BenchmarkClient.triggerExecution(this.newExecution)

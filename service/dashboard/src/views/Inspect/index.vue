@@ -28,6 +28,8 @@ import EDM from '@/util/ExecutionDataFormatters';
 const { flattenGraphs, flattenQuerySpans } = EDM;
 
 export default {
+  name: 'Inspect',
+
   components: { GraphTabs, ExecutionCard },
 
   data() {
@@ -113,9 +115,3 @@ export default {
   },
 };
 </script>
-
-<style scoped lang="scss">
-h2 {
-  margin-bottom: 10px;
-}
-</style>
