@@ -4,222 +4,240 @@ import { Client as IEsClient, RequestParams } from '@elastic/elasticsearch';
 import { VmController } from '../vm';
 import { IExecution, TStatus, TStatuses } from '../../types';
 import { GraphQLSchema } from 'graphql/type';
+import { getEsClient } from '../../utils';
 
-export class ExecutionController {
-  private client: IEsClient;
+const esClient = getEsClient();
 
-  constructor(esClient: IEsClient) {
-    this.client = esClient;
-  }
+const ES_PAYLOAD_COMMON = { index: 'grakn-benchmark', type: 'execution' };
 
-  create = async (req, res): Promise<void> => {
-    const { commit, repoUrl } = req.body;
+const statuses: { [key: string]: TStatus; } = {
+  INITIALISING: 'INITIALISING',
+  CANCELED: 'CANCELED',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  RUNNING: 'RUNNING',
+};
 
-    const execution: IExecution = {
-      commit,
-      repoUrl,
-      id: commit + Date.now(),
-      executionInitialisedAt: new Date().toISOString(),
-      status: 'INITIALISING',
-      vmName: `benchmark-executor-${commit.trim()}`,
-    };
+const create = async (req, res) => {
+  const { commit, repoUrl } = req.body;
+  const execution: IExecution = {
+    commit,
+    repoUrl,
+    id: commit + Date.now(),
+    executionInitialisedAt: new Date().toISOString(),
+    status: statuses.INITIALISING as TStatus,
+    vmName: `benchmark-executor-${commit.trim()}`,
+    prMergedAt: undefined,
+    prUrl: undefined,
+    prNumber: undefined,
+    executionStartedAt: undefined,
+    executionCompletedAt: undefined,
+  };
 
-    try {
-      await this.client.create({
-        ... this.getDefaultEsClientPayload(),
-        id: execution.id,
-        body: {
-          commit: execution.commit,
-          prMergedAt: execution.prMergedAt,
-          prUrl: execution.prUrl,
-          prNumber: execution.prNumber,
-          repoUrl: execution.repoUrl,
-          executionInitialisedAt: execution.executionInitialisedAt,
-          executionStartedAt: execution.executionStartedAt,
-          executionCompletedAt: execution.executionCompletedAt,
-          status: execution.status,
-          vmName: execution.vmName,
-        },
-      });
+  try {
+    const { id, ...body } = execution;
+    const payload: RequestParams.Create<Omit<IExecution, 'id'>> = { ...ES_PAYLOAD_COMMON, id, body };
+    await esClient.create(payload);
 
-      console.log('New execution added to ES.');
+    console.log('New execution added to ES.');
 
-      const vmController = new VmController(execution);
+    const vm = new VmController(execution);
+    const operation = await vm.start();
 
-      const operation = await vmController.start();
+    operation.on('complete', () => {
+      // the executor VM has been launched and is ready to be benchmarked
 
-      operation.on('complete', () => {
-        // the executor VM has been launched and is ready to be benchmarked
-
-        vmController.runZipkin(execution.vmName, async () => {
-          try {
-            await this.updateStatus(execution, 'RUNNING');
-          } catch (error) {
-            throw error.body.error;
-          }
-
-          vmController.runBenchmark(execution.vmName, execution.id, async () => {
+      // the need for setTimeout is due to a bug that has been issued here:
+      // https://github.com/googleapis/nodejs-compute/issues/336
+      setTimeout(() => {
+        vm.setUp(execution, async () => {
+          vm.runZipkin(execution, async () => {
             try {
-              await this.updateStatus(execution, 'COMPLETED');
-              operation.removeAllListeners();
-              res.status(200).json({ triggered: true });
+              await updateStatusInternal(execution, statuses.RUNNING);
             } catch (error) {
               throw error.body.error;
             }
+
+            vm.runBenchmark(execution, async () => {
+              try {
+                // await updateStatusInternal(execution, statuses.COMPLETED);
+                operation.removeAllListeners();
+                res.status(200).json({ triggered: true });
+              } catch (error) {
+                throw error.body.error;
+              }
+            });
           });
         });
-
-        operation.on('error', async (error) => {
-          try {
-            await this.updateStatus(execution, 'FAILED');
-            throw error;
-          } catch (error) {
-            throw error.body.error;
-          }
-        });
-      });
-    } catch (error) {
-      res.status(500).json({ error, triggered: false });
-    }
-  }
-
-  destroy = async (req, res): Promise<void> => {
-    try {
-      const execution: IExecution = req.body;
-
-      await this.client.delete({
-        ... this.getDefaultEsClientPayload(),
-        id: execution.id,
-      } as RequestParams.Delete);
-
-      const vmController = new VmController(execution);
-      await vmController.delete();
-
-      console.log('Execution deleted.');
-      res.status(200).json({});
-    } catch (error) {
-      res.status(500).json({});
-      console.error(error);
-    }
-  }
-
-  updateStatusRouteHandler = async (req, res) => {
-    try {
-      const newStatus: TStatus = req.local.newStatus;
-      await this.updateStatus(req.body.execution, newStatus);
-      res.status(200).json({});
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({});
-    }
-  }
-
-  // since updating the status of an execution needs to be done both internally (in the process of running the benchmark)
-  // and externally, we need this method which is called directly for internal use, and through updateStatusRouteHandler
-  // for external use
-  updateStatus = async (execution: IExecution, newStatus: TStatus): Promise<void> => {
-    await this.client.update({
-      ... this.getDefaultEsClientPayload(),
-      id: execution.id,
-      body: {
-        doc: {
-          status: newStatus,
-          executionCompletedAt: new Date().toISOString(),
-        },
-      },
+      },         2000);
     });
 
-    const deleteRequiringStatuses: TStatuses = ['COMPLETED', 'FAILED', 'STOPPED'];
-    if (deleteRequiringStatuses.includes(newStatus)) {
-      const vmController = new VmController(execution);
-      vmController.delete();
-    }
-
-    console.log(`Execution marked as ${newStatus}.`);
-  }
-
-  getGraphqlServer = () => {
-    return graphqlHTTP({
-      schema: this.getSchema(),
-      context: { client: this.client },
-    });
-  }
-
-  private getSchema = (): GraphQLSchema => {
-    const typeDefs: string = `
-      type Query {
-          executions (
-            status: [String],
-            orderBy: String,
-            order: String,
-            offset: Int,
-            limit: Int
-          ): [Execution]
-
-          executionById(id: String!): Execution
+    operation.on('error', async (error) => {
+      try {
+        await updateStatusInternal(execution, statuses.FAILED);
+        throw error;
+      } catch (error) {
+        console.log(error);
+        throw error.body.error;
       }
+    });
+  } catch (error) {
+    try {
+      await updateStatusInternal(execution, statuses.FAILED);
+      throw error;
+    } catch (error) {
+      console.log(error);
+      throw error.body.error;
+    }
+  }
+};
 
-      type Execution {
-          id: String!,
-          commit: String!
-          repoUrl: String!
-          prMergedAt: String,
-          prUrl: String,
-          prNumber: String,
-          executionInitialisedAt: String
-          executionStartedAt: String
-          executionCompletedAt: String
-          status: String!
-          vmName: String
-      }`;
+const updateStatus = async (req, res, status: TStatus) => {
+  try {
+    await updateStatusInternal(req.body.execution, status);
+    res.status(200).json({});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({});
+  }
+};
 
-    const resolvers: IResolvers = {
-      Query: {
-        executions: async (object, args, context, info) => {
-          const body = {};
-          if (args.status) Object.assign(body, this.filterResultsByStatus(args.status));
-          if (args.orderBy) Object.assign(body, this.sortResults(args.orderBy, args.order));
-          Object.assign(body, this.limitResults(args.offset, args.limit));
-          const queryObject = Object.assign({}, this.getDefaultEsClientPayload(), { body });
+// since updating the status of an execution needs to be done both internally (in the process of running the benchmark)
+// and externally (via the dashboard), we need this method which is called directly for internal use, and through
+// its wrapper for external use
+const updateStatusInternal = async (execution: IExecution, status: TStatus): Promise<void> => {
+  const payload: RequestParams.Update<{ doc: Partial<IExecution>; }> = {
+    ...ES_PAYLOAD_COMMON, id: execution.id, body: { doc: { status } },
+  };
 
-          try {
-            const results = await context.client.search(queryObject);
-            return results.body.hits.hits.map(hit => Object.assign(hit._source, { id: hit._id }));
-          } catch (error) {
-            // Return empty response as this exception only means there are no Executions in ES yet.
-            if (error.body.error.type === 'index_not_found_exception') return [];
-            throw error;
-          }
-        },
-        executionById: async (object, args, context) => {
-          try {
-            const result = await context.client.get(Object.assign({}, this.getDefaultEsClientPayload(), { id: args.id }));
-            return Object.assign(result.body._source, { id: result.body._id });
-          } catch (error) {
-            throw error;
-          }
-        },
-      },
-    };
+  if (status === 'CANCELED' as TStatus) payload.body.doc.executionCompletedAt = new Date().toISOString();
 
-    const schema: GraphQLSchema = makeExecutableSchema({ typeDefs, resolvers });
-    return schema;
+  await esClient.update(payload);
+
+  console.log(`Execution marked as ${status}.`);
+
+  const vmDeletionStatuses: TStatuses = ['COMPLETED', 'FAILED', 'CANCELED'];
+  if (vmDeletionStatuses.includes(status)) {
+    const vm = new VmController(execution);
+    vm.delete();
+  }
+};
+
+const destroy = async (req, res) => {
+  try {
+    const execution: IExecution = req.body;
+    const id = execution.id;
+    const payload: RequestParams.Delete = { ...ES_PAYLOAD_COMMON, id };
+    await esClient.delete(payload);
+    console.log('Execution deleted.');
+
+    const vm = new VmController(execution);
+    await vm.delete();
+    console.log('VM instance deleted.');
+
+    res.status(200).json({});
+  } catch (error) {
+    res.status(500).json({});
+    console.error(error);
+  }
+};
+
+const getGraphqlServer = () => {
+  return graphqlHTTP({
+    schema,
+    context: { client: esClient },
+  });
+};
+
+const typeDefs = `
+  type Query {
+      executions (
+        status: [String],
+        orderBy: String,
+        order: String,
+        offset: Int,
+        limit: Int
+      ): [Execution]
+
+      executionById(id: String!): Execution
   }
 
-  private getDefaultEsClientPayload(): { index: string, type: string } {
-    return { index: 'grakn-benchmark', type: 'execution' };
-  }
+  type Execution {
+      id: String!,
+      commit: String!
+      repoUrl: String!
+      prMergedAt: String,
+      prUrl: String,
+      prNumber: String,
+      executionInitialisedAt: String
+      executionStartedAt: String
+      executionCompletedAt: String
+      status: String!
+      vmName: String
+  }`;
 
-  private filterResultsByStatus(statuses): { query: { bool: { should: { match: { status: TStatus }[] } } } } {
-    const should = statuses.map(status => ({ match: { status } }));
-    return { query: { bool: { should } } };
-  }
+const resolvers: IResolvers = {
+  Query: {
+    executions: async (object, args, context, info) => {
+      const body = {};
 
-  private sortResults(orderBy, orderMethod): { sort: [{ [key: string]: 'desc' | 'asc' }] } {
-    return { sort: [{ [orderBy]: orderMethod || 'desc' }] };
-  }
+      const { offset, limit } = args;
+      Object.assign(body, limitResults(offset, limit));
 
-  private limitResults(offset, limit): { from: number, size: number } {
-    return { from: offset || 0, size: limit || 50 };
-  }
-}
+      const { status, orderBy, order } = args;
+      if (status) Object.assign(body, filterResultsByStatus(status));
+      if (orderBy) Object.assign(body, sortResults(orderBy, order));
+
+      const payload: RequestParams.Search<any> = { ...ES_PAYLOAD_COMMON, body };
+      const esClient: IEsClient = context.client;
+
+      try {
+        const results = await esClient.search(payload);
+
+        const executions = results.body.hits.hits.map((hit) => {
+          const execution = hit._source;
+          return { ...execution, id: hit._id };
+        });
+
+        return executions;
+      } catch (error) {
+        // Return empty response as this exception only means there are no Executions in ES yet.
+        if (error.body.error.type === 'index_not_found_exception') return [];
+        throw error;
+      }
+    },
+
+    executionById: async (object, args, context) => {
+      try {
+        const payload: RequestParams.Get = { ...ES_PAYLOAD_COMMON, id: args.id };
+        const result = await esClient.get(payload);
+        const execution = result.body._source;
+        return { ...execution, id: result.body._id };
+      } catch (error) {
+        throw error;
+      }
+    },
+  },
+};
+
+const schema: GraphQLSchema = makeExecutableSchema({ typeDefs, resolvers });
+
+const filterResultsByStatus = (statuses: TStatuses) => {
+  const should = statuses.map(status => ({ match: { status } }));
+  return { query: { bool: { should } } };
+};
+
+const sortResults = (orderBy: keyof IExecution, orderMethod: 'desc' | 'asc') => {
+  return { sort: [{ [orderBy]: orderMethod || 'desc' }] };
+};
+
+const limitResults = (offset: number, limit: number) => {
+  return { from: offset || 0, size: limit || 50 };
+};
+
+export const ExecutionController = {
+  create,
+  updateStatus,
+  destroy,
+  getGraphqlServer,
+};

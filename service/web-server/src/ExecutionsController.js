@@ -15,7 +15,6 @@ function ExecutionsController(client){
 
 module.exports = ExecutionsController;
 
-
 function addExecution(execution) {
     return this.client.create({
         index: GRAKN_BENCHMARK_INDEX,

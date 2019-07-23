@@ -21,56 +21,17 @@ export class VmController {
   }
 
   start = async (): Promise<any> => {
-    const { id, repoUrl, commit, vmName } = this.execution;
-    const startupScript = `
-      #!/bin/bash
-
-      report_failure() {
-        curl --header "Content-Type: application/json" \
-          --request POST \
-          --data "{\"executionId\":\"${id}\" }" \
-          --insecure \
-          https://${this.esUri}/execution/failed
-
-        exit 1
-      }
-      # catch any error - report failure to Service and exit the script
-      trap report_failure ERR
-
-      # navigate to home
-      cd /home/ubuntu
-
-      # build and unzip grakn
-      git clone ${repoUrl}
-      cd grakn
-      sudo git checkout ${commit}
-      sudo bazel build //:assemble-linux-targz
-      cd bazel-genfiles
-      sudo tar -xf grakn-core-all-linux.tar.gz
-
-      # build and unzip benchmark
-      cd /home/ubuntu
-      git clone https://github.com/graknlabs/benchmark.git
-      cd benchmark
-      bazel build //:profiler-distribution
-      cd bazel-genfiles
-      unzip profiler.zip
-    `;
+    const { vmName } = this.execution;
 
     const config = {
       machineType: 'n1-standard-16',
       disks: [{
         boot: true,
-        source: `https://www.googleapis.com/compute/v1/projects/${this.project}/zones/${this.zone}/disks/benchmark-executor`,
+        initializeParams: {
+          sourceImage:
+            `https://www.googleapis.com/compute/v1/projects/${this.project}/global/images/benchmark-executor-image-2`,
+        },
       }],
-      metadata: {
-        items: [
-          {
-            key: 'startup-script',
-            value: startupScript,
-          },
-        ],
-      },
       // this config assigns an external IP to the VM instance which is required for ssh access
       networkInterfaces: [{ accessConfigs: [{}] }],
     };
@@ -83,25 +44,38 @@ export class VmController {
 
   delete = async (): Promise<void> => {
     const vmName: string = this.execution.vmName;
+
     const vm = this.client.zone(this.zone).vm(vmName);
     await vm.delete();
-    console.log(`${vmName} VM instance was successfully deleted.`);
+
+    const disk = this.client.zone(this.zone).disk(vmName);
+    await disk.delete();
+
+    console.log(`${vmName} VM instance and associated disk were successfully deleted.`);
   }
 
-  runZipkin = (vmName: string, callback: any) => {
+  setUp = (execution: IExecution, callback) => {
+    console.log('Setting up the instance.');
+    const bashFile = `${__dirname}/scripts/setup.sh`;
+    const { vmName, repoUrl, commit } = execution;
+    this.executeBashOnVm(bashFile, callback, [vmName, this.zone, repoUrl, commit]);
+  }
+
+  runZipkin = (execution: IExecution, callback: any) => {
     console.log('Running Zipkin.');
-    const bashFile: string = `${__dirname}/srcipts/zipkin.sh`;
-    this.executeBashOnVm(bashFile, vmName, callback);
+    const bashFile: string = `${__dirname}/scripts/zipkin.sh`;
+    this.executeBashOnVm(bashFile, callback, [execution.vmName, this.zone]);
   }
 
-  runBenchmark = (vmName: string, executionId: String, callback: any) => {
+  runBenchmark = (execution: IExecution, callback: any) => {
     console.log('Running benchmark.');
-    const bashFile: string = `${__dirname}/srcipts/benchmark.sh`;
-    this.executeBashOnVm(bashFile, vmName, callback, [executionId, this.esUri]);
+    const bashFile: string = `${__dirname}/scripts/benchmark.sh`;
+    const { vmName, id } = execution;
+    this.executeBashOnVm(bashFile, callback, [vmName, this.zone, id, this.esUri]);
   }
 
-  private executeBashOnVm = async (bashFile: string, vmName: string, callback, options: any[] = []): Promise<(void)> => {
-    const promise = spawn('bash', [bashFile, process.env.GOOGLE_APPLICATION_CREDENTIALS, vmName, this.zone, ...options]);
+  private executeBashOnVm = async (bashFile: string, callback, options: any[] = []): Promise<(void)> => {
+    const promise = spawn('bash', [bashFile, process.env.GOOGLE_APPLICATION_CREDENTIALS, ...options]);
     const childProcess = promise.childProcess;
 
     childProcess.stdout.on('data', (data) => { console.log('[spawn] stdout: ', data.toString()); });
