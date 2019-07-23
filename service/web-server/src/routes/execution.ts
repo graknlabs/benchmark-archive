@@ -9,19 +9,19 @@ import { ExecutionController } from '../controllers/execution';
 export const getExecutionRoutes = (esClient: IEsClient) => {
   const router = express.Router();
 
-  router.post('/new', ExecutionController.create);
+  router.post('/new', (req, res) => { ExecutionController.create(req, res, esClient); });
 
-  router.post('/delete', ExecutionController.destroy);
+  router.post('/delete', (req, res) => { ExecutionController.destroy(req, res, esClient); });
 
-  router.post('/start', (req, res) => { ExecutionController.updateStatus(req, res, 'RUNNING'); });
+  router.post('/start', (req, res) => { ExecutionController.updateStatus(req, res, esClient, 'RUNNING'); });
 
-  router.post('/completed', (req, res) => { ExecutionController.updateStatus(req, res, 'COMPLETED'); });
+  router.post('/completed', (req, res) => { ExecutionController.updateStatus(req, res, esClient, 'COMPLETED'); });
 
-  router.post('/stop', (req, res) => { ExecutionController.updateStatus(req, res, 'CANCELED'); });
+  router.post('/stop', (req, res) => { ExecutionController.updateStatus(req, res, esClient, 'CANCELED'); });
 
-  router.post('/failed', (req, res) => { ExecutionController.updateStatus(req, res, 'FAILED'); });
+  router.post('/failed', (req, res) => { ExecutionController.updateStatus(req, res, esClient, 'FAILED'); });
 
-  router.post('/query', ExecutionController.getGraphqlServer());
+  router.post('/query', ExecutionController.getGraphqlServer(esClient));
 
   return router;
 };

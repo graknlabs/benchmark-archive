@@ -4,9 +4,6 @@ import { Client as IEsClient, RequestParams } from '@elastic/elasticsearch';
 import { VmController } from '../vm';
 import { IExecution, TStatus, TStatuses } from '../../types';
 import { GraphQLSchema } from 'graphql/type';
-import { getEsClient } from '../../utils';
-
-const esClient = getEsClient();
 
 const ES_PAYLOAD_COMMON = { index: 'grakn-benchmark', type: 'execution' };
 
@@ -18,7 +15,7 @@ const statuses: { [key: string]: TStatus; } = {
   RUNNING: 'RUNNING',
 };
 
-const create = async (req, res) => {
+const create = async (req, res, esClient) => {
   const { commit, repoUrl } = req.body;
   const execution: IExecution = {
     commit,
@@ -53,14 +50,14 @@ const create = async (req, res) => {
         vm.setUp(execution, async () => {
           vm.runZipkin(execution, async () => {
             try {
-              await updateStatusInternal(execution, statuses.RUNNING);
+              await updateStatusInternal(esClient, execution, statuses.RUNNING);
             } catch (error) {
               throw error.body.error;
             }
 
             vm.runBenchmark(execution, async () => {
               try {
-                // await updateStatusInternal(execution, statuses.COMPLETED);
+                await updateStatusInternal(esClient, execution, statuses.COMPLETED);
                 operation.removeAllListeners();
                 res.status(200).json({ triggered: true });
               } catch (error) {
@@ -74,7 +71,7 @@ const create = async (req, res) => {
 
     operation.on('error', async (error) => {
       try {
-        await updateStatusInternal(execution, statuses.FAILED);
+        await updateStatusInternal(esClient, execution, statuses.FAILED);
         throw error;
       } catch (error) {
         throw error.body.error;
@@ -82,7 +79,7 @@ const create = async (req, res) => {
     });
   } catch (error) {
     try {
-      await updateStatusInternal(execution, statuses.FAILED);
+      await updateStatusInternal(esClient, execution, statuses.FAILED);
       throw error;
     } catch (error) {
       throw error.body.error;
@@ -90,9 +87,9 @@ const create = async (req, res) => {
   }
 };
 
-const updateStatus = async (req, res, status: TStatus) => {
+const updateStatus = async (req, res, esClient: IEsClient, status: TStatus) => {
   try {
-    await updateStatusInternal(req.body.execution, status);
+    await updateStatusInternal(esClient, req.body.execution, status);
     res.status(200).json({});
   } catch (error) {
     console.error(error);
@@ -103,7 +100,7 @@ const updateStatus = async (req, res, status: TStatus) => {
 // since updating the status of an execution needs to be done both internally (in the process of running the benchmark)
 // and externally (via the dashboard), we need this method which is called directly for internal use, and through
 // its wrapper for external use
-const updateStatusInternal = async (execution: IExecution, status: TStatus): Promise<void> => {
+const updateStatusInternal = async (esClient: IEsClient, execution: IExecution, status: TStatus): Promise<void> => {
   const payload: RequestParams.Update<{ doc: Partial<IExecution>; }> = {
     ...ES_PAYLOAD_COMMON, id: execution.id, body: { doc: { status } },
   };
@@ -121,7 +118,7 @@ const updateStatusInternal = async (execution: IExecution, status: TStatus): Pro
   }
 };
 
-const destroy = async (req, res) => {
+const destroy = async (req, res, esClient) => {
   try {
     const execution: IExecution = req.body;
     const id = execution.id;
@@ -140,7 +137,7 @@ const destroy = async (req, res) => {
   }
 };
 
-const getGraphqlServer = () => {
+const getGraphqlServer = (esClient) => {
   return graphqlHTTP({
     schema,
     context: { client: esClient },
@@ -207,6 +204,7 @@ const resolvers: IResolvers = {
 
     executionById: async (object, args, context) => {
       try {
+        const esClient: IEsClient = context.client;
         const payload: RequestParams.Get = { ...ES_PAYLOAD_COMMON, id: args.id };
         const result = await esClient.get(payload);
         const execution = result.body._source;
