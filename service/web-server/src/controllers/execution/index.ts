@@ -77,7 +77,6 @@ const create = async (req, res) => {
         await updateStatusInternal(execution, statuses.FAILED);
         throw error;
       } catch (error) {
-        console.log(error);
         throw error.body.error;
       }
     });
@@ -86,7 +85,6 @@ const create = async (req, res) => {
       await updateStatusInternal(execution, statuses.FAILED);
       throw error;
     } catch (error) {
-      console.log(error);
       throw error.body.error;
     }
   }
