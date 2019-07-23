@@ -28,11 +28,11 @@ export interface IExecutionController {
 export function ExecutionController(this: IExecutionController, client: IEsClient) {
   this.esClient = client;
 
-  this.create = create;
-  this.updateStatus = updateStatus;
-  this.destroy = destroy;
-  this.getGraphqlServer = getGraphqlServer;
-  this.updateStatusInternal = updateStatusInternal;
+  this.create = create.bind(this);
+  this.updateStatus = updateStatus.bind(this);
+  this.destroy = destroy.bind(this);
+  this.getGraphqlServer = getGraphqlServer.bind(this);
+  this.updateStatusInternal = updateStatusInternal.bind(this);
 }
 
 async function create(this: IExecutionController, req, res) {
