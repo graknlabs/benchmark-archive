@@ -1,7 +1,7 @@
 import * as graphqlHTTP from 'express-graphql';
 import { makeExecutableSchema, IResolvers } from 'graphql-tools';
 import { Client as IEsClient, RequestParams } from '@elastic/elasticsearch';
-import { VmController } from '../vm';
+import { VMController, IVMController } from '../vm';
 import { IExecution, TStatus, TStatuses } from '../../types';
 import { GraphQLSchema } from 'graphql/type';
 
@@ -58,7 +58,7 @@ async function create(this: IExecutionController, req, res) {
 
     console.log('New execution added to ES.');
 
-    const vm = new VmController(execution);
+    const vm: IVMController = new VMController(execution);
     const operation = await vm.start();
 
     operation.on('complete', () => {
@@ -67,15 +67,15 @@ async function create(this: IExecutionController, req, res) {
       // the need for setTimeout is due to a bug that has been issued here:
       // https://github.com/googleapis/nodejs-compute/issues/336
       setTimeout(() => {
-        vm.setUp(execution, async () => {
-          vm.runZipkin(execution, async () => {
+        vm.setUp(async () => {
+          vm.runZipkin(async () => {
             try {
               await this.updateStatusInternal(execution, statuses.RUNNING);
             } catch (error) {
               throw error.body.error;
             }
 
-            vm.runBenchmark(execution, async () => {
+            vm.runBenchmark(async () => {
               try {
                 await this.updateStatusInternal(execution, statuses.COMPLETED);
                 operation.removeAllListeners();
@@ -86,7 +86,7 @@ async function create(this: IExecutionController, req, res) {
             });
           });
         });
-      }, 2000);
+      },         2000);
     });
 
     operation.on('error', async (error) => {
@@ -133,8 +133,8 @@ async function updateStatusInternal(this: IExecutionController, execution: IExec
 
   const vmDeletionStatuses: TStatuses = ['COMPLETED', 'FAILED', 'CANCELLED'];
   if (vmDeletionStatuses.includes(status)) {
-    const vm = new VmController(execution);
-    vm.delete();
+    const vm = new VMController(execution);
+    vm.terminate();
   }
 }
 
@@ -146,9 +146,8 @@ async function destroy(this: IExecutionController, req, res) {
     await this.esClient.delete(payload);
     console.log('Execution deleted.');
 
-    const vm = new VmController(execution);
-    await vm.delete();
-    console.log('VM instance deleted.');
+    const vm: IVMController = new VMController(execution);
+    await vm.terminate();
 
     res.status(200).json({});
   } catch (error) {
