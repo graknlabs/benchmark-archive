@@ -1,4 +1,4 @@
-export type TStatus = 'INITIALISING' | 'RUNNING' | 'CANCELED' | 'COMPLETED' | 'FAILED';
+export type TStatus = 'INITIALISING' | 'RUNNING' | 'CANCELLED' | 'COMPLETED' | 'FAILED';
 export type TStatuses = TStatus[];
 
 export interface IExecution {

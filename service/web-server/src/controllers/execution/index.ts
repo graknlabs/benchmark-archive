@@ -9,13 +9,33 @@ const ES_PAYLOAD_COMMON = { index: 'grakn-benchmark', type: 'execution' };
 
 const statuses: { [key: string]: TStatus; } = {
   INITIALISING: 'INITIALISING',
-  CANCELED: 'CANCELED',
+  CANCELLED: 'CANCELLED',
   COMPLETED: 'COMPLETED',
   FAILED: 'FAILED',
   RUNNING: 'RUNNING',
 };
 
-const create = async (req, res, esClient) => {
+export interface IExecutionController {
+  esClient: IEsClient;
+  create: (req, res) => {};
+  updateStatus: (req, res, status) => {};
+  destroy: (req, res) => {};
+  getGraphqlServer: () => {};
+  updateStatusInternal: (execution: IExecution, status: TStatus) => {};
+}
+
+// tslint:disable-next-line: function-name
+export function ExecutionController(this: IExecutionController, client: IEsClient) {
+  this.esClient = client;
+
+  this.create = create;
+  this.updateStatus = updateStatus;
+  this.destroy = destroy;
+  this.getGraphqlServer = getGraphqlServer;
+  this.updateStatusInternal = updateStatusInternal;
+}
+
+async function create(this: IExecutionController, req, res) {
   const { commit, repoUrl } = req.body;
   const execution: IExecution = {
     commit,
@@ -34,7 +54,7 @@ const create = async (req, res, esClient) => {
   try {
     const { id, ...body } = execution;
     const payload: RequestParams.Create<Omit<IExecution, 'id'>> = { ...ES_PAYLOAD_COMMON, id, body };
-    await esClient.create(payload);
+    await this.esClient.create(payload);
 
     console.log('New execution added to ES.');
 
@@ -50,14 +70,14 @@ const create = async (req, res, esClient) => {
         vm.setUp(execution, async () => {
           vm.runZipkin(execution, async () => {
             try {
-              await updateStatusInternal(esClient, execution, statuses.RUNNING);
+              await this.updateStatusInternal(execution, statuses.RUNNING);
             } catch (error) {
               throw error.body.error;
             }
 
             vm.runBenchmark(execution, async () => {
               try {
-                await updateStatusInternal(esClient, execution, statuses.COMPLETED);
+                await this.updateStatusInternal(execution, statuses.COMPLETED);
                 operation.removeAllListeners();
                 res.status(200).json({ triggered: true });
               } catch (error) {
@@ -66,12 +86,12 @@ const create = async (req, res, esClient) => {
             });
           });
         });
-      },         2000);
+      }, 2000);
     });
 
     operation.on('error', async (error) => {
       try {
-        await updateStatusInternal(esClient, execution, statuses.FAILED);
+        await this.updateStatusInternal(execution, statuses.FAILED);
         throw error;
       } catch (error) {
         throw error.body.error;
@@ -79,51 +99,51 @@ const create = async (req, res, esClient) => {
     });
   } catch (error) {
     try {
-      await updateStatusInternal(esClient, execution, statuses.FAILED);
+      await this.updateStatusInternal(execution, statuses.FAILED);
       throw error;
     } catch (error) {
       throw error.body.error;
     }
   }
-};
+}
 
-const updateStatus = async (req, res, esClient: IEsClient, status: TStatus) => {
+async function updateStatus(this: IExecutionController, req, res, status: TStatus) {
   try {
-    await updateStatusInternal(esClient, req.body.execution, status);
+    await this.updateStatusInternal(req.body.execution, status);
     res.status(200).json({});
   } catch (error) {
     console.error(error);
     res.status(500).json({});
   }
-};
+}
 
 // since updating the status of an execution needs to be done both internally (in the process of running the benchmark)
 // and externally (via the dashboard), we need this method which is called directly for internal use, and through
 // its wrapper for external use
-const updateStatusInternal = async (esClient: IEsClient, execution: IExecution, status: TStatus): Promise<void> => {
+async function updateStatusInternal(this: IExecutionController, execution: IExecution, status: TStatus): Promise<void> {
   const payload: RequestParams.Update<{ doc: Partial<IExecution>; }> = {
     ...ES_PAYLOAD_COMMON, id: execution.id, body: { doc: { status } },
   };
 
   if (status === 'CANCELED' as TStatus) payload.body.doc.executionCompletedAt = new Date().toISOString();
 
-  await esClient.update(payload);
+  await this.esClient.update(payload);
 
   console.log(`Execution marked as ${status}.`);
 
-  const vmDeletionStatuses: TStatuses = ['COMPLETED', 'FAILED', 'CANCELED'];
+  const vmDeletionStatuses: TStatuses = ['COMPLETED', 'FAILED', 'CANCELLED'];
   if (vmDeletionStatuses.includes(status)) {
     const vm = new VmController(execution);
     vm.delete();
   }
-};
+}
 
-const destroy = async (req, res, esClient) => {
+async function destroy(this: IExecutionController, req, res) {
   try {
     const execution: IExecution = req.body;
     const id = execution.id;
     const payload: RequestParams.Delete = { ...ES_PAYLOAD_COMMON, id };
-    await esClient.delete(payload);
+    await this.esClient.delete(payload);
     console.log('Execution deleted.');
 
     const vm = new VmController(execution);
@@ -135,14 +155,14 @@ const destroy = async (req, res, esClient) => {
     res.status(500).json({});
     console.error(error);
   }
-};
+}
 
-const getGraphqlServer = (esClient) => {
+function getGraphqlServer(this: IExecutionController) {
   return graphqlHTTP({
     schema,
-    context: { client: esClient },
+    context: { client: this.esClient },
   });
-};
+}
 
 const typeDefs = `
   type Query {
@@ -184,10 +204,9 @@ const resolvers: IResolvers = {
       if (orderBy) Object.assign(body, sortResults(orderBy, order));
 
       const payload: RequestParams.Search<any> = { ...ES_PAYLOAD_COMMON, body };
-      const esClient: IEsClient = context.client;
 
       try {
-        const results = await esClient.search(payload);
+        const results = await context.client.search(payload);
 
         const executions = results.body.hits.hits.map((hit) => {
           const execution = hit._source;
@@ -204,9 +223,8 @@ const resolvers: IResolvers = {
 
     executionById: async (object, args, context) => {
       try {
-        const esClient: IEsClient = context.client;
         const payload: RequestParams.Get = { ...ES_PAYLOAD_COMMON, id: args.id };
-        const result = await esClient.get(payload);
+        const result = await context.client.get(payload);
         const execution = result.body._source;
         return { ...execution, id: result.body._id };
       } catch (error) {
@@ -229,11 +247,4 @@ const sortResults = (orderBy: keyof IExecution, orderMethod: 'desc' | 'asc') => 
 
 const limitResults = (offset: number, limit: number) => {
   return { from: offset || 0, size: limit || 50 };
-};
-
-export const ExecutionController = {
-  create,
-  updateStatus,
-  destroy,
-  getGraphqlServer,
 };

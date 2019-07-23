@@ -4,24 +4,25 @@
 
 import * as express from 'express';
 import { Client as IEsClient } from '@elastic/elasticsearch';
-import { ExecutionController } from '../controllers/execution';
+import { ExecutionController, IExecutionController } from '../controllers/execution';
 
 export const getExecutionRoutes = (esClient: IEsClient) => {
+  const controller: IExecutionController = new ExecutionController(esClient);
   const router = express.Router();
 
-  router.post('/new', (req, res) => { ExecutionController.create(req, res, esClient); });
+  router.post('/new', controller.create);
 
-  router.post('/delete', (req, res) => { ExecutionController.destroy(req, res, esClient); });
+  router.post('/delete', controller.destroy);
 
-  router.post('/start', (req, res) => { ExecutionController.updateStatus(req, res, esClient, 'RUNNING'); });
+  router.post('/start', (req, res) => { controller.updateStatus(req, res, 'RUNNING'); });
 
-  router.post('/completed', (req, res) => { ExecutionController.updateStatus(req, res, esClient, 'COMPLETED'); });
+  router.post('/completed', (req, res) => { controller.updateStatus(req, res, 'COMPLETED'); });
 
-  router.post('/stop', (req, res) => { ExecutionController.updateStatus(req, res, esClient, 'CANCELED'); });
+  router.post('/stop', (req, res) => { controller.updateStatus(req, res, 'CANCELED'); });
 
-  router.post('/failed', (req, res) => { ExecutionController.updateStatus(req, res, esClient, 'FAILED'); });
+  router.post('/failed', (req, res) => { controller.updateStatus(req, res, 'FAILED'); });
 
-  router.post('/query', ExecutionController.getGraphqlServer(esClient));
+  router.post('/query', controller.getGraphqlServer());
 
   return router;
 };
