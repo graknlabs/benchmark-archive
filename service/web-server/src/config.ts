@@ -21,6 +21,7 @@ export const config: IConfig = {
   },
   web: {
     port: (process.env.NODE_ENV === 'production' ? 443 : 80),
+    host: (process.env.NODE_ENV === 'production' ? 'https://benchmark.grakn.ai' : 'https://6fd44ced.ngrok.io'),
   },
   auth: {
     intervalInMinutesToFetchGraknLabsMembers: 10,

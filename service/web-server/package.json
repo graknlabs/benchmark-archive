@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "bash": "copyfiles src/**/*.sh dist/ && copyfiles .env dist/",
+        "bash": "copyfiles src/**/*.sh dist/ && copyfiles resources/**/*.sh dist/ && copyfiles .env dist/",
         "prebuild": "tslint -c tslint.js -p tsconfig.json --fix",
         "build": "rm -rf dist && node_modules/typescript/bin/tsc -p tsconfig.json && yarn bash",
         "prestart": "yarn build",
@@ -16,6 +16,7 @@
         "@octokit/rest": "^16.28.2",
         "@types/elasticsearch": "^5.0.34",
         "@types/node": "^12.6.3",
+        "app-root-path": "^2.2.1",
         "body-parser": "^1.18.3",
         "child-process-promise": "^2.2.1",
         "connect-history-api-fallback": "^1.6.0",

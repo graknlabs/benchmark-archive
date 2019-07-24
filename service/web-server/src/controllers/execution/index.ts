@@ -21,7 +21,7 @@ export interface IExecutionController {
   updateStatus: (req, res, status) => {};
   destroy: (req, res) => {};
   getGraphqlServer: () => {};
-  updateStatusInternal: (execution: IExecution, status: TStatus) => {};
+  updateStatusInternal: (execution: IExecution, status: TStatus) => Promise<void>;
 }
 
 // tslint:disable-next-line: function-name
@@ -56,65 +56,42 @@ async function create(this: IExecutionController, req, res) {
     const payload: RequestParams.Create<Omit<IExecution, 'id'>> = { ...ES_PAYLOAD_COMMON, id, body };
     await this.esClient.create(payload);
 
-    console.log('New execution added to ES.');
+    console.log(`New execution ${execution.id} added to ES.`);
 
     const vm: IVMController = new VMController(execution);
     const operation = await vm.start();
 
     operation.on('complete', () => {
-      // the executor VM has been launched and is ready to be benchmarked
+      console.log(`${execution.vmName} VM instance is up and running`);
 
       // the need for setTimeout is due to a bug that has been issued here:
       // https://github.com/googleapis/nodejs-compute/issues/336
-      setTimeout(() => {
-        vm.setUp(async () => {
-          vm.runZipkin(async () => {
-            try {
-              await this.updateStatusInternal(execution, statuses.RUNNING);
-            } catch (error) {
-              throw error.body.error;
-            }
-
-            vm.runBenchmark(async () => {
-              try {
-                await this.updateStatusInternal(execution, statuses.COMPLETED);
-                operation.removeAllListeners();
-                res.status(200).json({ triggered: true });
-              } catch (error) {
-                throw error.body.error;
-              }
-            });
-          });
-        });
+      setTimeout(async () => {
+        await vm.execute().catch((error) => { throw error; });
+        operation.removeAllListeners();
+        res.status(200).json({ triggered: true });
       },         2000);
     });
 
     operation.on('error', async (error) => {
-      try {
-        await this.updateStatusInternal(execution, statuses.FAILED);
-        throw error;
-      } catch (error) {
-        throw error.body.error;
-      }
+      await this.updateStatusInternal(execution, statuses.FAILED).catch((error) => { throw error; });
+      throw error;
     });
   } catch (error) {
-    try {
-      await this.updateStatusInternal(execution, statuses.FAILED);
-      throw error;
-    } catch (error) {
-      throw error.body.error;
-    }
+    console.log(error);
+    await this.updateStatusInternal(execution, statuses.FAILED).catch((error) => { console.log(error); });
   }
 }
 
 async function updateStatus(this: IExecutionController, req, res, status: TStatus) {
-  try {
-    await this.updateStatusInternal(req.body.execution, status);
-    res.status(200).json({});
-  } catch (error) {
+  const execution = req.body;
+  await this.updateStatusInternal(execution, status).catch((error) => {
     console.error(error);
-    res.status(500).json({});
-  }
+    res.status(500).json({ error });
+    return;
+  });
+
+  res.status(200).json({});
 }
 
 // since updating the status of an execution needs to be done both internally (in the process of running the benchmark)
@@ -125,16 +102,18 @@ async function updateStatusInternal(this: IExecutionController, execution: IExec
     ...ES_PAYLOAD_COMMON, id: execution.id, body: { doc: { status } },
   };
 
-  if (status === 'CANCELED' as TStatus) payload.body.doc.executionCompletedAt = new Date().toISOString();
+  if (status === statuses.CANCELLED) payload.body.doc.executionCompletedAt = new Date().toISOString();
 
-  await this.esClient.update(payload);
+  await this.esClient.update(payload).catch((error) => { console.log(error); });
 
-  console.log(`Execution marked as ${status}.`);
+  console.log(`Execution ${execution.id} marked as ${status}.`);
 
   const vmDeletionStatuses: TStatuses = ['COMPLETED', 'FAILED', 'CANCELLED'];
+
   if (vmDeletionStatuses.includes(status)) {
-    const vm = new VMController(execution);
-    vm.terminate();
+    const vm: IVMController = new VMController(execution);
+    await vm.downloadLogs().catch((error) => { throw error; });
+    vm.terminate().catch((error) => { console.log(error); });
   }
 }
 
@@ -144,7 +123,8 @@ async function destroy(this: IExecutionController, req, res) {
     const id = execution.id;
     const payload: RequestParams.Delete = { ...ES_PAYLOAD_COMMON, id };
     await this.esClient.delete(payload);
-    console.log('Execution deleted.');
+
+    console.log(`Execution ${execution.id} deleted.`);
 
     const vm: IVMController = new VMController(execution);
     await vm.terminate();
