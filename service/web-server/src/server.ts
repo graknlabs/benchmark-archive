@@ -41,11 +41,6 @@ const CLIENT_ID = process.env.GITHUB_CLIENT_ID as string;
 const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET as string;
 const GRABL_TOKEN = process.env.GITHUB_GRABL_TOKEN as string;
 
-// with the following setting, we are allowing the cookie middleware to trust the X-Forwarded-Proto header and
-// allow secure cookies being sent over plain HTTP, provided that X-Forwarded-Proto is set to https
-// more on this: https://stackoverflow.com/a/23426060/10600803
-app.set('trust proxy', true);
-
 app.use(cookieSession({
   name: 'session', // set as key on the req object
   keys: [CLIENT_SECRET], // used as a key in signing and verifying cookie values
