@@ -7,140 +7,140 @@ import { GraphQLSchema } from 'graphql/type';
 
 const ES_PAYLOAD_COMMON = { index: 'grakn-benchmark', type: 'execution' };
 
-const statuses: { [key: string]: TStatus; } = {
-  INITIALISING: 'INITIALISING',
-  CANCELLED: 'CANCELLED',
-  COMPLETED: 'COMPLETED',
-  FAILED: 'FAILED',
-  RUNNING: 'RUNNING',
+const statuses: { [key: string]: TStatus } = {
+    INITIALISING: 'INITIALISING',
+    CANCELLED: 'CANCELLED',
+    COMPLETED: 'COMPLETED',
+    FAILED: 'FAILED',
+    RUNNING: 'RUNNING',
 };
 
 export interface IExecutionController {
-  esClient: IEsClient;
-  create: (req, res) => {};
-  updateStatus: (req, res, status) => {};
-  destroy: (req, res) => {};
-  getGraphqlServer: () => {};
-  updateStatusInternal: (execution: IExecution, status: TStatus) => Promise<void>;
+    esClient: IEsClient;
+    create: (req, res) => {};
+    updateStatus: (req, res, status) => {};
+    destroy: (req, res) => {};
+    getGraphqlServer: () => {};
+    updateStatusInternal: (execution: IExecution, status: TStatus) => Promise<void>;
 }
 
 // tslint:disable-next-line: function-name
 export function ExecutionController(this: IExecutionController, client: IEsClient) {
-  this.esClient = client;
+    this.esClient = client;
 
-  this.create = create.bind(this);
-  this.updateStatus = updateStatus.bind(this);
-  this.destroy = destroy.bind(this);
-  this.getGraphqlServer = getGraphqlServer.bind(this);
-  this.updateStatusInternal = updateStatusInternal.bind(this);
+    this.create = create.bind(this);
+    this.updateStatus = updateStatus.bind(this);
+    this.destroy = destroy.bind(this);
+    this.getGraphqlServer = getGraphqlServer.bind(this);
+    this.updateStatusInternal = updateStatusInternal.bind(this);
 }
 
 async function create(this: IExecutionController, req, res) {
-  const { commit, repoUrl } = req.body;
-  const execution: IExecution = {
-    commit,
-    repoUrl,
-    id: commit + Date.now(),
-    executionInitialisedAt: new Date().toISOString(),
-    status: statuses.INITIALISING as TStatus,
-    vmName: `benchmark-executor-${commit.trim()}`,
-    prMergedAt: undefined,
-    prUrl: undefined,
-    prNumber: undefined,
-    executionStartedAt: undefined,
-    executionCompletedAt: undefined,
-  };
+    const { commit, repoUrl } = req.body;
+    const execution: IExecution = {
+        commit,
+        repoUrl,
+        id: commit + Date.now(),
+        executionInitialisedAt: new Date().toISOString(),
+        status: statuses.INITIALISING as TStatus,
+        vmName: `benchmark-executor-${commit.trim()}`,
+        prMergedAt: undefined,
+        prUrl: undefined,
+        prNumber: undefined,
+        executionStartedAt: undefined,
+        executionCompletedAt: undefined,
+    };
 
-  try {
-    const { id, ...body } = execution;
-    const payload: RequestParams.Create<Omit<IExecution, 'id'>> = { ...ES_PAYLOAD_COMMON, id, body };
-    await this.esClient.create(payload);
+    try {
+        const { id, ...body } = execution;
+        const payload: RequestParams.Create<Omit<IExecution, 'id'>> = { ...ES_PAYLOAD_COMMON, id, body };
+        await this.esClient.create(payload);
 
-    console.log(`New execution ${execution.id} added to ES.`);
+        console.log(`New execution ${execution.id} added to ES.`);
 
-    const vm: IVMController = new VMController(execution);
-    const operation = await vm.start();
+        const vm: IVMController = new VMController(execution);
+        const operation = await vm.start();
 
-    operation.on('complete', () => {
-      console.log(`${execution.vmName} VM instance is up and running`);
+        operation.on('complete', () => {
+            console.log(`${execution.vmName} VM instance is up and running`);
 
-      // the need for setTimeout is due to a bug that has been issued here:
-      // https://github.com/googleapis/nodejs-compute/issues/336
-      setTimeout(async () => {
-        await vm.execute().catch((error) => { throw error; });
-        operation.removeAllListeners();
-        res.status(200).json({ triggered: true });
-      },         2000);
-    });
+            // the need for setTimeout is due to a bug that has been issued here:
+            // https://github.com/googleapis/nodejs-compute/issues/336
+            setTimeout(async () => {
+                await vm.execute().catch((error) => { throw error; });
+                operation.removeAllListeners();
+                res.status(200).json({ triggered: true });
+            }, 2000);
+        });
 
-    operation.on('error', async (error) => {
-      await this.updateStatusInternal(execution, statuses.FAILED).catch((error) => { throw error; });
-      throw error;
-    });
-  } catch (error) {
-    console.log(error);
-    await this.updateStatusInternal(execution, statuses.FAILED).catch((error) => { console.log(error); });
-  }
+        operation.on('error', async (error) => {
+            await this.updateStatusInternal(execution, statuses.FAILED).catch((error) => { throw error; });
+            throw error;
+        });
+    } catch (error) {
+        console.log(error);
+        await this.updateStatusInternal(execution, statuses.FAILED).catch((error) => { console.log(error); });
+    }
 }
 
 async function updateStatus(this: IExecutionController, req, res, status: TStatus) {
-  const execution = req.body;
-  await this.updateStatusInternal(execution, status).catch((error) => {
-    console.error(error);
-    res.status(500).json({ error });
-    return;
-  });
+    const execution = req.body;
+    await this.updateStatusInternal(execution, status).catch((error) => {
+        console.error(error);
+        res.status(500).json({ error });
+        return;
+    });
 
-  res.status(200).json({});
+    res.status(200).json({});
 }
 
 // since updating the status of an execution needs to be done both internally (in the process of running the benchmark)
 // and externally (via the dashboard), we need this method which is called directly for internal use, and through
 // its wrapper for external use
 async function updateStatusInternal(this: IExecutionController, execution: IExecution, status: TStatus): Promise<void> {
-  const payload: RequestParams.Update<{ doc: Partial<IExecution>; }> = {
-    ...ES_PAYLOAD_COMMON, id: execution.id, body: { doc: { status } },
-  };
+    const payload: RequestParams.Update<{ doc: Partial<IExecution> }> = {
+        ...ES_PAYLOAD_COMMON, id: execution.id, body: { doc: { status } },
+    };
 
-  if (status === statuses.CANCELLED) payload.body.doc.executionCompletedAt = new Date().toISOString();
+    if (status === statuses.CANCELLED) payload.body.doc.executionCompletedAt = new Date().toISOString();
 
-  await this.esClient.update(payload).catch((error) => { console.log(error); });
+    await this.esClient.update(payload).catch((error) => { console.log(error); });
 
-  console.log(`Execution ${execution.id} marked as ${status}.`);
+    console.log(`Execution ${execution.id} marked as ${status}.`);
 
-  const vmDeletionStatuses: TStatuses = ['COMPLETED', 'FAILED', 'CANCELLED'];
+    const vmDeletionStatuses: TStatuses = ['COMPLETED', 'FAILED', 'CANCELLED'];
 
-  if (vmDeletionStatuses.includes(status)) {
-    const vm: IVMController = new VMController(execution);
-    await vm.downloadLogs().catch((error) => { throw error; });
-    vm.terminate().catch((error) => { console.log(error); });
-  }
+    if (vmDeletionStatuses.includes(status)) {
+        const vm: IVMController = new VMController(execution);
+        await vm.downloadLogs().catch((error) => { throw error; });
+        vm.terminate().catch((error) => { console.log(error); });
+    }
 }
 
 async function destroy(this: IExecutionController, req, res) {
-  try {
-    const execution: IExecution = req.body;
-    const id = execution.id;
-    const payload: RequestParams.Delete = { ...ES_PAYLOAD_COMMON, id };
-    await this.esClient.delete(payload);
+    try {
+        const execution: IExecution = req.body;
+        const id = execution.id;
+        const payload: RequestParams.Delete = { ...ES_PAYLOAD_COMMON, id };
+        await this.esClient.delete(payload);
 
-    console.log(`Execution ${execution.id} deleted.`);
+        console.log(`Execution ${execution.id} deleted.`);
 
-    const vm: IVMController = new VMController(execution);
-    await vm.terminate();
+        const vm: IVMController = new VMController(execution);
+        await vm.terminate();
 
-    res.status(200).json({});
-  } catch (error) {
-    res.status(500).json({});
-    console.error(error);
-  }
+        res.status(200).json({});
+    } catch (error) {
+        res.status(500).json({});
+        console.error(error);
+    }
 }
 
 function getGraphqlServer(this: IExecutionController) {
-  return graphqlHTTP({
-    schema,
-    context: { client: this.esClient },
-  });
+    return graphqlHTTP({
+        schema,
+        context: { client: this.esClient },
+    });
 }
 
 const typeDefs = `
@@ -171,59 +171,60 @@ const typeDefs = `
   }`;
 
 const resolvers: IResolvers = {
-  Query: {
-    executions: async (object, args, context, info) => {
-      const body = {};
+    Query: {
+        executions: async (object, args, context) => {
+            const body = {};
 
-      const { offset, limit } = args;
-      Object.assign(body, limitResults(offset, limit));
+            const { offset, limit } = args;
+            Object.assign(body, limitResults(offset, limit));
 
-      const { status, orderBy, order } = args;
-      if (status) Object.assign(body, filterResultsByStatus(status));
-      if (orderBy) Object.assign(body, sortResults(orderBy, order));
+            const { status, orderBy, order } = args;
+            if (status) Object.assign(body, filterResultsByStatus(status));
+            if (orderBy) Object.assign(body, sortResults(orderBy, order));
 
-      const payload: RequestParams.Search<any> = { ...ES_PAYLOAD_COMMON, body };
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const payload: RequestParams.Search<any> = { ...ES_PAYLOAD_COMMON, body };
 
-      try {
-        const results = await context.client.search(payload);
+            try {
+                const results = await context.client.search(payload);
 
-        const executions = results.body.hits.hits.map((hit) => {
-          const execution = hit._source;
-          return { ...execution, id: hit._id };
-        });
+                const executions = results.body.hits.hits.map((hit) => {
+                    const execution = hit._source;
+                    return { ...execution, id: hit._id };
+                });
 
-        return executions;
-      } catch (error) {
-        // Return empty response as this exception only means there are no Executions in ES yet.
-        if (error.body.error.type === 'index_not_found_exception') return [];
-        throw error;
-      }
+                return executions;
+            } catch (error) {
+                // Return empty response as this exception only means there are no Executions in ES yet.
+                if (error.body.error.type === 'index_not_found_exception') return [];
+                throw error;
+            }
+        },
+
+        executionById: async (object, args, context) => {
+            try {
+                const payload: RequestParams.Get = { ...ES_PAYLOAD_COMMON, id: args.id };
+                const result = await context.client.get(payload);
+                const execution = result.body._source;
+                return { ...execution, id: result.body._id };
+            } catch (error) {
+                throw error;
+            }
+        },
     },
-
-    executionById: async (object, args, context) => {
-      try {
-        const payload: RequestParams.Get = { ...ES_PAYLOAD_COMMON, id: args.id };
-        const result = await context.client.get(payload);
-        const execution = result.body._source;
-        return { ...execution, id: result.body._id };
-      } catch (error) {
-        throw error;
-      }
-    },
-  },
 };
 
 const schema: GraphQLSchema = makeExecutableSchema({ typeDefs, resolvers });
 
 const filterResultsByStatus = (statuses: TStatuses) => {
-  const should = statuses.map(status => ({ match: { status } }));
-  return { query: { bool: { should } } };
+    const should = statuses.map(status => ({ match: { status } }));
+    return { query: { bool: { should } } };
 };
 
 const sortResults = (orderBy: keyof IExecution, orderMethod: 'desc' | 'asc') => {
-  return { sort: [{ [orderBy]: orderMethod || 'desc' }] };
+    return { sort: [{ [orderBy]: orderMethod || 'desc' }] };
 };
 
 const limitResults = (offset: number, limit: number) => {
-  return { from: offset || 0, size: limit || 50 };
+    return { from: offset || 0, size: limit || 50 };
 };

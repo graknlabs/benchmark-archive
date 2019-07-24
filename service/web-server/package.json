@@ -3,11 +3,13 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "bash": "copyfiles src/**/*.sh dist/ && copyfiles resources/**/*.sh dist/ && copyfiles .env dist/",
-        "prebuild": "tslint -c tslint.js -p tsconfig.json --fix",
-        "build": "rm -rf dist && node_modules/typescript/bin/tsc -p tsconfig.json && yarn bash",
-        "prestart": "yarn build",
         "start": "node dist/src/server.js",
+        "prestart": "yarn build",
+        "build": "node_modules/typescript/bin/tsc -p tsconfig.json && yarn copy",
+        "prebuild": "yarn lint:fix && yarn clean",
+        "copy": "copyfiles src/**/*.sh dist/ && copyfiles resources/**/*.sh dist/ && copyfiles .env dist/",
+        "clean": "rm -rf dist",
+        "lint:fix": "node_modules/.bin/eslint ./src/**/*.ts",
         "test": "node node_modules/jest/bin/jest.js"
     },
     "dependencies": {
@@ -29,11 +31,12 @@
     },
     "devDependencies": {
         "@types/graphql": "^14.2.2",
+        "@typescript-eslint/eslint-plugin": "^1.13.0",
+        "@typescript-eslint/parser": "^1.13.0",
         "copyfiles": "^2.1.1",
+        "eslint": "^6.1.0",
         "jest": "^23.6.0",
         "supertest": "^3.4.1",
-        "tslint": "^5.18.0",
-        "tslint-config-airbnb": "^5.11.1",
         "typescript": "^3.5.3"
     }
 }
