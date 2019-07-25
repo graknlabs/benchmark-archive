@@ -11,6 +11,8 @@ export interface IConfig {
     auth: {
         intervalInMinutesToFetchGraknLabsMembers: number;
     };
+    logDir: string;
+    appRoot: string;
 }
 
 export const config: IConfig = {
@@ -20,9 +22,11 @@ export const config: IConfig = {
     },
     web: {
         port: (process.env.NODE_ENV === 'production' ? 443 : 80),
-        host: (process.env.NODE_ENV === 'production' ? 'https://benchmark.grakn.ai' : 'https://6fd44ced.ngrok.io'),
+        host: (process.env.NODE_ENV === 'production' ? 'https://benchmark.grakn.ai' : 'https://810d4594.ngrok.io'),
     },
     auth: {
         intervalInMinutesToFetchGraknLabsMembers: 10,
     },
+    logDir: (process.env.NODE_ENV === 'production' ?  `${__dirname}/../../logs/`: `${__dirname}/../../logs`),
+    appRoot: `${__dirname}/../`
 };

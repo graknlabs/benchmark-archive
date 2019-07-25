@@ -15,6 +15,7 @@ export interface IVMController {
     logsDestPath: string;
     esUri: string;
     webUri: string;
+    logDir: string;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     start: () => Promise<any>;
@@ -33,6 +34,7 @@ export function VMController(this: IVMController, execution: IExecution) {
     this.imageName = 'benchmark-executor-image-2';
     this.esUri = `${config.es.host}:${config.es.port}`;
     this.webUri = `${config.web.host}`;
+    this.logDir = config.logDir;
 
     this.start = start.bind(this);
     this.execute = execute.bind(this);
@@ -65,7 +67,7 @@ async function start(this: IVMController) {
 async function execute(this: IVMController) {
     const { vmName, commit, repoUrl, id } = this.execution;
     const bashFile = `${__dirname}/scripts/runExecute.sh`;
-    const executeFile = `${appRoot.toString()}/resources/execute.sh`;
+    const executeFile = `${config.appRoot}/resources/execute.sh`;
 
     console.log(`Executing benchmark on ${vmName} VM instance.`);
 
@@ -101,17 +103,14 @@ async function downloadLogs(this: IVMController) {
 
     await executeBashOnVm(
         bashFile,
-        [vmName, this.zone],
+        [vmName, this.zone, this.logDir],
     ).catch((error) => { throw error; });
 }
 
 async function executeBashOnVm(bashFile: string, options: string[] = []) {
-    const workingDirectory = process.env.NODE_ENV === 'production' ? '/home/ubuntu' : appRoot.toString();
-
     const promise = spawn(
         'bash',
-        [bashFile, process.env.GOOGLE_APPLICATION_CREDENTIALS, ...options],
-        { cwd: workingDirectory },
+        [bashFile, process.env.GOOGLE_APPLICATION_CREDENTIALS, ...options]
     );
     const childProcess = promise.childProcess;
 
