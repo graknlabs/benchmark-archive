@@ -13,12 +13,12 @@ export const getEsClient = (): EsClient => {
 
     const esClient: EsClient = new EsClient(esClientOptions);
 
-    esClient.ping((error) => {
-        if (error) {
-            console.error("Elastic Search Server is down. Makes sure it's up and running before starting the web-server.");
-            process.exit(1);
-        }
-    });
+    // esClient.ping((error) => {
+    //     if (error) {
+    //         console.error("Elastic Search Server is down. Makes sure it's up and running before starting the web-server.");
+    //         process.exit(1);
+    //     }
+    // });
 
     return esClient;
 };

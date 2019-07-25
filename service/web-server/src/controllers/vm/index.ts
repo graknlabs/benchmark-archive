@@ -1,6 +1,5 @@
-import * as appRoot from 'app-root-path';
 import * as ComputeClient from '@google-cloud/compute';
-import { spawn } from 'child-process-promise';
+import { spawn, exec } from 'child-process-promise';
 import { IExecution } from '../../types';
 import { config } from '../../config';
 
@@ -51,7 +50,7 @@ async function start(this: IVMController) {
             boot: true,
             initializeParams: {
                 sourceImage:
-					`https://www.googleapis.com/compute/v1/projects/${this.project}/global/images/${this.imageName}`,
+                    `https://www.googleapis.com/compute/v1/projects/${this.project}/global/images/${this.imageName}`,
             },
         }],
         // this config assigns an external IP to the VM instance which is required for ssh access
@@ -59,9 +58,19 @@ async function start(this: IVMController) {
     };
 
     console.log(`Starting the ${vmName} VM instance`);
-    const createVMResp = await this.computeClient.zone(this.zone).createVM(vmName, config).catch((error) => { throw error; });
-    const operation = createVMResp[1];
-    return operation;
+
+    const [vm, operation] = await this.computeClient.zone(this.zone).createVM(vmName, config).catch((error) => { throw error; });
+    console.log(`Polling operation ${operation.id} of ${vmName} VM instance...`);
+    await operation.promise();
+    operation.on('error', async (error) => { throw error; });
+
+    const [metadata] = await vm.getMetadata();
+    const ip: string = metadata.networkInterfaces[0].accessConfigs[0].natIP;
+
+    console.log(`${vmName} VM instance is starting. Waiting for IP `);
+    await pingVM(ip);
+
+    console.log(`${vmName} VM instance is up and running.`);
 }
 
 async function execute(this: IVMController) {
@@ -118,4 +127,14 @@ async function executeBashOnVm(bashFile: string, options: string[] = []) {
     childProcess.stderr.on('data', (data) => { console.log('[spawn] stderr: ', data.toString()); });
 
     await promise.catch((error) => { throw error; });
+}
+
+async function pingVM(ip: string) {
+    let exit = false;
+    while (!exit) {
+        await new Promise(r => setTimeout(r, 2000));
+        exec(`ping -c 1 ${ip}`)
+            .then(() => { exit = true; })
+            .catch(() => { process.stdout.write('.'); })
+    }
 }

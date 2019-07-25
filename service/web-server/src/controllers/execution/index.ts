@@ -56,27 +56,14 @@ async function create(this: IExecutionController, req, res) {
         const payload: RequestParams.Create<Omit<IExecution, 'id'>> = { ...ES_PAYLOAD_COMMON, id, body };
         await this.esClient.create(payload);
 
+        res.status(200).json({ triggered: true });
+
         console.log(`New execution ${execution.id} added to ES.`);
 
         const vm: IVMController = new VMController(execution);
-        const operation = await vm.start();
+        await vm.start();
+        await vm.execute();
 
-        operation.on('complete', () => {
-            console.log(`${execution.vmName} VM instance is up and running`);
-
-            // the need for setTimeout is due to a bug that has been issued here:
-            // https://github.com/googleapis/nodejs-compute/issues/336
-            setTimeout(async () => {
-                await vm.execute().catch((error) => { throw error; });
-                operation.removeAllListeners();
-                res.status(200).json({ triggered: true });
-            }, 2000);
-        });
-
-        operation.on('error', async (error) => {
-            await this.updateStatusInternal(execution, statuses.FAILED).catch((error) => { throw error; });
-            throw error;
-        });
     } catch (error) {
         console.log(error);
         await this.updateStatusInternal(execution, statuses.FAILED).catch((error) => { console.log(error); });
@@ -85,13 +72,14 @@ async function create(this: IExecutionController, req, res) {
 
 async function updateStatus(this: IExecutionController, req, res, status: TStatus) {
     const execution = req.body;
-    await this.updateStatusInternal(execution, status).catch((error) => {
+
+    try {
+        await this.updateStatusInternal(execution, status);
+        res.status(200).json({});
+    } catch (error) {
         console.error(error);
         res.status(500).json({ error });
-        return;
-    });
-
-    res.status(200).json({});
+    }
 }
 
 // since updating the status of an execution needs to be done both internally (in the process of running the benchmark)
