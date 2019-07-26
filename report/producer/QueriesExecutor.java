@@ -21,8 +21,10 @@ package grakn.benchmark.report.producer;
 import grakn.benchmark.report.producer.container.QueryExecutionResults;
 import grakn.client.GraknClient;
 import grakn.core.concept.Concept;
+import grakn.core.concept.answer.AnswerGroup;
 import grakn.core.concept.answer.ConceptMap;
 import grakn.core.concept.answer.ConceptSet;
+import grakn.core.concept.answer.Numeric;
 import graql.lang.Graql;
 import graql.lang.query.GraqlCompute;
 import graql.lang.query.GraqlDelete;
@@ -56,6 +58,8 @@ class QueriesExecutor implements Callable<Map<GraqlQuery, QueryExecutionResults>
 
         for (int rep = 0; rep < repetitions; rep++) {
             for (GraqlQuery query : queries) {
+
+                System.out.println("Repetition " + rep + ", this thread executed: " + query);
 
                 // open a new write transaction and record execution time
                 GraknClient.Transaction tx = session.transaction().write();
@@ -106,8 +110,26 @@ class QueriesExecutor implements Callable<Map<GraqlQuery, QueryExecutionResults>
 
                     // TODO handle compute queries
 
+                } else if (query instanceof GraqlGet.Group) {
+                    queryType = "aggregate";
+
+                    startTime = System.currentTimeMillis();
+                    List<AnswerGroup<ConceptMap>> answer = tx.execute(query.asGetGroup());
+                    endTime = System.currentTimeMillis();
+
+                    roundTrips = AnswerAnalysis.roundTripsCompleted(answer);
+                    conceptsHandled = AnswerAnalysis.handledConcepts(answer);
+                } else if (query instanceof GraqlGet.Aggregate) {
+                    queryType = "aggregate";
+
+                    startTime = System.currentTimeMillis();
+                    List<Numeric> answer = tx.execute(query.asGetAggregate());
+                    endTime = System.currentTimeMillis();
+
+                    roundTrips = 2;
+                    conceptsHandled = answer.get(0).number().intValue();
                 } else {
-                    queryType = "UNKNOWN";
+                    queryType = "UNKNWON";
                 }
 
                 tx.close();

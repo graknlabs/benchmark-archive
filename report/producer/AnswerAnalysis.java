@@ -19,6 +19,7 @@
 package grakn.benchmark.report.producer;
 
 import grakn.core.concept.answer.Answer;
+import grakn.core.concept.answer.AnswerGroup;
 import grakn.core.concept.answer.ConceptMap;
 import grakn.core.concept.answer.ConceptSet;
 import graql.lang.query.GraqlCompute;
@@ -30,18 +31,18 @@ import java.util.List;
 
 public class AnswerAnalysis {
 
-    public static int insertedConcepts(GraqlInsert insertQuery, ConceptMap answer) {
+    static int insertedConcepts(GraqlInsert insertQuery, ConceptMap answer) {
         return answer.map().size();
     }
 
-    public static int retrievedConcepts(GraqlGet getQuery, List<ConceptMap> answer) {
+    static int retrievedConcepts(GraqlGet getQuery, List<ConceptMap> answer) {
         return answer.stream()
                 .map(conceptMap -> conceptMap.map().size())
                 .reduce((a,b) -> a+b)
                 .orElse(0);
     }
 
-    public static int deletedConcepts(GraqlDelete deleteQuery, ConceptSet answer) {
+    static int deletedConcepts(GraqlDelete deleteQuery, ConceptSet answer) {
         return answer.set().size();
     }
 
@@ -50,17 +51,31 @@ public class AnswerAnalysis {
         return -1;
     }
 
-    public static int roundTripsCompleted(GraqlInsert inserQuert, ConceptMap answer) {
+    static int roundTripsCompleted(GraqlInsert inserQuert, ConceptMap answer) {
         return 3;
     }
 
-    public static int roundTripsCompleted(GraqlGet getQuery, List<ConceptMap> answer) {
+    static int roundTripsCompleted(GraqlGet getQuery, List<ConceptMap> answer) {
         int baseRoundTrips = 2; // 1 - open query, 1 - iterator exhausted
         return baseRoundTrips + answer.size();
     }
 
-    public static int roundTripsCompleted(GraqlDelete deleteQuery, ConceptSet answer) {
+    static int roundTripsCompleted(List<AnswerGroup<ConceptMap>> answer) {
+        int baseRoundTrips = 2;
+        return baseRoundTrips + answer.size();
+    }
+
+    static int roundTripsCompleted(GraqlDelete deleteQuery, ConceptSet answer) {
         return 2;
+    }
+
+
+    public static int handledConcepts(List<AnswerGroup<ConceptMap>> answer) {
+        int count = 0;
+        for (AnswerGroup<ConceptMap> answerGroup : answer) {
+            count += answerGroup.answers().size();
+        }
+        return count;
     }
 }
 

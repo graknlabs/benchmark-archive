@@ -38,7 +38,8 @@ public class ReportFormatter {
                 .build();
 
         Options options = new Options();
-        options.addOption(reportJsonOption);;
+        options.addOption(reportJsonOption);
+        ;
         options.addOption(destinationDirectory);
         CommandLineParser parser = new DefaultParser();
         CommandLine arguments;
@@ -69,11 +70,7 @@ public class ReportFormatter {
 
     private static Map<String, QueryDataContainer> toMap(Json data) {
         Map<String, QueryDataContainer> queryDataMap = new HashMap<>();
-
-        // iterate over configuration executions
-        for (Json configExecution : data.asJsonList()) {
-            extractQueryData(configExecution, queryDataMap);
-        }
+        extractQueryData(data, queryDataMap);
         return queryDataMap;
     }
 
