@@ -82,7 +82,7 @@ class QueriesExecutor implements Callable<Map<GraqlQuery, QueryExecutionResults>
                     endTime = System.currentTimeMillis();
 
                     roundTrips = AnswerAnalysis.roundTripsCompleted(query.asGet(), answer);
-                    conceptsHandled = AnswerAnalysis.retrievedConcepts(query.asGet(), answer);
+                    conceptsHandled = AnswerAnalysis.countRetrievedConcepts(query.asGet(), answer);
 
                 } else if (query instanceof GraqlInsert) {
                     queryType = "insert";
@@ -93,7 +93,7 @@ class QueriesExecutor implements Callable<Map<GraqlQuery, QueryExecutionResults>
                     endTime = System.currentTimeMillis();
 
                     roundTrips = AnswerAnalysis.roundTripsCompleted(query.asInsert(), answer);
-                    conceptsHandled = AnswerAnalysis.insertedConcepts(query.asInsert(), answer);
+                    conceptsHandled = AnswerAnalysis.countInsertedConcepts(query.asInsert(), answer);
 
                     for (Concept concept : answer.concepts()) {
                         insertedConceptIds.add(concept.id().toString());
@@ -107,7 +107,7 @@ class QueriesExecutor implements Callable<Map<GraqlQuery, QueryExecutionResults>
                     endTime = System.currentTimeMillis();
 
                     roundTrips = AnswerAnalysis.roundTripsCompleted(query.asDelete(), answer);
-                    conceptsHandled = AnswerAnalysis.deletedConcepts(query.asDelete(), answer);
+                    conceptsHandled = AnswerAnalysis.countDeletedConcepts(query.asDelete(), answer);
 
                 } else if (query instanceof GraqlCompute) {
                     queryType = "compute";
@@ -122,7 +122,7 @@ class QueriesExecutor implements Callable<Map<GraqlQuery, QueryExecutionResults>
                     endTime = System.currentTimeMillis();
 
                     roundTrips = AnswerAnalysis.roundTripsCompleted(answer);
-                    conceptsHandled = AnswerAnalysis.handledConcepts(answer);
+                    conceptsHandled = AnswerAnalysis.countGroupedConcepts(answer);
                 } else if (query instanceof GraqlGet.Aggregate) {
                     queryType = "aggregate";
 

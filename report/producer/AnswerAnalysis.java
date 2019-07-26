@@ -31,18 +31,18 @@ import java.util.List;
 
 public class AnswerAnalysis {
 
-    static int insertedConcepts(GraqlInsert insertQuery, ConceptMap answer) {
+    static int countInsertedConcepts(GraqlInsert insertQuery, ConceptMap answer) {
         return answer.map().size();
     }
 
-    static int retrievedConcepts(GraqlGet getQuery, List<ConceptMap> answer) {
+    static int countRetrievedConcepts(GraqlGet getQuery, List<ConceptMap> answer) {
         return answer.stream()
                 .map(conceptMap -> conceptMap.map().size())
                 .reduce((a,b) -> a+b)
                 .orElse(0);
     }
 
-    static int deletedConcepts(GraqlDelete deleteQuery, ConceptSet answer) {
+    static int countDeletedConcepts(GraqlDelete deleteQuery, ConceptSet answer) {
         return answer.set().size();
     }
 
@@ -70,7 +70,7 @@ public class AnswerAnalysis {
     }
 
 
-    public static int handledConcepts(List<AnswerGroup<ConceptMap>> answer) {
+    public static int countGroupedConcepts(List<AnswerGroup<ConceptMap>> answer) {
         int count = 0;
         for (AnswerGroup<ConceptMap> answerGroup : answer) {
             count += answerGroup.answers().size();

@@ -101,7 +101,6 @@ public class ReportProducer {
         client = new GraknClient(config.graknUri());
     }
 
-
     public void start() throws IOException {
         Ignite ignite = IgniteManager.initIgnite();
         String keyspace = config.getKeyspace();
