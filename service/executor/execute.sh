@@ -62,7 +62,7 @@ unzip profiler.zip
 cd profiler
 
 # --- run zipkin ---
-tmux new-session -d -s zipkin "STORAGE_TYPE=elasticsearch ES_HOSTS=http://$SERVICE_ADDR:9200 ES_INDEX=benchmark java -jar external-dependencies/zipkin.jar"
+tmux new-session -d -s zipkin "STORAGE_TYPE=elasticsearch ES_HOSTS=benchmark-service:9200 ES_INDEX=benchmark java -jar external-dependencies/zipkin.jar"
 
 
 # notify benchmark service about start
@@ -74,17 +74,17 @@ curl --header "Content-Type: application/json" \
     https://$SERVICE_ADDR/execution/start
 
 # -- write queries --
-./benchmark --config ./scenario/road_network/road_config_write.yml --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_ADDR:9200
-./benchmark --config ./scenario/complex/config_write.yml --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_ADDR:9200
+./benchmark --config ./scenario/road_network/road_config_write.yml --execution-name "$EXECUTION_ID" --elastic-uri benchmark-service:9200
+./benchmark --config ./scenario/complex/config_write.yml --execution-name "$EXECUTION_ID" --elastic-uri benchmark-service:9200
 
 # -- read queries --
-./benchmark --config ./scenario/road_network/road_config_read.yml                --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_ADDR:9200 --keyspace road_network_read
-./benchmark --config ./scenario/biochemical_network/biochemical_config_read.yml  --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_ADDR:9200
-./benchmark --config ./scenario/complex/config_read.yml                          --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_ADDR:9200 --keyspace generic_uniform_network_read
-./benchmark --config ./scenario/reasoning/config_read.yml                        --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_ADDR:9200 --keyspace reasoner --load-schema --static-data-import
-./benchmark --config ./scenario/rule_scaling/config_read.yml                     --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_ADDR:9200 --keyspace rule_scaling --load-schema --static-data-import
-./benchmark --config ./scenario/schema/data_definition_config.yml                --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_ADDR:9200 --keyspace schema --load-schema --no-data-generation
-./benchmark --config ./scenario/attribute/attribute_read_config.yml              --execution-name "$EXECUTION_ID" --elastic-uri $SERVICE_ADDR:9200 --keyspace attribute
+./benchmark --config ./scenario/road_network/road_config_read.yml                --execution-name "$EXECUTION_ID" --elastic-uri benchmark-service:9200 --keyspace road_network_read
+./benchmark --config ./scenario/biochemical_network/biochemical_config_read.yml  --execution-name "$EXECUTION_ID" --elastic-uri benchmark-service:9200
+./benchmark --config ./scenario/complex/config_read.yml                          --execution-name "$EXECUTION_ID" --elastic-uri benchmark-service:9200 --keyspace generic_uniform_network_read
+./benchmark --config ./scenario/reasoning/config_read.yml                        --execution-name "$EXECUTION_ID" --elastic-uri benchmark-service:9200 --keyspace reasoner --load-schema --static-data-import
+./benchmark --config ./scenario/rule_scaling/config_read.yml                     --execution-name "$EXECUTION_ID" --elastic-uri benchmark-service:9200 --keyspace rule_scaling --load-schema --static-data-import
+./benchmark --config ./scenario/schema/data_definition_config.yml                --execution-name "$EXECUTION_ID" --elastic-uri benchmark-service:9200 --keyspace schema --load-schema --no-data-generation
+./benchmark --config ./scenario/attribute/attribute_read_config.yml              --execution-name "$EXECUTION_ID" --elastic-uri benchmark-service:9200 --keyspace attribute
 
 # TODO report log files
 
