@@ -81,7 +81,7 @@ class QueriesExecutor implements Callable<Map<GraqlQuery, QueryExecutionResults>
                     List<ConceptMap> answer = tx.execute(query.asGet());
                     endTime = System.currentTimeMillis();
 
-                    roundTrips = AnswerAnalysis.roundTripsCompleted(query.asGet(), answer);
+                    roundTrips = AnswerAnalysis.countRoundTripsCompleted(query.asGet(), answer);
                     conceptsHandled = AnswerAnalysis.countRetrievedConcepts(query.asGet(), answer);
 
                 } else if (query instanceof GraqlInsert) {
@@ -92,7 +92,7 @@ class QueriesExecutor implements Callable<Map<GraqlQuery, QueryExecutionResults>
                     tx.commit();
                     endTime = System.currentTimeMillis();
 
-                    roundTrips = AnswerAnalysis.roundTripsCompleted(query.asInsert(), answer);
+                    roundTrips = AnswerAnalysis.countRoundTripsCompleted(query.asInsert(), answer);
                     conceptsHandled = AnswerAnalysis.countInsertedConcepts(query.asInsert(), answer);
 
                     for (Concept concept : answer.concepts()) {
@@ -106,7 +106,7 @@ class QueriesExecutor implements Callable<Map<GraqlQuery, QueryExecutionResults>
                     ConceptSet answer = tx.stream(query.asDelete()).findFirst().get();
                     endTime = System.currentTimeMillis();
 
-                    roundTrips = AnswerAnalysis.roundTripsCompleted(query.asDelete(), answer);
+                    roundTrips = AnswerAnalysis.countRoundTripsCompleted(query.asDelete(), answer);
                     conceptsHandled = AnswerAnalysis.countDeletedConcepts(query.asDelete(), answer);
 
                 } else if (query instanceof GraqlCompute) {
@@ -121,7 +121,7 @@ class QueriesExecutor implements Callable<Map<GraqlQuery, QueryExecutionResults>
                     List<AnswerGroup<ConceptMap>> answer = tx.execute(query.asGetGroup());
                     endTime = System.currentTimeMillis();
 
-                    roundTrips = AnswerAnalysis.roundTripsCompleted(answer);
+                    roundTrips = AnswerAnalysis.countRoundTripsCompleted(answer);
                     conceptsHandled = AnswerAnalysis.countGroupedConcepts(answer);
                 } else if (query instanceof GraqlGet.Aggregate) {
                     queryType = "aggregate";

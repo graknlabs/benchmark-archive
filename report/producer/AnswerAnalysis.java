@@ -51,21 +51,21 @@ public class AnswerAnalysis {
         return -1;
     }
 
-    static int roundTripsCompleted(GraqlInsert inserQuert, ConceptMap answer) {
+    static int countRoundTripsCompleted(GraqlInsert inserQuert, ConceptMap answer) {
         return 3;
     }
 
-    static int roundTripsCompleted(GraqlGet getQuery, List<ConceptMap> answer) {
+    static int countRoundTripsCompleted(GraqlGet getQuery, List<ConceptMap> answer) {
         int baseRoundTrips = 2; // 1 - open query, 1 - iterator exhausted
         return baseRoundTrips + answer.size();
     }
 
-    static int roundTripsCompleted(List<AnswerGroup<ConceptMap>> answer) {
+    static int countRoundTripsCompleted(List<AnswerGroup<ConceptMap>> answer) {
         int baseRoundTrips = 2;
         return baseRoundTrips + answer.size();
     }
 
-    static int roundTripsCompleted(GraqlDelete deleteQuery, ConceptSet answer) {
+    static int countRoundTripsCompleted(GraqlDelete deleteQuery, ConceptSet answer) {
         return 2;
     }
 
