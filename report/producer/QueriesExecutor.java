@@ -31,6 +31,8 @@ import graql.lang.query.GraqlDelete;
 import graql.lang.query.GraqlGet;
 import graql.lang.query.GraqlInsert;
 import graql.lang.query.GraqlQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -39,6 +41,8 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 class QueriesExecutor implements Callable<Map<GraqlQuery, QueryExecutionResults>> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(QueriesExecutor.class);
 
     private final List<GraqlQuery> queries;
     private int repetitions;
@@ -59,7 +63,7 @@ class QueriesExecutor implements Callable<Map<GraqlQuery, QueryExecutionResults>
         for (int rep = 0; rep < repetitions; rep++) {
             for (GraqlQuery query : queries) {
 
-                System.out.println("Repetition " + rep + ", this thread executed: " + query);
+                LOG.info("Repetition " + rep + ", this thread executed: " + query);
 
                 // open a new write transaction and record execution time
                 GraknClient.Transaction tx = session.transaction().write();
