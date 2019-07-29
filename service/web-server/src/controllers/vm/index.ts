@@ -5,8 +5,7 @@ import { config } from '../../config';
 
 export interface IVMController {
     execution: IExecution;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    computeClient: any;
+    computeClient;
     zone: 'us-east1-b';
     project: 'grakn-dev';
     machineType: 'n1-standard-16';
@@ -16,7 +15,6 @@ export interface IVMController {
     webUri: string;
     logDir: string;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     start: () => Promise<void>;
     execute: () => Promise<void>;
     terminate: () => Promise<void>;
