@@ -17,7 +17,7 @@ export interface IConfig {
 
 export const config: IConfig = {
     es: {
-        host: (process.env.NODE_ENV === 'production' ? 'http://127.0.0.1' : 'http://benchmark.grakn.ai'),
+        host: (process.env.NODE_ENV === 'production' ? '127.0.0.1' : 'http://35.237.252.2'),
         port: 9200
     },
     web: {
