@@ -4,6 +4,7 @@ import { Client as IEsClient, RequestParams } from '@elastic/elasticsearch';
 import { VMController, IVMController } from '../vm';
 import { IExecution, TStatus, TStatuses } from '../../types';
 import { GraphQLSchema } from 'graphql/type';
+import { limitResults, sortResults } from '../utils';
 
 const ES_PAYLOAD_COMMON = { index: 'grakn-benchmark', type: 'execution' };
 
@@ -207,12 +208,4 @@ const schema: GraphQLSchema = makeExecutableSchema({ typeDefs, resolvers });
 const filterResultsByStatus = (statuses: TStatuses) => {
     const should = statuses.map(status => ({ match: { status } }));
     return { query: { bool: { should } } };
-};
-
-const sortResults = (orderBy: keyof IExecution, orderMethod: 'desc' | 'asc') => {
-    return { sort: [{ [orderBy]: orderMethod || 'desc' }] };
-};
-
-const limitResults = (offset: number, limit: number) => {
-    return { from: offset || 0, size: limit || 50 };
 };
