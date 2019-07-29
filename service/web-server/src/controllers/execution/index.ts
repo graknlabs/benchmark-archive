@@ -25,8 +25,7 @@ export interface IExecutionController {
     updateStatusInternal: (execution: IExecution, status: TStatus) => Promise<void>;
 }
 
-// tslint:disable-next-line: function-name
-export function ExecutionController(this: IExecutionController, client: IEsClient) {
+export function ExecutionController(client: IEsClient) {
     this.esClient = client;
 
     this.create = create.bind(this);
@@ -36,7 +35,7 @@ export function ExecutionController(this: IExecutionController, client: IEsClien
     this.updateStatusInternal = updateStatusInternal.bind(this);
 }
 
-async function create(this: IExecutionController, req, res) {
+async function create(req, res) {
     const { commit, repoUrl } = req.body;
     const execution: IExecution = {
         commit,
@@ -71,7 +70,7 @@ async function create(this: IExecutionController, req, res) {
     }
 }
 
-async function updateStatus(this: IExecutionController, req, res, status: TStatus) {
+async function updateStatus(req, res, status: TStatus) {
     const execution = req.body;
 
     try {
@@ -86,7 +85,7 @@ async function updateStatus(this: IExecutionController, req, res, status: TStatu
 // since updating the status of an execution needs to be done both internally (in the process of running the benchmark)
 // and externally (via the dashboard), we need this method which is called directly for internal use, and through
 // its wrapper for external use
-async function updateStatusInternal(this: IExecutionController, execution: IExecution, status: TStatus): Promise<void> {
+async function updateStatusInternal(execution: IExecution, status: TStatus): Promise<void> {
     const payload: RequestParams.Update<{ doc: Partial<IExecution> }> = {
         ...ES_PAYLOAD_COMMON, id: execution.id, body: { doc: { status } },
     };
@@ -98,15 +97,15 @@ async function updateStatusInternal(this: IExecutionController, execution: IExec
     console.log(`Execution ${execution.id} marked as ${status}.`);
 
     const vmDeletionStatuses: TStatuses = ['COMPLETED', 'FAILED', 'CANCELLED'];
-
     if (vmDeletionStatuses.includes(status)) {
         const vm: IVMController = new VMController(execution);
-        await vm.downloadLogs().catch((error) => { throw error; });
-        vm.terminate().catch((error) => { console.log(error); });
+        vm.downloadLogs()
+            .then(() => { vm.terminate().catch((error) => { console.log(error); }); })
+            .catch((error) => { throw error; });
     }
 }
 
-async function destroy(this: IExecutionController, req, res) {
+async function destroy(req, res) {
     try {
         const execution: IExecution = req.body;
         const id = execution.id;
@@ -120,12 +119,12 @@ async function destroy(this: IExecutionController, req, res) {
 
         res.status(200).json({});
     } catch (error) {
-        res.status(500).json({});
         console.error(error);
+        res.status(500).json({});
     }
 }
 
-function getGraphqlServer(this: IExecutionController) {
+function getGraphqlServer() {
     return graphqlHTTP({
         schema,
         context: { client: this.esClient },
