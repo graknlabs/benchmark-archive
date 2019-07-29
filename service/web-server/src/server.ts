@@ -13,6 +13,7 @@ import { config } from './config';
 
 import { getExecutionRoutes } from './routes/execution';
 import { getEsClient, getGraknLabsMembers, getGithubUserId, getGithubUserAccessToken, parseMergedPR, startBenchmarking } from './utils';
+import { getSpanRoutes } from './routes/span';
 
 const app = express();
 
@@ -22,13 +23,13 @@ const esClient = getEsClient();
 app.use(bodyParser.json());
 
 app.use('/execution', getExecutionRoutes(esClient));
+app.use('/span', getSpanRoutes(esClient));
 
-const SpansController = require('./SpansController');
 const ExecutionsController = require('./ExecutionsController');
 
 const LAUNCH_EXECUTOR_SCRIPT_PATH = `${__dirname}/../../launch_executor_server.sh`;
 
-const spans = new SpansController(esClient);
+// const spans = new SpansController(esClient);
 
 const currentEnv = process.env.NODE_ENV || 'production';
 
@@ -132,7 +133,7 @@ app.post('/pull_request', checkPullRequestIsMerged, (req, res) => {
 //  */
 
 // Register GraphQL middleware for span queries
-app.use('/span/query', verifyIdentity, spans.query());
+// app.use('/span/query', verifyIdentity, spans.query());
 
 // Middleware used by /pull_request end-point
 function checkPullRequestIsMerged(req, res, next) {
