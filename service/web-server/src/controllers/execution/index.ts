@@ -161,17 +161,26 @@ const typeDefs = `
 const resolvers: IResolvers = {
     Query: {
         executions: async (object, args, context) => {
+            const filterResults = (args) => {
+                let should = [];
+
+                const { status } = args;
+                if (statuses) should = status.map(status => ({ match: { status } }));
+
+                return { query: { bool: { should } } };
+            };
+
             const body = {};
 
             const { offset, limit } = args;
             Object.assign(body, limitResults(offset, limit));
 
-            const { status, orderBy, order } = args;
-            if (status) Object.assign(body, filterResultsByStatus(status));
+            const { orderBy, order } = args;
             if (orderBy) Object.assign(body, sortResults(orderBy, order));
 
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const payload: RequestParams.Search<any> = { ...ES_PAYLOAD_COMMON, body };
+            Object.assign(body, filterResults(args));
+
+            const payload: RequestParams.Search = { ...ES_PAYLOAD_COMMON, body };
 
             try {
                 const results = await context.client.search(payload);
@@ -203,8 +212,3 @@ const resolvers: IResolvers = {
 };
 
 const schema: GraphQLSchema = makeExecutableSchema({ typeDefs, resolvers });
-
-const filterResultsByStatus = (statuses: TStatuses) => {
-    const should = statuses.map(status => ({ match: { status } }));
-    return { query: { bool: { should } } };
-};
