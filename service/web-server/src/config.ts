@@ -32,5 +32,5 @@ export const config: IConfig = {
     logPath: (process.env.NODE_ENV === 'production' ?  '/home/ubuntu' : `${__dirname}/../../logs`),
     envPath: (process.env.NODE_ENV === 'production' ?  '/home/ubuntu/.env' : `${__dirname}/../.env`),
     resourcesPath: `${__dirname}/../resources`,
-    dashboardPath: `${__dirname}/../../dashboard/dist`
+    dashboardPath: `${__dirname}/../../../dashboard/dist`
 };

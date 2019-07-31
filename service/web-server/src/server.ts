@@ -46,6 +46,8 @@ function Server(): IServer {
 }
 
 function loadEnvVars() {
+    require('dotenv').config({ path: config.envPath });
+
     const envVars = {
         development: ['GITHUB_GRABL_TOKEN', 'GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET'],
         production: ['GITHUB_GRABL_TOKEN', 'GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET', 'SERVER_CERTIFICATE', 'SERVER_KEY'],
@@ -59,7 +61,6 @@ function loadEnvVars() {
         Get in touch with the team to obtain the missing environment variables.`;
     }
 
-    require('dotenv').config({ path: config.envPath });
 }
 
 function registerRoutes() {
@@ -86,6 +87,7 @@ function registerRoutes() {
     // 3. is not a direct file request, i.e. the requested path does not contain a . (DOT) character and
     // 4. does not match a pattern provided in options.rewrites (read docs of connect-history-api-fallback)
     this.app.use(history());
+
     this.app.use(express.static(`${config.dashboardPath}`));
 }
 
