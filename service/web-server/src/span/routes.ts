@@ -4,7 +4,7 @@
 
 import express from 'express';
 import { Client as IEsClient } from '@elastic/elasticsearch';
-import { SpanController, ISpanController } from '../controllers/span';
+import { SpanController, ISpanController } from './controller';
 
 export const getSpanRoutes = (esClient: IEsClient) => {
     const controller: ISpanController = new SpanController(esClient);

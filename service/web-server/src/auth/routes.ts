@@ -3,7 +3,7 @@
  */
 
 import express from 'express';
-import { AuthController } from '../controllers/auth';
+import { AuthController } from './controller';
 
 export const getAuthRoutes = () => {
     const controller = AuthController();

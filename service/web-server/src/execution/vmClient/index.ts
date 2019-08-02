@@ -1,6 +1,6 @@
 import ComputeClient from '@google-cloud/compute';
 import { spawn, exec } from 'child-process-promise';
-import { IExecution } from '../../types';
+import { IExecution } from '../types';
 import { config } from '../../config';
 
 export interface IVMController {

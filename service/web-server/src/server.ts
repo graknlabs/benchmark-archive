@@ -5,9 +5,9 @@ import cookieSession from 'cookie-session';
 import http from 'http';
 import https from 'https';
 import { config } from './config';
-import { getExecutionRoutes } from './routes/execution';
-import { getSpanRoutes } from './routes/span';
-import { getAuthRoutes } from './routes/auth';
+import { getExecutionRoutes } from './execution/routes';
+import { getSpanRoutes } from './span/routes';
+import { getAuthRoutes } from './auth/routes';
 import { getEsClient } from './utils';
 import { Client as IEsClient } from '@elastic/elasticsearch';
 

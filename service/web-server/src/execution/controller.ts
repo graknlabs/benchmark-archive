@@ -2,8 +2,8 @@
 import graphqlHTTP from 'express-graphql';
 import { makeExecutableSchema, IResolvers } from 'graphql-tools';
 import { Client as IEsClient, RequestParams } from '@elastic/elasticsearch';
-import { VMController, IVMController } from '../vm';
-import { IExecution, TStatus, TStatuses } from '../../types';
+import { VMController, IVMController } from './vmClient';
+import { IExecution, TStatus, TStatuses } from './types';
 import { GraphQLSchema } from 'graphql/type';
 import { limitResults, sortResults } from '../utils';
 
@@ -26,8 +26,6 @@ export interface IExecutionController {
     destroy: (req, res) => {};
     getGraphqlServer: () => graphqlHTTP.Middleware;
     updateStatusInternal: (execution: IExecution, status: TStatus) => Promise<void>;
-
-    isPRMerged: (req, res, next) => {};
 }
 
 export function ExecutionController(client: IEsClient) {
@@ -40,7 +38,6 @@ export function ExecutionController(client: IEsClient) {
     this.destroy = destroy.bind(this);
     this.getGraphqlServer = getGraphqlServer.bind(this);
     this.watchPR = watchPR.bind(this);
-    this.isPRMerged = isPRMerged.bind(this);
 }
 
 async function watchPR(req, res) {
@@ -252,9 +249,3 @@ const resolvers: IResolvers = {
 };
 
 const schema: GraphQLSchema = makeExecutableSchema({ typeDefs, resolvers });
-
-function isPRMerged (req, res, next) {
-    const { body: { action, pull_request: { merged }}} = req;
-    const isMerged = action === 'closed' && merged;
-    isMerged ? next() : res.status(200).json({ triggered: false, error: 'PR has not been merged yet.' });
-}

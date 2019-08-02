@@ -1,5 +1,5 @@
-import { getGithubClient, IGithubClient } from './utils';
-import { config } from '../../config';
+import { getGithubClient, IGithubClient } from './githubClient';
+import { config } from '../config';
 
 export interface IAuthController {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

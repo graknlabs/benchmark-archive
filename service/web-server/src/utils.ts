@@ -7,3 +7,12 @@ export const getEsClient = (): EsClient => {
     const esClient: EsClient = new EsClient(esClientOptions);
     return esClient;
 };
+
+
+export const sortResults = (orderBy: string, orderMethod: 'desc' | 'asc') => {
+    return { sort: [{ [orderBy]: orderMethod || 'desc' }] };
+};
+
+export const limitResults = (offset: number, limit: number) => {
+    return { from: offset || 0, size: limit || 50 };
+};
