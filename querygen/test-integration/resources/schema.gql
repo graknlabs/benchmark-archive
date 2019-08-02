@@ -1,0 +1,7 @@
+define
+    person sub entity,
+        plays spouse,
+        has name;
+    name sub attribute, datatype string;
+    marriage sub relation,
+        relates spouse;

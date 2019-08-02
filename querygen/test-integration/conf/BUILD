@@ -16,23 +16,4 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-java_test(
-    name = "query-generator-it",
-    test_class = "grakn.benchmark.querygen.QueryGeneratorIT",
-    srcs = ["QueryGeneratorIT.java"],
-    deps = [
-        "//querygen/src:query-generator",
-        "@graknlabs_client_java//:client-java",
-        "@graknlabs_grakn_core//concept:concept",
-        "@graknlabs_graql//java:graql",
-        "@graknlabs_grakn_core//test-integration/rule:grakn-test-server"
-    ],
-    classpath_resources = [
-        "//querygen/test-integration/resources:logback-test"
-    ],
-    data = [
-        "//querygen/test-integration/conf:cassandra-embedded.yaml",
-        "//querygen/test-integration/conf:grakn.properties",
-        "//querygen/test-integration/resources:schema.gql"
-    ]
-)
+exports_files(["cassandra-embedded.yaml", "grakn.properties"])

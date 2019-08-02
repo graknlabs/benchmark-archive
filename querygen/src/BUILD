@@ -16,23 +16,22 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-java_test(
-    name = "query-generator-it",
-    test_class = "grakn.benchmark.querygen.QueryGeneratorIT",
-    srcs = ["QueryGeneratorIT.java"],
+java_library(
+    name = "query-generator",
+    srcs = glob(["*.java"]),
     deps = [
-        "//querygen/src:query-generator",
         "@graknlabs_client_java//:client-java",
-        "@graknlabs_grakn_core//concept:concept",
         "@graknlabs_graql//java:graql",
-        "@graknlabs_grakn_core//test-integration/rule:grakn-test-server"
+        "@graknlabs_grakn_core//api:api",
+        "@graknlabs_grakn_core//concept:concept",
+
+        # together these can be used to create clients with tracing enabled
+        "//dependencies/maven/artifacts/org/slf4j:slf4j-api",
+#        "//dependencies/maven/artifacts/commons-cli",
     ],
-    classpath_resources = [
-        "//querygen/test-integration/resources:logback-test"
+    runtime_deps = [
+        "//dependencies/maven/artifacts/io/grpc:grpc-netty-shaded",
+        "//dependencies/maven/artifacts/ch/qos/logback:logback-classic",
     ],
-    data = [
-        "//querygen/test-integration/conf:cassandra-embedded.yaml",
-        "//querygen/test-integration/conf:grakn.properties",
-        "//querygen/test-integration/resources:schema.gql"
-    ]
+    visibility = ["//visibility:public"]
 )
