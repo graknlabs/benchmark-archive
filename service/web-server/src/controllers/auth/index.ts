@@ -1,4 +1,4 @@
-import { GithubClient, IGithubClient } from './utils';
+import { getGithubClient, IGithubClient } from './utils';
 import { config } from '../../config';
 
 export interface IAuthController {
@@ -23,7 +23,7 @@ export function AuthController(): IAuthController {
 async function oauthCallback(req, res) {
     try {
         const oauthCode = req.query.code;
-        const ghClient: IGithubClient = GithubClient(oauthCode);
+        const ghClient: IGithubClient = getGithubClient(oauthCode);
 
         const userId = await ghClient.getUserId();
         const isAuthorised = this.graknlabsMembers.some(member => member.id === userId);
@@ -56,7 +56,7 @@ function checkVerification (req, res, next) {
 
 
 async function updateGraknlabsMembers() {
-    const ghClient: IGithubClient = GithubClient();
+    const ghClient: IGithubClient = getGithubClient();
 
     this.graknlabsMembers = await ghClient.getGraknLabsMembers();
     setInterval(async () => {

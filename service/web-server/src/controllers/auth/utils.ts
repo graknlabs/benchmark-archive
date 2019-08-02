@@ -14,7 +14,7 @@ export interface IGithubClient {
     revokeAccess: () => Promise<void>;
 }
 
-export function GithubClient(oauthCode: string = ''): IGithubClient {
+export function getGithubClient(oauthCode: string = ''): IGithubClient {
     return {
         grablToken: process.env.GITHUB_GRABL_TOKEN as string,
         oauthAppId: process.env.GITHUB_CLIENT_ID as string,
