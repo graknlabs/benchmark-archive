@@ -47,14 +47,15 @@ public class QueryGenerator {
         GraknClient.Session session = client.session(keyspace);
 
         for (int i = 0; i < numQueries; i++) {
-            queries.add(generateNewQuery(session).toString());
+            try (GraknClient.Transaction tx = session.transaction().write()) {
+                queries.add(generateNewQuery(tx).toString());
+            }
         }
 
         return queries;
     }
 
-    private QueryBuilder generateNewQuery(GraknClient.Session session) {
-        GraknClient.Transaction tx = session.transaction().write();
+    QueryBuilder generateNewQuery(GraknClient.Transaction tx) {
         Type rootThing = tx.getMetaConcept();
 
         QueryBuilder builder = new QueryBuilder();
@@ -65,25 +66,25 @@ public class QueryGenerator {
 
         // TODO determine how long this query should be
 
-        for (int i = 0; i < 5; i++) {
-            // pick a new variable from the mapping we have not visited
-            Variable var = builder.randomUnvisitedVariable(random);
-            builder.visitVariable(var);
-            Type varType = builder.getType(var);
-
-            if (varType.isRelationType()) {
-                // assign role players
-            }
-
-            // assign attribute ownership
-            assignAttributes(var, varType, builder);
-        }
+//        for (int i = 0; i < 5; i++) {
+//            // pick a new variable from the mapping we have not visited
+//            Variable var = builder.randomUnvisitedVariable(random);
+//            builder.visitVariable(var);
+//            Type varType = builder.getType(var);
+//
+//            if (varType.isRelationType()) {
+//                // assign role players
+//            }
+//
+//            // assign attribute ownership
+//            assignAttributes(var, varType, builder);
+//        }
 
         // TODO add a comparison between compatible attributes with a low probability
 
         // convert QueryBuilder into graql query
 
-        return null;
+        return builder;
     }
 
     private void assignAttributes(Variable var, Type varType, QueryBuilder builder) {

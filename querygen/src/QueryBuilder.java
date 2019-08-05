@@ -3,7 +3,9 @@ package grakn.benchmark.querygen;
 import grakn.core.concept.type.Type;
 import graql.lang.statement.Variable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -20,6 +22,7 @@ public class QueryBuilder {
 
     public QueryBuilder() {
         this.variableTypeMap = new HashMap<>();
+        this.unvisitedVariables = new ArrayList<>();
     }
 
     public Variable reserveNewVariable() {

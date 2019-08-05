@@ -19,9 +19,9 @@
 package grakn.benchmark.querygen;
 
 import grakn.client.GraknClient;
+import grakn.core.concept.type.Type;
 import grakn.core.rule.GraknTestServer;
 import graql.lang.Graql;
-import graql.lang.query.GraqlGet;
 import graql.lang.query.GraqlQuery;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -34,6 +34,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class QueryGeneratorIT {
 
@@ -69,8 +70,32 @@ public class QueryGeneratorIT {
     public void queryGeneratorReturnsCorrectNumberOfQueries() {
         QueryGenerator queryGenerator = new QueryGenerator(server.grpcUri(), testKeyspace);
         int queriesToGenerate = 100;
-        List<GraqlGet> queries = queryGenerator.generate(queriesToGenerate);
+        List<String> queries = queryGenerator.generate(queriesToGenerate);
         assertEquals(queries.size(), queriesToGenerate);
+    }
+
+
+    /**
+     * Test that a single new query is generated as a QueryBuilder
+     */
+    @Test
+    public void newQueryIsReturnedAsBuilderWithValidRootType() {
+        // a empty queryGenerator
+        QueryGenerator queryGenerator = new QueryGenerator(null, null);
+
+        try (GraknClient client = new GraknClient(server.grpcUri());
+             GraknClient.Session session = client.session(testKeyspace);
+             GraknClient.Transaction tx = session.transaction().write()) {
+
+            // directly generate a new query which contains concepts bound to this tx
+            QueryBuilder queryBuilder = queryGenerator.generateNewQuery(tx);
+            assertNotNull(queryBuilder);
+
+            Type rootType = queryBuilder.variableTypeMap.values().iterator().next();
+
+            // this should not throw
+            assertNotNull(tx.getSchemaConcept(rootType.label()));
+        }
     }
 
 }

@@ -13,7 +13,7 @@ class SchemaWalker {
      * @param rootType starting type
      * @return some type that is a subtype of rootType
      */
-    public static Type walkSub(Type rootType, Random random) {
+    static Type walkSub(Type rootType, Random random) {
         List<Type> subs = rootType.subs().collect(Collectors.toList());
         int index = random.nextInt(subs.size());
         return subs.get(index);
