@@ -78,7 +78,7 @@ public class QueryBuilder {
                 .collect(Collectors.toList());
     }
 
-    GraqlGet build(GraknClient.Transaction tx) {
+    GraqlGet build(GraknClient.Transaction tx, Random random) {
         List<Pattern> patterns = new ArrayList<>();
         for (Variable statementVariable : variableTypeMap.keySet()) {
             Type type = variableTypeMap.get(statementVariable);
@@ -88,7 +88,12 @@ public class QueryBuilder {
             if (attributeOwnership.containsKey(statementVariable)) {
                 for (Variable ownedVariable : attributeOwnership.get(statementVariable)) {
                     Type ownedType = variableTypeMap.get(ownedVariable);
-                    pattern = pattern.has(ownedType.label().toString(), Graql.var(ownedVariable));
+
+                    // NOTE we intentionally obfuscate the type when we say "match $x has attr $y" because later we provide
+                    // a more specific "$y isa subAttr"
+
+                    Type superOfOwnedType = SchemaWalker.walkSupsNoMeta(tx, ownedType, random);
+                    pattern = pattern.has(superOfOwnedType.label().toString(), Graql.var(ownedVariable));
                 }
             }
 

@@ -23,15 +23,8 @@ class SchemaWalker {
     }
 
     static Type walkSupsNoMeta(GraknClient.Transaction tx, Type ownableAttribute, Random random) {
-        List<Type> metaConcepts = Arrays.asList(
-                tx.getMetaConcept(),
-                tx.getMetaEntityType(),
-                tx.getMetaRelationType(),
-                tx.getMetaAttributeType()
-                // not including Role and Rule as they are not Type but SchemaConcept
-        );
-
-        List<? extends Type> nonMetaSups = ownableAttribute.sups().filter(type -> !metaConcepts.contains(type)).collect(Collectors.toList());
+        Type metaConcept = tx.getMetaConcept();
+        List<? extends Type> nonMetaSups = ownableAttribute.sups().filter(type -> !type.equals(metaConcept)).collect(Collectors.toList());
 
         int index = random.nextInt(nonMetaSups.size());
         return nonMetaSups.get(index);

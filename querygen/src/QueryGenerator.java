@@ -49,7 +49,7 @@ public class QueryGenerator {
         for (int i = 0; i < numQueries; i++) {
             try (GraknClient.Transaction tx = session.transaction().write()) {
                 QueryBuilder builder = generateNewQuery(tx);
-                queries.add(builder.build(tx));
+                queries.add(builder.build(tx, random));
             }
         }
 
