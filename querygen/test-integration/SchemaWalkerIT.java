@@ -1,6 +1,7 @@
 package grakn.benchmark.querygen;
 
 import grakn.client.GraknClient;
+import grakn.core.concept.Label;
 import grakn.core.concept.type.Type;
 import grakn.core.rule.GraknTestServer;
 import graql.lang.Graql;
@@ -15,10 +16,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class SchemaWalkerIT {
@@ -52,19 +53,46 @@ public class SchemaWalkerIT {
     }
 
     @Test
-    public static void walkSubRetrievesDifferentSubtypes() {
-        GraknClient client = new GraknClient(server.grpcUri());
-        GraknClient.Session session = client.session(testKeyspace);
-        GraknClient.Transaction tx = session.transaction().write();
+    public void walkSubRetrievesDifferentSubtypes() {
+        try (GraknClient client = new GraknClient(server.grpcUri());
+             GraknClient.Session session = client.session(testKeyspace);
+             GraknClient.Transaction tx = session.transaction().write()) {
 
-        Type rootThing = tx.getMetaConcept();
-        Random random = new Random(0);
+            Type rootThing = tx.getMetaConcept();
+            Random random = new Random(0);
 
-        List<Type> subTypes = new ArrayList<>();
-        for (int i = 0; i < 50; i++) {
-            subTypes.add(SchemaWalker.walkSub(rootThing, random));
+            List<Type> subTypes = new ArrayList<>();
+            for (int i = 0; i < 50; i++) {
+                subTypes.add(SchemaWalker.walkSubs(rootThing, random));
+            }
+
+            assertThat(subTypes, CoreMatchers.not(CoreMatchers.everyItem(CoreMatchers.is(rootThing))));
         }
+    }
 
-        assertThat(subTypes, CoreMatchers.everyItem(CoreMatchers.is(rootThing)));
+
+    @Test
+    public void walkSupsNoMetaDoesNotRetrieveMetaTypes() {
+        try (GraknClient client = new GraknClient(server.grpcUri());
+             GraknClient.Session session = client.session(testKeyspace);
+             GraknClient.Transaction tx = session.transaction().write()) {
+
+            Type personType = tx.getSchemaConcept(Label.of("person"));
+            Random random = new Random(0);
+
+            List<Type> superTypes = new ArrayList<>();
+            for (int i = 0; i < 50; i++) {
+                superTypes.add(SchemaWalker.walkSupsNoMeta(tx, personType, random));
+            }
+
+            assertThat(superTypes, CoreMatchers.not(CoreMatchers.anyOf(
+                    CoreMatchers.is(tx.getMetaAttributeType()),
+                    CoreMatchers.is(tx.getMetaRelationType()),
+                    CoreMatchers.is(tx.getMetaEntityType()),
+                    CoreMatchers.is(tx.getMetaConcept())
+            )));
+
+
+        }
     }
 }

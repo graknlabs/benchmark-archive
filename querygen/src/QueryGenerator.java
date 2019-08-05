@@ -21,7 +21,6 @@ package grakn.benchmark.querygen;
 import grakn.client.GraknClient;
 import grakn.core.concept.type.AttributeType;
 import grakn.core.concept.type.Type;
-import graql.lang.query.GraqlGet;
 import graql.lang.statement.Variable;
 
 import java.util.ArrayList;
@@ -60,25 +59,25 @@ public class QueryGenerator {
 
         QueryBuilder builder = new QueryBuilder();
 
-        Type startingType = SchemaWalker.walkSub(rootThing, random);
+        Type startingType = SchemaWalker.walkSubs(rootThing, random);
         Variable startingVariable = builder.reserveNewVariable();
         builder.addMapping(startingVariable, startingType);
 
         // TODO determine how long this query should be
 
-//        for (int i = 0; i < 5; i++) {
-//            // pick a new variable from the mapping we have not visited
-//            Variable var = builder.randomUnvisitedVariable(random);
-//            builder.visitVariable(var);
-//            Type varType = builder.getType(var);
-//
-//            if (varType.isRelationType()) {
-//                // assign role players
-//            }
-//
-//            // assign attribute ownership
-//            assignAttributes(var, varType, builder);
-//        }
+        for (int i = 0; i < 5; i++) {
+            // pick a new variable from the mapping we have not visited
+            Variable var = builder.randomUnvisitedVariable(random);
+            builder.visitVariable(var);
+            Type varType = builder.getType(var);
+
+            if (varType.isRelationType()) {
+                // TODO assign role players
+            }
+
+            // assign attribute ownership
+            assignAttributes(tx, var, varType, builder);
+        }
 
         // TODO add a comparison between compatible attributes with a low probability
 
@@ -87,14 +86,27 @@ public class QueryGenerator {
         return builder;
     }
 
-    private void assignAttributes(Variable var, Type varType, QueryBuilder builder) {
+    private void assignAttributes(GraknClient.Transaction tx, Variable var, Type varType, QueryBuilder builder) {
         // TODO determine how many attributes should be had
         int maxAttrs = 3;
         int attrs = random.nextInt(maxAttrs);
 
         List<AttributeType> allowedAttributes = varType.attributes().collect(Collectors.toList());
         for (int i = 0; i < attrs; i++) {
-            AttributeType attrToOwn = allowedAttributes.get(random.nextInt(allowedAttributes.size()));
+            AttributeType ownableAttribute = allowedAttributes.get(random.nextInt(allowedAttributes.size()));
+
+            // choose between walking up and walking down the type hierarchy
+            boolean walkSubs = random.nextBoolean();
+            Type attributeType;
+            if (walkSubs) {
+                // walk subs
+                attributeType = SchemaWalker.walkSubs(ownableAttribute, random);
+            } else {
+                // walk sups
+                attributeType = SchemaWalker.walkSupsNoMeta(tx, ownableAttribute, random);
+            }
+
+
             // choose between reusing a variable for this type
             // and a new variable
         }
