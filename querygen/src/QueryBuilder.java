@@ -1,6 +1,12 @@
 package grakn.benchmark.querygen;
 
+import grakn.client.GraknClient;
 import grakn.core.concept.type.Type;
+import graql.lang.Graql;
+import graql.lang.pattern.Pattern;
+import graql.lang.query.GraqlGet;
+import graql.lang.statement.Statement;
+import graql.lang.statement.StatementInstance;
 import graql.lang.statement.Variable;
 
 import java.util.ArrayList;
@@ -14,7 +20,7 @@ public class QueryBuilder {
 
     Map<Variable, Type> variableTypeMap;
 
-    Map<Variable, Variable> attributeOwnership;
+    Map<Variable, List<Variable>> attributeOwnership;
 
     List<Variable> unvisitedVariables;
 
@@ -39,7 +45,8 @@ public class QueryBuilder {
     }
 
     public void addOwnership(Variable owner, Variable owned) {
-        attributeOwnership.put(owner, owned);
+        attributeOwnership.putIfAbsent(owner, new ArrayList<>());
+        attributeOwnership.get(owner).add(owned);
     }
 
     boolean containsVariableWithType(Type type) {
@@ -69,5 +76,27 @@ public class QueryBuilder {
                 .filter(entry -> entry.getValue().equals(type))
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
+    }
+
+    GraqlGet build(GraknClient.Transaction tx) {
+        List<Pattern> patterns = new ArrayList<>();
+        for (Variable statementVariable : variableTypeMap.keySet()) {
+            Type type = variableTypeMap.get(statementVariable);
+            StatementInstance pattern = Graql.var(statementVariable).isa(type.label().toString());
+
+            // attribute ownership
+            if (attributeOwnership.containsKey(statementVariable)) {
+                for (Variable ownedVariable : attributeOwnership.get(statementVariable)) {
+                    Type ownedType = variableTypeMap.get(ownedVariable);
+                    pattern = pattern.has(ownedType.label().toString(), Graql.var(ownedVariable));
+                }
+            }
+
+            // TODO relation role players
+
+            patterns.add(pattern);
+
+        }
+        return Graql.match(patterns).get();
     }
 }

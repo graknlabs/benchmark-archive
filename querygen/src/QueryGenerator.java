@@ -21,6 +21,7 @@ package grakn.benchmark.querygen;
 import grakn.client.GraknClient;
 import grakn.core.concept.type.AttributeType;
 import grakn.core.concept.type.Type;
+import graql.lang.query.GraqlGet;
 import graql.lang.statement.Variable;
 
 import java.util.ArrayList;
@@ -40,14 +41,15 @@ public class QueryGenerator {
         this.random = new Random(0);
     }
 
-    List<String> generate(int numQueries) {
-        List<String> queries = new ArrayList<>(numQueries);
+    List<GraqlGet> generate(int numQueries) {
+        List<GraqlGet> queries = new ArrayList<>(numQueries);
         GraknClient client = new GraknClient(graknUri);
         GraknClient.Session session = client.session(keyspace);
 
         for (int i = 0; i < numQueries; i++) {
             try (GraknClient.Transaction tx = session.transaction().write()) {
-                queries.add(generateNewQuery(tx).toString());
+                QueryBuilder builder = generateNewQuery(tx);
+                queries.add(builder.build(tx));
             }
         }
 
@@ -86,8 +88,6 @@ public class QueryGenerator {
         }
 
         // TODO add a comparison between compatible attributes with a low probability
-
-        // convert QueryBuilder into graql query
 
         return builder;
     }

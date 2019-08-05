@@ -22,6 +22,7 @@ import grakn.client.GraknClient;
 import grakn.core.concept.type.Type;
 import grakn.core.rule.GraknTestServer;
 import graql.lang.Graql;
+import graql.lang.query.GraqlGet;
 import graql.lang.query.GraqlQuery;
 import graql.lang.statement.Variable;
 import org.junit.BeforeClass;
@@ -32,7 +33,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -72,8 +75,11 @@ public class QueryGeneratorIT {
     public void queryGeneratorReturnsCorrectNumberOfQueries() {
         QueryGenerator queryGenerator = new QueryGenerator(server.grpcUri(), testKeyspace);
         int queriesToGenerate = 100;
-        List<String> queries = queryGenerator.generate(queriesToGenerate);
+        List<GraqlGet> queries = queryGenerator.generate(queriesToGenerate);
         assertEquals(queries.size(), queriesToGenerate);
+        for (GraqlGet query : queries) {
+            assertNotNull(query);
+        }
     }
 
 
@@ -113,7 +119,7 @@ public class QueryGeneratorIT {
             // directly generate a new query which contains concepts bound to this tx
             QueryBuilder queryBuilder = queryGenerator.generateNewQuery(tx);
 
-            for (Variable attributeOwned : queryBuilder.attributeOwnership.values()) {
+            for (Variable attributeOwned : queryBuilder.attributeOwnership.values().stream().flatMap(Collection::stream).collect(Collectors.toSet())) {
                 Type attributeOwnedType = queryBuilder.getType(attributeOwned);
                 assertTrue(attributeOwnedType.isAttributeType());
             }
