@@ -1,6 +1,7 @@
 package grakn.benchmark.querygen;
 
 import grakn.client.GraknClient;
+import grakn.core.concept.type.Role;
 import grakn.core.concept.type.Type;
 import graql.lang.Graql;
 import graql.lang.pattern.Pattern;
@@ -21,6 +22,7 @@ public class QueryBuilder {
     Map<Variable, Type> variableTypeMap;
 
     Map<Variable, List<Variable>> attributeOwnership;
+    Map<Variable, List<Pair<Variable, Role>>> relationRolePlayers;
 
     List<Variable> unvisitedVariables;
 
@@ -29,6 +31,7 @@ public class QueryBuilder {
     QueryBuilder() {
         this.variableTypeMap = new HashMap<>();
         this.attributeOwnership = new HashMap<>();
+        this.relationRolePlayers = new HashMap<>();
         this.unvisitedVariables = new ArrayList<>();
     }
 
@@ -39,14 +42,19 @@ public class QueryBuilder {
     }
 
 
-    public void addMapping(Variable var, Type type) {
+    void addMapping(Variable var, Type type) {
         variableTypeMap.put(var, type);
         unvisitedVariables.add(var);
     }
 
-    public void addOwnership(Variable owner, Variable owned) {
+    void addOwnership(Variable owner, Variable owned) {
         attributeOwnership.putIfAbsent(owner, new ArrayList<>());
         attributeOwnership.get(owner).add(owned);
+    }
+
+    void addRolePlayer(Variable relationVar, Variable rolePlayerVariable, Role role) {
+        relationRolePlayers.putIfAbsent(relationVar, new ArrayList<>());
+        relationRolePlayers.get(relationVar).add(new Pair<>(rolePlayerVariable, role));
     }
 
     boolean containsVariableWithType(Type type) {
@@ -104,4 +112,6 @@ public class QueryBuilder {
         }
         return Graql.match(patterns).get();
     }
+
+
 }

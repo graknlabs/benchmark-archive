@@ -20,6 +20,8 @@ package grakn.benchmark.querygen;
 
 import grakn.client.GraknClient;
 import grakn.core.concept.type.AttributeType;
+import grakn.core.concept.type.RelationType;
+import grakn.core.concept.type.Role;
 import grakn.core.concept.type.Type;
 import graql.lang.query.GraqlGet;
 import graql.lang.statement.Variable;
@@ -78,7 +80,7 @@ public class QueryGenerator {
             Type varType = builder.getType(var);
 
             if (varType.isRelationType()) {
-                // TODO assign role players
+                assignRolePlayers(tx, var, varType.asRelationType(), builder);
             }
 
             // assign attribute ownership
@@ -90,6 +92,31 @@ public class QueryGenerator {
         // TODO add a comparison between compatible attributes with a low probability
 
         return builder;
+    }
+
+    private void assignRolePlayers(GraknClient.Transaction tx, Variable relationVar, RelationType relationType, QueryBuilder builder) {
+        List<Role> allowedRoles = relationType.roles().collect(Collectors.toList());
+
+        // TODO choose some subset of roles to populate, with repetition
+        int maxRoles = 5;
+        int roles = 1 + random.nextInt(maxRoles-1); // must have at least 1 role player
+
+        for (int i = 0; i < roles; i++) {
+            Role role = allowedRoles.get(random.nextInt(allowedRoles.size()));
+
+            List<Type> allowedRolePlayers = role.players().collect(Collectors.toList());
+
+            // choose a random type that can play this role
+            Type rolePlayerType = allowedRolePlayers.get(random.nextInt(allowedRolePlayers.size()));
+
+            // TODO do we need to do another walkSubs(rolePlayerType) to choose which some random subtype?
+            // TODO this may not be needed if all the subtypes are already included in the list above
+
+            Variable rolePlayerVariable = chooseVariable(tx, builder, rolePlayerType, random);
+
+            builder.addMapping(rolePlayerVariable, rolePlayerType);
+            builder.addRolePlayer(relationVar, rolePlayerVariable, role);
+        }
     }
 
     private void assignAttributes(GraknClient.Transaction tx, Variable var, Type varType, QueryBuilder builder) {

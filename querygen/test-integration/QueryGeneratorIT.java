@@ -19,6 +19,7 @@
 package grakn.benchmark.querygen;
 
 import grakn.client.GraknClient;
+import grakn.core.concept.type.Role;
 import grakn.core.concept.type.Type;
 import grakn.core.rule.GraknTestServer;
 import graql.lang.Graql;
@@ -35,6 +36,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -118,6 +120,32 @@ public class QueryGeneratorIT {
 
             // directly generate a new query which contains concepts bound to this tx
             QueryBuilder queryBuilder = queryGenerator.generateNewQuery(tx);
+
+            for (Variable attributeOwned : queryBuilder.attributeOwnership.values().stream().flatMap(Collection::stream).collect(Collectors.toSet())) {
+                Type attributeOwnedType = queryBuilder.getType(attributeOwned);
+                assertTrue(attributeOwnedType.isAttributeType());
+            }
+        }
+    }
+
+    @Test
+    public void relationVariablesHaveAtLeastOneRolePlayer() {
+        QueryGenerator queryGenerator = new QueryGenerator(null, null);
+
+        try (GraknClient client = new GraknClient(server.grpcUri());
+             GraknClient.Session session = client.session(testKeyspace);
+             GraknClient.Transaction tx = session.transaction().write()) {
+
+            // directly generate a new query which contains concepts bound to this tx
+            QueryBuilder queryBuilder = queryGenerator.generateNewQuery(tx);
+
+            for (Map.Entry<Variable, Type> entry : queryBuilder.variableTypeMap.entrySet()) {
+                if (entry.getValue().isRelationType()) {
+                    List<Pair<Variable, Role>> rolePlayers = queryBuilder.relationRolePlayers.get(entry.getKey());
+                    assertNotNull(rolePlayers);
+                    assertTrue(rolePlayers.size() >= 1);
+                }
+            }
 
             for (Variable attributeOwned : queryBuilder.attributeOwnership.values().stream().flatMap(Collection::stream).collect(Collectors.toSet())) {
                 Type attributeOwnedType = queryBuilder.getType(attributeOwned);
