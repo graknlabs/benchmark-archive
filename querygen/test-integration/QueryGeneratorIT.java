@@ -77,9 +77,10 @@ public class QueryGeneratorIT {
 
     /**
      * Test that a single new query is generated as a QueryBuilder
+     * This query builder should have all the reserved vars mapped to a type
      */
     @Test
-    public void newQueryIsReturnedAsBuilderWithValidRootType() {
+    public void newQueryIsReturnedAsBuilderWithAllVarsMapped() {
         // a empty queryGenerator
         QueryGenerator queryGenerator = new QueryGenerator(null, null);
 
@@ -89,12 +90,9 @@ public class QueryGeneratorIT {
 
             // directly generate a new query which contains concepts bound to this tx
             QueryBuilder queryBuilder = queryGenerator.generateNewQuery(tx);
-            assertNotNull(queryBuilder);
 
-            Type rootType = queryBuilder.variableTypeMap.values().iterator().next();
-
-            // this should not throw
-            assertNotNull(tx.getSchemaConcept(rootType.label()));
+            int generatedVars = queryBuilder.nextVar;
+            assertEquals(queryBuilder.variableTypeMap.size(), generatedVars);
         }
     }
 

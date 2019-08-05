@@ -65,7 +65,11 @@ public class QueryGenerator {
 
         // TODO determine how long this query should be
 
-        for (int i = 0; i < 5; i++) {
+        int variablesToProduce = 5;
+        int variablesProduced = 0;
+
+        while (variablesProduced < variablesToProduce && builder.haveUnvisitedVariable()) {
+
             // pick a new variable from the mapping we have not visited
             Variable var = builder.randomUnvisitedVariable(random);
             builder.visitVariable(var);
@@ -76,7 +80,9 @@ public class QueryGenerator {
             }
 
             // assign attribute ownership
-            assignAttributes(tx, var, varType, builder);
+            assignAttributesForVarType(tx, varType, builder);
+
+            variablesProduced++;
         }
 
         // TODO add a comparison between compatible attributes with a low probability
@@ -86,29 +92,65 @@ public class QueryGenerator {
         return builder;
     }
 
-    private void assignAttributes(GraknClient.Transaction tx, Variable var, Type varType, QueryBuilder builder) {
+    private void assignAttributesForVarType(GraknClient.Transaction tx, Type varType, QueryBuilder builder) {
         // TODO determine how many attributes should be had
         int maxAttrs = 3;
         int attrs = random.nextInt(maxAttrs);
 
         List<AttributeType> allowedAttributes = varType.attributes().collect(Collectors.toList());
-        for (int i = 0; i < attrs; i++) {
-            AttributeType ownableAttribute = allowedAttributes.get(random.nextInt(allowedAttributes.size()));
+        if (allowedAttributes.size() > 0) {
+            for (int i = 0; i < attrs; i++) {
+                AttributeType ownableAttribute = allowedAttributes.get(random.nextInt(allowedAttributes.size()));
 
-            // choose between walking up and walking down the type hierarchy
-            boolean walkSubs = random.nextBoolean();
-            Type attributeType;
-            if (walkSubs) {
-                // walk subs
-                attributeType = SchemaWalker.walkSubs(ownableAttribute, random);
-            } else {
-                // walk sups
-                attributeType = SchemaWalker.walkSupsNoMeta(tx, ownableAttribute, random);
+                // choose between walking up and walking down the type hierarchy
+                Type attributeType = chooseSubOrSuperType(tx, ownableAttribute, random);
+
+                // choose between reusing a variable for this type and making a new variable
+                Variable attributeVariable = chooseVariable(tx, builder, attributeType, random);
+
+                // write this new mapping to the query builder
+                builder.addMapping(attributeVariable, attributeType);
             }
+        }
+    }
 
+    /**
+     * Reuse a variable 75% of the time, if we can (to cause the query to look connect to itself)
+     * Else reserve a new variable
+     *
+     * @param tx
+     * @param builder
+     * @param type
+     * @param random
+     * @return
+     */
+    private Variable chooseVariable(GraknClient.Transaction tx, QueryBuilder builder, Type type, Random random) {
+        // choose an existing variable 75% of the time
+        double probability = random.nextDouble();
+        if (probability > 0.25 && builder.containsVariableWithType(type)) {
+            // reuse a variable
+            List<Variable> varsMappedToType = builder.variablesWithType(type);
+            int index = random.nextInt(varsMappedToType.size());
+            return varsMappedToType.get(index);
+        } else {
+            return builder.reserveNewVariable();
+        }
+    }
 
-            // choose between reusing a variable for this type
-            // and a new variable
+    /**
+     * Choose a sub (50%) or super (50%) direction, and then choose a random sub or super type of the given type
+     *
+     * @param tx
+     * @param type
+     * @param random
+     * @return
+     */
+    private Type chooseSubOrSuperType(GraknClient.Transaction tx, Type type, Random random) {
+        boolean walkSubs = random.nextBoolean();
+        if (walkSubs) {
+            return SchemaWalker.walkSubs(type, random);
+        } else {
+            return SchemaWalker.walkSupsNoMeta(tx, type, random);
         }
     }
 

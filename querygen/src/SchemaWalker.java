@@ -1,8 +1,6 @@
 package grakn.benchmark.querygen;
 
 import grakn.client.GraknClient;
-import grakn.core.concept.type.AttributeType;
-import grakn.core.concept.type.SchemaConcept;
 import grakn.core.concept.type.Type;
 
 import java.util.Arrays;
