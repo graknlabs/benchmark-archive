@@ -23,6 +23,7 @@ import grakn.core.concept.type.Type;
 import grakn.core.rule.GraknTestServer;
 import graql.lang.Graql;
 import graql.lang.query.GraqlQuery;
+import graql.lang.statement.Variable;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -35,6 +36,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class QueryGeneratorIT {
 
@@ -93,6 +95,28 @@ public class QueryGeneratorIT {
 
             int generatedVars = queryBuilder.nextVar;
             assertEquals(queryBuilder.variableTypeMap.size(), generatedVars);
+        }
+    }
+
+
+    /**
+     * QueryBuilder contains mappings from owner types
+     */
+    @Test
+    public void ownedVariablesAreMappedToAttributeTypes() {
+        QueryGenerator queryGenerator = new QueryGenerator(null, null);
+
+        try (GraknClient client = new GraknClient(server.grpcUri());
+             GraknClient.Session session = client.session(testKeyspace);
+             GraknClient.Transaction tx = session.transaction().write()) {
+
+            // directly generate a new query which contains concepts bound to this tx
+            QueryBuilder queryBuilder = queryGenerator.generateNewQuery(tx);
+
+            for (Variable attributeOwned : queryBuilder.attributeOwnership.values()) {
+                Type attributeOwnedType = queryBuilder.getType(attributeOwned);
+                assertTrue(attributeOwnedType.isAttributeType());
+            }
         }
     }
 

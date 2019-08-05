@@ -22,6 +22,7 @@ public class QueryBuilder {
 
     QueryBuilder() {
         this.variableTypeMap = new HashMap<>();
+        this.attributeOwnership = new HashMap<>();
         this.unvisitedVariables = new ArrayList<>();
     }
 
@@ -31,13 +32,18 @@ public class QueryBuilder {
         return var;
     }
 
-    boolean containsVariableWithType(Type type) {
-        return variableTypeMap.values().contains(type);
-    }
 
     public void addMapping(Variable var, Type type) {
         variableTypeMap.put(var, type);
         unvisitedVariables.add(var);
+    }
+
+    public void addOwnership(Variable owner, Variable owned) {
+        attributeOwnership.put(owner, owned);
+    }
+
+    boolean containsVariableWithType(Type type) {
+        return variableTypeMap.values().contains(type);
     }
 
     public Type getType(Variable var) {

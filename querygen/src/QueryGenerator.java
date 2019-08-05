@@ -80,7 +80,7 @@ public class QueryGenerator {
             }
 
             // assign attribute ownership
-            assignAttributesForVarType(tx, varType, builder);
+            assignAttributes(tx, var, varType, builder);
 
             variablesProduced++;
         }
@@ -92,7 +92,7 @@ public class QueryGenerator {
         return builder;
     }
 
-    private void assignAttributesForVarType(GraknClient.Transaction tx, Type varType, QueryBuilder builder) {
+    private void assignAttributes(GraknClient.Transaction tx, Variable var, Type varType, QueryBuilder builder) {
         // TODO determine how many attributes should be had
         int maxAttrs = 3;
         int attrs = random.nextInt(maxAttrs);
@@ -110,6 +110,7 @@ public class QueryGenerator {
 
                 // write this new mapping to the query builder
                 builder.addMapping(attributeVariable, attributeType);
+                builder.addOwnership(var, attributeVariable);
             }
         }
     }
