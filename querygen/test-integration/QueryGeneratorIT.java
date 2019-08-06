@@ -36,6 +36,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -132,6 +133,9 @@ public class QueryGeneratorIT {
         }
     }
 
+    /**
+     * We only want to generate queries that are connected
+     */
     @Test
     public void queryVariablesAreConnected() {
         QueryGenerator queryGenerator = new QueryGenerator(null, null);
@@ -141,10 +145,42 @@ public class QueryGeneratorIT {
              GraknClient.Transaction tx = session.transaction().write()) {
 
             for (int i = 0; i < 20; i++) {
-                // directly generate a new query which contains concepts bound to this tx
                 QueryBuilder queryBuilder = queryGenerator.generateNewQuery(tx);
 
-                // TODO
+                Set<Variable> allVariables = new HashSet<>(queryBuilder.variableTypeMap.keySet());
+                Set<Variable> connectedVariables = new HashSet<>(Collections.singleton(allVariables.iterator().next()));
+
+                boolean changed = true;
+                while (changed) {
+
+                    Set<Variable> newConnectedVariables = new HashSet<>(connectedVariables);
+                    for (Map.Entry<Variable, List<Variable>> entry : queryBuilder.attributeOwnership.entrySet()) {
+                        for (Variable v : connectedVariables) {
+                            if (entry.getKey().equals(v)) {
+                                newConnectedVariables.addAll(entry.getValue());
+                            } else if (entry.getValue().contains(v)) {
+                                newConnectedVariables.add(entry.getKey());
+                            }
+                        }
+                    }
+
+                    for (Map.Entry<Variable, List<Pair<Variable, Role>>> rp : queryBuilder.relationRolePlayers.entrySet()) {
+                        Set<Variable> rolePlayerVars = rp.getValue().stream().map(Pair::getFirst).collect(Collectors.toSet());
+                        for (Variable v : connectedVariables) {
+                            if (rp.getKey().equals(v)) {
+                                newConnectedVariables.addAll(rolePlayerVars);
+                            } else if (rolePlayerVars.contains(v)) {
+                                newConnectedVariables.add(rp.getKey());
+                            }
+                        }
+                    }
+
+                    changed = newConnectedVariables.size() != connectedVariables.size();
+                    connectedVariables = newConnectedVariables;
+                }
+
+                allVariables.removeAll(connectedVariables);
+                assertTrue(allVariables.isEmpty());
             }
         }
     }
