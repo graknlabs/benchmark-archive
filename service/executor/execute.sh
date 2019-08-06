@@ -79,12 +79,12 @@ curl --header "Content-Type: application/json" \
 
 # -- read queries --
 ./benchmark --config ./scenario/road_network/road_config_read.yml                --execution-name "$EXECUTION_ID" --elastic-uri benchmark-service:9200 --keyspace road_network_read
-./benchmark --config ./scenario/biochemical_network/biochemical_config_read.yml  --execution-name "$EXECUTION_ID" --elastic-uri benchmark-service:9200
+./benchmark --config ./scenario/biochemical_network/biochemical_config_read.yml  --execution-name "$EXECUTION_ID" --elastic-uri benchmark-service:9200 --keyspace biochemical_read
 ./benchmark --config ./scenario/complex/config_read.yml                          --execution-name "$EXECUTION_ID" --elastic-uri benchmark-service:9200 --keyspace generic_uniform_network_read
-./benchmark --config ./scenario/reasoning/config_read.yml                        --execution-name "$EXECUTION_ID" --elastic-uri benchmark-service:9200 --keyspace reasoner --load-schema --static-data-import
+./benchmark --config ./scenario/reasoning/config_read.yml                        --execution-name "$EXECUTION_ID" --elastic-uri benchmark-service:9200 --keyspace reasoner_read --load-schema --static-data-import
 ./benchmark --config ./scenario/rule_scaling/config_read.yml                     --execution-name "$EXECUTION_ID" --elastic-uri benchmark-service:9200 --keyspace rule_scaling --load-schema --static-data-import
-./benchmark --config ./scenario/schema/data_definition_config.yml                --execution-name "$EXECUTION_ID" --elastic-uri benchmark-service:9200 --keyspace schema --load-schema --no-data-generation
-./benchmark --config ./scenario/attribute/attribute_read_config.yml              --execution-name "$EXECUTION_ID" --elastic-uri benchmark-service:9200 --keyspace attribute
+./benchmark --config ./scenario/schema/data_definition_config.yml                --execution-name "$EXECUTION_ID" --elastic-uri benchmark-service:9200 --keyspace schema_read_write --load-schema --no-data-generation
+./benchmark --config ./scenario/attribute/attribute_read_config.yml              --execution-name "$EXECUTION_ID" --elastic-uri benchmark-service:9200 --keyspace attribute_read
 
 # TODO report log files
 
