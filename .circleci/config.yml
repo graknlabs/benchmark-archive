@@ -55,6 +55,11 @@ jobs:
           command: bazel test //common/analysis/test:insert-query-analysis-unit-test --test_output=errors
       - run-bazel-rbe:
           command: bazel test //common/configuration/test:configuration-test --test_output=errors
+      # run integration tests that do not depend on external grakn
+      - run-bazel-rbe:
+          command: bazel test //querygen/test-integration:query-generator-it --test_output=errors
+      - run-bazel-rbe:
+          command: bazel test //querygen/test-integration:schema-walker-it --test_output=errors
       # run integration tests
       - run-bazel-rbe:
           command: bazel build @graknlabs_grakn_core//:assemble-linux-targz
