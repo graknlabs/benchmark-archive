@@ -25,6 +25,8 @@ import grakn.core.concept.type.Role;
 import grakn.core.concept.type.Type;
 import graql.lang.query.GraqlGet;
 import graql.lang.statement.Variable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,6 +36,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class QueryGenerator {
+
+    private static final Logger LOG = LoggerFactory.getLogger(QueryGenerator.class);
 
     private final Random random;
     private String graknUri;
@@ -134,17 +138,21 @@ public class QueryGenerator {
         for (int i = 0; i < roles; i++) {
             Role role = compatibleRoles.get(random.nextInt(compatibleRoles.size()));
 
-            // find all types that can play the chosen role
-            List<Type> allowedRolePlayers = role.players().collect(Collectors.toList());
+            // find all types that can play the chosen role, or its subtypes
+            List<Type> allowedRolePlayers = role.subs().flatMap(Role::players).collect(Collectors.toList());
 
             // choose a random type that can play this role
-            Type rolePlayerType = allowedRolePlayers.get(random.nextInt(allowedRolePlayers.size()));
+            if (allowedRolePlayers.size() > 0) {
+                Type rolePlayerType = allowedRolePlayers.get(random.nextInt(allowedRolePlayers.size()));
 
-            Variable rolePlayerVariable = chooseVariable(tx, builder, rolePlayerType, random, usedRolePlayerVariables);
-            usedRolePlayerVariables.add(rolePlayerVariable);
+                Variable rolePlayerVariable = chooseVariable(tx, builder, rolePlayerType, random, usedRolePlayerVariables);
+                usedRolePlayerVariables.add(rolePlayerVariable);
 
-            builder.addMapping(rolePlayerVariable, rolePlayerType);
-            builder.addRolePlayer(relationVar, rolePlayerVariable, role);
+                builder.addMapping(rolePlayerVariable, rolePlayerType);
+                builder.addRolePlayer(relationVar, rolePlayerVariable, role);
+            } else {
+                LOG.debug("Role: " + role.label().toString() + ", or its subtypes, have no possible players");
+            }
         }
     }
 
