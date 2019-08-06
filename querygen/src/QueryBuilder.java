@@ -105,7 +105,11 @@ public class QueryBuilder {
                 }
             }
 
-            // TODO relation role players
+            if (relationRolePlayers.containsKey(statementVariable)) {
+                for (Pair<Variable, Role> rolePlayer : relationRolePlayers.get(statementVariable)) {
+                    pattern = pattern.rel(rolePlayer.getSecond().label().toString(), Graql.var(rolePlayer.getFirst()));
+                }
+            }
 
             patterns.add(pattern);
 

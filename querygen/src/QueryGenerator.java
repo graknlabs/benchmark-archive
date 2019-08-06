@@ -27,6 +27,7 @@ import graql.lang.query.GraqlGet;
 import graql.lang.statement.Variable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -99,11 +100,11 @@ public class QueryGenerator {
     /**
      * We want to use this method to generate a variety of specificity of the roles played
      * So, for a given starting relation type, we first find all roles that can be played by it or its subtypes (down a schema branch)
-     *
+     * <p>
      * Then for a random seed role out of this branch, we find all relations that can relate this role
      * Then proceed to find all unique roles that can be related by these relations (collecting all roles on this branch,
      * filtering out relations on another branch)
-     *
+     * <p>
      * We then construct role players
      *
      * @param tx
@@ -112,7 +113,7 @@ public class QueryGenerator {
      * @param builder
      */
     private void assignRolePlayers(GraknClient.Transaction tx, Variable relationVar, RelationType relationType, QueryBuilder builder) {
-        Set<RelationType> relationSubtypes = relationType.subs().filter(relation-> !relation.isImplicit()).collect(Collectors.toSet());
+        Set<RelationType> relationSubtypes = relationType.subs().filter(relation -> !relation.isImplicit()).collect(Collectors.toSet());
 
         // a super relation can be seen as playing its children's roles because only compatible relation subtypes are returned
         List<Role> allPossibleRoles = relationSubtypes.stream().flatMap(RelationType::roles).collect(Collectors.toList());
@@ -125,7 +126,10 @@ public class QueryGenerator {
 
         // TODO choose some subset of roles to populate, with repetition
         int maxRoles = 5;
-        int roles = 1 + random.nextInt(maxRoles-1); // must have at least 1 role player
+        int roles = 1 + random.nextInt(maxRoles - 1); // must have at least 1 role player
+
+        // do not reuse the same variables
+        Set<Variable> usedRolePlayerVariables = new HashSet<>();
 
         for (int i = 0; i < roles; i++) {
             Role role = compatibleRoles.get(random.nextInt(compatibleRoles.size()));
@@ -136,7 +140,8 @@ public class QueryGenerator {
             // choose a random type that can play this role
             Type rolePlayerType = allowedRolePlayers.get(random.nextInt(allowedRolePlayers.size()));
 
-            Variable rolePlayerVariable = chooseVariable(tx, builder, rolePlayerType, random);
+            Variable rolePlayerVariable = chooseVariable(tx, builder, rolePlayerType, random, usedRolePlayerVariables);
+            usedRolePlayerVariables.add(rolePlayerVariable);
 
             builder.addMapping(rolePlayerVariable, rolePlayerType);
             builder.addRolePlayer(relationVar, rolePlayerVariable, role);
@@ -187,6 +192,36 @@ public class QueryGenerator {
         } else {
             return builder.reserveNewVariable();
         }
+    }
+
+    /**
+     * Reuse a variable 75% of the time, if we can (to cause the query to look connect to itself), and if the variables are not in the exclude set
+     * Else reserve a new variable
+     *
+     * @param tx
+     * @param builder
+     * @param type
+     * @param random
+     * @param exclude - variables that may not be chosen
+     * @return
+     */
+    private Variable chooseVariable(GraknClient.Transaction tx, QueryBuilder builder, Type type, Random random, Set<Variable> exclude) {
+        // choose an existing variable 75% of the time, assuming other criteria are met
+        double probability = random.nextDouble();
+        if (probability > 0.25) {
+            if (builder.containsVariableWithType(type)) {
+                // reuse a variable
+                List<Variable> varsMappedToType = builder.variablesWithType(type);
+                varsMappedToType.removeAll(exclude);
+
+                if (!varsMappedToType.isEmpty()) {
+                    int index = random.nextInt(varsMappedToType.size());
+                    return varsMappedToType.get(index);
+                }
+            }
+        }
+
+        return builder.reserveNewVariable();
     }
 
     /**
