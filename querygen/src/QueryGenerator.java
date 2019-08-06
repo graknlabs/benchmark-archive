@@ -51,13 +51,15 @@ public class QueryGenerator {
 
     List<GraqlGet> generate(int numQueries) {
         List<GraqlGet> queries = new ArrayList<>(numQueries);
-        GraknClient client = new GraknClient(graknUri);
-        GraknClient.Session session = client.session(keyspace);
+        try (GraknClient client = new GraknClient(graknUri);
+             GraknClient.Session session = client.session(keyspace);) {
 
-        for (int i = 0; i < numQueries; i++) {
-            try (GraknClient.Transaction tx = session.transaction().write()) {
-                QueryBuilder builder = generateNewQuery(tx);
-                queries.add(builder.build(tx, random));
+
+            for (int i = 0; i < numQueries; i++) {
+                try (GraknClient.Transaction tx = session.transaction().write()) {
+                    QueryBuilder builder = generateNewQuery(tx);
+                    queries.add(builder.build(tx, random));
+                }
             }
         }
 
