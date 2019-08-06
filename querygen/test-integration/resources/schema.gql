@@ -2,6 +2,13 @@ define
     person sub entity,
         plays spouse,
         has name;
+
+    subperson sub person,
+        plays foo,
+        has name;
     name sub attribute, datatype string;
     marriage sub relation,
         relates spouse;
+
+    bar sub relation,
+        relates foo;

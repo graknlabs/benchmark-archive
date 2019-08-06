@@ -19,6 +19,7 @@
 package grakn.benchmark.querygen;
 
 import grakn.client.GraknClient;
+import grakn.core.concept.type.RelationType;
 import grakn.core.concept.type.Role;
 import grakn.core.concept.type.Type;
 import grakn.core.rule.GraknTestServer;
@@ -35,8 +36,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -129,27 +132,56 @@ public class QueryGeneratorIT {
     }
 
     @Test
-    public void relationVariablesHaveAtLeastOneRolePlayer() {
+    public void queryVariablesAreConnected() {
         QueryGenerator queryGenerator = new QueryGenerator(null, null);
 
         try (GraknClient client = new GraknClient(server.grpcUri());
              GraknClient.Session session = client.session(testKeyspace);
              GraknClient.Transaction tx = session.transaction().write()) {
 
-            // directly generate a new query which contains concepts bound to this tx
-            QueryBuilder queryBuilder = queryGenerator.generateNewQuery(tx);
+            for (int i = 0; i < 20; i++) {
+                // directly generate a new query which contains concepts bound to this tx
+                QueryBuilder queryBuilder = queryGenerator.generateNewQuery(tx);
 
-            for (Map.Entry<Variable, Type> entry : queryBuilder.variableTypeMap.entrySet()) {
-                if (entry.getValue().isRelationType()) {
-                    List<Pair<Variable, Role>> rolePlayers = queryBuilder.relationRolePlayers.get(entry.getKey());
-                    assertNotNull(rolePlayers);
-                    assertTrue(rolePlayers.size() >= 1);
-                }
+                // TODO
             }
+        }
+    }
 
-            for (Variable attributeOwned : queryBuilder.attributeOwnership.values().stream().flatMap(Collection::stream).collect(Collectors.toSet())) {
-                Type attributeOwnedType = queryBuilder.getType(attributeOwned);
-                assertTrue(attributeOwnedType.isAttributeType());
+    /**
+     * Confirm that the when specifying any roles picked for a relation's role players are actually possible in the schema
+     * In other words, the intersection of the relations allowing each of these role players is not empty
+     */
+    @Test
+    public void relationRolesCanOccurTogetherInSchema() {
+        QueryGenerator queryGenerator = new QueryGenerator(null, null);
+
+        try (GraknClient client = new GraknClient(server.grpcUri());
+             GraknClient.Session session = client.session(testKeyspace);
+             GraknClient.Transaction tx = session.transaction().write()) {
+
+            for (int i = 0; i < 20; i++) {
+                // directly generate a new query which contains concepts bound to this tx
+                QueryBuilder queryBuilder = queryGenerator.generateNewQuery(tx);
+
+                for (Map.Entry<Variable, Type> entry : queryBuilder.variableTypeMap.entrySet()) {
+                    if (entry.getValue().isRelationType() && queryBuilder.relationRolePlayers.containsKey(entry.getKey())) {
+                        List<Pair<Variable, Role>> rolePlayers = queryBuilder.relationRolePlayers.get(entry.getKey());
+
+                        Set<Role> roles = rolePlayers.stream().map(Pair::getSecond).collect(Collectors.toSet());
+
+                        Set<RelationType> relationTypesIntersection = roles.stream()
+                                .map(role -> role.relations().collect(Collectors.toSet()))
+                                .reduce((a, b) -> {
+                                    Set<RelationType> copy = new HashSet<>(a);
+                                    copy.retainAll(b);
+                                    return copy;
+                                })
+                                .get();
+
+                        assertTrue(relationTypesIntersection.size() > 0);
+                    }
+                }
             }
         }
     }

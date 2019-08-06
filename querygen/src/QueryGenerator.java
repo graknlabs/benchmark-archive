@@ -29,6 +29,7 @@ import graql.lang.statement.Variable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class QueryGenerator {
@@ -79,7 +80,8 @@ public class QueryGenerator {
             builder.visitVariable(var);
             Type varType = builder.getType(var);
 
-            if (varType.isRelationType()) {
+            if (varType.isRelationType() && !varType.isImplicit()) {
+                // we do not assign role players for implicit relations manually
                 assignRolePlayers(tx, var, varType.asRelationType(), builder);
             }
 
@@ -94,23 +96,45 @@ public class QueryGenerator {
         return builder;
     }
 
+    /**
+     * We want to use this method to generate a variety of specificity of the roles played
+     * So, for a given starting relation type, we first find all roles that can be played by it or its subtypes (down a schema branch)
+     *
+     * Then for a random seed role out of this branch, we find all relations that can relate this role
+     * Then proceed to find all unique roles that can be related by these relations (collecting all roles on this branch,
+     * filtering out relations on another branch)
+     *
+     * We then construct role players
+     *
+     * @param tx
+     * @param relationVar
+     * @param relationType
+     * @param builder
+     */
     private void assignRolePlayers(GraknClient.Transaction tx, Variable relationVar, RelationType relationType, QueryBuilder builder) {
-        List<Role> allowedRoles = relationType.roles().collect(Collectors.toList());
+        Set<RelationType> relationSubtypes = relationType.subs().filter(relation-> !relation.isImplicit()).collect(Collectors.toSet());
+
+        // a super relation can be seen as playing its children's roles because only compatible relation subtypes are returned
+        List<Role> allPossibleRoles = relationSubtypes.stream().flatMap(RelationType::roles).collect(Collectors.toList());
+
+        // choose a starting role, which can only ever occur with some other roles, but not any role
+        Role seedRole = allPossibleRoles.get(random.nextInt(allPossibleRoles.size()));
+
+        // find all compatible roles so we generate combinations of roles that might actually occur in data, according to the schema
+        List<Role> compatibleRoles = seedRole.relations().filter(relationSubtypes::contains).flatMap(RelationType::roles).distinct().collect(Collectors.toList());
 
         // TODO choose some subset of roles to populate, with repetition
         int maxRoles = 5;
         int roles = 1 + random.nextInt(maxRoles-1); // must have at least 1 role player
 
         for (int i = 0; i < roles; i++) {
-            Role role = allowedRoles.get(random.nextInt(allowedRoles.size()));
+            Role role = compatibleRoles.get(random.nextInt(compatibleRoles.size()));
 
+            // find all types that can play the chosen role
             List<Type> allowedRolePlayers = role.players().collect(Collectors.toList());
 
             // choose a random type that can play this role
             Type rolePlayerType = allowedRolePlayers.get(random.nextInt(allowedRolePlayers.size()));
-
-            // TODO do we need to do another walkSubs(rolePlayerType) to choose which some random subtype?
-            // TODO this may not be needed if all the subtypes are already included in the list above
 
             Variable rolePlayerVariable = chooseVariable(tx, builder, rolePlayerType, random);
 
