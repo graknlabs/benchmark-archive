@@ -75,12 +75,14 @@ public class QueryGenerator {
         Variable startingVariable = builder.reserveNewVariable();
         builder.addMapping(startingVariable, startingType);
 
-        // TODO determine how long this query should be
 
-        int variablesToProduce = 5;
-        int variablesProduced = 0;
+        // exponential/geometric probability distribution
+        // 1/0.1 = 10 variables on average
+        double variableGenerateProbability = 1.0;
+        double variableGenerateProbabilityReduction = 0.1;
+        double nextProbability = random.nextDouble();
 
-        while (variablesProduced < variablesToProduce && builder.haveUnvisitedVariable()) {
+        while (nextProbability < variableGenerateProbability && builder.haveUnvisitedVariable()) {
 
             // pick a new variable from the mapping we have not visited
             Variable var = builder.randomUnvisitedVariable(random);
@@ -95,7 +97,8 @@ public class QueryGenerator {
             // assign attribute ownership
             assignAttributes(tx, var, varType, builder);
 
-            variablesProduced++;
+            variableGenerateProbability *= variableGenerateProbabilityReduction;
+            nextProbability = random.nextDouble();
         }
 
         // TODO add a comparison between compatible attributes with a low probability
@@ -130,15 +133,24 @@ public class QueryGenerator {
         // find all compatible roles so we generate combinations of roles that might actually occur in data, according to the schema
         List<Role> compatibleRoles = seedRole.relations().filter(relationSubtypes::contains).flatMap(RelationType::roles).distinct().collect(Collectors.toList());
 
-        // TODO choose some subset of roles to populate, with repetition
-        int maxRoles = 5;
-        int roles = 1 + random.nextInt(maxRoles - 1); // must have at least 1 role player
+
+        // choose a geometric series number of roles
+        // with mean of 1/0.5 = 2 roles, min 1
+        double roleGenerateProbability = 1.0;
+        double roleGenerateProbabilityReduction = 0.5;
+        double nextProbability = random.nextDouble();
 
         // do not reuse the same variables
         Set<Variable> usedRolePlayerVariables = new HashSet<>();
+        // bias new roles away from being the same as old ones
+        List<Role> usedRoleTypes = new ArrayList<>();
 
-        for (int i = 0; i < roles; i++) {
+        while (nextProbability < roleGenerateProbability) {
             Role role = compatibleRoles.get(random.nextInt(compatibleRoles.size()));
+            // re-pick once if the role has already been picked before
+            if (usedRoleTypes.contains(role)) {
+                role = compatibleRoles.get(random.nextInt(compatibleRoles.size()));
+            }
 
             // find all types that can play the chosen role, or its subtypes
             List<Type> allowedRolePlayers = role.subs().flatMap(Role::players).collect(Collectors.toList());
@@ -149,23 +161,30 @@ public class QueryGenerator {
 
                 Variable rolePlayerVariable = chooseVariable(tx, builder, rolePlayerType, random, usedRolePlayerVariables);
                 usedRolePlayerVariables.add(rolePlayerVariable);
+                usedRoleTypes.add(role);
 
                 builder.addMapping(rolePlayerVariable, rolePlayerType);
                 builder.addRolePlayer(relationVar, rolePlayerVariable, role);
+
             } else {
                 LOG.debug("Role: " + role.label().toString() + ", or its subtypes, have no possible players");
             }
+
+            roleGenerateProbability *= roleGenerateProbabilityReduction;
+            nextProbability = random.nextDouble();
         }
     }
 
     private void assignAttributes(GraknClient.Transaction tx, Variable var, Type varType, QueryBuilder builder) {
-        // TODO determine how many attributes should be had
-        int maxAttrs = 3;
-        int attrs = random.nextInt(maxAttrs);
+
+        // choose a geometric series number of attributes
+        double attrGenerateProbability = 0.5;
+        double attrGenerateProbabilityReduction = 0.3;
+        double nextProbability = random.nextDouble();
 
         List<AttributeType> allowedAttributes = varType.attributes().collect(Collectors.toList());
         if (allowedAttributes.size() > 0) {
-            for (int i = 0; i < attrs; i++) {
+            while (nextProbability < attrGenerateProbability) {
                 AttributeType ownableAttribute = allowedAttributes.get(random.nextInt(allowedAttributes.size()));
 
                 // choose between walking up and walking down the type hierarchy
@@ -177,6 +196,9 @@ public class QueryGenerator {
                 // write this new mapping to the query builder
                 builder.addMapping(attributeVariable, attributeType);
                 builder.addOwnership(var, attributeVariable);
+
+                attrGenerateProbability *= attrGenerateProbabilityReduction;
+                nextProbability = random.nextDouble();
             }
         }
     }
