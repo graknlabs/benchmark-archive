@@ -79,14 +79,18 @@ public class QueryGeneratorIT {
 
     @Test
     public void queryGeneratorReturnsCorrectNumberOfQueries() {
-        QueryGenerator queryGenerator = new QueryGenerator(server.grpcUri(), testKeyspace);
-        int queriesToGenerate = 100;
-        List<GraqlGet> queries = queryGenerator.generate(queriesToGenerate);
-        assertEquals(queries.size(), queriesToGenerate);
-        for (GraqlGet query : queries) {
-            assertNotNull(query);
-            System.out.println(query);
+        try (GraknClient client = new GraknClient(server.grpcUri());
+             GraknClient.Session session = client.session(testKeyspace)) {
+            QueryGenerator queryGenerator = new QueryGenerator(session);
+            int queriesToGenerate = 100;
+            List<GraqlGet> queries = queryGenerator.generate(queriesToGenerate);
+            assertEquals(queries.size(), queriesToGenerate);
+            for (GraqlGet query : queries) {
+                assertNotNull(query);
+                System.out.println(query);
+            }
         }
+
     }
 
 
@@ -97,17 +101,18 @@ public class QueryGeneratorIT {
     @Test
     public void newQueryIsReturnedAsBuilderWithAllVarsMapped() {
         // a empty queryGenerator
-        QueryGenerator queryGenerator = new QueryGenerator(null, null);
 
         try (GraknClient client = new GraknClient(server.grpcUri());
-             GraknClient.Session session = client.session(testKeyspace);
-             GraknClient.Transaction tx = session.transaction().write()) {
+             GraknClient.Session session = client.session(testKeyspace)) {
 
-            // directly generate a new query which contains concepts bound to this tx
-            QueryBuilder queryBuilder = queryGenerator.generateNewQuery(tx);
+            QueryGenerator queryGenerator = new QueryGenerator(session);
+            try (GraknClient.Transaction tx = session.transaction().write()){
+                // directly generate a new query which contains concepts bound to this tx
+                QueryBuilder queryBuilder = queryGenerator.generateNewQuery(tx);
 
-            int generatedVars = queryBuilder.nextVar;
-            assertEquals(queryBuilder.variableTypeMap.size(), generatedVars);
+                int generatedVars = queryBuilder.nextVar;
+                assertEquals(queryBuilder.variableTypeMap.size(), generatedVars);
+            }
         }
     }
 
@@ -117,18 +122,21 @@ public class QueryGeneratorIT {
      */
     @Test
     public void ownedVariablesAreMappedToAttributeTypes() {
-        QueryGenerator queryGenerator = new QueryGenerator(null, null);
 
         try (GraknClient client = new GraknClient(server.grpcUri());
-             GraknClient.Session session = client.session(testKeyspace);
-             GraknClient.Transaction tx = session.transaction().write()) {
+             GraknClient.Session session = client.session(testKeyspace)) {
 
-            // directly generate a new query which contains concepts bound to this tx
-            QueryBuilder queryBuilder = queryGenerator.generateNewQuery(tx);
+            QueryGenerator queryGenerator = new QueryGenerator(session);
+            try (GraknClient.Transaction tx = session.transaction().write()) {
 
-            for (Variable attributeOwned : queryBuilder.attributeOwnership.values().stream().flatMap(Collection::stream).collect(Collectors.toSet())) {
-                Type attributeOwnedType = queryBuilder.getType(attributeOwned);
-                assertTrue(attributeOwnedType.isAttributeType());
+                // directly generate a new query which contains concepts bound to this tx
+                QueryBuilder queryBuilder = queryGenerator.generateNewQuery(tx);
+
+                for (Variable attributeOwned : queryBuilder.attributeOwnership.values().stream().flatMap(Collection::stream).collect(Collectors.toSet())) {
+                    Type attributeOwnedType = queryBuilder.getType(attributeOwned);
+                    assertTrue(attributeOwnedType.isAttributeType());
+                }
+
             }
         }
     }
@@ -138,49 +146,51 @@ public class QueryGeneratorIT {
      */
     @Test
     public void queryVariablesAreConnected() {
-        QueryGenerator queryGenerator = new QueryGenerator(null, null);
 
         try (GraknClient client = new GraknClient(server.grpcUri());
-             GraknClient.Session session = client.session(testKeyspace);
-             GraknClient.Transaction tx = session.transaction().write()) {
+             GraknClient.Session session = client.session(testKeyspace)) {
 
-            for (int i = 0; i < 20; i++) {
-                QueryBuilder queryBuilder = queryGenerator.generateNewQuery(tx);
+            QueryGenerator queryGenerator = new QueryGenerator(session);
+            try (GraknClient.Transaction tx = session.transaction().write()) {
+                for (int i = 0; i < 20; i++) {
+                    QueryBuilder queryBuilder = queryGenerator.generateNewQuery(tx);
 
-                Set<Variable> allVariables = new HashSet<>(queryBuilder.variableTypeMap.keySet());
-                Set<Variable> connectedVariables = new HashSet<>(Collections.singleton(allVariables.iterator().next()));
+                    Set<Variable> allVariables = new HashSet<>(queryBuilder.variableTypeMap.keySet());
+                    Set<Variable> connectedVariables = new HashSet<>(Collections.singleton(allVariables.iterator().next()));
 
-                boolean changed = true;
-                while (changed) {
+                    boolean changed = true;
+                    while (changed) {
 
-                    Set<Variable> newConnectedVariables = new HashSet<>(connectedVariables);
-                    for (Map.Entry<Variable, List<Variable>> entry : queryBuilder.attributeOwnership.entrySet()) {
-                        for (Variable v : connectedVariables) {
-                            if (entry.getKey().equals(v)) {
-                                newConnectedVariables.addAll(entry.getValue());
-                            } else if (entry.getValue().contains(v)) {
-                                newConnectedVariables.add(entry.getKey());
+                        Set<Variable> newConnectedVariables = new HashSet<>(connectedVariables);
+                        for (Map.Entry<Variable, List<Variable>> entry : queryBuilder.attributeOwnership.entrySet()) {
+                            for (Variable v : connectedVariables) {
+                                if (entry.getKey().equals(v)) {
+                                    newConnectedVariables.addAll(entry.getValue());
+                                } else if (entry.getValue().contains(v)) {
+                                    newConnectedVariables.add(entry.getKey());
+                                }
                             }
                         }
-                    }
 
-                    for (Map.Entry<Variable, List<Pair<Variable, Role>>> rp : queryBuilder.relationRolePlayers.entrySet()) {
-                        Set<Variable> rolePlayerVars = rp.getValue().stream().map(Pair::getFirst).collect(Collectors.toSet());
-                        for (Variable v : connectedVariables) {
-                            if (rp.getKey().equals(v)) {
-                                newConnectedVariables.addAll(rolePlayerVars);
-                            } else if (rolePlayerVars.contains(v)) {
-                                newConnectedVariables.add(rp.getKey());
+                        for (Map.Entry<Variable, List<Pair<Variable, Role>>> rp : queryBuilder.relationRolePlayers.entrySet()) {
+                            Set<Variable> rolePlayerVars = rp.getValue().stream().map(Pair::getFirst).collect(Collectors.toSet());
+                            for (Variable v : connectedVariables) {
+                                if (rp.getKey().equals(v)) {
+                                    newConnectedVariables.addAll(rolePlayerVars);
+                                } else if (rolePlayerVars.contains(v)) {
+                                    newConnectedVariables.add(rp.getKey());
+                                }
                             }
                         }
+
+                        changed = newConnectedVariables.size() != connectedVariables.size();
+                        connectedVariables = newConnectedVariables;
                     }
 
-                    changed = newConnectedVariables.size() != connectedVariables.size();
-                    connectedVariables = newConnectedVariables;
+                    allVariables.removeAll(connectedVariables);
+                    assertTrue(allVariables.isEmpty());
                 }
 
-                allVariables.removeAll(connectedVariables);
-                assertTrue(allVariables.isEmpty());
             }
         }
     }
@@ -191,35 +201,37 @@ public class QueryGeneratorIT {
      */
     @Test
     public void relationRolesCanOccurTogetherInSchema() {
-        QueryGenerator queryGenerator = new QueryGenerator(null, null);
 
         try (GraknClient client = new GraknClient(server.grpcUri());
-             GraknClient.Session session = client.session(testKeyspace);
-             GraknClient.Transaction tx = session.transaction().write()) {
+             GraknClient.Session session = client.session(testKeyspace)) {
 
-            for (int i = 0; i < 20; i++) {
-                // directly generate a new query which contains concepts bound to this tx
-                QueryBuilder queryBuilder = queryGenerator.generateNewQuery(tx);
+            QueryGenerator queryGenerator = new QueryGenerator(session);
+            try (GraknClient.Transaction tx = session.transaction().write()) {
+                for (int i = 0; i < 20; i++) {
+                    // directly generate a new query which contains concepts bound to this tx
+                    QueryBuilder queryBuilder = queryGenerator.generateNewQuery(tx);
 
-                for (Map.Entry<Variable, Type> entry : queryBuilder.variableTypeMap.entrySet()) {
-                    if (entry.getValue().isRelationType() && queryBuilder.relationRolePlayers.containsKey(entry.getKey())) {
-                        List<Pair<Variable, Role>> rolePlayers = queryBuilder.relationRolePlayers.get(entry.getKey());
+                    for (Map.Entry<Variable, Type> entry : queryBuilder.variableTypeMap.entrySet()) {
+                        if (entry.getValue().isRelationType() && queryBuilder.relationRolePlayers.containsKey(entry.getKey())) {
+                            List<Pair<Variable, Role>> rolePlayers = queryBuilder.relationRolePlayers.get(entry.getKey());
 
-                        Set<Role> roles = rolePlayers.stream().map(Pair::getSecond).collect(Collectors.toSet());
+                            Set<Role> roles = rolePlayers.stream().map(Pair::getSecond).collect(Collectors.toSet());
 
-                        Set<RelationType> relationTypesIntersection = roles.stream()
-                                .map(role -> role.relations().collect(Collectors.toSet()))
-                                .reduce((a, b) -> {
-                                    Set<RelationType> copy = new HashSet<>(a);
-                                    copy.retainAll(b);
-                                    return copy;
-                                })
-                                .get();
+                            Set<RelationType> relationTypesIntersection = roles.stream()
+                                    .map(role -> role.relations().collect(Collectors.toSet()))
+                                    .reduce((a, b) -> {
+                                        Set<RelationType> copy = new HashSet<>(a);
+                                        copy.retainAll(b);
+                                        return copy;
+                                    })
+                                    .get();
 
-                        assertTrue(relationTypesIntersection.size() > 0);
+                            assertTrue(relationTypesIntersection.size() > 0);
+                        }
                     }
                 }
             }
+
         }
     }
 

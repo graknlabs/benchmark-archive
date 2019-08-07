@@ -6,7 +6,6 @@ import grakn.core.concept.type.Type;
 import graql.lang.Graql;
 import graql.lang.pattern.Pattern;
 import graql.lang.query.GraqlGet;
-import graql.lang.statement.Statement;
 import graql.lang.statement.StatementInstance;
 import graql.lang.statement.Variable;
 
@@ -19,12 +18,11 @@ import java.util.stream.Collectors;
 
 public class QueryBuilder {
 
-    Map<Variable, Type> variableTypeMap;
+    final Map<Variable, Type> variableTypeMap;
+    final Map<Variable, List<Variable>> attributeOwnership;
+    final Map<Variable, List<Pair<Variable, Role>>> relationRolePlayers;
 
-    Map<Variable, List<Variable>> attributeOwnership;
-    Map<Variable, List<Pair<Variable, Role>>> relationRolePlayers;
-
-    List<Variable> unvisitedVariables;
+    final List<Variable> unvisitedVariables;
 
     int nextVar = 0;
 

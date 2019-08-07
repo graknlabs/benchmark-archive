@@ -40,26 +40,19 @@ public class QueryGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(QueryGenerator.class);
 
     private final Random random;
-    private String graknUri;
-    private String keyspace;
+    private final GraknClient.Session session;
 
-    public QueryGenerator(String graknUri, String keyspace) {
-        this.graknUri = graknUri;
-        this.keyspace = keyspace;
+    public QueryGenerator(GraknClient.Session session) {
+        this.session = session;
         this.random = new Random(0);
     }
 
     List<GraqlGet> generate(int numQueries) {
         List<GraqlGet> queries = new ArrayList<>(numQueries);
-        try (GraknClient client = new GraknClient(graknUri);
-             GraknClient.Session session = client.session(keyspace);) {
-
-
-            for (int i = 0; i < numQueries; i++) {
-                try (GraknClient.Transaction tx = session.transaction().write()) {
-                    QueryBuilder builder = generateNewQuery(tx);
-                    queries.add(builder.build(tx, random));
-                }
+        for (int i = 0; i < numQueries; i++) {
+            try (GraknClient.Transaction tx = session.transaction().write()) {
+                QueryBuilder builder = generateNewQuery(tx);
+                queries.add(builder.build(tx, random));
             }
         }
 
