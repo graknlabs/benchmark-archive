@@ -275,7 +275,7 @@ public class QueryGenerator {
 
         // only choose from types that have two ore more vars
         List<AttributeType<?>> possibleAttributeTypes = attributeTypeVariablesMap.entrySet().stream()
-                .filter(entry -> entry.getKey().label().toString().equals("attribute")) // TODO better to check if equals meta type
+                .filter(entry -> !entry.getKey().label().toString().equals("attribute")) // TODO better to check if equals meta type
                 .filter(entry -> entry.getValue().size() > 1)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());

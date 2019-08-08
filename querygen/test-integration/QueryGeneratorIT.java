@@ -87,8 +87,6 @@ public class QueryGeneratorIT {
             assertEquals(queries.size(), queriesToGenerate);
             for (GraqlGet query : queries) {
                 assertNotNull(query);
-                System.out.println(query);
-                System.out.print("\n");
             }
         }
     }
@@ -247,7 +245,6 @@ public class QueryGeneratorIT {
             for (GraqlGet query : queries) {
                 String q = query.toString();
                 if (q.contains("==") || q.contains("!==") || q.contains("<") || q.contains(">")) {
-                    System.out.println(query);
                     comparisonFound = true;
                 }
             }
