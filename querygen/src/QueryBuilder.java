@@ -14,9 +14,11 @@ import graql.lang.statement.Variable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -106,6 +108,24 @@ public class QueryBuilder {
                 ));
 
         return attrTypeMapping;
+    }
+
+    Set<Variable> rolePlayersInRelation(Variable relationVariable) {
+        List<Pair<Variable, Role>> pairs = relationRolePlayers.get(relationVariable);
+        if (pairs == null) {
+            return new HashSet<>();
+        } else {
+            return pairs.stream().map(Pair::getFirst).collect(Collectors.toSet());
+        }
+    }
+
+    List<Role> rolesPlayedInRelation(Variable relationVariable) {
+        List<Pair<Variable, Role>> pairs = relationRolePlayers.get(relationVariable);
+        if (pairs == null) {
+            return new ArrayList<>();
+        } else {
+            return pairs.stream().map(Pair::getSecond).collect(Collectors.toList());
+        }
     }
 
     GraqlGet build(GraknClient.Transaction tx, Random random) {

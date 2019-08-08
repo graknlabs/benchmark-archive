@@ -30,6 +30,7 @@ import graql.lang.statement.Variable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.management.relation.Relation;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -71,31 +72,30 @@ public class QueryGenerator {
         Variable startingVariable = builder.reserveNewVariable();
         builder.addMapping(startingVariable, startingType);
 
-
         // exponential/geometric probability distribution
         // 1/0.05 = 20 variables on average
-        double variableGenerateProbability = 3.0;
-        double variableGenerateProbabilityReduction = 0.05;
+        double variableGenerateProbability = 1.0;
+        double variableGenerateProbabilityReduction = 0.9;
         double nextProbability = random.nextDouble();
 
         while (nextProbability < variableGenerateProbability && builder.haveUnvisitedVariable()) {
 
             // pick a new variable from the mapping we have not visited
-            Variable var = builder.randomUnvisitedVariable(random);
-            builder.visitVariable(var);
-            Type varType = builder.getType(var);
+            Variable newVariable = builder.randomUnvisitedVariable(random);
+            builder.visitVariable(newVariable);
+            Type newVariableType = builder.getType(newVariable);
 
             // assign role players to a relation
-            if (varType.isRelationType() && !varType.isImplicit()) {
+            if (newVariableType.isRelationType() && !newVariableType.isImplicit()) {
                 // we do not assign role players for implicit relations manually
-                assignRolePlayers(tx, var, varType.asRelationType(), builder);
+                assignRolePlayers(tx, newVariable, newVariableType.asRelationType(), builder);
             }
 
             // assign new relations this concept plays a role in
-            assignRelations(tx, var, varType, builder);
+            assignRelations(tx, newVariable, newVariableType, builder);
 
             // assign attribute ownership
-            assignAttributes(tx, var, varType, builder);
+            assignAttributes(tx, newVariable, newVariableType, builder);
 
             variableGenerateProbability *= variableGenerateProbabilityReduction;
             nextProbability = random.nextDouble();
@@ -104,7 +104,7 @@ public class QueryGenerator {
 
         // because it's so rare we generate two compatible attributes in a query already,
         // we can ste the probability of a comparison quite high
-        double comparisonGenerateProbability = 0.3;
+        double comparisonGenerateProbability = 0.5;
         double comparisonGenerateProbabilityReduction = 0.5;
         nextProbability = random.nextDouble();
 
@@ -121,15 +121,15 @@ public class QueryGenerator {
 
     /**
      * Assign new relations this concept plays a role in, if any. This method allows us to generate multi-hop queries
-     *
+     * NOTE this method can also generate new variables
      * @param tx
-     * @param var
-     * @param varType
+     * @param variable
+     * @param variableType
      * @param builder
      */
-    private void assignRelations(GraknClient.Transaction tx, Variable var, Type varType, QueryBuilder builder) {
+    private void assignRelations(GraknClient.Transaction tx, Variable variable, Type variableType, QueryBuilder builder) {
         // obtain all roles this concept type can play
-        List<Role> playableRoles = varType.playing().filter(role -> !role.isImplicit()).collect(Collectors.toList());
+        List<Role> playableRoles = variableType.playing().filter(role -> !role.isImplicit()).collect(Collectors.toList());
 
         double relationGenerateProbability = 0.8;
         double relationGenerateProbabilityReduction = 0.5;
@@ -138,17 +138,17 @@ public class QueryGenerator {
         if (playableRoles.size() > 0) {
             while (nextRandom < relationGenerateProbability) {
                 // choose a role to play
-                Role varRole = playableRoles.get(random.nextInt(playableRoles.size()));
+                Role variableRole = playableRoles.get(random.nextInt(playableRoles.size()));
 
                 // find all relations that can relate this type of role
-                List<RelationType> allowedRelations = varRole.relations().collect(Collectors.toList());
-                RelationType relationType = allowedRelations.get(random.nextInt(allowedRelations.size()));
+                List<RelationType> allowedRelations = variableRole.relations().collect(Collectors.toList());
+                RelationType newRelationType = allowedRelations.get(random.nextInt(allowedRelations.size()));
 
                 // generate a new relation (no reuse here) with this var as a role player
-                Variable newRelation = builder.reserveNewVariable();
-                builder.addMapping(newRelation, relationType);
+                Variable newRelationVariable = builder.reserveNewVariable();
+                builder.addMapping(newRelationVariable, newRelationType);
 
-                assignRolePlayers(tx, newRelation, relationType, builder, var, varRole);
+                assignRolePlayers(tx, newRelationVariable, newRelationType, variable, variableRole, builder);
 
                 relationGenerateProbability *= relationGenerateProbabilityReduction;
                 nextRandom = random.nextDouble();
@@ -176,16 +176,12 @@ public class QueryGenerator {
      * @param relationType
      * @param builder
      */
-    private void assignRolePlayers(GraknClient.Transaction tx, Variable relationVar, RelationType relationType, QueryBuilder builder,
-                                   Variable usedRolePlayerVariable, Role seedRole) {
+    private void assignRolePlayers(GraknClient.Transaction tx, Variable relationVar, RelationType relationType,
+                                   Variable usedRolePlayerVariable, Role seedRole, QueryBuilder builder) {
 
         Set<RelationType> relationSubtypes = relationType.subs().filter(relation -> !relation.isImplicit()).collect(Collectors.toSet());
 
 
-        // do not reuse the same variables
-        Set<Variable> usedRolePlayerVariables = new HashSet<>();
-        // bias new roles away from being the same as old ones
-        List<Role> usedRoleTypes = new ArrayList<>();
         double roleGenerateProbability;
 
         if (seedRole == null) {
@@ -197,14 +193,17 @@ public class QueryGenerator {
             // force generation of at least 1 role
             roleGenerateProbability = 1.0;
         } else {
-            // record the role player already guaranteed
-            usedRolePlayerVariables.add(usedRolePlayerVariable);
-            usedRoleTypes.add(seedRole);
             builder.addRolePlayer(relationVar, usedRolePlayerVariable, seedRole);
-
             // we already have 1 role player guaranteed, reduce probability of generating more
             roleGenerateProbability = 0.5;
         }
+
+
+        // do not reuse the same variables among the role players
+        Set<Variable> usedRolePlayerVariables = builder.rolePlayersInRelation(relationVar);
+
+        // bias new roles away from being the same as old ones
+        List<Role> usedRoleTypes = builder.rolesPlayedInRelation(relationVar);
 
         // find all compatible roles so we generate combinations of roles that might actually occur in data, according to the schema
         List<Role> compatibleRoles = seedRole.relations().filter(relationSubtypes::contains).flatMap(RelationType::roles).distinct().collect(Collectors.toList());
@@ -214,7 +213,7 @@ public class QueryGenerator {
 
         while (nextProbability < roleGenerateProbability) {
             Role role = compatibleRoles.get(random.nextInt(compatibleRoles.size()));
-            // re-pick once if the role has already been picked before
+            // re-pick once if the role has already been picked before, slightly weighting away from re-using role types
             if (usedRoleTypes.contains(role)) {
                 role = compatibleRoles.get(random.nextInt(compatibleRoles.size()));
             }
@@ -227,11 +226,15 @@ public class QueryGenerator {
                 Type rolePlayerType = allowedRolePlayers.get(random.nextInt(allowedRolePlayers.size()));
 
                 Variable rolePlayerVariable = chooseVariable(tx, builder, rolePlayerType, random, usedRolePlayerVariables);
+
+                // sometimes we get back a rolePlayerVariable that is already a role player, even though we try to exclude it
+                // this is because the chooseVariable() only
                 usedRolePlayerVariables.add(rolePlayerVariable);
                 usedRoleTypes.add(role);
 
                 builder.addMapping(rolePlayerVariable, rolePlayerType);
                 builder.addRolePlayer(relationVar, rolePlayerVariable, role);
+                System.out.println("lol");
 
             } else {
                 LOG.debug("Role: " + role.label().toString() + ", or its subtypes, have no possible players");
@@ -276,6 +279,7 @@ public class QueryGenerator {
 
         // only choose from types that have two ore more vars
         List<AttributeType<?>> possibleAttributeTypes = attributeTypeVariablesMap.entrySet().stream()
+                .filter(entry -> entry.getKey().label().toString().equals("attribute")) // TODO better to check if equals meta type
                 .filter(entry -> entry.getValue().size() > 1)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());

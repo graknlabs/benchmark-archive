@@ -88,6 +88,7 @@ public class QueryGeneratorIT {
             for (GraqlGet query : queries) {
                 assertNotNull(query);
                 System.out.println(query);
+                System.out.print("\n");
             }
         }
     }
