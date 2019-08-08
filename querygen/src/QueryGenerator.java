@@ -101,9 +101,10 @@ public class QueryGenerator {
             nextProbability = random.nextDouble();
         }
 
-        // TODO add a comparison between compatible attributes with a low probability
 
-        double comparisonGenerateProbability = 0.1;
+        // because it's so rare we generate two compatible attributes in a query already,
+        // we can ste the probability of a comparison quite high
+        double comparisonGenerateProbability = 0.3;
         double comparisonGenerateProbabilityReduction = 0.5;
         nextProbability = random.nextDouble();
 
@@ -130,7 +131,7 @@ public class QueryGenerator {
         // obtain all roles this concept type can play
         List<Role> playableRoles = varType.playing().filter(role -> !role.isImplicit()).collect(Collectors.toList());
 
-        double relationGenerateProbability = 0.5;
+        double relationGenerateProbability = 0.8;
         double relationGenerateProbabilityReduction = 0.5;
         double nextRandom = random.nextDouble();
 
@@ -164,7 +165,7 @@ public class QueryGenerator {
      * We want to use this method to generate a variety of specificity of the roles played
      * So, for a given starting relation type, we first find all roles that can be played by it or its subtypes (down a schema branch)
      * <p>
-     * Then for a random seed role out of this branch, we find all relations that can relate this role
+     * Then for a seed role (which is optionally provided), we find all relations that can relate this role
      * Then proceed to find all unique roles that can be related by these relations (collecting all roles on this branch,
      * filtering out relations on another branch)
      * <p>
