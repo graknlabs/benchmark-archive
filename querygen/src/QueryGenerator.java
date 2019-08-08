@@ -22,7 +22,6 @@ import grakn.client.GraknClient;
 import grakn.core.concept.type.AttributeType;
 import grakn.core.concept.type.RelationType;
 import grakn.core.concept.type.Role;
-import grakn.core.concept.type.SchemaConcept;
 import grakn.core.concept.type.Type;
 import graql.lang.Graql;
 import graql.lang.query.GraqlGet;
@@ -30,9 +29,7 @@ import graql.lang.statement.Variable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.relation.Relation;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -122,6 +119,7 @@ public class QueryGenerator {
     /**
      * Assign new relations this concept plays a role in, if any. This method allows us to generate multi-hop queries
      * NOTE this method can also generate new variables
+     *
      * @param tx
      * @param variable
      * @param variableType
