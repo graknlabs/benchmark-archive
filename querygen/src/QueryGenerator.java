@@ -22,7 +22,9 @@ import grakn.client.GraknClient;
 import grakn.core.concept.type.AttributeType;
 import grakn.core.concept.type.RelationType;
 import grakn.core.concept.type.Role;
+import grakn.core.concept.type.SchemaConcept;
 import grakn.core.concept.type.Type;
+import graql.lang.Graql;
 import graql.lang.query.GraqlGet;
 import graql.lang.statement.Variable;
 import org.slf4j.Logger;
@@ -31,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -70,9 +73,9 @@ public class QueryGenerator {
 
 
         // exponential/geometric probability distribution
-        // 1/0.1 = 10 variables on average
-        double variableGenerateProbability = 1.0;
-        double variableGenerateProbabilityReduction = 0.1;
+        // 1/0.05 = 20 variables on average
+        double variableGenerateProbability = 3.0;
+        double variableGenerateProbabilityReduction = 0.05;
         double nextProbability = random.nextDouble();
 
         while (nextProbability < variableGenerateProbability && builder.haveUnvisitedVariable()) {
@@ -82,10 +85,14 @@ public class QueryGenerator {
             builder.visitVariable(var);
             Type varType = builder.getType(var);
 
+            // assign role players to a relation
             if (varType.isRelationType() && !varType.isImplicit()) {
                 // we do not assign role players for implicit relations manually
                 assignRolePlayers(tx, var, varType.asRelationType(), builder);
             }
+
+            // assign new relations this concept plays a role in
+            assignRelations(tx, var, varType, builder);
 
             // assign attribute ownership
             assignAttributes(tx, var, varType, builder);
@@ -96,7 +103,61 @@ public class QueryGenerator {
 
         // TODO add a comparison between compatible attributes with a low probability
 
+        double comparisonGenerateProbability = 0.1;
+        double comparisonGenerateProbabilityReduction = 0.5;
+        nextProbability = random.nextDouble();
+
+        while (nextProbability < comparisonGenerateProbability) {
+
+            assignAttributeComparison(builder);
+
+            comparisonGenerateProbability *= comparisonGenerateProbabilityReduction;
+            nextProbability = random.nextDouble();
+        }
+
         return builder;
+    }
+
+    /**
+     * Assign new relations this concept plays a role in, if any. This method allows us to generate multi-hop queries
+     *
+     * @param tx
+     * @param var
+     * @param varType
+     * @param builder
+     */
+    private void assignRelations(GraknClient.Transaction tx, Variable var, Type varType, QueryBuilder builder) {
+        // obtain all roles this concept type can play
+        List<Role> playableRoles = varType.playing().filter(role -> !role.isImplicit()).collect(Collectors.toList());
+
+        double relationGenerateProbability = 0.5;
+        double relationGenerateProbabilityReduction = 0.5;
+        double nextRandom = random.nextDouble();
+
+        if (playableRoles.size() > 0) {
+            while (nextRandom < relationGenerateProbability) {
+                // choose a role to play
+                Role varRole = playableRoles.get(random.nextInt(playableRoles.size()));
+
+                // find all relations that can relate this type of role
+                List<RelationType> allowedRelations = varRole.relations().collect(Collectors.toList());
+                RelationType relationType = allowedRelations.get(random.nextInt(allowedRelations.size()));
+
+                // generate a new relation (no reuse here) with this var as a role player
+                Variable newRelation = builder.reserveNewVariable();
+                builder.addMapping(newRelation, relationType);
+
+                assignRolePlayers(tx, newRelation, relationType, builder, var, varRole);
+
+                relationGenerateProbability *= relationGenerateProbabilityReduction;
+                nextRandom = random.nextDouble();
+            }
+        }
+    }
+
+
+    private void assignRolePlayers(GraknClient.Transaction tx, Variable relationVar, RelationType relationType, QueryBuilder builder) {
+        assignRolePlayers(tx, relationVar, relationType, builder, null, null);
     }
 
     /**
@@ -114,29 +175,41 @@ public class QueryGenerator {
      * @param relationType
      * @param builder
      */
-    private void assignRolePlayers(GraknClient.Transaction tx, Variable relationVar, RelationType relationType, QueryBuilder builder) {
+    private void assignRolePlayers(GraknClient.Transaction tx, Variable relationVar, RelationType relationType, QueryBuilder builder,
+                                   Variable usedRolePlayerVariable, Role seedRole) {
+
         Set<RelationType> relationSubtypes = relationType.subs().filter(relation -> !relation.isImplicit()).collect(Collectors.toSet());
 
-        // a super relation can be seen as playing its children's roles because only compatible relation subtypes are returned
-        List<Role> allPossibleRoles = relationSubtypes.stream().flatMap(RelationType::roles).collect(Collectors.toList());
-
-        // choose a starting role, which can only ever occur with some other roles, but not any role
-        Role seedRole = allPossibleRoles.get(random.nextInt(allPossibleRoles.size()));
-
-        // find all compatible roles so we generate combinations of roles that might actually occur in data, according to the schema
-        List<Role> compatibleRoles = seedRole.relations().filter(relationSubtypes::contains).flatMap(RelationType::roles).distinct().collect(Collectors.toList());
-
-
-        // choose a geometric series number of roles
-        // with mean of 1/0.5 = 2 roles, min 1
-        double roleGenerateProbability = 1.0;
-        double roleGenerateProbabilityReduction = 0.5;
-        double nextProbability = random.nextDouble();
 
         // do not reuse the same variables
         Set<Variable> usedRolePlayerVariables = new HashSet<>();
         // bias new roles away from being the same as old ones
         List<Role> usedRoleTypes = new ArrayList<>();
+        double roleGenerateProbability;
+
+        if (seedRole == null) {
+            // a super relation can be seen as playing its children's roles because only compatible relation subtypes are returned
+            List<Role> allPossibleRoles = relationSubtypes.stream().flatMap(RelationType::roles).collect(Collectors.toList());
+            // choose a starting role, which can only ever occur with some other roles, but not any role
+            seedRole = allPossibleRoles.get(random.nextInt(allPossibleRoles.size()));
+
+            // force generation of at least 1 role
+            roleGenerateProbability = 1.0;
+        } else {
+            // record the role player already guaranteed
+            usedRolePlayerVariables.add(usedRolePlayerVariable);
+            usedRoleTypes.add(seedRole);
+            builder.addRolePlayer(relationVar, usedRolePlayerVariable, seedRole);
+
+            // we already have 1 role player guaranteed, reduce probability of generating more
+            roleGenerateProbability = 0.5;
+        }
+
+        // find all compatible roles so we generate combinations of roles that might actually occur in data, according to the schema
+        List<Role> compatibleRoles = seedRole.relations().filter(relationSubtypes::contains).flatMap(RelationType::roles).distinct().collect(Collectors.toList());
+
+        double roleGenerateProbabilityReduction = 0.5;
+        double nextProbability = random.nextDouble();
 
         while (nextProbability < roleGenerateProbability) {
             Role role = compatibleRoles.get(random.nextInt(compatibleRoles.size()));
@@ -194,6 +267,47 @@ public class QueryGenerator {
                 nextProbability = random.nextDouble();
             }
         }
+    }
+
+
+    private void assignAttributeComparison(QueryBuilder builder) {
+        Map<AttributeType<?>, List<Variable>> attributeTypeVariablesMap = builder.attributeTypeVariables();
+
+        // only choose from types that have two ore more vars
+        List<AttributeType<?>> possibleAttributeTypes = attributeTypeVariablesMap.entrySet().stream()
+                .filter(entry -> entry.getValue().size() > 1)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+
+        if (possibleAttributeTypes.size() == 0) {
+            return;
+        }
+
+        // choose the attribute type that will use a comparison
+        int index = random.nextInt(possibleAttributeTypes.size());
+        AttributeType<?> attributeType = possibleAttributeTypes.get(index);
+
+        // choose two variables to compare
+        List<Variable> comparableVariables = attributeTypeVariablesMap.get(attributeType);
+        int comparingVarIndex = random.nextInt(comparableVariables.size());
+        int otherVarIndex = random.nextInt(comparableVariables.size());
+        while (otherVarIndex == comparingVarIndex) {
+            otherVarIndex = random.nextInt(comparableVariables.size());
+        }
+
+        // choose a comparator
+        List<Graql.Token.Comparator> comparators = new ArrayList<>();
+        if (attributeType.dataType().dataClass().equals(String.class)) {
+            comparators.add(Graql.Token.Comparator.CONTAINS);
+        }
+        comparators.add(Graql.Token.Comparator.GT);
+        comparators.add(Graql.Token.Comparator.LT);
+        comparators.add(Graql.Token.Comparator.EQV);
+        comparators.add(Graql.Token.Comparator.NEQV);
+
+
+        Graql.Token.Comparator comparator = comparators.get(random.nextInt(comparators.size()));
+        builder.addComparison(comparableVariables.get(comparingVarIndex), comparableVariables.get(otherVarIndex), comparator);
     }
 
     /**

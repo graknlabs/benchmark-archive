@@ -90,7 +90,6 @@ public class QueryGeneratorIT {
                 System.out.println(query);
             }
         }
-
     }
 
 
@@ -231,7 +230,27 @@ public class QueryGeneratorIT {
                     }
                 }
             }
+        }
+    }
 
+    @Test
+    public void someQueriesContainComparisons() {
+        try (GraknClient client = new GraknClient(server.grpcUri());
+             GraknClient.Session session = client.session(testKeyspace)) {
+            QueryGenerator queryGenerator = new QueryGenerator(session);
+            // generate 500 queries, some fraction (1/20)? should have
+            int queriesToGenerate = 500;
+            List<GraqlGet> queries = queryGenerator.generate(queriesToGenerate);
+            assertEquals(queries.size(), queriesToGenerate);
+            boolean comparisonFound = false;
+            for (GraqlGet query : queries) {
+                String q = query.toString();
+                if (q.contains("==") || q.contains("!==") || q.contains("<") || q.contains(">")) {
+                    System.out.println(query);
+                    comparisonFound = true;
+                }
+            }
+            assertTrue(comparisonFound);
         }
     }
 
