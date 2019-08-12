@@ -96,16 +96,19 @@ public class QueryBuilder {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * @return mapping from attribute type to all the variables corresponding to that attribute type
+     */
     Map<AttributeType<?>, List<Variable>> attributeTypeVariables() {
         Map<AttributeType<?>, List<Variable>> attrTypeMapping = new HashMap<>();
-
-        variableTypeMap.entrySet().stream()
-                .filter(entry -> entry.getValue().isAttributeType())
-                .forEach(entry -> attrTypeMapping.merge(
-                        entry.getValue().asAttributeType(),
-                        Collections.singletonList(entry.getKey()),
-                        (l1, l2) -> Stream.concat(l1.stream(), l2.stream()).collect(Collectors.toList())
-                ));
+        for (Map.Entry<Variable, Type> entry : variableTypeMap.entrySet()) {
+            if (entry.getValue().isAttributeType()) {
+                AttributeType<?> attributeType = entry.getValue().asAttributeType();
+                Variable var = entry.getKey();
+                attrTypeMapping.putIfAbsent(attributeType, new ArrayList<>());
+                attrTypeMapping.get(attributeType).add(var);
+            }
+        }
 
         return attrTypeMapping;
     }

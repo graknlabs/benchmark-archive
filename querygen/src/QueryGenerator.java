@@ -100,7 +100,7 @@ public class QueryGenerator {
 
 
         // because it's so rare we generate two compatible attributes in a query already,
-        // we can ste the probability of a comparison quite high
+        // we can set the probability of a comparison quite high
         double comparisonGenerateProbability = 0.5;
         double comparisonGenerateProbabilityReduction = 0.5;
         nextProbability = random.nextDouble();
