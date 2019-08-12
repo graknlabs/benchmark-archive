@@ -232,6 +232,14 @@ public class QueryGeneratorIT {
         }
     }
 
+    /**
+     * TODO test to check that attribute comparisons are compatiblet
+      */
+    @Test
+    public void attributeComparisonsBetweenSameDatatypes() {
+
+    }
+
     @Test
     public void someQueriesContainComparisons() {
         try (GraknClient client = new GraknClient(server.grpcUri());
