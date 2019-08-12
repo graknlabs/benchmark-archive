@@ -18,7 +18,7 @@
 
 package grakn.benchmark.querygen.test.vectorise;
 
-import grakn.benchmark.querygen.vectorise.Vectoriser;
+import grakn.benchmark.querygen.Vectoriser;
 import graql.lang.Graql;
 import graql.lang.query.GraqlGet;
 import org.junit.Test;

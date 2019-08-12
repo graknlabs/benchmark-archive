@@ -87,6 +87,7 @@ public class QueryGeneratorIT {
             assertEquals(queries.size(), queriesToGenerate);
             for (GraqlGet query : queries) {
                 assertNotNull(query);
+                System.out.println(query);
             }
         }
     }

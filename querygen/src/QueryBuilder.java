@@ -30,7 +30,6 @@ import graql.lang.statement.StatementInstance;
 import graql.lang.statement.Variable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,7 +37,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class QueryBuilder {
 
@@ -147,6 +145,18 @@ public class QueryBuilder {
         } else {
             return pairs.stream().map(Pair::getSecond).collect(Collectors.toList());
         }
+    }
+
+    Set<Variable> allVariables() {
+        return variableTypeMap.keySet();
+    }
+
+    Set<Variable> relationVariables() {
+        return variableTypeMap.entrySet().stream().filter(entry -> entry.getValue().isRelationType())
+    }
+
+    List<Variable> attributesOwned(Variable var) {
+        return attributeOwnership.get(var);
     }
 
     GraqlGet build(GraknClient.Transaction tx, Random random) {
