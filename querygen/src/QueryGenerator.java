@@ -129,7 +129,7 @@ public class QueryGenerator {
         // obtain all roles this concept type can play
         List<Role> playableRoles = variableType.playing().filter(role -> !role.isImplicit()).collect(Collectors.toList());
 
-        double relationGenerateProbability = 0.8;
+        double relationGenerateProbability = 0.5;
         double relationGenerateProbabilityReduction = 0.5;
         double nextRandom = random.nextDouble();
 

@@ -116,7 +116,7 @@ public class Vectoriser {
         for (Variable var : allVariables) {
             Type type = query.getType(var);
             // determine attribtues this type can own
-            Set<AttributeType<?>> ownableTypes = type.attributes().collect(Collectors.toSet());
+            Set<AttributeType> ownableTypes = type.attributes().collect(Collectors.toSet());
             if (ownableTypes.size() > 0) {
                 totalThingsThatCanOwnAttributes++;
 
@@ -130,13 +130,133 @@ public class Vectoriser {
     }
 
     /**
-     * @return - mean ambiguity
+     * Query ambiguity is a measure of the number of choices the query planner has to make
+     * The higher the ambiguity, the more difficult a query is to plan
+     *
+     * The full computation enumerate all the orders of exploring nodes,
+     * similar to what the query planner does in the optimal tree to plan traversal
+     * This would be a potentially exponential tree search...
+     *
+     * As a simpler estimation of the number of choices there are to make we can perform the following variable-local
+     * explanation:
+     *
+     * sum(E(var)!)
+     *
+     * where E is the number of edges connected to a variable `var`.
+     * This is a local, 1-hop estimation of the number of choices to make
+     *
+     * Intuitively the ambiguity score should capture the following:
+     * - linear chains are mid-level difficulty to plan, depending on where you elect to start
+     * - the number of choices induced by a node is some function of the factorial of the number of connections (orderings of exploring the edges)
+     * - more variables will always induce a more difficult planning phase
+     *
+     * The underlying assumption here is that there is 1 optimal plan that we are trying to find.
+     * The more choices there are, the less likely/more work we have to do find it
+     *
+     * @return - ambiguity score
      */
+    public static double ambiguity(QueryBuilder query) {
+        Set<Variable> allVariables = query.allVariables();
+
+        int ambiguity = 0;
+
+        for (Variable var : allVariables) {
+            int edges = 0;
+
+            // attribute ownership edges (from owner to attribute)
+            int attributesOwned = query.attributesOwned(var).size();
+            edges += attributesOwned;
+
+
+            // TODO do we want to include both directions of an edge (ie double count)
+
+            // roles played in relation, if any, edges
+            List<Role> rolesPlayed = query.rolesPlayedInRelation(var);
+            if (rolesPlayed != null) {
+                edges += rolesPlayed.size();
+            }
+
+            // we only track the roles played in relation, ie edges from relation to role player
+            // rather than also computing the roles played by each variable
+
+            // TODO sum the factorial of the number of edges on this variable
+
+        }
+
+        // simple example: two variables, one ownership =>  0.5
+        // to expand the range of this value we double the outEdges to double count each edge in both directions
+
+        return ambiguity;
+    }
 
 
     /**
+     * A measure of specific the query is, compared to how specific it could be overall.
+     * Note that making it more specific could change the meaning of the query. However,
+     * it is a general measure of how many results may be matched. It could also be seen as a sort
+     * of measure of how well we can plan a query overall. The more specific the components, the more we can
+     * try to infer and prune (in the long term).
+     *
+     * Ie. a low specificity query: match $x isa entity; get; // where we have thing - entity - home - apartment
+     * a high specificity query: match $x isa apartment; get;
+     *
+     * Computation:
+     * For each variable in the query, obtain its type T. Calculate its depth d(T). Obtain all the leaf
+     * child types L(T). Take the mean depth of T wrt. its child leaves. Compute the mean specificity of T:
+     * over l in L(T): m(T) = sum(d(T)/d(l)) / #(L(T))
+     *
+     * then compute the mean of m(T) = sum(m(T)) / #s(T)
+     *
      * @return - mean specificity
      */
+    public static double specificity(QueryBuilder query) {
+        Set<Variable> allVariables = query.allVariables();
+
+        double specificity = 0.0;
+        for (Variable var : allVariables) {
+            Type type = query.getType(var);
+
+            Set<Type> leafChildren = leafChildren(type);
+            if (!leafChildren.isEmpty()) {
+                int typeDepth = depth(type);
+                double meanDepth = 0.0;
+                for (Type leafChild : leafChildren) {
+                    meanDepth += typeDepth / ((double) depth(leafChild));
+                }
+                specificity += meanDepth;
+            }
+        }
+
+        specificity /= allVariables.size();
+        return specificity;
+    }
+
+    private static int depth(Type t) {
+        int upward = 1;
+        Type parent = t.sup();
+        while (!parent.label().toString().equals("thing")) {
+            upward++;
+            parent = parent.sup();
+        }
+        return upward;
+    }
+
+    /**
+     *
+     * @param t - concept Type t
+     * @return - set of child types that are also leaves
+     */
+    private static Set<Type> leafChildren(Type t) {
+        List<? extends Type> children = t.subs().collect(Collectors.toList());
+        Set<Type> leafChildren = new HashSet<>();
+        for (Type child : children) {
+            // filter out children that have more `subs` than themselves
+            if (!(child.subs().collect(Collectors.toList()).size() == 1)) {
+                leafChildren.add(child);
+            }
+        }
+        return leafChildren;
+    }
 
     /**
      * @return - 2*(role players + attrs owned)/#vars ~= edges per vertex
@@ -172,5 +292,15 @@ public class Vectoriser {
         // to expand the range of this value we double the outEdges to double count each edge in both directions
 
         return 2.0*outEdges / numVariables;
+    }
+
+
+    /**
+     *
+     * @param query
+     * @return
+     */
+    public static int numComparisons(QueryBuilder query) {
+        return query.numAttributeComparisons();
     }
 }

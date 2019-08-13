@@ -170,6 +170,10 @@ public class QueryBuilder {
         return attributeOwnership.get(var);
     }
 
+    int numAttributeComparisons() {
+        return attributeComparisons.size();
+    }
+
     GraqlGet build(GraknClient.Transaction tx, Random random) {
         List<Pattern> patterns = new ArrayList<>();
 
