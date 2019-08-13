@@ -147,14 +147,25 @@ public class QueryBuilder {
         }
     }
 
+
+    /**
+    * all variables in query
+    */
     Set<Variable> allVariables() {
         return variableTypeMap.keySet();
     }
 
+
+    /**
+     * Variables representing relations
+     */
     Set<Variable> relationVariables() {
-        return variableTypeMap.entrySet().stream().filter(entry -> entry.getValue().isRelationType())
+        return variableTypeMap.entrySet().stream().filter(entry -> entry.getValue().isRelationType()).map(Map.Entry::getKey).collect(Collectors.toSet());
     }
 
+    /**
+     *
+     */
     List<Variable> attributesOwned(Variable var) {
         return attributeOwnership.get(var);
     }

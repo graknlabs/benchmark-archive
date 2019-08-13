@@ -44,6 +44,7 @@ public class Vectoriser {
 
     /**
      * @return - Number of unique variables in the query
+     * Range: 0 - inf
      */
     public static int numVariables(QueryBuilder query) {
         return query.allVariables().size();
@@ -57,7 +58,8 @@ public class Vectoriser {
      */
 
     /**
-     * 3. average roles per relation (non-unique)
+     * @return - average roles per relation (non-unique)
+     * Range: 0 - inf
      */
     public static double meanRolesPerRelation(QueryBuilder query) {
         Set<Variable> relationVariables = query.relationVariables();
@@ -76,7 +78,11 @@ public class Vectoriser {
 
 
     /**
-     * 4. average unique roles per relation
+     * @return - average unique roles per relation
+     * Range: 0 - mean number of role types in a releation
+     *
+     * Example 0: match $x isa relation; get; (no role players)
+     * Example max: match $x isa marriage; $x (husband: $h, wife: $w); get;
      */
     public static double meanUniqueRolesPerRelation(QueryBuilder query) {
         Set<Variable> relationVariables = query.relationVariables();
@@ -93,7 +99,13 @@ public class Vectoriser {
     }
 
     /**
-     * 5. average attrs per thing that can have any attrs
+     * @return - average attrs per thing that can have any attrs
+     * Range: 0 - inf
+     *
+     * Example of 0: match $x isa person; get; (where a person can own a name)
+     * Example of 3: match $x isa person, has name $a1, has name $a2, has name $a3; get; (where a person can own a name)
+     *
+     * TODO include the idea of != to ensure the edges are actually different, otherwise the query just returns the same thing many times
      */
     public static double meanAttributesOwnedPerThing(QueryBuilder query) {
         Set<Variable> allVariables = query.allVariables();
@@ -118,8 +130,47 @@ public class Vectoriser {
     }
 
     /**
-     * 6. mean ambiguity
-     * 7. mean specificity
-     * 8. (roles played + attrs owned)/#vars ~= edges per vertex
+     * @return - mean ambiguity
      */
+
+
+    /**
+     * @return - mean specificity
+     */
+
+    /**
+     * @return - 2*(role players + attrs owned)/#vars ~= edges per vertex
+     *
+     * Value Range: 0 - 1
+     * because the same variable can only be used once in a role player, creating one edge from relation to role player
+     * and each attribute variable will only be owned once, at least every relation is connected to every other variable
+     * and every attribute is owned by everyone => 0.5 cost. We double it to count each edge in each direction so we
+     * end up with range 0 - 1
+     */
+    public static double meanEdgesPerVariable(QueryBuilder query) {
+        Set<Variable> allVariables = query.allVariables();
+
+        int outEdges = 0;
+        int numVariables = allVariables.size();
+
+        for (Variable var : allVariables) {
+            // attribute ownership edges (from owner to attribute)
+            int attributesOwned = query.attributesOwned(var).size();
+            outEdges += attributesOwned;
+
+            // roles played in relation, if any, edges
+            List<Role> rolesPlayed = query.rolesPlayedInRelation(var);
+            if (rolesPlayed != null) {
+                outEdges += rolesPlayed.size();
+            }
+
+            // we only track the roles played in relation, ie edges from relation to role player
+            // rather than also computing the roles played by each variable
+        }
+
+        // simple example: two variables, one ownership =>  0.5
+        // to expand the range of this value we double the outEdges to double count each edge in both directions
+
+        return 2.0*outEdges / numVariables;
+    }
 }
