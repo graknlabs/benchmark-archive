@@ -149,7 +149,7 @@ public class QueryBuilder {
 
 
     /**
-    * all variables in query
+    * @return all variables in this query
     */
     Set<Variable> allVariables() {
         return variableTypeMap.keySet();
@@ -157,14 +157,14 @@ public class QueryBuilder {
 
 
     /**
-     * Variables representing relations
+     * @return Set of variables that are representing relations
      */
     Set<Variable> relationVariables() {
         return variableTypeMap.entrySet().stream().filter(entry -> entry.getValue().isRelationType()).map(Map.Entry::getKey).collect(Collectors.toSet());
     }
 
     /**
-     *
+     * @return List of variables representing attributes that are owned by a variable
      */
     List<Variable> attributesOwned(Variable var) {
         return attributeOwnership.get(var);
