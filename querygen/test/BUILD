@@ -28,7 +28,4 @@ java_test(
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
         "//dependencies/maven/artifacts/org/hamcrest:hamcrest-all"
     ],
-#    classpath_resources = [
-#        "//querygen/test-integration/resources:logback-test"
-#    ],
 )

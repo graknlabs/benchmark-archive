@@ -24,7 +24,6 @@ import grakn.core.concept.type.Role;
 import grakn.core.concept.type.Type;
 import graql.lang.statement.Variable;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -33,32 +32,22 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Consume a GraqlGet query and provide a n-dimensional vector representation
+ * Consume a QueryBuilder and provide a n-dimensional vector representation
  */
 public class Vectoriser {
+    private final QueryBuilder queryBuilder;
 
-
-    public static List<Double> vectorise(QueryBuilder query) {
-        return Arrays.asList(
-                (double)numVariables(query),
-                meanRolesPerRelation(query),
-                meanUniqueRolesPerRelation(query),
-                meanAttributesOwnedPerThing(query),
-                ambiguity(query),
-                specificity(query),
-                meanEdgesPerVariable(query),
-                (double)numComparisons(query)
-        );
+    public Vectoriser(QueryBuilder queryBuilder) {
+        this.queryBuilder = queryBuilder;
     }
 
     /**
      * @return - Number of unique variables in the query
      * Range: 0 - inf
      */
-    static int numVariables(QueryBuilder query) {
-        return query.allVariables().size();
+    int numVariables() {
+        return queryBuilder.allVariables().size();
     }
-
 
 
     /**
@@ -70,13 +59,13 @@ public class Vectoriser {
      * @return - average roles per relation (non-unique)
      * Range: 0 - inf
      */
-    static double meanRolesPerRelation(QueryBuilder query) {
-        Set<Variable> relationVariables = query.relationVariables();
+    double meanRolesPerRelation() {
+        Set<Variable> relationVariables = queryBuilder.relationVariables();
 
         int totalRolesPlayed = 0;
         int totalRelations = 0;
         for (Variable var : relationVariables) {
-            List<Role> rolesPlayed = query.rolesPlayedInRelation(var);
+            List<Role> rolesPlayed = queryBuilder.rolesPlayedInRelation(var);
             totalRolesPlayed += rolesPlayed.size();
             totalRelations++;
         }
@@ -97,13 +86,13 @@ public class Vectoriser {
      * Example 0: match $x isa relation; get; (no role players)
      * Example max: match $x isa marriage; $x (husband: $h, wife: $w); get;
      */
-    static double meanUniqueRolesPerRelation(QueryBuilder query) {
-        Set<Variable> relationVariables = query.relationVariables();
+    double meanUniqueRolesPerRelation() {
+        Set<Variable> relationVariables = queryBuilder.relationVariables();
 
         int totalRolesPlayed = 0;
         int totalRelations = 0;
         for (Variable var : relationVariables) {
-            Set<Role> rolesPlayed = new HashSet<>(query.rolesPlayedInRelation(var));
+            Set<Role> rolesPlayed = new HashSet<>(queryBuilder.rolesPlayedInRelation(var));
             totalRolesPlayed += rolesPlayed.size();
             totalRelations++;
         }
@@ -124,20 +113,20 @@ public class Vectoriser {
      *
      * TODO include the idea of != to ensure the edges are actually different, otherwise the query just returns the same thing many times
      */
-    static double meanAttributesOwnedPerThing(QueryBuilder query) {
-        Set<Variable> allVariables = query.allVariables();
+    double meanAttributesOwnedPerThing() {
+        Set<Variable> allVariables = queryBuilder.allVariables();
 
         int totalAttributesOwned = 0;
         int totalThingsThatCanOwnAttributes = 0;
 
         for (Variable var : allVariables) {
-            Type type = query.getType(var);
+            Type type = queryBuilder.getType(var);
             // determine attribtues this type can own
             Set<AttributeType> ownableTypes = type.attributes().collect(Collectors.toSet());
             if (ownableTypes.size() > 0) {
                 totalThingsThatCanOwnAttributes++;
 
-                List<Variable> attributeVariablesOwned = query.attributesOwned(var);
+                List<Variable> attributeVariablesOwned = queryBuilder.attributesOwned(var);
                 if (attributeVariablesOwned != null) {
                     totalAttributesOwned += attributeVariablesOwned.size();
                 }
@@ -177,15 +166,15 @@ public class Vectoriser {
      *
      * @return - ambiguity score
      */
-    static double ambiguity(QueryBuilder query) {
-        Set<Variable> allVariables = query.allVariables();
+    double ambiguity() {
+        Set<Variable> allVariables = queryBuilder.allVariables();
 
         Map<Variable, Integer> edgeCounts = new HashMap<>();
         for (Variable var : allVariables) {
             edgeCounts.putIfAbsent(var, 0);
 
             // attribute ownership edges (from owner to attribute)
-            List<Variable> variablesOwned = query.attributesOwned(var);
+            List<Variable> variablesOwned = queryBuilder.attributesOwned(var);
             if (variablesOwned != null) {
                 edgeCounts.put(var, edgeCounts.get(var) + variablesOwned.size());
                 for (Variable ownedVariable : variablesOwned) {
@@ -194,12 +183,12 @@ public class Vectoriser {
             }
 
             // roles played in relation, if any, edges
-            List<Role> rolesPlayed = query.rolesPlayedInRelation(var);
+            List<Role> rolesPlayed = queryBuilder.rolesPlayedInRelation(var);
             if (rolesPlayed != null) {
                 edgeCounts.put(var, edgeCounts.get(var) + rolesPlayed.size());
             }
 
-            Set<Variable> rolePlayers = query.rolePlayersInRelation(var);
+            Set<Variable> rolePlayers = queryBuilder.rolePlayersInRelation(var);
             if (rolePlayers != null) {
                 for (Variable rolePlayer : rolePlayers) {
                     edgeCounts.put(rolePlayer, edgeCounts.getOrDefault(rolePlayer, 0) + 1);
@@ -216,7 +205,7 @@ public class Vectoriser {
         return ambiguity;
     }
 
-    private static long factorial(int number) {
+    static long factorial(int number) {
         long result = 1;
 
         for (int factor = 2; factor <= number; factor++) {
@@ -246,12 +235,12 @@ public class Vectoriser {
      *
      * @return - mean specificity
      */
-    static double specificity(QueryBuilder query) {
-        Set<Variable> allVariables = query.allVariables();
+    double specificity() {
+        Set<Variable> allVariables = queryBuilder.allVariables();
 
         double specificity = 0.0;
         for (Variable var : allVariables) {
-            Type type = query.getType(var);
+            Type type = queryBuilder.getType(var);
 
             Set<Type> leafChildren = leafChildren(type);
             if (!leafChildren.isEmpty()) {
@@ -260,7 +249,7 @@ public class Vectoriser {
                 for (Type leafChild : leafChildren) {
                     meanDepth += typeDepth / ((double) depth(leafChild));
                 }
-                specificity += meanDepth;
+                specificity += meanDepth/leafChildren.size();
             }
         }
 
@@ -268,7 +257,7 @@ public class Vectoriser {
         return specificity;
     }
 
-    static int depth(Type t) {
+    int depth(Type t) {
         if (t.label().toString().equals("thing")) {
             return 0;
         }
@@ -287,7 +276,7 @@ public class Vectoriser {
      * @param t - concept Type t
      * @return - set of child types that are also leaves
      */
-    static Set<Type> leafChildren(Type t) {
+    Set<Type> leafChildren(Type t) {
         List<? extends Type> children = t.subs().collect(Collectors.toList());
         Set<Type> leafChildren = new HashSet<>();
         for (Type child : children) {
@@ -308,20 +297,20 @@ public class Vectoriser {
      * and every attribute is owned by everyone => 0.5 cost. We double it to count each edge in each direction so we
      * end up with range 0 - 1
      */
-    static double meanEdgesPerVariable(QueryBuilder query) {
-        Set<Variable> allVariables = query.allVariables();
+    double meanEdgesPerVariable() {
+        Set<Variable> allVariables = queryBuilder.allVariables();
 
         int outEdges = 0;
         int numVariables = allVariables.size();
 
         for (Variable var : allVariables) {
             // attribute ownership edges (from owner to attribute)
-            List<Variable> attributeVariables = query.attributesOwned(var);
+            List<Variable> attributeVariables = queryBuilder.attributesOwned(var);
             int attributesOwned = attributeVariables != null ? attributeVariables.size() : 0;
             outEdges += attributesOwned;
 
             // roles played in relation, if any, edges
-            List<Role> rolesPlayed = query.rolesPlayedInRelation(var);
+            List<Role> rolesPlayed = queryBuilder.rolesPlayedInRelation(var);
             if (rolesPlayed != null) {
                 outEdges += rolesPlayed.size();
             }
@@ -338,11 +327,9 @@ public class Vectoriser {
 
 
     /**
-     *
-     * @param query
      * @return
      */
-    static int numComparisons(QueryBuilder query) {
-        return query.numAttributeComparisons();
+    int numComparisons() {
+        return queryBuilder.numAttributeComparisons();
     }
 }

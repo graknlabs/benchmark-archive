@@ -29,7 +29,7 @@ public class VectoriserTest {
         Type t = mock(Type.class);
         builder.addMapping(v, t);
 
-        Assert.assertEquals(Vectoriser.numVariables(builder), 1);
+        Assert.assertEquals((new Vectoriser(builder)).numVariables(), 1);
     }
 
     @Test
@@ -48,14 +48,14 @@ public class VectoriserTest {
         Variable anotherRolePlayerVar = builder.reserveNewVariable();
         builder.addRolePlayer(v, anotherRolePlayerVar, r1);
 
-        assertEquals(2.0, Vectoriser.meanRolesPerRelation(builder), 0.0001);
+        assertEquals(2.0, (new Vectoriser(builder)).meanRolesPerRelation(), 0.0001);
 
         Variable anotherRelation = builder.reserveNewVariable();
         RelationType anotherRelationType = mock(RelationType.class);
         when(anotherRelationType.isRelationType()).thenReturn(true);
         builder.addMapping(anotherRelation, anotherRelationType);
 
-        assertEquals(1.0, Vectoriser.meanRolesPerRelation(builder), 00001);
+        assertEquals(1.0, (new Vectoriser(builder)).meanRolesPerRelation(), 00001);
     }
 
     @Test
@@ -74,14 +74,14 @@ public class VectoriserTest {
         Variable anotherRolePlayerVar = builder.reserveNewVariable();
         builder.addRolePlayer(v, anotherRolePlayerVar, r1);
 
-        assertEquals(1.0, Vectoriser.meanUniqueRolesPerRelation(builder), 0.0001);
+        assertEquals(1.0, (new Vectoriser(builder)).meanUniqueRolesPerRelation(), 0.0001);
 
         Variable anotherRelation = builder.reserveNewVariable();
         RelationType anotherRelationType = mock(RelationType.class);
         when(anotherRelationType.isRelationType()).thenReturn(true);
         builder.addMapping(anotherRelation, anotherRelationType);
 
-        assertEquals(0.5, Vectoriser.meanUniqueRolesPerRelation(builder), 0.0001);
+        assertEquals(0.5, (new Vectoriser(builder)).meanUniqueRolesPerRelation(), 0.0001);
     }
 
 
@@ -114,7 +114,7 @@ public class VectoriserTest {
         when(entityType2.attributes()).thenReturn(Stream.empty());
         builder.addMapping(v2, entityType2);
 
-        assertEquals(3.0 / 1.0, Vectoriser.meanAttributesOwnedPerThing(builder), 0.0001);
+        assertEquals(3.0 / 1.0, (new Vectoriser(builder)).meanAttributesOwnedPerThing(), 0.0001);
     }
 
     /**
@@ -162,13 +162,16 @@ public class VectoriserTest {
         builder.addRolePlayer(r1, e1, role1);
         builder.addRolePlayer(r1, e2, role2);
 
-        assertEquals(35.0, Vectoriser.ambiguity(builder), 0.0001);
+        assertEquals(35.0, (new Vectoriser(builder)).ambiguity(), 0.0001);
     }
 
+    /**
+     * Test the specificity measure is correct by building a mock type hierarchy
+     * And checking the final specificity against the expected values from the hierarchy
+     * as explained on the Vectors.specificity method
+     */
     @Test
     public void testSpecificity() {
-        QueryBuilder builder = new QueryBuilder();
-
         // first, build up the whole type hierarchy
         // thing - entity - person
         // thing - relation [@has-attribute - @has-name, marriage]
@@ -217,25 +220,42 @@ public class VectoriserTest {
 
 
         // test depth calculation is correct
-        assertEquals(0, Vectoriser.depth(thing));
-        assertEquals(1, Vectoriser.depth(relation));
-        assertEquals(2, Vectoriser.depth(hasAttribute));
+        assertEquals(0, (new Vectoriser(null)).depth(thing));
+        assertEquals(1, (new Vectoriser(null)).depth(relation));
+        assertEquals(2, (new Vectoriser(null)).depth(hasAttribute));
 
         // test leafChildren is correct
-        Set<Type> leafChildren = Vectoriser.leafChildren(thing);
+        Set<Type> leafChildren = (new Vectoriser(null)).leafChildren(thing);
         assertThat(leafChildren, containsInAnyOrder(person, marriage, hasName, attribute));
 
+
+        // TODO measure specificity of a query
+        QueryBuilder builder = new QueryBuilder();
+        Variable v = builder.reserveNewVariable();
+        builder.addMapping(v, hasAttribute);
+
+        assertEquals(2.0/3, (new Vectoriser(builder)).specificity(), 0.0001);
+
+        Variable v2 = builder.reserveNewVariable();
+        builder.addMapping(v2, relation);
+        assertEquals( (2.0/3 + 0.5*(1.0/3 + 1.0/2))*0.5, (new Vectoriser(builder)).specificity(), 0.0001);
     }
 
     /**
+     * Ensure that the mean edges per variable is correct.
+     * The following test query is used:
+     *
      * Query:
      * e1 --> a1, a2
      * | \
      * r1 / a3
      * |
      * e2
-     * <p>
-     * 4! + 3! + 2! + 3*1! = 35
+     *
+     * This should lead to the following number of edges being counted (each edge is counted from each end, ie. twice):
+     * 4 + 3 + 2 + 3*1 = 12
+     * We have 6 variables, so the edge per variable:
+     * 12/6 = 2.0
      */
     @Test
     public void testEdgesPerVariable() {
@@ -272,7 +292,7 @@ public class VectoriserTest {
         builder.addRolePlayer(r1, e1, role1);
         builder.addRolePlayer(r1, e2, role2);
 
-        assertEquals(2.0, Vectoriser.meanEdgesPerVariable(builder), 0.0001);
+        assertEquals(2.0, (new Vectoriser(builder)).meanEdgesPerVariable(), 0.0001);
 
     }
 }
