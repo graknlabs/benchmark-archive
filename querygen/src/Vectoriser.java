@@ -44,7 +44,8 @@ public class Vectoriser {
                 meanAttributesOwnedPerThing(query),
                 ambiguity(query),
                 specificity(query),
-                meanEdgesPerVariable(query)
+                meanEdgesPerVariable(query),
+                (double)numComparisons(query)
         );
     }
 
@@ -52,7 +53,7 @@ public class Vectoriser {
      * @return - Number of unique variables in the query
      * Range: 0 - inf
      */
-    public static int numVariables(QueryBuilder query) {
+    static int numVariables(QueryBuilder query) {
         return query.allVariables().size();
     }
 
@@ -67,7 +68,7 @@ public class Vectoriser {
      * @return - average roles per relation (non-unique)
      * Range: 0 - inf
      */
-    public static double meanRolesPerRelation(QueryBuilder query) {
+    static double meanRolesPerRelation(QueryBuilder query) {
         Set<Variable> relationVariables = query.relationVariables();
 
         int totalRolesPlayed = 0;
@@ -94,7 +95,7 @@ public class Vectoriser {
      * Example 0: match $x isa relation; get; (no role players)
      * Example max: match $x isa marriage; $x (husband: $h, wife: $w); get;
      */
-    public static double meanUniqueRolesPerRelation(QueryBuilder query) {
+    static double meanUniqueRolesPerRelation(QueryBuilder query) {
         Set<Variable> relationVariables = query.relationVariables();
 
         int totalRolesPlayed = 0;
@@ -121,7 +122,7 @@ public class Vectoriser {
      *
      * TODO include the idea of != to ensure the edges are actually different, otherwise the query just returns the same thing many times
      */
-    public static double meanAttributesOwnedPerThing(QueryBuilder query) {
+    static double meanAttributesOwnedPerThing(QueryBuilder query) {
         Set<Variable> allVariables = query.allVariables();
 
         int totalAttributesOwned = 0;
@@ -174,7 +175,7 @@ public class Vectoriser {
      *
      * @return - ambiguity score
      */
-    public static double ambiguity(QueryBuilder query) {
+    static double ambiguity(QueryBuilder query) {
         Set<Variable> allVariables = query.allVariables();
 
         int ambiguity = 0;
@@ -235,7 +236,7 @@ public class Vectoriser {
      *
      * @return - mean specificity
      */
-    public static double specificity(QueryBuilder query) {
+    static double specificity(QueryBuilder query) {
         Set<Variable> allVariables = query.allVariables();
 
         double specificity = 0.0;
@@ -293,7 +294,7 @@ public class Vectoriser {
      * and every attribute is owned by everyone => 0.5 cost. We double it to count each edge in each direction so we
      * end up with range 0 - 1
      */
-    public static double meanEdgesPerVariable(QueryBuilder query) {
+    static double meanEdgesPerVariable(QueryBuilder query) {
         Set<Variable> allVariables = query.allVariables();
 
         int outEdges = 0;
@@ -327,7 +328,7 @@ public class Vectoriser {
      * @param query
      * @return
      */
-    public static int numComparisons(QueryBuilder query) {
+    static int numComparisons(QueryBuilder query) {
         return query.numAttributeComparisons();
     }
 }

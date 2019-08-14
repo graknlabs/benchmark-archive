@@ -16,16 +16,18 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+
 java_test(
-     name = "query-vectoriser-test",
-     test_class = "grakn.benchmark.querygen.vectorise.QueryVectoriserTest",
-     srcs = ["QueryVectoriserTest.java"],
-     deps = [
-#         "@graknlabs_grakn_core//concept:concept",
-         "//querygen/src/vectorise:query-vectoriser",
-         "@graknlabs_graql//java:graql",
-     ],
-     classpath_resources = [
-         "//querygen/test-integration/resources:logback-test"
-     ]
- )
+    name = "vectoriser-test",
+    test_class = "grakn.benchmark.querygen.VectoriserTest",
+    srcs = ["VectoriserTest.java"],
+    deps = [
+        "//querygen/src:query-generator",
+        "@graknlabs_grakn_core//concept:concept",
+        "@graknlabs_graql//java:graql",
+        "//dependencies/maven/artifacts/org/mockito:mockito-core"
+    ],
+#    classpath_resources = [
+#        "//querygen/test-integration/resources:logback-test"
+#    ],
+)
