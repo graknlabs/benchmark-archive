@@ -84,7 +84,6 @@ public class VectoriserTest {
     @Test
     public void testMeanAttributesOwnedPerThing() {
         QueryBuilder builder = new QueryBuilder();
-        // create one relation variable
 
         Variable v1 = builder.reserveNewVariable();
         // an entity type that can have 2 different attribute types
@@ -112,5 +111,55 @@ public class VectoriserTest {
         builder.addMapping(v2, entityType2);
 
         assertEquals(3.0/1.0, Vectoriser.meanAttributesOwnedPerThing(builder), 0.0001);
+    }
+
+    /**
+     * Query:
+     *  e1 --> a1, a2
+     *  | \
+     * r1 / a3
+     *  |
+     * e2
+     *
+     * 4! + 3! + 2! + 3*1! = 35
+     */
+    @Test
+    public void testAmbiguity() {
+        QueryBuilder builder = new QueryBuilder();
+
+        Variable e1 = builder.reserveNewVariable();
+        EntityType entityType = Mockito.mock(EntityType.class);
+        AttributeType attributeType = Mockito.mock(AttributeType.class);
+        AttributeType attributeType2 = Mockito.mock(AttributeType.class);
+        builder.addMapping(e1, entityType);
+
+        Variable a1 = builder.reserveNewVariable();
+        builder.addMapping(a1, attributeType);
+        builder.addOwnership(e1, a1);
+        Variable a2 = builder.reserveNewVariable();
+        builder.addMapping(a2, attributeType);
+        builder.addOwnership(e1, a2);
+        Variable a3 = builder.reserveNewVariable();
+        builder.addMapping(a3, attributeType2);
+        builder.addOwnership(e1, a3);
+
+        Variable e2 = builder.reserveNewVariable();
+        EntityType entityType2 = Mockito.mock(EntityType.class);
+        builder.addMapping(e2, entityType2);
+
+        Variable r1 = builder.reserveNewVariable();
+        RelationType relationType = Mockito.mock(RelationType.class);
+        builder.addMapping(r1, relationType);
+        builder.addOwnership(r1, a3);
+
+        Role role1 = Mockito.mock(Role.class);
+        Role role2 = Mockito.mock(Role.class);
+
+        builder.addRolePlayer(r1, e1, role1);
+        builder.addRolePlayer(r1, e2, role2);
+
+
+
+        assertEquals(35.0, Vectoriser.ambiguity(builder), 0.0001);
     }
 }

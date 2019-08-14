@@ -25,8 +25,10 @@ import grakn.core.concept.type.Type;
 import graql.lang.statement.Variable;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -178,27 +180,35 @@ public class Vectoriser {
     static double ambiguity(QueryBuilder query) {
         Set<Variable> allVariables = query.allVariables();
 
-        int ambiguity = 0;
-
+        Map<Variable, Integer> edgeCounts = new HashMap<>();
         for (Variable var : allVariables) {
-            int edges = 0;
+            edgeCounts.putIfAbsent(var, 0);
 
             // attribute ownership edges (from owner to attribute)
             List<Variable> variablesOwned = query.attributesOwned(var);
-            int attributesOwned = variablesOwned != null ? variablesOwned.size() : 0;
-            edges += attributesOwned;
-
-            // TODO do we want to include both directions of an edge (ie double count)?
+            if (variablesOwned != null) {
+                edgeCounts.put(var, edgeCounts.get(var) + variablesOwned.size());
+                for (Variable ownedVariable : variablesOwned) {
+                    edgeCounts.put(ownedVariable, edgeCounts.getOrDefault(ownedVariable, 0) + 1);
+                }
+            }
 
             // roles played in relation, if any, edges
             List<Role> rolesPlayed = query.rolesPlayedInRelation(var);
             if (rolesPlayed != null) {
-                edges += rolesPlayed.size();
+                edgeCounts.put(var, edgeCounts.get(var) + rolesPlayed.size());
             }
 
-            // we only track the roles played in relation, ie edges from relation to role player
-            // rather than also computing the roles played by each variable
+            Set<Variable> rolePlayers = query.rolePlayersInRelation(var);
+            if (rolePlayers != null) {
+                for (Variable rolePlayer : rolePlayers) {
+                    edgeCounts.put(rolePlayer, edgeCounts.getOrDefault(rolePlayer, 0) + 1);
+                }
+            }
+        }
 
+        int ambiguity = 0;
+        for (Integer edges : edgeCounts.values()) {
             long f = factorial(edges);
             ambiguity += f;
         }
