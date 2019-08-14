@@ -25,7 +25,8 @@ java_test(
         "//querygen/src:query-generator",
         "@graknlabs_grakn_core//concept:concept",
         "@graknlabs_graql//java:graql",
-        "//dependencies/maven/artifacts/org/mockito:mockito-core"
+        "//dependencies/maven/artifacts/org/mockito:mockito-core",
+        "//dependencies/maven/artifacts/org/hamcrest:hamcrest-all"
     ],
 #    classpath_resources = [
 #        "//querygen/test-integration/resources:logback-test"

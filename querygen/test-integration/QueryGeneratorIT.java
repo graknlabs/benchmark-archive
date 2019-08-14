@@ -33,7 +33,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
@@ -59,7 +58,6 @@ public class QueryGeneratorIT {
 
     @BeforeClass
     public static void loadSchema() {
-        Path path = Paths.get("querygen");
         GraknClient client = new GraknClient(server.grpcUri());
         GraknClient.Session session = client.session(testKeyspace);
         GraknClient.Transaction transaction = session.transaction().write();

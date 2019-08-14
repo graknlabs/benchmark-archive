@@ -268,14 +268,18 @@ public class Vectoriser {
         return specificity;
     }
 
-    private static int depth(Type t) {
-        int upward = 0;
+    static int depth(Type t) {
+        if (t.label().toString().equals("thing")) {
+            return 0;
+        }
+
+        int depth = 1;
         Type parent = t;
         while (parent.sup() != null && !parent.label().toString().equals("thing")) {
-            upward++;
+            depth++;
             parent = parent.sup();
         }
-        return upward;
+        return depth;
     }
 
     /**
@@ -283,12 +287,12 @@ public class Vectoriser {
      * @param t - concept Type t
      * @return - set of child types that are also leaves
      */
-    private static Set<Type> leafChildren(Type t) {
+    static Set<Type> leafChildren(Type t) {
         List<? extends Type> children = t.subs().collect(Collectors.toList());
         Set<Type> leafChildren = new HashSet<>();
         for (Type child : children) {
             // filter out children that have more `subs` than themselves
-            if (!(child.subs().collect(Collectors.toList()).size() == 1)) {
+            if (child.subs().collect(Collectors.toList()).size() == 1) {
                 leafChildren.add(child);
             }
         }
