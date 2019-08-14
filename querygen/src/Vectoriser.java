@@ -24,6 +24,7 @@ import grakn.core.concept.type.Role;
 import grakn.core.concept.type.Type;
 import graql.lang.statement.Variable;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,15 +32,20 @@ import java.util.stream.Collectors;
 
 /**
  * Consume a GraqlGet query and provide a n-dimensional vector representation
- *
- *
- * TODO what to do if have 0 in the denominator
  */
 public class Vectoriser {
 
 
-    public static double[] vectorise(QueryBuilder query) {
-        return null;
+    public static List<Double> vectorise(QueryBuilder query) {
+        return Arrays.asList(
+                (double)numVariables(query),
+                meanRolesPerRelation(query),
+                meanUniqueRolesPerRelation(query),
+                meanAttributesOwnedPerThing(query),
+                ambiguity(query),
+                specificity(query),
+                meanEdgesPerVariable(query)
+        );
     }
 
     /**
@@ -72,7 +78,11 @@ public class Vectoriser {
             totalRelations++;
         }
 
-        return totalRolesPlayed / (double) totalRelations;
+        if (totalRelations != 0) {
+            return totalRolesPlayed / (double) totalRelations;
+        } else {
+            return 0.0;
+        }
     }
 
 
@@ -95,7 +105,11 @@ public class Vectoriser {
             totalRelations++;
         }
 
-        return totalRolesPlayed / (double) totalRelations;
+        if (totalRelations != 0) {
+            return totalRolesPlayed / (double) totalRelations;
+        } else{
+            return 0.0;
+        }
     }
 
     /**
@@ -126,7 +140,12 @@ public class Vectoriser {
                 }
             }
         }
-        return totalAttributesOwned / (double) totalThingsThatCanOwnAttributes;
+
+        if (totalThingsThatCanOwnAttributes != 0) {
+            return totalAttributesOwned / (double) totalThingsThatCanOwnAttributes;
+        } else {
+            return 0.0;
+        }
     }
 
     /**
@@ -164,11 +183,11 @@ public class Vectoriser {
             int edges = 0;
 
             // attribute ownership edges (from owner to attribute)
-            int attributesOwned = query.attributesOwned(var).size();
+            List<Variable> variablesOwned = query.attributesOwned(var);
+            int attributesOwned = variablesOwned != null ? variablesOwned.size() : 0;
             edges += attributesOwned;
 
-
-            // TODO do we want to include both directions of an edge (ie double count)
+            // TODO do we want to include both directions of an edge (ie double count)?
 
             // roles played in relation, if any, edges
             List<Role> rolesPlayed = query.rolesPlayedInRelation(var);
@@ -179,14 +198,21 @@ public class Vectoriser {
             // we only track the roles played in relation, ie edges from relation to role player
             // rather than also computing the roles played by each variable
 
-            // TODO sum the factorial of the number of edges on this variable
-
+            long f = factorial(edges);
+            ambiguity += f;
         }
 
-        // simple example: two variables, one ownership =>  0.5
-        // to expand the range of this value we double the outEdges to double count each edge in both directions
-
         return ambiguity;
+    }
+
+    private static long factorial(int number) {
+        long result = 1;
+
+        for (int factor = 2; factor <= number; factor++) {
+            result *= factor;
+        }
+
+        return result;
     }
 
 
@@ -232,9 +258,9 @@ public class Vectoriser {
     }
 
     private static int depth(Type t) {
-        int upward = 1;
-        Type parent = t.sup();
-        while (!parent.label().toString().equals("thing")) {
+        int upward = 0;
+        Type parent = t;
+        while (parent.sup() != null && !parent.label().toString().equals("thing")) {
             upward++;
             parent = parent.sup();
         }
@@ -275,7 +301,8 @@ public class Vectoriser {
 
         for (Variable var : allVariables) {
             // attribute ownership edges (from owner to attribute)
-            int attributesOwned = query.attributesOwned(var).size();
+            List<Variable> attributeVariables = query.attributesOwned(var);
+            int attributesOwned = attributeVariables != null ? attributeVariables.size() : 0;
             outEdges += attributesOwned;
 
             // roles played in relation, if any, edges
