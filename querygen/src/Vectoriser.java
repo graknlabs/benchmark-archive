@@ -327,9 +327,18 @@ public class Vectoriser {
 
 
     /**
-     * @return
+     * @return - the mean number of comparisons per attribute variable
+     *
+     * Range: 0 - #vars
+     * explanation: at most n*(n-1) pairwise variable comparisons, divided by n ~= n comparisons per variable
      */
-    int numComparisons() {
-        return queryBuilder.numAttributeComparisons();
+    double comparisonsPerAttribute() {
+        long comparisons = queryBuilder.numAttributeComparisons();
+        long attributeVariables = queryBuilder.allVariables().stream().filter(var -> queryBuilder.getType(var).isAttributeType()).count();
+        if (attributeVariables > 0) {
+            return ((double) comparisons) / attributeVariables;
+        } else {
+            return 0.0;
+        }
     }
 }

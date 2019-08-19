@@ -6,6 +6,7 @@ import grakn.core.concept.type.EntityType;
 import grakn.core.concept.type.RelationType;
 import grakn.core.concept.type.Role;
 import grakn.core.concept.type.Type;
+import graql.lang.Graql;
 import graql.lang.statement.Variable;
 import org.junit.Assert;
 import org.junit.Test;
@@ -293,6 +294,66 @@ public class VectoriserTest {
         builder.addRolePlayer(r1, e2, role2);
 
         assertEquals(2.0, (new Vectoriser(builder)).meanEdgesPerVariable(), 0.0001);
+
+    }
+
+    /**
+     * The following test query is used:
+     *
+     * Query:
+     * e1 --> a1, a2
+     * | \
+     * r1 / a3
+     * |
+     * e2
+     *
+     * with: a1 == a3, a1 != a2
+     *
+     * Since we have 2 comparisons between 3 variables, we should compute 2/3 = 0.66
+     */
+    @Test
+    public void comparisonsPerAttribute() {
+        QueryBuilder builder = new QueryBuilder();
+
+        Variable e1 = builder.reserveNewVariable();
+        EntityType entityType = mock(EntityType.class);
+        AttributeType attributeType = mock(AttributeType.class);
+        when(attributeType.isAttributeType()).thenReturn(true);
+        AttributeType attributeType2 = mock(AttributeType.class);
+        when(attributeType2.isAttributeType()).thenReturn(true);
+        builder.addMapping(e1, entityType);
+
+        Variable a1 = builder.reserveNewVariable();
+        builder.addMapping(a1, attributeType);
+        builder.addOwnership(e1, a1);
+        Variable a2 = builder.reserveNewVariable();
+        builder.addMapping(a2, attributeType);
+        builder.addOwnership(e1, a2);
+        Variable a3 = builder.reserveNewVariable();
+        builder.addMapping(a3, attributeType2);
+        builder.addOwnership(e1, a3);
+
+        Variable e2 = builder.reserveNewVariable();
+        EntityType entityType2 = mock(EntityType.class);
+        builder.addMapping(e2, entityType2);
+
+        Variable r1 = builder.reserveNewVariable();
+        RelationType relationType = mock(RelationType.class);
+        builder.addMapping(r1, relationType);
+        builder.addOwnership(r1, a3);
+
+        Role role1 = mock(Role.class);
+        Role role2 = mock(Role.class);
+
+        builder.addRolePlayer(r1, e1, role1);
+        builder.addRolePlayer(r1, e2, role2);
+
+        builder.addComparison(a1, a2, Graql.Token.Comparator.EQV);
+        builder.addComparison(a1, a3, Graql.Token.Comparator.NEQV);
+
+        Vectoriser vectoriser = new Vectoriser(builder);
+
+        assertEquals(0.66666, vectoriser.comparisonsPerAttribute(), 0.0001);
 
     }
 }

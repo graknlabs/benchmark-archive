@@ -48,13 +48,16 @@ public class QueryGenerator {
         this.random = new Random(0);
     }
 
-    List<GraqlGet> generate(int numQueries) {
-        List<GraqlGet> queries = new ArrayList<>(numQueries);
+    List<VectorisedQuery> generate(int numQueries) {
+        List<VectorisedQuery> queries = new ArrayList<>(numQueries);
         for (int i = 0; i < numQueries; i++) {
             try (GraknClient.Transaction tx = session.transaction().write()) {
                 QueryBuilder builder = generateNewQuery(tx);
                 Vectoriser queryVectoriser = new Vectoriser(builder);
-                queries.add(builder.build(tx, random));
+
+                GraqlGet graqlQuery = builder.build(tx, random);
+                VectorisedQuery vectorisedQuery = new VectorisedQuery(graqlQuery, queryVectoriser);
+                queries.add(vectorisedQuery);
             }
         }
 

@@ -43,7 +43,7 @@ public class QueryBuilder {
     final Map<Variable, Type> variableTypeMap;
     final Map<Variable, List<Variable>> attributeOwnership;
     final Map<Variable, List<Pair<Variable, Role>>> relationRolePlayers;
-    final Map<Variable, Pair<Variable, Graql.Token.Comparator>> attributeComparisons;
+    final Map<Variable, Map<Variable, Graql.Token.Comparator>> attributeComparisons;
 
     final List<Variable> unvisitedVariables;
 
@@ -80,7 +80,9 @@ public class QueryBuilder {
     }
 
     void addComparison(Variable var1, Variable var2, Graql.Token.Comparator comparator) {
-        attributeComparisons.put(var1, new Pair<>(var2, comparator));
+        attributeComparisons.putIfAbsent(var1, new HashMap<>());
+        Map<Variable, Graql.Token.Comparator> comparisons = attributeComparisons.get(var1);
+        comparisons.put(var2, comparator);
     }
 
     boolean containsVariableWithType(Type type) {
@@ -170,8 +172,8 @@ public class QueryBuilder {
         return attributeOwnership.get(var);
     }
 
-    int numAttributeComparisons() {
-        return attributeComparisons.size();
+    long numAttributeComparisons() {
+        return attributeComparisons.values().stream().flatMap(map -> map.values().stream()).count();
     }
 
     GraqlGet build(GraknClient.Transaction tx, Random random) {
@@ -206,11 +208,12 @@ public class QueryBuilder {
         }
 
         // add attribute - attribute comparisons to the query
-        for (Map.Entry<Variable, Pair<Variable, Graql.Token.Comparator>> attributeComparison : attributeComparisons.entrySet()) {
+        for (Map.Entry<Variable, Map<Variable, Graql.Token.Comparator>> attributeComparison : attributeComparisons.entrySet()) {
             Variable v1 = attributeComparison.getKey();
-            Variable v2 = attributeComparison.getValue().getFirst();
-            Graql.Token.Comparator comparator = attributeComparison.getValue().getSecond();
-            patterns.add(Graql.var(v1).operation(ValueProperty.Operation.Comparison.Variable.of(comparator, Graql.var(v2))));
+            for (Variable v2 : attributeComparison.getValue().keySet()) {
+                Graql.Token.Comparator comparator = attributeComparison.getValue().get(v2);
+                patterns.add(Graql.var(v1).operation(ValueProperty.Operation.Comparison.Variable.of(comparator, Graql.var(v2))));
+            }
         }
 
         return Graql.match(patterns).get();
