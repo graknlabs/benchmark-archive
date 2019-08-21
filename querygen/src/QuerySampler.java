@@ -18,12 +18,14 @@
 
 package grakn.benchmark.querygen;
 
-import grakn.benchmark.querygen.kmeans.KMeans;
+import grakn.benchmark.querygen.subsampling.GriddedSampler;
+import grakn.benchmark.querygen.subsampling.KMeans;
 import grakn.client.GraknClient;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -52,7 +54,20 @@ public class QuerySampler {
 
         List<VectorisedQuery> sampledQueries = sampleFromClusters(computedClusters, samplesPerCluster);
 
-        System.out.println(sampledQueries);
+        return sampledQueries;
+    }
+
+    public static List<VectorisedQuery> querySampleGridded(GraknClient.Session session, int generate, int targetSamples, int divisionsPerAxis) {
+        System.out.println("Starting query generation...");
+        List<VectorisedQuery> rawQueries = parallelQueryGeneration(session, generate, 4);
+        GriddedSampler<VectorisedQuery> sampler = new GriddedSampler<>(divisionsPerAxis, rawQueries);
+
+        System.out.println("Calculating grid...");
+        sampler.calculateGrid();
+
+        Random random = new Random(0);
+        List<VectorisedQuery> sampledQueries = sampler.getSamples(targetSamples, random);
+
         return sampledQueries;
     }
 

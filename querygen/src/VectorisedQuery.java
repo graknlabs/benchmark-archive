@@ -18,7 +18,7 @@
 
 package grakn.benchmark.querygen;
 
-import grakn.benchmark.querygen.kmeans.Vectorisable;
+import grakn.benchmark.querygen.subsampling.Vectorisable;
 import graql.lang.query.GraqlGet;
 
 import java.util.Arrays;
@@ -64,4 +64,5 @@ public class VectorisedQuery implements Vectorisable {
                 comparisonsPerAttribute
         );
     }
+
 }

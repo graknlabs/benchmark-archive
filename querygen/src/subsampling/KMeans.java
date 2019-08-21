@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.querygen.kmeans;
+package grakn.benchmark.querygen.subsampling;
 
 
 import java.util.ArrayList;

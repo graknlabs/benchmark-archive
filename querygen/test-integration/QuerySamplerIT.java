@@ -31,8 +31,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class QuerySamplerIT {
 
@@ -66,18 +66,36 @@ public class QuerySamplerIT {
 
 
     @Test
-    public void querySamplerReturnsCorrectNumberOfQueries() {
+    public void queryKMeansSamplerReturnsLimitedNumberOfQueries() {
         try (GraknClient client = new GraknClient(server.grpcUri());
              GraknClient.Session session = client.session(testKeyspace)) {
 
             int queriesToSample = 100;
             int queriesToGenerate = 2000;
             List<VectorisedQuery> queries = QuerySampler.querySampleKMeans(session, queriesToGenerate, queriesToSample, 2);
-            assertEquals(queries.size(), queriesToGenerate);
+            assertTrue(queriesToSample > queries.size());
             for (VectorisedQuery query : queries) {
                 assertNotNull(query);
                 assertNotNull(query.graqlQuery);
                 System.out.println(query.graqlQuery);
+            }
+        }
+    }
+
+    @Test
+    public void queryGriddedSamplerReturnsCorrectNumberOfQueries() {
+        try (GraknClient client = new GraknClient(server.grpcUri());
+             GraknClient.Session session = client.session(testKeyspace)) {
+
+            int queriesToSample = 100;
+            int queriesToGenerate = 2000;
+            List<VectorisedQuery> queries = QuerySampler.querySampleGridded(session, queriesToGenerate, queriesToSample, 5);
+            assertTrue(queries.size() == queriesToSample);
+            for (VectorisedQuery query : queries) {
+                assertNotNull(query);
+                assertNotNull(query.graqlQuery);
+                System.out.println(query.graqlQuery);
+                System.out.println();
             }
         }
     }

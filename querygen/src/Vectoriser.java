@@ -234,6 +234,7 @@ public class Vectoriser {
      * then compute the mean of m(T) = sum(m(T)) / #s(T)
      *
      * @return - mean specificity
+     * Range: 0 - 1
      */
     double specificity() {
         Set<Variable> allVariables = queryBuilder.allVariables();
