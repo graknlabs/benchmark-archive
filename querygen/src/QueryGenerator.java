@@ -51,6 +51,7 @@ public class QueryGenerator {
     List<VectorisedQuery> generate(int numQueries) {
         List<VectorisedQuery> queries = new ArrayList<>(numQueries);
         for (int i = 0; i < numQueries; i++) {
+            System.out.println("QueryGenerator has generated: " + i);
             try (GraknClient.Transaction tx = session.transaction().write()) {
                 QueryBuilder builder = generateNewQuery(tx);
                 Vectoriser queryVectoriser = new Vectoriser(builder);

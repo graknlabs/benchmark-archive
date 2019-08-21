@@ -58,3 +58,24 @@ java_test(
         "//querygen/test-integration/resources:schema.gql"
     ]
 )
+
+java_test(
+    name = "query-sampler-it",
+    test_class = "grakn.benchmark.querygen.QuerySamplerIT",
+    srcs = ["QuerySamplerIT.java"],
+    deps = [
+        "//querygen/src:query-generator",
+        "@graknlabs_client_java//:client-java",
+        "@graknlabs_grakn_core//concept:concept",
+        "@graknlabs_graql//java:graql",
+        "@graknlabs_grakn_core//test-integration/rule:grakn-test-server"
+    ],
+    classpath_resources = [
+        "//querygen/test-integration/resources:logback-test"
+    ],
+    data = [
+        "//querygen/test-integration/conf:cassandra-embedded.yaml",
+        "//querygen/test-integration/conf:grakn.properties",
+        "//querygen/test-integration/resources:schema.gql"
+    ]
+)

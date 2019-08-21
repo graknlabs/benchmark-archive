@@ -18,7 +18,7 @@
 
 java_library(
     name = "query-generator",
-    srcs = glob(["*.java"]),
+    srcs = glob(["*.java", "kmeans/*.java"]),
     deps = [
         "@graknlabs_client_java//:client-java",
         "@graknlabs_graql//java:graql",

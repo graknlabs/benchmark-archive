@@ -1,4 +1,4 @@
-package grakn.benchmark.querygen;
+package grakn.benchmark.querygen.kmeans;
 
 import java.util.List;
 

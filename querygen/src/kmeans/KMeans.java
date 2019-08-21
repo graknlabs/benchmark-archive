@@ -1,4 +1,4 @@
-package grakn.benchmark.querygen;
+package grakn.benchmark.querygen.kmeans;
 
 
 import java.util.ArrayList;
@@ -9,17 +9,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class KMeans {
+public class KMeans<K extends Vectorisable> {
 
+    List<Cluster<K>> clusters;
+    List<K> items;
 
-    List<Cluster> clusters;
-    List<? extends Vectorisable> items;
-
-    public KMeans(List<? extends Vectorisable> items, int clusters) {
+    public KMeans(List<K> items, int clusters) {
         this.items = items;
 
-
-        while (this.clusters == null || anyEmptyClusters(this.clusters)) {
+        int initialisationAttemptsLimit = 1000;
+        int initialisations = 0;
+        int bestEmptyClusters = clusters;
+        List<Cluster<K>> bestClusters = null;
+        while (bestEmptyClusters > 0 && initialisations < initialisationAttemptsLimit) {
             Set<Vectorisable> picked = new HashSet<>();
 
             Collections.shuffle(items);
@@ -32,27 +34,36 @@ public class KMeans {
                     Vectorisable chosen = items.get(index);
                     picked.add(chosen);
                     // init clusters with the value of the item chosen
-                    this.clusters.add(new Cluster(new Centroid(chosen.asVector())));
+                    this.clusters.add(new Cluster<>(new Centroid(chosen.asVector())));
                 }
                 index++;
             }
 
             assignItemsToClusters(this.clusters, items);
-            System.out.println(anyEmptyClusters(this.clusters));
+            int emptyClusters = numberOfEmptyClusters(this.clusters);
+            System.out.println(emptyClusters + " out of " + clusters + " are empty.");
+
+            if (emptyClusters < bestEmptyClusters) {
+                bestEmptyClusters = emptyClusters;
+                bestClusters = this.clusters;
+            }
+
+            initialisations++;
         }
+        System.out.println("best non-empty clusters found: " + (clusters - bestEmptyClusters));
+        this.clusters = bestClusters.stream().filter(cluster -> !cluster.members.isEmpty()).collect(Collectors.toList());
     }
+
 
     public int run(int maxSteps) {
         int step = 0;
         boolean settled = false;
 
         while (step < maxSteps && !settled) {
-            // DO k-means
-
             // create new clusters based on centroids
-            List<Cluster> newClusters = new ArrayList<>(clusters.size());
-            for (Cluster c : clusters) {
-                newClusters.add(new Cluster(c.newCentroid()));
+            List<Cluster<K>> newClusters = new ArrayList<>(clusters.size());
+            for (Cluster<K> c : clusters) {
+                newClusters.add(new Cluster<>(c.newCentroid()));
             }
 
             assignItemsToClusters(newClusters, items);
@@ -66,27 +77,33 @@ public class KMeans {
         return step;
     }
 
-    private boolean clustersUnchanged(List<Cluster> newClusters, List<Cluster> oldClusters) {
+    public List<Cluster<K>> getClusters() {
+        return clusters;
+    }
+
+    private boolean clustersUnchanged(List<Cluster<K>> newClusters, List<Cluster<K>> oldClusters) {
         Set<List<Double>> newClusterCentroids = newClusters.stream().map(cluster -> cluster.newCentroid().asVector()).collect(Collectors.toSet());
         Set<List<Double>> oldClusterCentroids = oldClusters.stream().map(cluster -> cluster.newCentroid().asVector()).collect(Collectors.toSet());
 
         return newClusterCentroids.equals(oldClusterCentroids);
     }
 
-    private boolean anyEmptyClusters(List<Cluster> clusters) {
+    private int numberOfEmptyClusters(List<Cluster<K>> clusters) {
+        int empty = 0;
         for (Cluster c : clusters) {
             if (c.members.isEmpty()) {
-                return true;
+                empty++;
             }
         }
-        return false;
+
+        return empty;
     }
 
-    private void assignItemsToClusters(List<Cluster> clusters, List<? extends Vectorisable> items) {
+    private void assignItemsToClusters(List<Cluster<K>> clusters, List<K> items) {
         // assign new ownerships
-        for (Vectorisable vectorisable : items) {
+        for (K vectorisable : items) {
             // find the closest cluster
-            Cluster closestCluster = clusters.get(0);
+            Cluster<K> closestCluster = clusters.get(0);
             double closestDistance = distance(vectorisable, closestCluster.centroid());
             for (int i = 1; i < clusters.size(); i++) {
                 double distance = distance(vectorisable, clusters.get(i).centroid());
@@ -98,16 +115,13 @@ public class KMeans {
 
             closestCluster.add(vectorisable);
         }
-        System.out.println("assigned");
-    }
-
-    List<Cluster> getClusters() {
-        return clusters;
     }
 
 
-    static class Cluster {
-        private List<Vectorisable> members = new ArrayList<>();
+
+    //VisibleForTesting
+    public static class Cluster<K extends Vectorisable> {
+        private List<K> members = new ArrayList<>();
         private Centroid centroid;
         private Centroid newCentroid = null;
 
@@ -115,7 +129,11 @@ public class KMeans {
             this.centroid = centroid;
         }
 
-        public void add(Vectorisable a) {
+        public List<K> getMembers() {
+            return members;
+        }
+
+        public void add(K a) {
             members.add(a);
         }
 

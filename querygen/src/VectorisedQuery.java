@@ -1,5 +1,6 @@
 package grakn.benchmark.querygen;
 
+import grakn.benchmark.querygen.kmeans.Vectorisable;
 import graql.lang.query.GraqlGet;
 
 import java.util.Arrays;
