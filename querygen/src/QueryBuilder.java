@@ -18,6 +18,7 @@
 
 package grakn.benchmark.querygen;
 
+import grakn.benchmark.querygen.util.Pair;
 import grakn.client.GraknClient;
 import grakn.core.concept.type.AttributeType;
 import grakn.core.concept.type.Role;

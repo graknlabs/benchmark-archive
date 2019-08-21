@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package grakn.benchmark.querygen;
+package grakn.benchmark.querygen.util;
 
 import java.util.Objects;
 

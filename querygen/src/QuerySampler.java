@@ -20,7 +20,10 @@ package grakn.benchmark.querygen;
 
 import grakn.benchmark.querygen.subsampling.GriddedSampler;
 import grakn.benchmark.querygen.subsampling.KMeans;
+import grakn.benchmark.querygen.util.Arguments;
 import grakn.client.GraknClient;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.ParseException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,6 +35,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class QuerySampler {
+
+
+    public static void main(String[] args) throws ParseException {
+        CommandLine arguments = Arguments.parse(args);
+
+        String graknUri = arguments.getOptionValue(Arguments.GRAKN_URI);
+        String keyspace = arguments.getOptionValue(Arguments.KEYSPACE_ARGUMENT);
+    }
 
     /**
      *
