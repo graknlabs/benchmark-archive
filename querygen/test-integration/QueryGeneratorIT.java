@@ -73,6 +73,7 @@ public class QueryGeneratorIT {
 
         session.close();
         client.close();
+        System.out.println("Loaded schema");
     }
 
     @Test
@@ -81,11 +82,32 @@ public class QueryGeneratorIT {
              GraknClient.Session session = client.session(testKeyspace)) {
             QueryGenerator queryGenerator = new QueryGenerator(session);
             int queriesToGenerate = 100;
-            List<GraqlGet> queries = queryGenerator.generate(queriesToGenerate);
+            List<VectorisedQuery> queries = queryGenerator.generate(queriesToGenerate);
             assertEquals(queries.size(), queriesToGenerate);
-            for (GraqlGet query : queries) {
+            for (VectorisedQuery query : queries) {
                 assertNotNull(query);
+                assertNotNull(query.graqlQuery);
             }
+        }
+    }
+
+
+    @Test
+    public void filterQueries() {
+        try (GraknClient client = new GraknClient(server.grpcUri());
+             GraknClient.Session session = client.session(testKeyspace)) {
+            QueryGenerator queryGenerator = new QueryGenerator(session);
+            int queriesToGenerate = 100;
+            List<VectorisedQuery> queries = queryGenerator.generate(queriesToGenerate);
+            System.out.println("Generated and analysed queries!");
+
+            KMeans kMeans = new KMeans(queries, 10);
+
+            int steps = kMeans.run(100);
+
+            List<KMeans.Cluster> clusters = kMeans.getClusters();
+            System.out.println(clusters);
+            System.out.println("Kmean computed in " + steps + " iterations");
         }
     }
 
@@ -245,16 +267,16 @@ public class QueryGeneratorIT {
             QueryGenerator queryGenerator = new QueryGenerator(session);
             // generate 500 queries, some fraction (1/20)? should have comparisons
             int queriesToGenerate = 500;
-            List<GraqlGet> queries = queryGenerator.generate(queriesToGenerate);
-            assertEquals(queries.size(), queriesToGenerate);
-            boolean comparisonFound = false;
-            for (GraqlGet query : queries) {
-                String q = query.toString();
-                if (q.contains("==") || q.contains("!==") || q.contains("<") || q.contains(">")) {
-                    comparisonFound = true;
-                }
-            }
-            assertTrue(comparisonFound);
+//            List<GraqlGet> queries = queryGenerator.generate(queriesToGenerate);
+//            assertEquals(queries.size(), queriesToGenerate);
+//            boolean comparisonFound = false;
+//            for (GraqlGet query : queries) {
+//                String q = query.toString();
+//                if (q.contains("==") || q.contains("!==") || q.contains("<") || q.contains(">")) {
+//                    comparisonFound = true;
+//                }
+//            }
+//            assertTrue(comparisonFound);
         }
     }
 

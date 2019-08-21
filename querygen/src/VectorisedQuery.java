@@ -2,9 +2,12 @@ package grakn.benchmark.querygen;
 
 import graql.lang.query.GraqlGet;
 
-public class VectorisedQuery {
+import java.util.Arrays;
+import java.util.List;
 
-    private GraqlGet graqlQuery;
+public class VectorisedQuery implements Vectorisable {
+
+    GraqlGet graqlQuery;
 
     private double numVariables;
     private double meanRolesPerRelation;
@@ -27,5 +30,19 @@ public class VectorisedQuery {
         specificity = queryVectoriser.specificity();
         meanEdgesPerVariable = queryVectoriser.meanEdgesPerVariable();
         comparisonsPerAttribute = queryVectoriser.comparisonsPerAttribute();
+    }
+
+    @Override
+    public List<Double> asVector() {
+        return Arrays.asList(
+                numVariables,
+                meanRolesPerRelation,
+                meanUniqueRolesPerRelation,
+                meanAttributesOwnedPerThing,
+                ambiguity,
+                specificity,
+                meanEdgesPerVariable,
+                comparisonsPerAttribute
+        );
     }
 }
