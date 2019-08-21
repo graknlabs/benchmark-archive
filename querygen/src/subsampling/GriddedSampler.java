@@ -1,6 +1,7 @@
 package grakn.benchmark.querygen.subsampling;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,10 @@ public class GriddedSampler<K extends Vectorisable> {
         }
     }
 
+    public int numberPopulatedGridCoordinates() {
+        return coordinateMembers.size();
+    }
+
     private List<Double> calculateMaximumVector(List<K> population) {
         List<Double> maxVector = population.get(0).asVector();
 
@@ -55,11 +60,10 @@ public class GriddedSampler<K extends Vectorisable> {
 
     public List<K> getSamples(int numSamples, Random random) {
         List<GridCoordinate> populatedCoordinates = new ArrayList<>(coordinateMembers.keySet());
+        Collections.shuffle(populatedCoordinates, random);
         List<K> samples = new ArrayList<>();
         for (int i = 0; i < numSamples; i++) {
-            int index = random.nextInt(populatedCoordinates.size());
-            List<K> subsamplable = coordinateMembers.get(populatedCoordinates.get(index));
-
+            List<K> subsamplable = coordinateMembers.get(populatedCoordinates.get(i%populatedCoordinates.size()));
             int subIndex = random.nextInt(subsamplable.size());
             samples.add(subsamplable.get(subIndex));
         }

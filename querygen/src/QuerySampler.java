@@ -65,6 +65,8 @@ public class QuerySampler {
         System.out.println("Calculating grid...");
         sampler.calculateGrid();
 
+        System.out.println("Number of populated grid positions: " + sampler.numberPopulatedGridCoordinates());
+
         Random random = new Random(0);
         List<VectorisedQuery> sampledQueries = sampler.getSamples(targetSamples, random);
 
@@ -75,7 +77,6 @@ public class QuerySampler {
         List<VectorisedQuery> sampled = new ArrayList<>();
         for (KMeans.Cluster<VectorisedQuery> cluster : computedClusters) {
             List<VectorisedQuery> members = cluster.getMembers();
-
             Collections.shuffle(members);
             for (int i = 0; i < samplesPerCluster; i++) {
                 sampled.add(members.get(i));
