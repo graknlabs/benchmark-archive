@@ -25,6 +25,10 @@ import grakn.client.GraknClient;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,29 +37,60 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 public class QuerySampler {
 
 
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) throws ParseException, IOException {
         CommandLine arguments = Arguments.parse(args);
-
         String graknUri = arguments.getOptionValue(Arguments.GRAKN_URI);
         String keyspace = arguments.getOptionValue(Arguments.KEYSPACE_ARGUMENT);
+
+        int generate = Integer.parseInt(arguments.getOptionValue(Arguments.GENERATE_ARGUMENT));
+        int sampled = Integer.parseInt(arguments.getOptionValue(Arguments.SAMPLE_ARGUMENT));
+
+        List<VectorisedQuery> sampledQueries;
+        try (GraknClient client = new GraknClient(graknUri);
+             GraknClient.Session session = client.session(keyspace)) {
+            if (arguments.hasOption(Arguments.KMEANS_SAMPLING_ARGUMENT)) {
+                sampledQueries = querySampleKMeans(session, generate, sampled, 2);
+            } else {
+                sampledQueries = querySampleGridded(session, generate, sampled, 5);
+            }
+        }
+
+        Path outputPath = Paths.get(arguments.getOptionValue(Arguments.OUTPUT_ARGUMENT));
+        Path outputFile = outputPath.resolve("queries_" + keyspace + "_" + sampledQueries.size() + ".gql");
+        if (Files.exists(outputFile)) {
+            throw new RuntimeException("Output file " + outputFile.toFile() + " exists, aborting");
+        }
+
+        writeQueries(outputFile, sampledQueries);
+
+        System.out.println("done");
+    }
+
+    private static void writeQueries(Path outputFile, List<VectorisedQuery> sampledQueries) throws IOException {
+        outputFile.toFile().createNewFile();
+        Files.write(
+                outputFile,
+                sampledQueries.stream().map(query -> query.graqlQuery.toString()).collect(Collectors.toList())
+        );
     }
 
     /**
-     *
-     * @param generate - how many queries to generate overall, before downsampling
-     * @param targetSamples - maximum, target number of queries to downsample to
+     * @param generate          - how many queries to generate overall, before downsampling
+     * @param targetSamples     - maximum, target number of queries to downsample to
      * @param samplesPerCluster - how many samples to choose from each KMeans cluster
      * @return
      */
     public static List<VectorisedQuery> querySampleKMeans(GraknClient.Session session, int generate, int targetSamples, int samplesPerCluster) {
-        System.out.println("Starting query generation");
-        List<VectorisedQuery> rawQueries = parallelQueryGeneration(session, generate, 4);
+        int threads = 4;
+        System.out.println("Starting generation of " + generate + " queries in " + threads + " threads");
+        List<VectorisedQuery> rawQueries = parallelQueryGeneration(session, generate, threads);
 
-        int clusters = targetSamples/samplesPerCluster;
+        int clusters = targetSamples / samplesPerCluster;
         System.out.println("Initialising KMeans...");
         KMeans<VectorisedQuery> clustering = new KMeans<>(rawQueries, clusters);
         System.out.println("Running KMeans...");
@@ -96,8 +131,8 @@ public class QuerySampler {
         return sampled;
     }
 
-    private static List<VectorisedQuery> parallelQueryGeneration(GraknClient.Session session, int target, int concurrency)  {
-        int queriesPerThread = target/concurrency;
+    private static List<VectorisedQuery> parallelQueryGeneration(GraknClient.Session session, int target, int concurrency) {
+        int queriesPerThread = target / concurrency;
 
         ExecutorService executor = Executors.newFixedThreadPool(concurrency);
 
@@ -117,6 +152,8 @@ public class QuerySampler {
                 e.printStackTrace();
             }
         }
+
+        executor.shutdown();
 
         return allQueries;
     }

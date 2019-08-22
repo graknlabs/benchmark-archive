@@ -1,5 +1,6 @@
 package grakn.benchmark.querygen.util;
 
+import javafx.scene.shape.Path;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -11,6 +12,12 @@ public class Arguments {
 
     public final static String GRAKN_URI = "grakn-uri";
     public final static String KEYSPACE_ARGUMENT = "keyspace";
+    public final static String KMEANS_SAMPLING_ARGUMENT = "kmeans";
+    public final static String GRIDDED_SAMPLING_ARGUMENT = "gridded";
+    public final static String GENERATE_ARGUMENT = "generate";
+    public final static String SAMPLE_ARGUMENT = "sample";
+    public final static String OUTPUT_ARGUMENT = "output";
+
 
 
     public static CommandLine parse(String[] args) throws ParseException {
@@ -37,9 +44,52 @@ public class Arguments {
                 .type(String.class)
                 .build();
 
+        Option kMeansSamplingOption = Option.builder("m")
+                .longOpt(KMEANS_SAMPLING_ARGUMENT)
+                .required(false)
+                .hasArg(false)
+                .desc("Sample queries using K Means")
+                .build();
+
+        Option griddedSamplingOption = Option.builder("r")
+                .longOpt(GRIDDED_SAMPLING_ARGUMENT)
+                .required(false)
+                .hasArg(false)
+                .desc("Sample queries using K Means")
+                .build();
+
+        Option generateOption = Option.builder("g")
+                .longOpt(GENERATE_ARGUMENT)
+                .required(true)
+                .hasArg(true)
+                .desc("Number of queries to generate before sampling")
+                .type(Integer.class)
+                .build();
+
+        Option samplesOption = Option.builder("s")
+                .longOpt(SAMPLE_ARGUMENT)
+                .required(true)
+                .hasArg(true)
+                .desc("Number of queries to sample down to")
+                .type(Integer.class)
+                .build();
+
+        Option destinationDirectoryOption = Option.builder("d")
+                .longOpt(OUTPUT_ARGUMENT)
+                .required(true)
+                .hasArg(true)
+                .desc("Absolute path to directory to which the queries will be written in generated_queries_n.gql")
+                .type(Path.class)
+                .build();
+
         Options options = new Options();
         options.addOption(graknAddressOption);
         options.addOption(keyspaceOption);
+        options.addOption(kMeansSamplingOption);
+        options.addOption(griddedSamplingOption);
+        options.addOption(generateOption);
+        options.addOption(samplesOption);
+        options.addOption(destinationDirectoryOption);
         return options;
     }
 
