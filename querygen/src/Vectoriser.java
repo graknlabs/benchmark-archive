@@ -32,7 +32,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Consume a QueryBuilder and provide a n-dimensional vector representation
+ * Consume a QueryBuilder enable extracting various metrics about the query
+ * essentially converting a query into a vector
  */
 public class Vectoriser {
     private final QueryBuilder queryBuilder;

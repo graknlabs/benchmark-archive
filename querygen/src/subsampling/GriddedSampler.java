@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * Split the vector space into a grid, assign each Vectorisable element a coordinate in the n-dimensional grid
+ * Then sample from the populate grids
+ */
 public class GriddedSampler<K extends Vectorisable> {
 
     private int divisionsPerAxis;

@@ -24,6 +24,9 @@ import graql.lang.query.GraqlGet;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * A GraqlGet query with the measures about the query, computed via
+ */
 public class VectorisedQuery implements Vectorisable {
 
     GraqlGet graqlQuery;

@@ -39,6 +39,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+/**
+ * Overgenerate, then downsample to a given number of queries
+ * The goal is to return a list of diverse queries for a given schema. This operates
+ * using a generate and reduce step.
+ *
+ * When executed directly, it can be provided with the grakn URI, a keyspace, the target number of queries
+ * to generate, and the query reduction method (gridded or Kmeans)
+ */
 public class QuerySampler {
 
 
@@ -80,6 +88,34 @@ public class QuerySampler {
     }
 
     /**
+     * Generate and reduce qeuries using Gridded Sampling
+     *
+     * @param session
+     * @param generate - number of queries to generate
+     * @param targetSamples - number of queries to downsample to from the number generated above
+     * @param divisionsPerAxis - how many bins on each axis define the overall grid that will bucket queries
+     * @return
+     */
+    public static List<VectorisedQuery> querySampleGridded(GraknClient.Session session, int generate, int targetSamples, int divisionsPerAxis) {
+        System.out.println("Starting query generation...");
+        List<VectorisedQuery> rawQueries = parallelQueryGeneration(session, generate, 4);
+        GriddedSampler<VectorisedQuery> sampler = new GriddedSampler<>(divisionsPerAxis, rawQueries);
+
+        System.out.println("Calculating grid...");
+        sampler.calculateGrid();
+
+        System.out.println("Number of populated grid positions: " + sampler.numberPopulatedGridCoordinates());
+
+        Random random = new Random(0);
+        List<VectorisedQuery> sampledQueries = sampler.getSamples(targetSamples, random);
+
+        return sampledQueries;
+    }
+
+    /**
+     * Generate and reduce queries using KMeans
+     * Will run a maximum of 100 iterations of KMeans
+     *
      * @param generate          - how many queries to generate overall, before downsampling
      * @param targetSamples     - maximum, target number of queries to downsample to
      * @param samplesPerCluster - how many samples to choose from each KMeans cluster
@@ -103,22 +139,6 @@ public class QuerySampler {
         return sampledQueries;
     }
 
-    public static List<VectorisedQuery> querySampleGridded(GraknClient.Session session, int generate, int targetSamples, int divisionsPerAxis) {
-        System.out.println("Starting query generation...");
-        List<VectorisedQuery> rawQueries = parallelQueryGeneration(session, generate, 4);
-        GriddedSampler<VectorisedQuery> sampler = new GriddedSampler<>(divisionsPerAxis, rawQueries);
-
-        System.out.println("Calculating grid...");
-        sampler.calculateGrid();
-
-        System.out.println("Number of populated grid positions: " + sampler.numberPopulatedGridCoordinates());
-
-        Random random = new Random(0);
-        List<VectorisedQuery> sampledQueries = sampler.getSamples(targetSamples, random);
-
-        return sampledQueries;
-    }
-
     private static List<VectorisedQuery> sampleFromClusters(List<KMeans.Cluster<VectorisedQuery>> computedClusters, int samplesPerCluster) {
         List<VectorisedQuery> sampled = new ArrayList<>();
         for (KMeans.Cluster<VectorisedQuery> cluster : computedClusters) {
@@ -131,6 +151,10 @@ public class QuerySampler {
         return sampled;
     }
 
+    /**
+     * Generate N queries in parallel
+     * @return - the aggregated queries generated
+     */
     private static List<VectorisedQuery> parallelQueryGeneration(GraknClient.Session session, int target, int concurrency) {
         int queriesPerThread = target / concurrency;
 

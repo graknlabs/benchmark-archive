@@ -39,13 +39,25 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Container for all the data that is required to build a GraqlGet query out of mappings from variables to variables
+ * and variables to types
+ *
+ * The entire lifetype of the QueryBuilder needs to be tied to a single Transaction, until after `.build()` is called
+ */
 public class QueryBuilder {
 
+    // Actual type to query a variable against
     final Map<Variable, Type> variableTypeMap;
+    // map for which variables are owned by which other variables
     final Map<Variable, List<Variable>> attributeOwnership;
+    // For each relation for which we specify role players, record variable and role type
     final Map<Variable, List<Pair<Variable, Role>>> relationRolePlayers;
+    // map between variables and the comparator used, storing attribute VALUE comparisons only
     final Map<Variable, Map<Variable, Graql.Token.Comparator>> attributeComparisons;
 
+    // variables that we haven't processed yet when expanding a query, so we don't grow from the same variable twice
+    // although doing so wouldn't be detrimental really
     final List<Variable> unvisitedVariables;
 
     int nextVar = 0;
@@ -177,6 +189,11 @@ public class QueryBuilder {
         return attributeComparisons.values().stream().flatMap(map -> map.values().stream()).count();
     }
 
+    /**
+     * Build a GraqlGet query out of all the maps
+     * Performs a bit of obfuscation when adding `$x has attributetype $a`, where we may provide a less concrete
+     * type for $a here but later specify `$a isa subattrtype` that the query planner has to pick up on
+     */
     GraqlGet build(GraknClient.Transaction tx, Random random) {
         List<Pattern> patterns = new ArrayList<>();
 

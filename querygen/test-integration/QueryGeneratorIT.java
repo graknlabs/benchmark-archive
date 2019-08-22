@@ -93,25 +93,6 @@ public class QueryGeneratorIT {
     }
 
 
-    @Test
-    public void filterQueries() {
-        try (GraknClient client = new GraknClient(server.grpcUri());
-             GraknClient.Session session = client.session(testKeyspace)) {
-            QueryGenerator queryGenerator = new QueryGenerator(session);
-            int queriesToGenerate = 100;
-            List<VectorisedQuery> queries = queryGenerator.generate(queriesToGenerate);
-            System.out.println("Generated and analysed queries!");
-
-            KMeans kMeans = new KMeans(queries, 10);
-
-            int steps = kMeans.run(100);
-
-            List<KMeans.Cluster> clusters = kMeans.getClusters();
-            System.out.println("Kmean computed in " + steps + " iterations");
-        }
-    }
-
-
     /**
      * Test that a single new query is generated as a QueryBuilder
      * This query builder should have all the reserved vars mapped to a type

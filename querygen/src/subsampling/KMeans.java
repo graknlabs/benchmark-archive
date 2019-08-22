@@ -27,6 +27,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Implment K-Means clustering
+ * @param <K>
+ */
 public class KMeans<K extends Vectorisable> {
 
     List<Cluster<K>> clusters;
@@ -135,7 +139,15 @@ public class KMeans<K extends Vectorisable> {
         }
     }
 
-
+    private double distance(Vectorisable a, Vectorisable b) {
+        double distance = 0.0;
+        List<Double> dA = a.asVector();
+        List<Double> dB = b.asVector();
+        for (int i = 0; i < dA.size(); i++) {
+            distance += Math.pow(dA.get(i) - dB.get(i), 2);
+        }
+        return Math.pow(distance, 0.5);
+    }
 
     //VisibleForTesting
     public static class Cluster<K extends Vectorisable> {
@@ -184,7 +196,6 @@ public class KMeans<K extends Vectorisable> {
 
     }
 
-
     private static class Centroid implements Vectorisable {
         List<Double> vector;
 
@@ -207,16 +218,4 @@ public class KMeans<K extends Vectorisable> {
             return this.vector.equals(((Vectorisable) o).asVector());
         }
     }
-
-
-    private double distance(Vectorisable a, Vectorisable b) {
-        double distance = 0.0;
-        List<Double> dA = a.asVector();
-        List<Double> dB = b.asVector();
-        for (int i = 0; i < dA.size(); i++) {
-            distance += Math.pow(dA.get(i) - dB.get(i), 2);
-        }
-        return Math.pow(distance, 0.5);
-    }
-
 }

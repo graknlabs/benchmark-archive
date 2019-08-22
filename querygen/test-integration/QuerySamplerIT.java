@@ -83,7 +83,7 @@ public class QuerySamplerIT {
     }
 
     @Test
-    public void queryGriddedSamplerReturnsCorrectNumberOfQueries() {
+    public void queryGriddedSamplerReturnsExactNumberOfQueries() {
         try (GraknClient client = new GraknClient(server.grpcUri());
              GraknClient.Session session = client.session(testKeyspace)) {
 
