@@ -22,7 +22,7 @@ java_test(
     test_class = "grakn.benchmark.querygen.VectoriserTest",
     srcs = ["VectoriserTest.java"],
     deps = [
-        "//querygen/src:query-generator",
+        "//querygen/src:query-sampler",
         "@graknlabs_grakn_core//concept:concept",
         "@graknlabs_graql//java:graql",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",

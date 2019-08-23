@@ -59,6 +59,8 @@ jobs:
       - run-bazel-rbe:
           command: bazel test //querygen/test-integration:query-generator-it --test_output=errors
       - run-bazel-rbe:
+          command: bazel test //querygen/test-integration:query-sampler-it --test_output=errors
+      - run-bazel-rbe:
           command: bazel test //querygen/test-integration:schema-walker-it --test_output=errors
       # run integration tests
       - run-bazel-rbe:

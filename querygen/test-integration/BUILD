@@ -21,7 +21,7 @@ java_test(
      test_class = "grakn.benchmark.querygen.QueryGeneratorIT",
      srcs = ["QueryGeneratorIT.java"],
      deps = [
-         "//querygen/src:query-generator",
+         "//querygen/src:query-sampler",
          "@graknlabs_client_java//:client-java",
          "@graknlabs_grakn_core//concept:concept",
          "@graknlabs_graql//java:graql",
@@ -43,7 +43,7 @@ java_test(
     test_class = "grakn.benchmark.querygen.SchemaWalkerIT",
     srcs = ["SchemaWalkerIT.java"],
     deps = [
-        "//querygen/src:query-generator",
+        "//querygen/src:query-sampler",
         "@graknlabs_client_java//:client-java",
         "@graknlabs_grakn_core//concept:concept",
         "@graknlabs_graql//java:graql",
@@ -64,7 +64,7 @@ java_test(
     test_class = "grakn.benchmark.querygen.QuerySamplerIT",
     srcs = ["QuerySamplerIT.java"],
     deps = [
-        "//querygen/src:query-generator",
+        "//querygen/src:query-sampler",
         "@graknlabs_client_java//:client-java",
         "@graknlabs_grakn_core//concept:concept",
         "@graknlabs_graql//java:graql",
@@ -79,3 +79,4 @@ java_test(
         "//querygen/test-integration/resources:schema.gql"
     ]
 )
+
