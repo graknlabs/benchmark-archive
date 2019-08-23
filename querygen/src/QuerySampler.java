@@ -18,7 +18,6 @@
 
 package grakn.benchmark.querygen;
 
-import grakn.benchmark.profiler.GraknBenchmark;
 import grakn.benchmark.querygen.subsampling.GriddedSampler;
 import grakn.benchmark.querygen.subsampling.KMeans;
 import grakn.benchmark.querygen.util.Arguments;
