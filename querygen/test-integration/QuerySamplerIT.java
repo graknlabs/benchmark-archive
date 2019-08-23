@@ -70,7 +70,7 @@ public class QuerySamplerIT {
              GraknClient.Session session = client.session(testKeyspace)) {
 
             int queriesToSample = 100;
-            int queriesToGenerate = 2000;
+            int queriesToGenerate = 1000;
             List<VectorisedQuery> queries = QuerySampler.querySampleKMeans(session, queriesToGenerate, queriesToSample, 2);
             assertTrue(queriesToSample > queries.size());
             for (VectorisedQuery query : queries) {
@@ -86,7 +86,7 @@ public class QuerySamplerIT {
              GraknClient.Session session = client.session(testKeyspace)) {
 
             int queriesToSample = 100;
-            int queriesToGenerate = 2000;
+            int queriesToGenerate = 1000;
             List<VectorisedQuery> queries = QuerySampler.querySampleGridded(session, queriesToGenerate, queriesToSample, 5);
             assertTrue(queries.size() == queriesToSample);
             for (VectorisedQuery query : queries) {
