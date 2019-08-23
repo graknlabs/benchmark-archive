@@ -38,4 +38,4 @@ This will produce a `.gql` file of queries in `ABSOLUTE_TARGET_DIRECTORY`.
 * no attribute values or IDs currently - good at generate structure
 * no generation of `key`
 * no disjunctions or negations
-* other niche features: sub!, isa!, `like`, aggregates missing
+* other niche features: `sub!`, `isa!`, `like`, aggregates missing
