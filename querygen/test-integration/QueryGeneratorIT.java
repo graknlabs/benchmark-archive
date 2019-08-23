@@ -74,7 +74,6 @@ public class QueryGeneratorIT {
 
         session.close();
         client.close();
-        System.out.println("Loaded schema");
     }
 
     @Test

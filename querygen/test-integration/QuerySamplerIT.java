@@ -61,7 +61,6 @@ public class QuerySamplerIT {
 
         session.close();
         client.close();
-        System.out.println("Loaded schema");
     }
 
 
@@ -77,7 +76,6 @@ public class QuerySamplerIT {
             for (VectorisedQuery query : queries) {
                 assertNotNull(query);
                 assertNotNull(query.graqlQuery);
-                System.out.println(query.graqlQuery);
             }
         }
     }
@@ -94,8 +92,6 @@ public class QuerySamplerIT {
             for (VectorisedQuery query : queries) {
                 assertNotNull(query);
                 assertNotNull(query.graqlQuery);
-                System.out.println(query.graqlQuery);
-                System.out.println();
             }
         }
     }

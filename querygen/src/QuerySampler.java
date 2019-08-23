@@ -18,12 +18,15 @@
 
 package grakn.benchmark.querygen;
 
+import grakn.benchmark.profiler.GraknBenchmark;
 import grakn.benchmark.querygen.subsampling.GriddedSampler;
 import grakn.benchmark.querygen.subsampling.KMeans;
 import grakn.benchmark.querygen.util.Arguments;
 import grakn.client.GraknClient;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -49,6 +52,7 @@ import java.util.stream.Collectors;
  */
 public class QuerySampler {
 
+    private static final Logger LOG = LoggerFactory.getLogger(QuerySampler.class);
 
     public static void main(String[] args) throws ParseException, IOException {
         CommandLine arguments = Arguments.parse(args);
@@ -76,7 +80,7 @@ public class QuerySampler {
 
         writeQueries(outputFile, sampledQueries);
 
-        System.out.println("done");
+        LOG.info("Finished");
     }
 
     private static void writeQueries(Path outputFile, List<VectorisedQuery> sampledQueries) throws IOException {
@@ -97,14 +101,14 @@ public class QuerySampler {
      * @return
      */
     public static List<VectorisedQuery> querySampleGridded(GraknClient.Session session, int generate, int targetSamples, int divisionsPerAxis) {
-        System.out.println("Starting query generation...");
+        LOG.info("Starting query generation...");
         List<VectorisedQuery> rawQueries = parallelQueryGeneration(session, generate, 4);
         GriddedSampler<VectorisedQuery> sampler = new GriddedSampler<>(divisionsPerAxis, rawQueries);
 
-        System.out.println("Calculating grid...");
+        LOG.info("Calculating grid...");
         sampler.calculateGrid();
 
-        System.out.println("Number of populated grid positions: " + sampler.numberPopulatedGridCoordinates());
+        LOG.info("Number of populated grid positions: " + sampler.numberPopulatedGridCoordinates());
 
         Random random = new Random(0);
         List<VectorisedQuery> sampledQueries = sampler.getSamples(targetSamples, random);
@@ -123,15 +127,15 @@ public class QuerySampler {
      */
     public static List<VectorisedQuery> querySampleKMeans(GraknClient.Session session, int generate, int targetSamples, int samplesPerCluster) {
         int threads = 4;
-        System.out.println("Starting generation of " + generate + " queries in " + threads + " threads");
+        LOG.info("Starting generation of " + generate + " queries in " + threads + " threads");
         List<VectorisedQuery> rawQueries = parallelQueryGeneration(session, generate, threads);
 
         int clusters = targetSamples / samplesPerCluster;
-        System.out.println("Initialising KMeans...");
+        LOG.info("Initialising KMeans...");
         KMeans<VectorisedQuery> clustering = new KMeans<>(rawQueries, clusters);
-        System.out.println("Running KMeans...");
+        LOG.info("Running KMeans...");
         int steps = clustering.run(100);
-        System.out.println("Clustering completed in " + steps + " iterations");
+        LOG.info("Clustering completed in " + steps + " iterations");
         List<KMeans.Cluster<VectorisedQuery>> computedClusters = clustering.getClusters();
 
         List<VectorisedQuery> sampledQueries = sampleFromClusters(computedClusters, samplesPerCluster);
@@ -159,25 +163,27 @@ public class QuerySampler {
         int queriesPerThread = target / concurrency;
 
         ExecutorService executor = Executors.newFixedThreadPool(concurrency);
-
-        List<Future<List<VectorisedQuery>>> executors = new ArrayList<>();
-        for (int i = 0; i < concurrency; i++) {
-            executors.add(executor.submit(() -> {
-                QueryGenerator generator = new QueryGenerator(session);
-                return generator.generate(queriesPerThread);
-            }));
-        }
-
         List<VectorisedQuery> allQueries = new ArrayList<>();
-        for (Future<List<VectorisedQuery>> future : executors) {
-            try {
-                allQueries.addAll(future.get());
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
+        try {
+            List<Future<List<VectorisedQuery>>> executors = new ArrayList<>();
+            for (int i = 0; i < concurrency; i++) {
+                executors.add(executor.submit(() -> {
+                    QueryGenerator generator = new QueryGenerator(session);
+                    return generator.generate(queriesPerThread);
+                }));
             }
-        }
 
-        executor.shutdown();
+            for (Future<List<VectorisedQuery>> future : executors) {
+                try {
+                    allQueries.addAll(future.get());
+                } catch (InterruptedException | ExecutionException e) {
+                    LOG.error("Query generation failed in parallel query generation: " + e.getMessage());
+                    throw new RuntimeException("Query Generation failed.");
+                }
+            }
+        } finally {
+            executor.shutdown();
+        }
 
         return allQueries;
     }

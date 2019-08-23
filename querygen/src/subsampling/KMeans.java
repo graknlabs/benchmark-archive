@@ -19,6 +19,9 @@
 package grakn.benchmark.querygen.subsampling;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,6 +35,8 @@ import java.util.stream.Collectors;
  * @param <K>
  */
 public class KMeans<K extends Vectorisable> {
+
+    private static Logger LOG = LoggerFactory.getLogger(KMeans.class);
 
     List<Cluster<K>> clusters;
     List<K> items;
@@ -63,7 +68,7 @@ public class KMeans<K extends Vectorisable> {
 
             assignItemsToClusters(this.clusters, items);
             int emptyClusters = numberOfEmptyClusters(this.clusters);
-            System.out.println(emptyClusters + " out of " + clusters + " are empty.");
+            LOG.trace("Initialising clusters: "  + emptyClusters + " out of " + clusters + " are empty.");
 
             if (emptyClusters < bestEmptyClusters) {
                 bestEmptyClusters = emptyClusters;
@@ -72,7 +77,7 @@ public class KMeans<K extends Vectorisable> {
 
             initialisations++;
         }
-        System.out.println("best non-empty clusters found: " + (clusters - bestEmptyClusters));
+        LOG.trace("Best non-empty clusters found: " + (clusters - bestEmptyClusters));
         this.clusters = bestClusters.stream().filter(cluster -> !cluster.members.isEmpty()).collect(Collectors.toList());
     }
 
