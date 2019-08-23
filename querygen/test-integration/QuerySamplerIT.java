@@ -69,10 +69,10 @@ public class QuerySamplerIT {
         try (GraknClient client = new GraknClient(server.grpcUri());
              GraknClient.Session session = client.session(testKeyspace)) {
 
-            int queriesToSample = 100;
-            int queriesToGenerate = 1000;
+            int queriesToSample = 30;
+            int queriesToGenerate = 300;
             List<VectorisedQuery> queries = QuerySampler.querySampleKMeans(session, queriesToGenerate, queriesToSample, 2);
-            assertTrue(queriesToSample > queries.size());
+            assertTrue(queriesToSample >= queries.size());
             for (VectorisedQuery query : queries) {
                 assertNotNull(query);
                 assertNotNull(query.graqlQuery);
@@ -85,8 +85,8 @@ public class QuerySamplerIT {
         try (GraknClient client = new GraknClient(server.grpcUri());
              GraknClient.Session session = client.session(testKeyspace)) {
 
-            int queriesToSample = 100;
-            int queriesToGenerate = 1000;
+            int queriesToSample = 30;
+            int queriesToGenerate = 300;
             List<VectorisedQuery> queries = QuerySampler.querySampleGridded(session, queriesToGenerate, queriesToSample, 5);
             assertTrue(queries.size() == queriesToSample);
             for (VectorisedQuery query : queries) {
