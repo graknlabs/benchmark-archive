@@ -1,0 +1,1714 @@
+match
+$v6 isa square;
+$v7 (owned: $v1) isa ownership-of-blob;
+$v8 (bigger: $v6, smaller: $v2, smaller: $v1) isa sizing-circle, has unique-key $v9;
+$v9 isa unique-key;
+$v0 (smaller: $v1, smaller: $v2) isa sizing-square, has attribute $v3;
+$v1 isa square, has attribute $v3;
+$v2 isa blob, has attribute $v3;
+$v3 isa unique-key;
+$v4 (smaller: $v2) isa sizing-square;
+$v5 (smaller: $v1, bigger: $v2, smaller: $v6) isa sizing;
+get;
+match
+$v6 isa circle;
+$v7 isa blob;
+$v0 (bigger: $v1) isa sizing-circle, has attribute $v2;
+$v1 isa circle;
+$v2 isa attribute;
+$v3 (bigger: $v1, smaller: $v4, bigger: $v5, bigger: $v6, bigger: $v7) isa sizing-square;
+$v4 isa square;
+$v5 isa square;
+get;
+match
+$v6 isa shape-value;
+$v7 isa blob;
+$v0 (smaller: $v1, bigger: $v2) isa sizing-circle, has attribute $v3;
+$v1 isa square;
+$v2 isa circle, has shape-value $v6, has unique-key $v3;
+$v3 isa unique-key;
+$v4 (circler: $v2, circler: $v5, blobber: $v7, squarer: $v1) isa interaction;
+$v5 isa circle;
+get;
+match
+$v6 isa square;
+$v7 isa unique-key;
+$v8 isa attribute;
+$v0 (owned: $v1, owner: $v2) isa ownership-of-blob;
+$v1 isa square, has attribute $v3;
+$v2 isa square;
+$v3 isa square-value;
+$v4 (bigger: $v2, smaller: $v6) isa sizing-square, has attribute $v7, has attribute $v8;
+$v5 (owned: $v2) isa ownership-of-blob;
+get;
+match
+$v0 (circler: $v1) isa interaction;
+$v1 isa circle, has circle-value $v3;
+$v2 (smaller: $v1, smaller: $v5) isa sizing, has attribute $v4;
+$v3 isa circle-value, has attribute $v4;
+$v4 isa attribute;
+$v5 isa circle;
+get;
+match
+$v0 (circler: $v1, squarer: $v2) isa relation;
+$v1 isa circle;
+$v2 isa square, has shape-value $v3, has shape-value $v4;
+$v3 isa square-value;
+$v4 isa shape-value;
+get;
+match
+$v6 isa blob-value;
+$v7 (blobber: $v4) isa interaction;
+$v8 isa unique-key;
+$v9 isa attribute;
+$v0 isa blob, has shape-value $v5, has shape-value $v6;
+$v1 (bigger: $v0, smaller: $v2) isa sizing-blob;
+$v2 isa square, has attribute $v9;
+$v3 (smaller: $v0, smaller: $v4) isa sizing-square;
+$v4 isa blob, has attribute $v8;
+$v5 isa shape-value;
+get;
+match
+$v0 (smaller: $v1) isa relation;
+$v1 isa square, has unique-key $v2;
+$v2 isa unique-key;
+get;
+match
+$v0 isa blob-value, has attribute $v1, has attribute $v2;
+$v1 isa unique-key;
+$v2 isa unique-key;
+$v2 == $v1;
+get;
+match
+$v0 isa @has-shape-value, has attribute $v1;
+$v1 isa attribute;
+get;
+match
+$v0 (bigger: $v1) isa sizing-blob, has unique-key $v2;
+$v1 isa square, has shape-value $v3;
+$v2 isa unique-key;
+$v3 isa square-value;
+get;
+match
+$v6 isa circle-value, has attribute $v3;
+$v0 isa blob;
+$v1 (owned: $v0, owner: $v2, owned: $v4, owned: $v5) isa ownership;
+$v2 isa blob, has attribute $v3;
+$v3 isa unique-key;
+$v4 isa circle, has circle-value $v6;
+$v5 isa square;
+get;
+match
+$v0 (owned: $v1) isa ownership, has attribute $v2;
+$v1 isa circle, has attribute $v3;
+$v2 isa attribute;
+$v3 isa attribute;
+get;
+match
+$v0 isa ownership-cost, has attribute $v1;
+$v1 isa attribute;
+get;
+match
+$v0 (bigger: $v1) isa sizing, has unique-key $v2;
+$v1 isa circle, has unique-key $v2, has shape-value $v3;
+$v2 isa unique-key;
+$v3 isa circle-value;
+get;
+match
+$v6 (owner: $v4, owner: $v7, owner: $v8) isa ownership-of-circle, has attribute $v9;
+$v7 isa blob;
+$v8 isa square;
+$v9 isa ownership-cost;
+$v0 (owned: $v1) isa ownership-of-blob, has attribute $v2;
+$v1 isa square;
+$v2 isa unique-key;
+$v3 (smaller: $v1, bigger: $v4) isa sizing-circle;
+$v4 isa square, has attribute $v2;
+$v5 (owned: $v4) isa ownership-of-blob;
+get;
+match
+$v6 isa blob;
+$v7 isa square;
+$v8 isa square, has unique-key $v2;
+$v9 isa square;
+$v10 isa square;
+$v12 isa circle;
+$v11 isa circle;
+$v14 (owner: $v10) isa ownership-of-square;
+$v13 isa blob;
+$v0 (bigger: $v1) isa sizing, has attribute $v2;
+$v1 isa circle;
+$v15 (squarer: $v8) isa interaction;
+$v2 isa unique-key;
+$v3 (smaller: $v1, bigger: $v7, bigger: $v8, smaller: $v9, bigger: $v10) isa sizing-circle, has unique-key $v2;
+$v4 (bigger: $v1, bigger: $v11, smaller: $v12, smaller: $v13) isa sizing;
+$v5 (circler: $v1, blobber: $v6, squarer: $v9) isa interaction;
+get;
+match
+$v6 isa circle;
+$v7 isa square;
+$v8 isa circle-value;
+$v0 isa square;
+$v1 (squarer: $v0) isa interaction;
+$v2 (squarer: $v0, circler: $v3) isa interaction;
+$v3 isa circle, has circle-value $v8;
+$v4 (owner: $v3) isa ownership-of-blob;
+$v5 (smaller: $v3, bigger: $v6, smaller: $v7) isa sizing-blob;
+get;
+match
+$v0 (owner: $v1) isa ownership-of-blob, has attribute $v2, has ownership-cost $v2;
+$v1 isa square, has attribute $v3;
+$v2 isa ownership-cost, has attribute $v3;
+$v3 isa unique-key;
+get;
+match
+$v6 isa unique-key;
+$v0 (owned: $v1, owner: $v2) isa ownership-of-circle, has attribute $v3;
+$v1 isa square;
+$v2 isa circle, has circle-value $v4, has attribute $v5;
+$v3 isa ownership-cost;
+$v4 isa circle-value, has attribute $v6;
+$v5 isa attribute;
+get;
+match
+$v0 (owner: $v1, owner: $v2) isa ownership, has attribute $v3, has attribute $v4, has attribute $v5;
+$v1 isa square;
+$v2 isa circle, has unique-key $v5;
+$v3 isa ownership-cost;
+$v4 isa attribute;
+$v5 isa unique-key;
+get;
+match
+$v6 isa square;
+$v7 (circler: $v1) isa interaction;
+$v8 (bigger: $v1) isa sizing;
+$v9 isa circle-value;
+$v10 isa unique-key;
+$v0 (owner: $v1, owned: $v2) isa ownership-of-circle;
+$v1 isa circle, has attribute $v9, has attribute $v10;
+$v2 isa blob;
+$v3 (owned: $v2, owner: $v4, owned: $v1) isa ownership;
+$v4 isa blob;
+$v5 (blobber: $v2, squarer: $v6, circler: $v1) isa interaction;
+get;
+match
+$v6 isa square;
+$v7 isa circle;
+$v0 (squarer: $v1, circler: $v2) isa interaction;
+$v1 isa square;
+$v2 isa circle, has attribute $v4;
+$v3 (squarer: $v1, blobber: $v5, squarer: $v6, circler: $v7) isa interaction;
+$v4 isa unique-key;
+$v5 isa blob;
+get;
+match
+$v0 (smaller: $v1, bigger: $v2) isa sizing-square, has attribute $v3;
+$v1 isa circle, has attribute $v4;
+$v2 isa square;
+$v3 isa unique-key;
+$v4 isa unique-key;
+$v3 == $v4;
+get;
+match
+$v0 (bigger: $v1) isa sizing-circle, has attribute $v2;
+$v1 isa circle;
+$v2 isa unique-key;
+get;
+match
+$v6 isa blob;
+$v7 (owned: $v5, owned: $v2, owner: $v8, owned: $v9) isa ownership, has unique-key $v3, has ownership-cost $v10, has attribute $v11;
+$v8 isa circle;
+$v9 isa circle;
+$v10 isa ownership-cost;
+$v11 isa attribute;
+$v0 (smaller: $v1, bigger: $v2) isa sizing, has attribute $v3;
+$v1 isa blob;
+$v2 isa circle;
+$v3 isa unique-key;
+$v4 (bigger: $v1, smaller: $v5, bigger: $v6) isa sizing-circle, has attribute $v3;
+$v5 isa square;
+get;
+match
+$v6 isa circle;
+$v7 isa circle-value;
+$v8 isa blob;
+$v9 isa unique-key;
+$v0 (blobber: $v1, circler: $v2) isa interaction, has attribute $v3;
+$v1 isa blob;
+$v2 isa circle, has attribute $v7;
+$v3 isa attribute;
+$v4 (owned: $v2, owned: $v5, owner: $v6, owned: $v1, owned: $v8) isa ownership-of-square, has unique-key $v9;
+$v5 isa square;
+get;
+match
+$v6 isa square;
+$v7 (squarer: $v6, circler: $v1) isa interaction;
+$v8 (smaller: $v6) isa sizing-blob;
+$v0 (bigger: $v1, smaller: $v2, smaller: $v3) isa sizing-circle;
+$v1 isa circle;
+$v2 isa blob;
+$v3 isa blob;
+$v4 (owned: $v3, owned: $v5, owner: $v6) isa ownership-of-blob;
+$v5 isa square;
+get;
+match
+$v0 (owned: $v1, owner: $v2) isa ownership-of-blob, has attribute $v3;
+$v1 isa blob, has attribute $v4;
+$v2 isa blob;
+$v3 isa ownership-cost, has attribute $v4;
+$v4 isa unique-key;
+get;
+match
+$v0 (circler: $v1) isa relation;
+$v1 isa circle, has attribute $v2, has shape-value $v3;
+$v2 isa attribute;
+$v3 isa shape-value, has attribute $v4, has attribute $v2;
+$v4 isa unique-key;
+get;
+match
+$v0 (owner: $v1) isa ownership, has attribute $v2;
+$v1 isa circle, has circle-value $v3;
+$v2 isa attribute;
+$v3 isa circle-value, has attribute $v2;
+get;
+match
+$v0 (bigger: $v1, bigger: $v2) isa sizing-blob;
+$v1 isa circle, has unique-key $v4;
+$v2 isa square, has square-value $v3;
+$v3 isa square-value;
+$v4 isa unique-key;
+get;
+match
+$v6 isa unique-key;
+$v7 isa unique-key;
+$v0 isa circle, has shape-value $v3;
+$v1 (bigger: $v0, bigger: $v2, bigger: $v4, bigger: $v5) isa sizing-blob, has attribute $v6, has attribute $v7;
+$v2 isa circle;
+$v3 isa circle-value;
+$v4 isa blob;
+$v5 isa blob;
+get;
+match
+$v6 isa unique-key;
+$v0 isa square;
+$v1 (bigger: $v0, smaller: $v4) isa sizing, has unique-key $v5;
+$v2 (squarer: $v0, blobber: $v3, squarer: $v4) isa interaction, has attribute $v6;
+$v3 isa blob;
+$v4 isa square;
+$v5 isa unique-key;
+$v5 !== $v6;
+get;
+match
+$v0 (owner: $v1, owner: $v2) isa relation;
+$v1 isa square;
+$v2 isa blob, has attribute $v3;
+$v3 isa attribute;
+get;
+match
+$v0 isa blob-value, has attribute $v1;
+$v1 isa attribute;
+get;
+match
+$v0 (bigger: $v1, bigger: $v2) isa sizing, has attribute $v3;
+$v1 isa square;
+$v2 isa blob;
+$v3 isa unique-key;
+get;
+match
+$v0 (owner: $v1) isa ownership, has attribute $v2;
+$v1 isa square, has attribute $v2, has attribute $v3;
+$v2 isa unique-key;
+$v3 isa attribute;
+get;
+match
+$v6 isa attribute;
+$v7 isa blob;
+$v8 isa square;
+$v9 isa ownership-cost;
+$v0 (smaller: $v1, smaller: $v2) isa sizing-square, has unique-key $v3;
+$v1 isa blob, has attribute $v6;
+$v2 isa circle;
+$v3 isa unique-key;
+$v4 (owner: $v1, owner: $v5, owned: $v7, owned: $v8) isa ownership-of-circle, has ownership-cost $v9;
+$v5 isa blob;
+get;
+match
+$v0 isa @has-shape-value, has attribute $v1, has attribute $v2, has unique-key $v2;
+$v1 isa attribute;
+$v2 isa unique-key;
+get;
+match
+$v0 (smaller: $v1, smaller: $v2) isa relation;
+$v1 isa circle;
+$v2 isa square;
+get;
+match
+$v6 isa unique-key;
+$v7 isa attribute;
+$v8 isa square-value;
+$v9 isa unique-key;
+$v0 (bigger: $v1, smaller: $v2, smaller: $v3) isa relation;
+$v1 isa blob, has shape-value $v5;
+$v2 isa blob, has unique-key $v9;
+$v3 isa square, has attribute $v6, has attribute $v7, has attribute $v8;
+$v4 (owned: $v1, owner: $v3) isa ownership;
+$v5 isa blob-value;
+get;
+match
+$v6 isa circle-value;
+$v7 isa unique-key;
+$v0 (owned: $v1, owner: $v2, owned: $v3) isa ownership-of-blob, has ownership-cost $v4;
+$v1 isa circle, has attribute $v6, has attribute $v7;
+$v2 isa circle;
+$v3 isa blob;
+$v4 isa ownership-cost;
+$v5 (circler: $v1) isa interaction;
+get;
+match
+$v6 isa unique-key;
+$v0 isa square;
+$v1 (squarer: $v0, circler: $v2, blobber: $v3) isa interaction, has interaction-value $v4;
+$v2 isa circle, has attribute $v5;
+$v3 isa blob;
+$v4 isa interaction-value, has unique-key $v6;
+$v5 isa attribute;
+get;
+match
+$v6 isa blob, has unique-key $v7;
+$v7 isa unique-key;
+$v8 (bigger: $v1, smaller: $v12) isa sizing, has attribute $v13;
+$v9 (smaller: $v1, bigger: $v10, smaller: $v6, smaller: $v12) isa sizing, has unique-key $v7;
+$v10 isa square;
+$v12 isa blob;
+$v11 isa shape-value;
+$v13 isa attribute;
+$v0 (smaller: $v1, smaller: $v2, smaller: $v3) isa sizing, has attribute $v4;
+$v1 isa blob, has attribute $v11;
+$v2 isa circle;
+$v3 isa circle, has attribute $v4;
+$v4 isa unique-key;
+$v5 (bigger: $v3, smaller: $v6) isa sizing;
+get;
+match
+$v6 isa circle;
+$v7 (circler: $v2) isa interaction;
+$v8 isa circle-value, has attribute $v10;
+$v9 isa circle-value;
+$v10 isa attribute;
+$v0 isa circle, has attribute $v4;
+$v1 (owned: $v0, owner: $v2, owner: $v5, owner: $v6) isa ownership-of-square, has attribute $v4;
+$v2 isa circle, has shape-value $v8, has circle-value $v9;
+$v3 (owned: $v0) isa ownership-of-square;
+$v4 isa attribute;
+$v5 isa square;
+$v8 == $v9;
+$v9 < $v8;
+get;
+match
+$v6 (smaller: $v3) isa sizing-blob;
+$v7 (smaller: $v3, bigger: $v0) isa sizing-blob;
+$v8 isa unique-key;
+$v0 isa square, has unique-key $v2;
+$v1 (squarer: $v0, circler: $v3, blobber: $v4) isa interaction, has attribute $v5;
+$v2 isa unique-key;
+$v3 isa circle, has attribute $v8;
+$v4 isa blob;
+$v5 isa attribute;
+$v8 == $v2;
+$v2 == $v8;
+get;
+match
+$v0 (owner: $v1, owned: $v2, owned: $v3) isa ownership;
+$v1 isa blob;
+$v2 isa blob, has unique-key $v4;
+$v3 isa circle;
+$v4 isa unique-key;
+get;
+match
+$v0 isa shape-value, has attribute $v1;
+$v1 isa unique-key;
+get;
+match
+$v0 (owned: $v1) isa ownership-of-blob, has attribute $v2;
+$v1 isa square, has attribute $v3, has attribute $v4;
+$v2 isa unique-key;
+$v3 isa unique-key;
+$v4 isa unique-key;
+$v3 == $v4;
+get;
+match
+$v6 isa circle-value, has attribute $v7;
+$v7 isa unique-key;
+$v0 (bigger: $v1, bigger: $v2) isa sizing, has attribute $v3;
+$v1 isa blob, has attribute $v4;
+$v2 isa circle, has shape-value $v6;
+$v3 isa attribute;
+$v4 isa attribute;
+$v5 (owner: $v2) isa ownership-of-circle;
+get;
+match $v0 isa @has-attribute; get;
+match
+$v0 (owner: $v1, owner: $v2, owned: $v3) isa ownership-of-square, has attribute $v4;
+$v1 isa circle, has attribute $v4;
+$v2 isa blob;
+$v3 isa square;
+$v4 isa attribute;
+get;
+match
+$v0 (blobber: $v1) isa interaction, has attribute $v2, has unique-key $v3;
+$v1 isa blob, has attribute $v2, has attribute $v3;
+$v2 isa attribute;
+$v3 isa unique-key;
+get;
+match
+$v6 (owner: $v1, owned: $v5) isa ownership-of-circle;
+$v7 isa attribute;
+$v8 isa square-value;
+$v0 (smaller: $v1) isa sizing-square, has unique-key $v2, has attribute $v3;
+$v1 isa square, has attribute $v7, has square-value $v8;
+$v2 isa unique-key;
+$v3 isa unique-key;
+$v4 (smaller: $v1, bigger: $v5) isa sizing-blob;
+$v5 isa circle;
+get;
+match
+$v0 isa circle, has shape-value $v1, has attribute $v2;
+$v1 isa shape-value, has attribute $v3;
+$v2 isa attribute;
+$v3 isa unique-key;
+get;
+match
+$v6 (owner: $v5) isa ownership;
+$v7 (smaller: $v5) isa sizing;
+$v0 (owner: $v1) isa ownership-of-circle, has unique-key $v2;
+$v1 isa square, has unique-key $v2, has attribute $v4;
+$v2 isa unique-key;
+$v3 (bigger: $v1, smaller: $v5) isa sizing;
+$v4 isa square-value, has attribute $v2, has unique-key $v2;
+$v5 isa square, has square-value $v4;
+get;
+match
+$v0 isa circle, has attribute $v1;
+$v1 isa circle-value, has attribute $v2;
+$v2 isa attribute;
+get;
+match
+$v6 isa circle;
+$v7 isa blob-value;
+$v8 isa square;
+$v9 isa interaction-value;
+$v0 (owned: $v1, owner: $v2) isa ownership-of-blob;
+$v1 isa blob, has attribute $v7, has unique-key $v3;
+$v2 isa square, has unique-key $v3;
+$v3 isa unique-key;
+$v4 (bigger: $v1, smaller: $v2) isa sizing;
+$v5 (blobber: $v1, circler: $v6, squarer: $v2, squarer: $v8) isa interaction, has attribute $v9;
+get;
+match
+$v0 isa circle, has shape-value $v1, has attribute $v2;
+$v1 isa circle-value, has unique-key $v3;
+$v2 isa circle-value;
+$v3 isa unique-key;
+$v1 > $v2;
+get;
+match
+$v0 (circler: $v1) isa interaction, has attribute $v2;
+$v1 isa circle, has shape-value $v5;
+$v2 isa interaction-value, has attribute $v3;
+$v3 isa unique-key;
+$v4 (owner: $v1) isa ownership-of-circle;
+$v5 isa circle-value;
+get;
+match
+$v6 isa blob;
+$v7 isa square-value, has unique-key $v2;
+$v0 isa square, has attribute $v2;
+$v1 (squarer: $v0, squarer: $v3) isa interaction, has attribute $v4;
+$v2 isa unique-key;
+$v3 isa square, has attribute $v7;
+$v4 isa interaction-value, has attribute $v2;
+$v5 (squarer: $v3, blobber: $v6) isa interaction;
+get;
+match
+$v6 isa square-value;
+$v7 isa square;
+$v8 isa square;
+$v9 isa square, has shape-value $v6;
+$v10 isa unique-key;
+$v11 (owner: $v9) isa ownership-of-circle;
+$v0 (owner: $v1) isa ownership, has attribute $v2;
+$v1 isa square, has square-value $v6;
+$v2 isa attribute;
+$v3 (bigger: $v1, smaller: $v4, bigger: $v5, bigger: $v7, smaller: $v8, smaller: $v9) isa sizing-square, has unique-key $v10;
+$v4 isa blob;
+$v5 isa circle;
+get;
+match
+$v6 isa blob-value;
+$v0 (owner: $v1, owned: $v2) isa relation;
+$v1 isa blob, has attribute $v6;
+$v2 isa circle;
+$v3 (owned: $v1, owner: $v4) isa ownership-of-blob;
+$v4 isa square;
+$v5 (owned: $v1) isa ownership-of-blob;
+get;
+match $v0 isa @key-attribute; get;
+match
+$v0 (bigger: $v1, bigger: $v2) isa sizing-circle, has unique-key $v3;
+$v1 isa square;
+$v2 isa square;
+$v3 isa unique-key;
+get;
+match
+$v6 isa square;
+$v0 (bigger: $v1, smaller: $v2) isa sizing-blob, has unique-key $v3;
+$v1 isa blob;
+$v2 isa blob, has blob-value $v5;
+$v3 isa unique-key;
+$v4 (owner: $v2, owned: $v6, owner: $v1) isa ownership-of-blob;
+$v5 isa blob-value;
+get;
+match
+$v6 (bigger: $v1, bigger: $v7) isa sizing-circle;
+$v7 isa circle;
+$v0 (smaller: $v1, smaller: $v2) isa sizing-circle, has unique-key $v3, has attribute $v3;
+$v1 isa blob;
+$v2 isa square, has shape-value $v5;
+$v3 isa unique-key;
+$v4 (owner: $v2) isa ownership-of-circle;
+$v5 isa square-value;
+get;
+match
+$v6 isa square, has shape-value $v10;
+$v7 isa blob;
+$v8 (owner: $v6, owned: $v9) isa ownership-of-blob;
+$v9 isa square, has unique-key $v3;
+$v10 isa square-value;
+$v11 (owned: $v9) isa ownership-of-blob;
+$v0 (bigger: $v1, smaller: $v2) isa sizing-circle, has unique-key $v3;
+$v1 isa square;
+$v2 isa blob;
+$v3 isa unique-key;
+$v4 (blobber: $v2) isa interaction;
+$v5 (bigger: $v2, smaller: $v6, smaller: $v7) isa sizing, has unique-key $v3;
+get;
+match
+$v6 (squarer: $v3, blobber: $v1) isa interaction;
+$v7 isa square;
+$v8 isa circle;
+$v9 isa unique-key;
+$v10 (owner: $v1) isa ownership-of-square;
+$v12 isa attribute;
+$v11 isa unique-key;
+$v0 (bigger: $v1) isa relation;
+$v1 isa blob, has unique-key $v11, has attribute $v12;
+$v2 (owner: $v1, owned: $v3) isa ownership-of-circle;
+$v3 isa square;
+$v4 (squarer: $v3, circler: $v5, blobber: $v1, squarer: $v7, circler: $v8) isa interaction, has attribute $v9;
+$v5 isa circle;
+get;
+match
+$v6 (owner: $v5, owned: $v3, owner: $v0, owner: $v8) isa ownership-of-circle;
+$v7 isa attribute;
+$v8 isa circle;
+$v0 isa circle;
+$v1 (owned: $v0, owned: $v2, owned: $v3) isa ownership;
+$v2 isa blob;
+$v3 isa square;
+$v4 (blobber: $v2, circler: $v0, circler: $v5) isa interaction;
+$v5 isa circle, has attribute $v7;
+get;
+match
+$v6 isa attribute;
+$v7 isa circle;
+$v8 (owner: $v7, owned: $v9, owner: $v10) isa ownership-of-square;
+$v9 isa square;
+$v10 isa circle;
+$v0 (owned: $v1) isa relation;
+$v1 isa blob;
+$v2 (smaller: $v1, bigger: $v3) isa sizing-circle, has attribute $v4;
+$v3 isa blob, has attribute $v6;
+$v4 isa unique-key;
+$v5 (smaller: $v3, bigger: $v7) isa sizing-circle;
+get;
+match
+$v0 (smaller: $v1, bigger: $v2, bigger: $v3) isa sizing-circle;
+$v1 isa circle;
+$v2 isa blob;
+$v3 isa circle;
+get;
+match
+$v6 isa blob;
+$v7 isa square;
+$v8 isa circle;
+$v0 (owner: $v1, owned: $v2) isa ownership;
+$v1 isa blob;
+$v2 isa circle, has attribute $v3;
+$v3 isa attribute;
+$v4 (blobber: $v1, circler: $v2, squarer: $v7, blobber: $v6, circler: $v8) isa interaction;
+$v5 (bigger: $v1, smaller: $v6, smaller: $v2) isa sizing-square, has attribute $v3;
+get;
+match
+$v6 (bigger: $v4, smaller: $v1) isa sizing;
+$v7 isa attribute;
+$v0 (owned: $v1, owner: $v2) isa relation;
+$v1 isa square, has unique-key $v5;
+$v2 isa square;
+$v3 (bigger: $v1, smaller: $v4) isa sizing;
+$v4 isa blob, has attribute $v7;
+$v5 isa unique-key;
+get;
+match
+$v0 (circler: $v1) isa interaction;
+$v1 isa circle;
+get;
+match
+$v6 isa square;
+$v7 isa blob;
+$v8 isa unique-key;
+$v9 isa unique-key;
+$v0 (smaller: $v1, bigger: $v2) isa sizing-blob;
+$v1 isa circle, has circle-value $v4;
+$v2 isa square;
+$v3 (bigger: $v1, smaller: $v2, smaller: $v7) isa sizing-circle, has attribute $v8, has attribute $v9;
+$v4 isa circle-value;
+$v5 (owned: $v2, owner: $v6, owner: $v7) isa ownership-of-circle;
+get;
+match
+$v6 isa circle;
+$v7 (smaller: $v3, bigger: $v6, smaller: $v9, smaller: $v10) isa sizing-blob, has attribute $v11, has unique-key $v12;
+$v8 isa blob-value;
+$v9 isa square;
+$v10 isa circle;
+$v12 isa unique-key;
+$v11 isa unique-key;
+$v0 isa blob;
+$v1 (owner: $v0, owned: $v6) isa ownership-of-circle, has attribute $v5;
+$v2 (bigger: $v0, smaller: $v3, bigger: $v4) isa sizing, has unique-key $v5;
+$v3 isa blob, has attribute $v8;
+$v4 isa blob;
+$v5 isa unique-key;
+get;
+match
+$v6 isa circle-value, has attribute $v4;
+$v7 isa square;
+$v0 isa blob, has unique-key $v4, has attribute $v4;
+$v1 (smaller: $v0, smaller: $v2, bigger: $v3, smaller: $v7) isa sizing, has unique-key $v4;
+$v2 isa circle, has circle-value $v6;
+$v3 isa circle;
+$v4 isa unique-key;
+$v5 (owner: $v2) isa ownership-of-circle;
+get;
+match
+$v6 isa circle;
+$v7 isa blob;
+$v8 (bigger: $v1, smaller: $v6) isa sizing-square, has unique-key $v2;
+$v0 (smaller: $v1) isa sizing-square, has attribute $v2;
+$v1 isa square, has attribute $v2;
+$v2 isa unique-key;
+$v3 (owned: $v1, owner: $v4) isa ownership-of-circle;
+$v4 isa square;
+$v5 (owner: $v4, owned: $v6, owner: $v1, owner: $v7) isa ownership-of-circle;
+get;
+match
+$v0 (bigger: $v1) isa sizing-blob, has attribute $v2;
+$v1 isa blob;
+$v2 isa attribute;
+get;
+match
+$v0 (owned: $v1) isa ownership-of-square, has unique-key $v2, has attribute $v3;
+$v1 isa circle, has unique-key $v2;
+$v2 isa unique-key;
+$v3 isa ownership-cost;
+$v4 (owned: $v1) isa ownership-of-square;
+get;
+match
+$v0 (owned: $v1, owned: $v2) isa ownership;
+$v1 isa square;
+$v2 isa circle;
+get;
+match
+$v6 isa blob;
+$v0 (owner: $v1, owned: $v2) isa ownership, has attribute $v3;
+$v1 isa square;
+$v2 isa square;
+$v3 isa attribute;
+$v4 (squarer: $v2, squarer: $v5, blobber: $v6) isa interaction;
+$v5 isa square;
+get;
+match
+$v6 isa blob;
+$v7 isa square;
+$v0 (owned: $v1) isa ownership-of-blob;
+$v1 isa circle;
+$v2 (smaller: $v1, bigger: $v3, bigger: $v5, bigger: $v6, smaller: $v7) isa sizing-blob;
+$v3 isa blob, has attribute $v4;
+$v4 isa unique-key;
+$v5 isa square;
+get;
+match
+$v6 isa blob;
+$v0 isa circle;
+$v1 (bigger: $v0, smaller: $v2, bigger: $v3, smaller: $v5, bigger: $v6) isa sizing, has attribute $v4;
+$v2 isa blob, has unique-key $v4;
+$v3 isa circle;
+$v4 isa unique-key;
+$v5 isa blob;
+get;
+match
+$v6 isa ownership-cost;
+$v7 isa unique-key;
+$v8 isa blob-value, has attribute $v7;
+$v0 isa square;
+$v1 (owned: $v0) isa ownership-of-square;
+$v2 (owner: $v0, owner: $v3, owned: $v4) isa ownership-of-blob, has attribute $v5, has attribute $v6;
+$v3 isa blob, has attribute $v7, has shape-value $v8;
+$v4 isa square;
+$v5 isa attribute;
+get;
+match
+$v0 (bigger: $v1, smaller: $v2) isa sizing-square;
+$v1 isa square;
+$v2 isa square, has attribute $v3;
+$v3 isa unique-key;
+get;
+match
+$v0 (owner: $v1) isa ownership;
+$v1 isa blob;
+get;
+match
+$v0 (owner: $v1, owned: $v2) isa ownership-of-circle, has attribute $v3;
+$v1 isa circle;
+$v2 isa blob, has attribute $v4;
+$v3 isa unique-key;
+$v4 isa unique-key;
+$v5 (owner: $v1) isa ownership-of-square;
+$v4 < $v3;
+get;
+match
+$v0 (smaller: $v1, smaller: $v2) isa sizing-circle, has unique-key $v3;
+$v1 isa square;
+$v2 isa square;
+$v3 isa unique-key;
+$v4 (smaller: $v2) isa sizing-square;
+$v5 (bigger: $v2, smaller: $v1) isa sizing-square;
+get;
+match
+$v0 isa square, has shape-value $v1;
+$v1 isa square-value;
+get;
+match
+$v6 isa attribute;
+$v0 (smaller: $v1, bigger: $v2, smaller: $v3, smaller: $v4) isa sizing-circle;
+$v1 isa blob, has attribute $v6;
+$v2 isa blob, has shape-value $v5;
+$v3 isa blob;
+$v4 isa blob;
+$v5 isa blob-value;
+get;
+match
+$v0 isa ownership-cost, has attribute $v1, has attribute $v2;
+$v1 isa attribute;
+$v2 isa unique-key;
+get;
+match
+$v0 isa @has-shape-value, has attribute $v1;
+$v1 isa attribute;
+get;
+match
+$v0 isa square, has attribute $v3, has square-value $v3;
+$v1 (bigger: $v0) isa sizing;
+$v2 (owner: $v0, owned: $v4) isa ownership-of-blob;
+$v3 isa square-value;
+$v4 isa blob;
+get;
+match
+$v6 isa square, has attribute $v9;
+$v7 (smaller: $v3, smaller: $v1) isa sizing-square;
+$v8 (bigger: $v1, smaller: $v5, smaller: $v2, smaller: $v10) isa sizing-square;
+$v9 isa unique-key;
+$v10 isa square;
+$v12 isa square;
+$v11 (owned: $v6, owner: $v12, owned: $v5) isa ownership;
+$v0 (owned: $v1, owner: $v2, owned: $v3) isa ownership-of-circle;
+$v1 isa blob, has unique-key $v9;
+$v2 isa square;
+$v3 isa circle;
+$v4 (smaller: $v3, smaller: $v5, smaller: $v6) isa sizing-blob;
+$v5 isa blob;
+get;
+match
+$v0 (owner: $v1) isa relation;
+$v1 isa square, has attribute $v2;
+$v2 isa attribute;
+get;
+match
+$v6 (owned: $v2, owner: $v7) isa ownership;
+$v7 isa blob;
+$v8 isa blob-value;
+$v9 isa attribute;
+$v10 isa circle-value;
+$v0 (smaller: $v1, bigger: $v2) isa sizing;
+$v1 isa square;
+$v2 isa blob, has shape-value $v8, has attribute $v9;
+$v3 (squarer: $v1, circler: $v4) isa interaction, has attribute $v5;
+$v4 isa circle, has circle-value $v10, has shape-value $v10;
+$v5 isa interaction-value;
+get;
+match
+$v0 (owner: $v1, owned: $v2) isa relation;
+$v1 isa blob;
+$v2 isa blob, has shape-value $v3, has attribute $v4;
+$v3 isa shape-value;
+$v4 isa attribute;
+get;
+match
+$v6 isa circle;
+$v7 isa square;
+$v8 isa unique-key;
+$v9 (owned: $v7) isa ownership-of-circle;
+$v10 (squarer: $v7) isa interaction;
+$v0 (owned: $v1, owner: $v2) isa ownership-of-blob;
+$v1 isa circle, has unique-key $v5;
+$v2 isa circle;
+$v3 (bigger: $v1, smaller: $v4, bigger: $v6, bigger: $v7) isa sizing-blob, has unique-key $v8;
+$v4 isa square;
+$v5 isa unique-key;
+get;
+match
+$v6 isa blob;
+$v7 (owner: $v4, owned: $v8) isa ownership;
+$v8 isa circle;
+$v9 (smaller: $v4, bigger: $v8, bigger: $v10, bigger: $v11) isa sizing;
+$v10 isa circle;
+$v12 isa interaction-value, has unique-key $v5;
+$v11 isa circle;
+$v0 isa blob, has attribute $v5;
+$v1 (blobber: $v0, squarer: $v4, blobber: $v6) isa interaction, has interaction-value $v12;
+$v2 (smaller: $v0, bigger: $v3, bigger: $v4, bigger: $v6) isa sizing-blob;
+$v3 isa blob;
+$v4 isa square;
+$v5 isa unique-key;
+get;
+match
+$v6 isa square;
+$v7 isa circle;
+$v0 (owned: $v1, owner: $v2) isa ownership-of-circle, has attribute $v3;
+$v1 isa blob;
+$v2 isa circle;
+$v3 isa unique-key;
+$v4 (owned: $v1, owner: $v2, owner: $v5, owned: $v6, owned: $v7) isa ownership-of-circle;
+$v5 isa blob;
+get;
+match
+$v0 (bigger: $v1, smaller: $v2, bigger: $v3) isa sizing, has attribute $v4;
+$v1 isa square, has unique-key $v5;
+$v2 isa blob;
+$v3 isa circle;
+$v4 isa unique-key;
+$v5 isa unique-key;
+$v4 == $v5;
+get;
+match
+$v0 isa @has-square-value, has attribute $v1, has attribute $v2;
+$v1 isa unique-key;
+$v2 isa unique-key;
+get;
+match
+$v0 (bigger: $v1, smaller: $v2) isa sizing-square;
+$v1 isa blob;
+$v2 isa square;
+get;
+match
+$v0 isa square, has attribute $v1;
+$v1 isa shape-value;
+get;
+match
+$v0 (smaller: $v1) isa sizing;
+$v1 isa circle, has attribute $v3;
+$v2 (owned: $v1, owner: $v4) isa ownership;
+$v3 isa attribute;
+$v4 isa blob;
+get;
+match
+$v6 isa square-value;
+$v7 isa circle;
+$v8 isa ownership-cost;
+$v0 isa blob;
+$v1 (owner: $v0, owned: $v2, owned: $v3) isa ownership-of-blob;
+$v2 isa square, has unique-key $v5, has square-value $v6;
+$v3 isa square, has attribute $v5;
+$v4 (owner: $v2, owned: $v7, owned: $v3) isa ownership-of-circle, has attribute $v8;
+$v5 isa unique-key;
+get;
+match
+$v6 isa attribute;
+$v7 isa square;
+$v0 (smaller: $v1, smaller: $v2, bigger: $v3) isa sizing-circle, has attribute $v4;
+$v1 isa blob;
+$v2 isa square, has attribute $v6;
+$v3 isa square;
+$v4 isa unique-key;
+$v5 (owner: $v3, owned: $v7) isa ownership-of-blob;
+get;
+match
+$v0 isa @has-circle-value, has attribute $v1, has unique-key $v1;
+$v1 isa unique-key;
+get;
+match
+$v6 isa blob;
+$v7 isa unique-key;
+$v8 (blobber: $v6) isa interaction;
+$v0 (bigger: $v1) isa sizing-circle, has attribute $v2;
+$v1 isa circle, has shape-value $v5;
+$v2 isa unique-key;
+$v3 (bigger: $v1, smaller: $v4, bigger: $v6) isa sizing-square, has unique-key $v7;
+$v4 isa circle;
+$v5 isa circle-value;
+$v7 < $v2;
+get;
+match
+$v6 isa blob-value;
+$v0 (squarer: $v1, blobber: $v2, circler: $v3) isa interaction;
+$v1 isa square;
+$v2 isa blob, has blob-value $v6;
+$v3 isa circle;
+$v4 (owner: $v3, owned: $v5) isa ownership-of-circle;
+$v5 isa circle;
+get;
+match
+$v0 (owned: $v1, owner: $v2, owned: $v3, owner: $v4) isa ownership-of-square;
+$v1 isa square;
+$v2 isa circle;
+$v3 isa square;
+$v4 isa square;
+get;
+match
+$v6 (bigger: $v1) isa sizing;
+$v7 isa square-value;
+$v0 (owner: $v1, owner: $v2) isa ownership-of-square;
+$v1 isa square, has shape-value $v7;
+$v2 isa blob, has attribute $v3;
+$v3 isa attribute;
+$v4 (owner: $v1) isa ownership-of-blob;
+$v5 (smaller: $v1) isa sizing;
+get;
+match
+$v6 isa blob;
+$v7 (blobber: $v2) isa interaction;
+$v0 isa square, has attribute $v5;
+$v1 (owner: $v0, owned: $v2) isa ownership-of-circle;
+$v2 isa blob;
+$v3 (squarer: $v0, circler: $v4, blobber: $v6) isa interaction;
+$v4 isa circle;
+$v5 isa square-value;
+get;
+match
+$v6 isa attribute;
+$v7 (owner: $v2, owned: $v1) isa ownership-of-circle;
+$v8 (owned: $v2) isa ownership-of-circle;
+$v9 (blobber: $v1) isa interaction;
+$v0 (owned: $v1, owner: $v2) isa ownership-of-blob, has unique-key $v3;
+$v1 isa blob, has attribute $v4, has unique-key $v5;
+$v2 isa square;
+$v3 isa unique-key;
+$v4 isa blob-value, has attribute $v6;
+$v5 isa unique-key;
+$v3 == $v5;
+$v5 > $v3;
+get;
+match
+$v6 isa unique-key;
+$v7 isa unique-key;
+$v0 isa square, has attribute $v3, has attribute $v7;
+$v1 (owner: $v0, owned: $v2, owned: $v4) isa ownership;
+$v2 isa circle;
+$v3 isa attribute;
+$v4 isa circle;
+$v5 (bigger: $v4, smaller: $v2, smaller: $v0) isa sizing-square, has attribute $v6, has unique-key $v6;
+$v7 > $v6;
+get;
+match
+$v6 isa blob, has attribute $v8;
+$v7 isa blob;
+$v8 isa attribute;
+$v0 (smaller: $v1) isa sizing-circle, has attribute $v2;
+$v1 isa blob, has unique-key $v2;
+$v2 isa unique-key;
+$v3 (owner: $v1) isa ownership-of-blob;
+$v4 (owner: $v1, owned: $v5, owner: $v6, owned: $v7) isa ownership-of-square;
+$v5 isa blob;
+get;
+match
+$v0 (smaller: $v1) isa sizing-blob, has unique-key $v2;
+$v1 isa circle, has attribute $v3;
+$v2 isa unique-key;
+$v3 isa attribute;
+get;
+match
+$v6 isa circle;
+$v7 isa ownership-cost, has unique-key $v9;
+$v8 isa ownership-cost;
+$v9 isa unique-key;
+$v0 isa square;
+$v1 (owned: $v0, owner: $v2, owner: $v3, owner: $v5, owned: $v6) isa ownership-of-blob, has attribute $v7, has ownership-cost $v8;
+$v2 isa circle;
+$v3 isa blob;
+$v4 (owner: $v2) isa ownership-of-blob;
+$v5 isa circle;
+$v7 == $v8;
+get;
+match
+$v0 isa shape-value, has unique-key $v1;
+$v1 isa unique-key;
+get;
+match
+$v6 (owner: $v1, owned: $v2) isa ownership-of-blob;
+$v7 isa blob;
+$v8 isa square, has shape-value $v14;
+$v9 (owner: $v2, owned: $v10, owned: $v7, owned: $v11) isa ownership-of-square;
+$v10 isa blob;
+$v12 (bigger: $v2, smaller: $v13) isa sizing-square;
+$v11 isa blob;
+$v14 isa square-value;
+$v13 isa blob;
+$v0 (bigger: $v1, smaller: $v2) isa sizing-square, has unique-key $v3;
+$v1 isa circle, has unique-key $v3;
+$v2 isa square, has attribute $v14;
+$v3 isa unique-key;
+$v4 (squarer: $v2, circler: $v1) isa interaction;
+$v5 (owner: $v1, owned: $v2, owner: $v7, owner: $v8) isa ownership;
+get;
+match
+$v6 isa square;
+$v7 isa ownership-cost;
+$v8 (owner: $v1, owned: $v9) isa ownership-of-square;
+$v9 isa circle;
+$v10 isa unique-key;
+$v11 isa blob-value;
+$v0 (owner: $v1, owned: $v2, owner: $v3) isa ownership-of-blob;
+$v1 isa blob, has attribute $v10, has blob-value $v11;
+$v2 isa blob;
+$v3 isa square;
+$v4 (owner: $v3, owned: $v5, owned: $v6) isa ownership-of-blob, has ownership-cost $v7;
+$v5 isa blob;
+get;
+match
+$v0 isa @has-ownership-cost, has unique-key $v1, has unique-key $v2;
+$v1 isa unique-key;
+$v2 isa unique-key;
+$v2 < $v1;
+get;
+match
+$v6 (bigger: $v1, smaller: $v7, bigger: $v4, bigger: $v10) isa sizing-square;
+$v7 isa blob;
+$v8 isa unique-key;
+$v9 (squarer: $v5) isa interaction;
+$v10 isa circle;
+$v12 isa square;
+$v11 (circler: $v10, blobber: $v7, squarer: $v12) isa interaction;
+$v0 (owner: $v1, owner: $v2) isa ownership-of-blob;
+$v1 isa circle, has unique-key $v8;
+$v2 isa square;
+$v3 (circler: $v1, blobber: $v4, squarer: $v5, blobber: $v7, squarer: $v2) isa interaction, has attribute $v8;
+$v4 isa blob;
+$v5 isa square, has unique-key $v8;
+get;
+match
+$v6 isa blob;
+$v7 isa blob;
+$v8 isa interaction-value;
+$v0 isa circle, has attribute $v3, has attribute $v4;
+$v1 (circler: $v0, blobber: $v2, blobber: $v6, blobber: $v7) isa interaction, has interaction-value $v8;
+$v2 isa blob, has blob-value $v5;
+$v3 isa unique-key;
+$v4 isa attribute;
+$v5 isa blob-value;
+get;
+match
+$v0 isa interaction-value, has unique-key $v1;
+$v1 isa unique-key;
+get;
+match
+$v0 (bigger: $v1, smaller: $v2) isa sizing;
+$v1 isa circle;
+$v2 isa square;
+get;
+match
+$v6 isa square;
+$v7 isa unique-key;
+$v0 (bigger: $v1) isa sizing-blob, has attribute $v2;
+$v1 isa square;
+$v2 isa attribute;
+$v3 (owner: $v1, owned: $v4, owned: $v6) isa ownership, has unique-key $v7;
+$v4 isa blob, has attribute $v5;
+$v5 isa shape-value;
+get;
+match
+$v0 (smaller: $v1, bigger: $v2) isa sizing-square, has attribute $v3;
+$v1 isa blob;
+$v2 isa square;
+$v3 isa attribute;
+get;
+match
+$v0 isa circle, has shape-value $v1;
+$v1 isa circle-value, has unique-key $v2;
+$v2 isa unique-key;
+get;
+match
+$v6 isa circle;
+$v7 isa attribute;
+$v8 (bigger: $v5, smaller: $v9, smaller: $v10) isa sizing-blob, has unique-key $v3;
+$v9 isa square, has unique-key $v3;
+$v10 isa circle;
+$v12 (bigger: $v6, smaller: $v13) isa sizing-square;
+$v11 (owned: $v6, owner: $v9) isa ownership-of-square;
+$v13 isa blob;
+$v0 (owned: $v1, owner: $v2) isa ownership-of-square;
+$v1 isa circle, has unique-key $v3;
+$v2 isa blob, has attribute $v3;
+$v3 isa unique-key;
+$v4 (bigger: $v1, smaller: $v5, smaller: $v6) isa sizing-circle, has attribute $v7;
+$v5 isa circle;
+get;
+match
+$v6 isa square;
+$v7 isa interaction-value;
+$v0 (owner: $v1, owned: $v2) isa ownership-of-square;
+$v1 isa circle;
+$v2 isa circle, has attribute $v4;
+$v3 (circler: $v2, blobber: $v5, squarer: $v6) isa interaction, has interaction-value $v7;
+$v4 isa unique-key;
+$v5 isa blob;
+get;
+match
+$v0 (smaller: $v1) isa sizing-square;
+$v1 isa blob, has shape-value $v3;
+$v2 (owned: $v1) isa ownership-of-circle;
+$v3 isa shape-value;
+get;
+match
+$v0 (bigger: $v1, bigger: $v2) isa sizing-blob, has attribute $v3;
+$v1 isa circle, has unique-key $v3;
+$v2 isa circle;
+$v3 isa unique-key;
+$v4 (circler: $v1) isa interaction;
+get;
+match
+$v0 (owned: $v1, owned: $v2) isa ownership-of-circle;
+$v1 isa blob, has attribute $v4, has attribute $v5;
+$v2 isa circle;
+$v3 (smaller: $v1, bigger: $v2) isa sizing;
+$v4 isa attribute;
+$v5 isa shape-value;
+get;
+match
+$v0 (owner: $v1) isa relation;
+$v1 isa circle, has attribute $v4, has unique-key $v4;
+$v2 (smaller: $v1, bigger: $v3) isa sizing-circle;
+$v3 isa circle;
+$v4 isa unique-key;
+get;
+match
+$v0 (owner: $v1) isa relation;
+$v1 isa square, has attribute $v5;
+$v2 (bigger: $v1, smaller: $v3, bigger: $v4) isa sizing-square;
+$v3 isa blob, has unique-key $v5;
+$v4 isa square;
+$v5 isa unique-key;
+get;
+match
+$v0 (bigger: $v1) isa sizing-blob, has attribute $v2;
+$v1 isa circle, has unique-key $v2;
+$v2 isa unique-key;
+get;
+match
+$v0 (bigger: $v1) isa relation;
+$v1 isa square;
+get;
+match
+$v6 isa unique-key;
+$v0 (smaller: $v1, bigger: $v2) isa sizing-square;
+$v1 isa blob;
+$v2 isa square;
+$v3 (owned: $v2, owner: $v1, owned: $v4) isa ownership-of-blob;
+$v4 isa square, has attribute $v6;
+$v5 (bigger: $v2) isa sizing-blob;
+get;
+match
+$v6 (blobber: $v3, circler: $v2) isa interaction;
+$v7 (owner: $v2, owner: $v1, owned: $v13) isa ownership-of-blob;
+$v8 (owner: $v2) isa ownership-of-circle;
+$v9 isa unique-key;
+$v10 (circler: $v1) isa interaction;
+$v12 isa unique-key;
+$v11 isa circle-value, has unique-key $v12;
+$v13 isa blob;
+$v0 (bigger: $v1, smaller: $v2, bigger: $v3) isa relation;
+$v1 isa circle, has circle-value $v11;
+$v2 isa circle, has unique-key $v9;
+$v3 isa blob;
+$v4 (smaller: $v3, bigger: $v5) isa sizing;
+$v5 isa blob;
+$v9 < $v12;
+get;
+match
+$v0 (smaller: $v1) isa sizing, has unique-key $v2;
+$v1 isa blob;
+$v2 isa unique-key;
+$v3 (blobber: $v1, blobber: $v4, squarer: $v5) isa interaction;
+$v4 isa blob;
+$v5 isa square;
+get;
+match
+$v6 isa unique-key;
+$v0 isa square, has attribute $v4;
+$v1 (owned: $v0) isa ownership;
+$v2 (smaller: $v0, bigger: $v5) isa sizing, has unique-key $v6;
+$v3 (owner: $v0) isa ownership-of-circle;
+$v4 isa unique-key;
+$v5 isa square;
+$v4 > $v6;
+get;
+match
+$v0 (smaller: $v1, smaller: $v2) isa sizing-square;
+$v1 isa circle;
+$v2 isa square;
+get;
+match
+$v6 isa blob;
+$v0 (smaller: $v1) isa sizing-square, has unique-key $v2, has attribute $v2;
+$v1 isa blob;
+$v2 isa unique-key;
+$v3 (bigger: $v1) isa sizing;
+$v4 (bigger: $v1, bigger: $v5, bigger: $v6) isa sizing-circle, has attribute $v2;
+$v5 isa blob;
+get;
+match
+$v6 isa attribute;
+$v0 isa blob, has attribute $v2;
+$v1 (blobber: $v0, squarer: $v3, blobber: $v4) isa interaction, has attribute $v5;
+$v2 isa unique-key;
+$v3 isa square, has unique-key $v5, has attribute $v6;
+$v4 isa blob;
+$v5 isa unique-key;
+get;
+match
+$v0 isa circle, has circle-value $v1;
+$v1 isa circle-value, has attribute $v2, has attribute $v3;
+$v2 isa attribute;
+$v3 isa unique-key;
+get;
+match
+$v6 isa attribute;
+$v0 (owner: $v1, owner: $v2) isa ownership-of-circle, has attribute $v3;
+$v1 isa circle, has attribute $v6;
+$v2 isa blob;
+$v3 isa unique-key;
+$v4 (smaller: $v1, bigger: $v5) isa sizing-circle;
+$v5 isa circle;
+get;
+match
+$v0 (owner: $v1, owner: $v2) isa relation;
+$v1 isa circle, has attribute $v3;
+$v2 isa square, has attribute $v4, has shape-value $v5;
+$v3 isa attribute;
+$v4 isa unique-key;
+$v5 isa shape-value;
+get;
+match
+$v0 isa blob, has blob-value $v1;
+$v1 isa blob-value;
+get;
+match
+$v6 isa circle;
+$v7 isa unique-key;
+$v8 isa attribute;
+$v0 isa square;
+$v1 (owned: $v0, owner: $v2) isa ownership-of-blob;
+$v2 isa square;
+$v3 (owned: $v0, owner: $v4, owner: $v5, owner: $v6) isa ownership-of-circle, has unique-key $v7, has attribute $v8;
+$v4 isa circle;
+$v5 isa circle;
+get;
+match $v0 isa thing; get;
+match
+$v0 isa @has-shape-value, has attribute $v1, has unique-key $v2;
+$v1 isa attribute;
+$v2 isa unique-key;
+get;
+match
+$v6 (owned: $v2, owned: $v13) isa ownership-of-circle;
+$v7 isa blob, has attribute $v17;
+$v8 isa blob, has shape-value $v10;
+$v9 (owner: $v8) isa ownership-of-circle;
+$v10 isa shape-value, has unique-key $v11;
+$v12 isa square;
+$v11 isa unique-key;
+$v14 (owned: $v7, owner: $v1, owner: $v15) isa ownership-of-circle;
+$v13 isa square;
+$v0 (owned: $v1, owner: $v2) isa ownership-of-blob, has attribute $v3;
+$v16 (bigger: $v7) isa sizing-blob;
+$v1 isa square;
+$v15 isa circle;
+$v2 isa blob;
+$v3 isa ownership-cost;
+$v17 isa attribute;
+$v4 (squarer: $v1, squarer: $v12) isa interaction, has attribute $v11;
+$v5 (smaller: $v2, smaller: $v7, bigger: $v8) isa sizing-blob;
+get;
+match $v0 isa unique-key; get;
+match
+$v0 (owned: $v1, owned: $v2) isa ownership-of-circle, has unique-key $v3;
+$v1 isa square;
+$v2 isa blob;
+$v3 isa unique-key;
+$v4 (bigger: $v1, smaller: $v5) isa sizing-blob;
+$v5 isa square;
+get;
+match
+$v0 (blobber: $v1) isa relation;
+$v1 isa blob, has blob-value $v2;
+$v2 isa blob-value;
+get;
+match
+$v0 (blobber: $v1, squarer: $v2) isa relation;
+$v1 isa blob;
+$v2 isa square;
+get;
+match
+$v6 isa unique-key;
+$v0 (smaller: $v1) isa sizing-blob, has attribute $v2;
+$v1 isa square, has attribute $v5;
+$v2 isa unique-key;
+$v3 (owner: $v1, owned: $v4) isa ownership;
+$v4 isa square, has attribute $v6;
+$v5 isa square-value;
+$v6 !== $v2;
+get;
+match
+$v0 (owned: $v1, owner: $v2) isa ownership;
+$v1 isa circle;
+$v2 isa blob;
+$v3 (smaller: $v1, bigger: $v2) isa sizing-square, has attribute $v4;
+$v4 isa unique-key;
+get;
+match
+$v0 (bigger: $v1) isa sizing-blob, has unique-key $v2;
+$v1 isa square, has shape-value $v5;
+$v2 isa unique-key;
+$v3 (squarer: $v1, blobber: $v4) isa interaction;
+$v4 isa blob;
+$v5 isa square-value;
+get;
+match
+$v6 isa square;
+$v7 (owned: $v1) isa ownership-of-blob;
+$v8 (bigger: $v6, smaller: $v2, smaller: $v1) isa sizing-circle, has unique-key $v9;
+$v9 isa unique-key;
+$v0 (smaller: $v1, smaller: $v2) isa sizing-square, has attribute $v3;
+$v1 isa square, has attribute $v3;
+$v2 isa blob, has attribute $v3;
+$v3 isa unique-key;
+$v4 (smaller: $v2) isa sizing-square;
+$v5 (smaller: $v1, bigger: $v2, smaller: $v6) isa sizing;
+get;
+match
+$v6 isa circle;
+$v7 isa blob;
+$v0 (bigger: $v1) isa sizing-circle, has attribute $v2;
+$v1 isa circle;
+$v2 isa attribute;
+$v3 (bigger: $v1, smaller: $v4, bigger: $v5, bigger: $v6, bigger: $v7) isa sizing-square;
+$v4 isa square;
+$v5 isa square;
+get;
+match
+$v6 isa shape-value;
+$v7 isa blob;
+$v0 (smaller: $v1, bigger: $v2) isa sizing-circle, has attribute $v3;
+$v1 isa square;
+$v2 isa circle, has shape-value $v6, has unique-key $v3;
+$v3 isa unique-key;
+$v4 (circler: $v2, circler: $v5, blobber: $v7, squarer: $v1) isa interaction;
+$v5 isa circle;
+get;
+match
+$v6 isa circle-value;
+$v7 isa square;
+$v0 (smaller: $v1, bigger: $v2) isa sizing-blob, has unique-key $v3;
+$v1 isa circle, has circle-value $v6;
+$v2 isa circle;
+$v3 isa unique-key;
+$v4 (owned: $v1, owner: $v7) isa ownership-of-square;
+$v5 (owner: $v1) isa ownership;
+get;
+match
+$v0 (circler: $v1) isa interaction;
+$v1 isa circle, has circle-value $v3;
+$v2 (smaller: $v1, smaller: $v5) isa sizing, has attribute $v4;
+$v3 isa circle-value, has attribute $v4;
+$v4 isa attribute;
+$v5 isa circle;
+get;
+match
+$v0 (circler: $v1, squarer: $v2) isa relation;
+$v1 isa circle;
+$v2 isa square, has shape-value $v3, has shape-value $v4;
+$v3 isa square-value;
+$v4 isa shape-value;
+get;
+match
+$v6 isa blob-value;
+$v7 (blobber: $v4) isa interaction;
+$v8 isa unique-key;
+$v9 isa attribute;
+$v0 isa blob, has shape-value $v5, has shape-value $v6;
+$v1 (bigger: $v0, smaller: $v2) isa sizing-blob;
+$v2 isa square, has attribute $v9;
+$v3 (smaller: $v0, smaller: $v4) isa sizing-square;
+$v4 isa blob, has attribute $v8;
+$v5 isa shape-value;
+get;
+match
+$v0 (smaller: $v1) isa relation;
+$v1 isa square, has unique-key $v2;
+$v2 isa unique-key;
+get;
+match
+$v0 isa blob-value, has attribute $v1, has attribute $v2;
+$v1 isa unique-key;
+$v2 isa unique-key;
+$v2 == $v1;
+get;
+match
+$v0 isa @has-shape-value, has attribute $v1;
+$v1 isa attribute;
+get;
+match
+$v0 (smaller: $v1) isa sizing-circle;
+$v1 isa circle, has attribute $v2;
+$v2 isa circle-value, has unique-key $v3;
+$v3 isa unique-key;
+get;
+match
+$v6 isa circle-value, has attribute $v3;
+$v0 isa blob;
+$v1 (owned: $v0, owner: $v2, owned: $v4, owned: $v5) isa ownership;
+$v2 isa blob, has attribute $v3;
+$v3 isa unique-key;
+$v4 isa circle, has circle-value $v6;
+$v5 isa square;
+get;
+match
+$v0 (owned: $v1) isa ownership, has attribute $v2;
+$v1 isa circle, has attribute $v3;
+$v2 isa attribute;
+$v3 isa attribute;
+get;
+match
+$v0 isa ownership-cost, has attribute $v1;
+$v1 isa attribute;
+get;
+match
+$v0 (bigger: $v1) isa sizing, has unique-key $v2;
+$v1 isa circle, has unique-key $v2, has shape-value $v3;
+$v2 isa unique-key;
+$v3 isa circle-value;
+get;
+match
+$v6 (owner: $v4, owner: $v7, owner: $v8) isa ownership-of-circle, has attribute $v9;
+$v7 isa blob;
+$v8 isa square;
+$v9 isa ownership-cost;
+$v0 (owned: $v1) isa ownership-of-blob, has attribute $v2;
+$v1 isa square;
+$v2 isa unique-key;
+$v3 (smaller: $v1, bigger: $v4) isa sizing-circle;
+$v4 isa square, has attribute $v2;
+$v5 (owned: $v4) isa ownership-of-blob;
+get;
+match
+$v6 isa blob;
+$v7 isa square;
+$v8 isa square, has unique-key $v2;
+$v9 isa square;
+$v10 isa square;
+$v12 isa circle;
+$v11 isa circle;
+$v14 (owner: $v10) isa ownership-of-square;
+$v13 isa blob;
+$v0 (bigger: $v1) isa sizing, has attribute $v2;
+$v1 isa circle;
+$v15 (squarer: $v8) isa interaction;
+$v2 isa unique-key;
+$v3 (smaller: $v1, bigger: $v7, bigger: $v8, smaller: $v9, bigger: $v10) isa sizing-circle, has unique-key $v2;
+$v4 (bigger: $v1, bigger: $v11, smaller: $v12, smaller: $v13) isa sizing;
+$v5 (circler: $v1, blobber: $v6, squarer: $v9) isa interaction;
+get;
+match
+$v6 isa circle;
+$v7 isa square;
+$v8 isa circle-value;
+$v0 isa square;
+$v1 (squarer: $v0) isa interaction;
+$v2 (squarer: $v0, circler: $v3) isa interaction;
+$v3 isa circle, has circle-value $v8;
+$v4 (owner: $v3) isa ownership-of-blob;
+$v5 (smaller: $v3, bigger: $v6, smaller: $v7) isa sizing-blob;
+get;
+match
+$v0 (owner: $v1) isa ownership-of-blob, has attribute $v2, has ownership-cost $v2;
+$v1 isa square, has attribute $v3;
+$v2 isa ownership-cost, has attribute $v3;
+$v3 isa unique-key;
+get;
+match
+$v6 isa unique-key;
+$v0 (owned: $v1, owner: $v2) isa ownership-of-circle, has attribute $v3;
+$v1 isa square;
+$v2 isa circle, has circle-value $v4, has attribute $v5;
+$v3 isa ownership-cost;
+$v4 isa circle-value, has attribute $v6;
+$v5 isa attribute;
+get;
+match
+$v0 isa circle;
+$v1 (circler: $v0, circler: $v2) isa interaction, has attribute $v3, has unique-key $v4;
+$v2 isa circle, has attribute $v3;
+$v3 isa attribute;
+$v4 isa unique-key;
+get;
+match
+$v6 isa square;
+$v7 (circler: $v1) isa interaction;
+$v8 (bigger: $v1) isa sizing;
+$v9 isa circle-value;
+$v10 isa unique-key;
+$v0 (owner: $v1, owned: $v2) isa ownership-of-circle;
+$v1 isa circle, has attribute $v9, has attribute $v10;
+$v2 isa blob;
+$v3 (owned: $v2, owner: $v4, owned: $v1) isa ownership;
+$v4 isa blob;
+$v5 (blobber: $v2, squarer: $v6, circler: $v1) isa interaction;
+get;
+match
+$v6 isa square;
+$v7 isa circle;
+$v0 (squarer: $v1, circler: $v2) isa interaction;
+$v1 isa square;
+$v2 isa circle, has attribute $v4;
+$v3 (squarer: $v1, blobber: $v5, squarer: $v6, circler: $v7) isa interaction;
+$v4 isa unique-key;
+$v5 isa blob;
+get;
+match
+$v0 (smaller: $v1, bigger: $v2) isa sizing-square, has attribute $v3;
+$v1 isa circle, has attribute $v4;
+$v2 isa square;
+$v3 isa unique-key;
+$v4 isa unique-key;
+$v3 == $v4;
+get;
+match
+$v0 (owned: $v1) isa ownership-of-circle, has attribute $v2;
+$v1 isa blob;
+$v2 isa unique-key;
+get;
+match
+$v6 isa blob;
+$v7 (owned: $v5, owned: $v2, owner: $v8, owned: $v9) isa ownership, has unique-key $v3, has ownership-cost $v10, has attribute $v11;
+$v8 isa circle;
+$v9 isa circle;
+$v10 isa ownership-cost;
+$v11 isa attribute;
+$v0 (smaller: $v1, bigger: $v2) isa sizing, has attribute $v3;
+$v1 isa blob;
+$v2 isa circle;
+$v3 isa unique-key;
+$v4 (bigger: $v1, smaller: $v5, bigger: $v6) isa sizing-circle, has attribute $v3;
+$v5 isa square;
+get;
+match
+$v6 isa square;
+$v7 isa square;
+$v0 (owned: $v1, owner: $v2) isa ownership-of-blob;
+$v1 isa blob;
+$v2 isa circle, has attribute $v4;
+$v3 (smaller: $v1, bigger: $v5, smaller: $v6, smaller: $v2, smaller: $v7) isa sizing;
+$v4 isa attribute;
+$v5 isa blob;
+get;
+match
+$v6 isa square;
+$v7 (squarer: $v6, circler: $v1) isa interaction;
+$v8 (smaller: $v6) isa sizing-blob;
+$v0 (bigger: $v1, smaller: $v2, smaller: $v3) isa sizing-circle;
+$v1 isa circle;
+$v2 isa blob;
+$v3 isa blob;
+$v4 (owned: $v3, owned: $v5, owner: $v6) isa ownership-of-blob;
+$v5 isa square;
+get;
+match
+$v0 (owned: $v1, owner: $v2) isa ownership-of-blob, has attribute $v3;
+$v1 isa blob, has attribute $v4;
+$v2 isa blob;
+$v3 isa ownership-cost, has attribute $v4;
+$v4 isa unique-key;
+get;
+match
+$v0 (circler: $v1) isa relation;
+$v1 isa circle, has attribute $v2, has shape-value $v3;
+$v2 isa attribute;
+$v3 isa shape-value, has attribute $v4, has attribute $v2;
+$v4 isa unique-key;
+get;
+match
+$v0 (owner: $v1) isa ownership, has attribute $v2;
+$v1 isa circle, has circle-value $v3;
+$v2 isa attribute;
+$v3 isa circle-value, has attribute $v2;
+get;
+match
+$v0 (owned: $v1, owned: $v2) isa ownership-of-square;
+$v1 isa blob, has blob-value $v3;
+$v2 isa circle;
+$v3 isa blob-value;
+get;
+match
+$v6 isa unique-key;
+$v7 isa unique-key;
+$v0 isa circle, has shape-value $v3;
+$v1 (bigger: $v0, bigger: $v2, bigger: $v4, bigger: $v5) isa sizing-blob, has attribute $v6, has attribute $v7;
+$v2 isa circle;
+$v3 isa circle-value;
+$v4 isa blob;
+$v5 isa blob;
+get;
+match
+$v6 isa unique-key;
+$v0 isa square;
+$v1 (bigger: $v0, smaller: $v4) isa sizing, has unique-key $v5;
+$v2 (squarer: $v0, blobber: $v3, squarer: $v4) isa interaction, has attribute $v6;
+$v3 isa blob;
+$v4 isa square;
+$v5 isa unique-key;
+$v5 !== $v6;
+get;
+match
+$v0 (owner: $v1, owner: $v2) isa relation;
+$v1 isa square;
+$v2 isa blob, has attribute $v3;
+$v3 isa attribute;
+get;
+match
+$v0 isa @has-blob-value, has attribute $v1;
+$v1 isa attribute;
+get;
+match
+$v0 (bigger: $v1, bigger: $v2) isa sizing, has attribute $v3;
+$v1 isa square;
+$v2 isa blob;
+$v3 isa unique-key;
+get;
