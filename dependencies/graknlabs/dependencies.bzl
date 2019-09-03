@@ -43,5 +43,5 @@ def graknlabs_protocol(): # TODO: Reconsider whether we need to load this explic
     git_repository(
         name = "graknlabs_protocol",
         remote = "https://github.com/graknlabs/protocol",
-        commit = "dbbea5ae6870dc0624658091c221fe9fc292bad1", # sync-marker: do not remove this comment, this is used for sync-dependencies by @graknlabs_protocol
+        commit = "fb958dad2dea58f1322411997ee5f24949204988", # sync-marker: do not remove this comment, this is used for sync-dependencies by @graknlabs_protocol
     )
