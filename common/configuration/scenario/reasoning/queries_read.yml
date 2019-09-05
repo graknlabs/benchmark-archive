@@ -10,7 +10,7 @@ queries:
   - "match (from: $x, to: $y) isa transRelation; get;"
 
   # transitive closure with a bound
-  - "match (from: $x, to: $y) isa transRelation;$x has index 'start'; get;"
+  - "match (from: $x, to: $y) isa transRelation; $x has nonInferredAttribute 'start'; get;"
 
   # limited transitive closure
   - "match (from: $x, to: $y) isa transRelation; get; limit 1000;"
