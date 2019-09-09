@@ -56,7 +56,7 @@ unzip -o profiler.zip
 
 # run zipkin
 cd profiler
-tmux new-session -d -s zipkin "STORAGE_TYPE=elasticsearch ES_HOSTS=http://$ES_URI ES_INDEX=benchmark java -jar external-dependencies/zipkin.jar"
+tmux new-session -d -s zipkin "STORAGE_TYPE=elasticsearch ES_HOSTS=$ES_URI ES_INDEX=benchmark java -jar external-dependencies/zipkin.jar"
 
 
 # mark execution as running
