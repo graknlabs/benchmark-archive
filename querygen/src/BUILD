@@ -17,7 +17,7 @@
 #
 
 java_library(
-    name = "query-sampler",
+    name = "query-sampler-lib",
     srcs = glob(["*.java", "subsampling/*.java", "util/*.java"]),
     deps = [
         "@graknlabs_client_java//:client-java",
@@ -37,7 +37,7 @@ java_library(
 )
 
 java_binary(
-    name = "query-sampler-binary",
+    name = "query-sampler",
     main_class = "grakn.benchmark.querygen.QuerySampler",
     runtime_deps = [
         ":query-sampler"

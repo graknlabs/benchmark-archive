@@ -31,6 +31,11 @@ bazel run //querygen:query-sampler-binary -- \
 
 This will produce a `.gql` file of queries in `ABSOLUTE_TARGET_DIRECTORY`.
 
+The alternative to the `--gridded` downsampling method is `--kmeans`, which utilises K-means to group
+similar queries and subsample, choosing a few of this similar grouping. In practice we have found `gridded`, which
+splits the vector space into a grid and samples from each grid square that contains elements to work better (ie.
+it is more interpretable, and controllable).
+
 
 ### Shortcomings
 * attribute comparisons limited to : contains (string), <, >, == and !==

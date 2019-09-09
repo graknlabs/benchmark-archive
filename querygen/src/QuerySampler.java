@@ -91,7 +91,7 @@ public class QuerySampler {
     }
 
     /**
-     * Generate and reduce qeuries using Gridded Sampling
+     * Generate and reduce queries using Gridded Sampling
      *
      * @param session
      * @param generate - number of queries to generate

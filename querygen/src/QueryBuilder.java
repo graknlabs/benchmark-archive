@@ -43,7 +43,8 @@ import java.util.stream.Collectors;
  * Container for all the data that is required to build a GraqlGet query out of mappings from variables to variables
  * and variables to types
  *
- * The entire lifetype of the QueryBuilder needs to be tied to a single Transaction, until after `.build()` is called
+ * The entire lifetime of the QueryBuilder needs to be tied to a single Transaction, until after `.build()` is called
+ * This is because it contains live `Concepts` bound to this transaction that are unusable if it is closed
  */
 public class QueryBuilder {
 
@@ -77,9 +78,9 @@ public class QueryBuilder {
     }
 
 
-    void addMapping(Variable var, Type type) {
-        variableTypeMap.put(var, type);
-        unvisitedVariables.add(var);
+    void addMapping(Variable variable, Type variableType) {
+        variableTypeMap.put(variable, variableType);
+        unvisitedVariables.add(variable);
     }
 
     void addOwnership(Variable owner, Variable owned) {
@@ -92,10 +93,10 @@ public class QueryBuilder {
         relationRolePlayers.get(relationVar).add(new Pair<>(rolePlayerVariable, role));
     }
 
-    void addComparison(Variable var1, Variable var2, Graql.Token.Comparator comparator) {
-        attributeComparisons.putIfAbsent(var1, new HashMap<>());
-        Map<Variable, Graql.Token.Comparator> comparisons = attributeComparisons.get(var1);
-        comparisons.put(var2, comparator);
+    void addComparison(Variable leftVariable, Variable rightVariable, Graql.Token.Comparator comparator) {
+        attributeComparisons.putIfAbsent(leftVariable, new HashMap<>());
+        Map<Variable, Graql.Token.Comparator> comparisons = attributeComparisons.get(leftVariable);
+        comparisons.put(rightVariable, comparator);
     }
 
     boolean containsVariableWithType(Type type) {
@@ -181,8 +182,8 @@ public class QueryBuilder {
     /**
      * @return List of variables representing attributes that are owned by a variable
      */
-    List<Variable> attributesOwned(Variable var) {
-        return attributeOwnership.get(var);
+    List<Variable> attributesOwned(Variable ownerVar) {
+        return attributeOwnership.get(ownerVar);
     }
 
     long numAttributeComparisons() {
@@ -227,10 +228,10 @@ public class QueryBuilder {
 
         // add attribute - attribute comparisons to the query
         for (Map.Entry<Variable, Map<Variable, Graql.Token.Comparator>> attributeComparison : attributeComparisons.entrySet()) {
-            Variable v1 = attributeComparison.getKey();
-            for (Variable v2 : attributeComparison.getValue().keySet()) {
-                Graql.Token.Comparator comparator = attributeComparison.getValue().get(v2);
-                patterns.add(Graql.var(v1).operation(ValueProperty.Operation.Comparison.Variable.of(comparator, Graql.var(v2))));
+            Variable leftComparisonVariable = attributeComparison.getKey();
+            for (Variable rightComparisonVariable : attributeComparison.getValue().keySet()) {
+                Graql.Token.Comparator comparator = attributeComparison.getValue().get(rightComparisonVariable);
+                patterns.add(Graql.var(leftComparisonVariable).operation(ValueProperty.Operation.Comparison.Variable.of(comparator, Graql.var(rightComparisonVariable))));
             }
         }
 
