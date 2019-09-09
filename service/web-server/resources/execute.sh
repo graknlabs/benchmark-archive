@@ -41,7 +41,7 @@ tar -xf grakn-core-all-linux.tar.gz
 cd grakn-core-all-linux
 
 # current server options to stabilise the variance include disabling the JITs and cassandra caches
-chmod +x server/conf/grakn.properties
+chmod a+rwx server/conf/grakn.properties
 echo "storage.internal.counter_cache_size_in_mb=0" >> server/conf/grakn.properties
 echo "storage.internal.key_cache_size_in_mb=0" >> server/conf/grakn.properties
 SERVER_JAVAOPTS='-Xint' STORAGE_JAVAOPTS='-Xint' ./grakn server start --benchmark
