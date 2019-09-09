@@ -37,9 +37,14 @@ bazel build //:assemble-linux-targz
 cd bazel-genfiles
 tar -xf grakn-core-all-linux.tar.gz
 
-# start grakn
+# configure and start grakn
 cd grakn-core-all-linux
-./grakn server start --benchmark
+
+# current server options to stabilise the variance include disabling the JITs and cassandra caches
+chmod +x server/conf/grakn.properties
+echo "storage.internal.counter_cache_size_in_mb=0" >> server/conf/grakn.properties
+echo "storage.internal.key_cache_size_in_mb=0" >> server/conf/grakn.properties
+SERVER_JAVAOPTS='-Xint' STORAGE_JAVAOPTS='-Xint' ./grakn server start --benchmark
 
 # clone, build and unzip grakn
 cd ~

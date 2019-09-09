@@ -89,7 +89,8 @@ import BenchmarkClient from '@/util/BenchmarkClient';
 import StepsTable from '../StepsTable';
 import 'echarts/lib/chart/bar';
 import 'echarts/lib/component/tooltip';
-import { flattenStepSpans, attachRepsToChildSpans } from '@/util/ExecutionDataFormatters';
+import EDF from '@/util/ExecutionDataFormatters';
+const { flattenStepSpans, attachRepsToChildSpans } = EDF;
 import { getQueryCardChartOptions, produceStepsAndGroups } from './util';
 import {
   getMean, getStdDeviation, getMedian, getOutliers,

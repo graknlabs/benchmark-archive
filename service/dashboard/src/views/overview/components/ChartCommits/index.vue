@@ -45,7 +45,8 @@ import 'echarts/lib/component/legend';
 import 'echarts/lib/component/legendScroll';
 import 'echarts/lib/component/dataZoom';
 import ScaleSelector from '@/components/Selector.vue';
-import { flattenQuerySpans } from '@/util/ExecutionDataFormatters';
+import EDF from '@/util/ExecutionDataFormatters';
+const { flattenQuerySpans } = EDF;
 
 export default {
   /* eslint-disable guard-for-in */

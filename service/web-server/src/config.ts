@@ -19,7 +19,7 @@ export interface IConfig {
 
 export const config: IConfig = {
     es: {
-        host: (process.env.NODE_ENV === 'production' ? '127.0.0.1' : 'http://35.237.252.2'),
+        host: (process.env.NODE_ENV === 'production' ? 'http://35.237.252.2' : 'http://35.237.252.2'),
         port: 9200
     },
     web: {
@@ -29,7 +29,7 @@ export const config: IConfig = {
     auth: {
         intervalInMinutesToFetchGraknLabsMembers: 10,
     },
-    logPath: (process.env.NODE_ENV === 'production' ?  '/home/ubuntu' : `${__dirname}/../../logs`),
+    logPath: (process.env.NODE_ENV === 'production' ?  '/home/ubuntu/logs' : `${__dirname}/../../logs`),
     envPath: (process.env.NODE_ENV === 'production' ?  '/home/ubuntu/.env' : `${__dirname}/../.env`),
     resourcesPath: `${__dirname}/../resources`,
     dashboardPath: `${__dirname}/../../../dashboard/dist`

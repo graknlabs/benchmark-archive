@@ -5,8 +5,7 @@ VM_NAME=$2
 ZONE=$3
 LOG_DIR=$4
 
-
-mkdir -p logs/$VM_NAME
+mkdir -p $LOG_DIR/$VM_NAME
 
 gcloud auth activate-service-account --key-file $GCLOUD_CREDENTIALS
 

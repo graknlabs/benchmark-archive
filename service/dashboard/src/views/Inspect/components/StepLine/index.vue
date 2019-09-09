@@ -40,7 +40,8 @@
 <script>
 import ordinal from 'ordinal';
 import BenchmarkClient from '@/util/BenchmarkClient';
-import { flattenStepSpans, attachRepsToChildSpans } from '@/util/ExecutionDataFormatters';
+import EDF from '@/util/ExecutionDataFormatters';
+const { flattenStepSpans, attachRepsToChildSpans } = EDF;
 import { getMedian } from '@/util/math';
 
 export default {

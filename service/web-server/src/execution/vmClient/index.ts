@@ -64,7 +64,7 @@ async function start() {
     const [metadata] = await vm.getMetadata();
     const ip: string = metadata.networkInterfaces[0].accessConfigs[0].natIP;
 
-    console.log(`${vmName} VM instance is starting. Waiting for IP `);
+    console.log(`${vmName} VM instance is starting. Waiting for IP ${ip} `);
     await pingVM(ip);
 
     console.log(`${vmName} VM instance is up and running.`);

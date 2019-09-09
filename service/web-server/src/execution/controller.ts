@@ -71,7 +71,8 @@ async function watchPR(req, res) {
 }
 
 async function create(req, res) {
-    const { commit, repoUrl } = req.body;
+    const { pull_request: { merge_commit_sha: commit }, repository: { html_url: repoUrl } } = req.body;
+
     const execution: IExecution = {
         commit,
         repoUrl,
@@ -107,7 +108,7 @@ async function createInternal(execution) {
 }
 
 async function updateStatus(req, res, status: TStatus) {
-    const execution = req.body;
+    const execution = req.body.execution;
 
     try {
         await this.updateStatusInternal(execution, status);
@@ -202,7 +203,7 @@ const resolvers: IResolvers = {
                 let should = [];
 
                 const { status } = args;
-                if (statuses) should = status.map(status => ({ match: { status } }));
+                if (status) should = status.map(status => ({ match: { status } }));
 
                 return { query: { bool: { should } } };
             };

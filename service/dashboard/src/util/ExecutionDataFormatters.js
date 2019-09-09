@@ -1,7 +1,7 @@
 function flattenGraphs(graphs) {
   const flattenedGraphs = graphs.map(graph => ({
     id: graph.id,
-    type: graph.tags.graphType,
+    type: graph.tags.configurationName,
     scale: graph.tags.graphScale,
     executionId: graph.tags.executionName,
     description: graph.tags.description,

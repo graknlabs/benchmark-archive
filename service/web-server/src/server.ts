@@ -68,6 +68,7 @@ function registerRoutes() {
     this.app.use(bodyParser.json());
 
     this.esClient.ping((error) => {
+        console.log(error);
         if (error) { throw "Elastic Search Server is down. Makes sure it's up and running before starting the web-server."; }
     });
 
