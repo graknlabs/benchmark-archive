@@ -19,6 +19,7 @@
 package grakn.benchmark.querygen.subsampling;
 
 
+import grakn.benchmark.querygen.VectorisedQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,24 +33,23 @@ import java.util.stream.Collectors;
 
 /**
  * Implment K-Means clustering
- * @param <K>
  */
-public class KMeans<K extends Vectorisable> {
+public class KMeans {
 
     private static Logger LOG = LoggerFactory.getLogger(KMeans.class);
 
-    List<Cluster<K>> clusters;
-    List<K> items;
+    List<Cluster> clusters;
+    List<VectorisedQuery> items;
 
-    public KMeans(List<K> items, int clusters) {
+    public KMeans(List<VectorisedQuery> items, int clusters) {
         this.items = items;
 
         int initialisationAttemptsLimit = 1000;
         int initialisations = 0;
         int bestEmptyClusters = clusters;
-        List<Cluster<K>> bestClusters = null;
+        List<Cluster> bestClusters = null;
         while (bestEmptyClusters > 0 && initialisations < initialisationAttemptsLimit) {
-            Set<Vectorisable> picked = new HashSet<>();
+            Set<VectorisedQuery> picked = new HashSet<>();
 
             Collections.shuffle(items);
 
@@ -58,10 +58,10 @@ public class KMeans<K extends Vectorisable> {
             int index = 0;
             while (this.clusters.size() != clusters && index < items.size()) {
                 if (!picked.contains(items.get(index))) {
-                    Vectorisable chosen = items.get(index);
+                    VectorisedQuery chosen = items.get(index);
                     picked.add(chosen);
                     // init clusters with the value of the item chosen
-                    this.clusters.add(new Cluster<>(new Centroid(chosen.asVector())));
+                    this.clusters.add(new Cluster(new Centroid(chosen.asVector())));
                 }
                 index++;
             }
@@ -88,9 +88,9 @@ public class KMeans<K extends Vectorisable> {
 
         while (step < maxSteps && !settled) {
             // create new clusters based on centroids
-            List<Cluster<K>> newClusters = new ArrayList<>(clusters.size());
-            for (Cluster<K> c : clusters) {
-                newClusters.add(new Cluster<>(c.newCentroid()));
+            List<Cluster> newClusters = new ArrayList<>(clusters.size());
+            for (Cluster c : clusters) {
+                newClusters.add(new Cluster(c.newCentroid()));
             }
 
             assignItemsToClusters(newClusters, items);
@@ -104,18 +104,18 @@ public class KMeans<K extends Vectorisable> {
         return step;
     }
 
-    public List<Cluster<K>> getClusters() {
+    public List<Cluster> getClusters() {
         return clusters;
     }
 
-    private boolean clustersUnchanged(List<Cluster<K>> newClusters, List<Cluster<K>> oldClusters) {
+    private boolean clustersUnchanged(List<Cluster> newClusters, List<Cluster> oldClusters) {
         Set<List<Double>> newClusterCentroids = newClusters.stream().map(cluster -> cluster.newCentroid().asVector()).collect(Collectors.toSet());
         Set<List<Double>> oldClusterCentroids = oldClusters.stream().map(cluster -> cluster.newCentroid().asVector()).collect(Collectors.toSet());
 
         return newClusterCentroids.equals(oldClusterCentroids);
     }
 
-    private int numberOfEmptyClusters(List<Cluster<K>> clusters) {
+    private int numberOfEmptyClusters(List<Cluster> clusters) {
         int empty = 0;
         for (Cluster c : clusters) {
             if (c.members.isEmpty()) {
@@ -126,11 +126,11 @@ public class KMeans<K extends Vectorisable> {
         return empty;
     }
 
-    private void assignItemsToClusters(List<Cluster<K>> clusters, List<K> items) {
+    private void assignItemsToClusters(List<Cluster> clusters, List<VectorisedQuery> items) {
         // assign new ownerships
-        for (K vectorisable : items) {
+        for (VectorisedQuery vectorisable : items) {
             // find the closest cluster
-            Cluster<K> closestCluster = clusters.get(0);
+            Cluster closestCluster = clusters.get(0);
             double closestDistance = distance(vectorisable, closestCluster.centroid());
             for (int i = 1; i < clusters.size(); i++) {
                 double distance = distance(vectorisable, clusters.get(i).centroid());
@@ -144,7 +144,7 @@ public class KMeans<K extends Vectorisable> {
         }
     }
 
-    private double distance(Vectorisable a, Vectorisable b) {
+    private double distance(VectorisedQuery a, Centroid b) {
         double distance = 0.0;
         List<Double> dA = a.asVector();
         List<Double> dB = b.asVector();
@@ -155,8 +155,8 @@ public class KMeans<K extends Vectorisable> {
     }
 
     //VisibleForTesting
-    public static class Cluster<K extends Vectorisable> {
-        private List<K> members = new ArrayList<>();
+    public class Cluster {
+        private List<VectorisedQuery> members = new ArrayList<>();
         private Centroid centroid;
         private Centroid newCentroid = null;
 
@@ -164,11 +164,11 @@ public class KMeans<K extends Vectorisable> {
             this.centroid = centroid;
         }
 
-        public List<K> getMembers() {
+        public List<VectorisedQuery> getMembers() {
             return members;
         }
 
-        public void add(K a) {
+        public void add(VectorisedQuery a) {
             members.add(a);
         }
 
@@ -201,15 +201,14 @@ public class KMeans<K extends Vectorisable> {
 
     }
 
-    private static class Centroid implements Vectorisable {
+    private class Centroid {
         List<Double> vector;
 
         Centroid(List<Double> vector) {
             this.vector = vector;
         }
 
-        @Override
-        public List<Double> asVector() {
+        List<Double> asVector() {
             return vector;
         }
 
@@ -220,7 +219,12 @@ public class KMeans<K extends Vectorisable> {
 
         @Override
         public boolean equals(Object o) {
-            return this.vector.equals(((Vectorisable) o).asVector());
+            if (o instanceof Centroid) {
+                return this.vector.equals(((Centroid)o).asVector());
+            } else if (o instanceof VectorisedQuery) {
+                return this.vector.equals(((VectorisedQuery)o).asVector());
+            }
+            return false;
         }
     }
 }

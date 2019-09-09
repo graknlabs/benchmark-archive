@@ -102,7 +102,7 @@ public class QuerySampler {
     public static List<VectorisedQuery> querySampleGridded(GraknClient.Session session, int generate, int targetSamples, int divisionsPerAxis) {
         LOG.info("Starting query generation...");
         List<VectorisedQuery> rawQueries = parallelQueryGeneration(session, generate, 4);
-        GriddedSampler<VectorisedQuery> sampler = new GriddedSampler<>(divisionsPerAxis, rawQueries);
+        GriddedSampler sampler = new GriddedSampler(divisionsPerAxis, rawQueries);
 
         LOG.info("Calculating grid...");
         sampler.calculateGrid();
@@ -131,20 +131,20 @@ public class QuerySampler {
 
         int clusters = targetSamples / samplesPerCluster;
         LOG.info("Initialising KMeans...");
-        KMeans<VectorisedQuery> clustering = new KMeans<>(rawQueries, clusters);
+        KMeans clustering = new KMeans(rawQueries, clusters);
         LOG.info("Running KMeans...");
         int steps = clustering.run(100);
         LOG.info("Clustering completed in " + steps + " iterations");
-        List<KMeans.Cluster<VectorisedQuery>> computedClusters = clustering.getClusters();
+        List<KMeans.Cluster> computedClusters = clustering.getClusters();
 
         List<VectorisedQuery> sampledQueries = sampleFromClusters(computedClusters, samplesPerCluster);
 
         return sampledQueries;
     }
 
-    private static List<VectorisedQuery> sampleFromClusters(List<KMeans.Cluster<VectorisedQuery>> computedClusters, int samplesPerCluster) {
+    private static List<VectorisedQuery> sampleFromClusters(List<KMeans.Cluster> computedClusters, int samplesPerCluster) {
         List<VectorisedQuery> sampled = new ArrayList<>();
-        for (KMeans.Cluster<VectorisedQuery> cluster : computedClusters) {
+        for (KMeans.Cluster cluster : computedClusters) {
             List<VectorisedQuery> members = cluster.getMembers();
             Collections.shuffle(members);
             for (int i = 0; i < samplesPerCluster; i++) {

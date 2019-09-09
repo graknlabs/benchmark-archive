@@ -18,7 +18,6 @@
 
 package grakn.benchmark.querygen;
 
-import grakn.benchmark.querygen.subsampling.KMeans;
 import grakn.benchmark.querygen.util.Pair;
 import grakn.client.GraknClient;
 import grakn.core.concept.type.RelationType;
@@ -260,4 +259,6 @@ public class QueryGeneratorIT {
         }
     }
 
+    public static class test {
+    }
 }

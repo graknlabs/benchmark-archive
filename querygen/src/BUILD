@@ -40,7 +40,7 @@ java_binary(
     name = "query-sampler",
     main_class = "grakn.benchmark.querygen.QuerySampler",
     runtime_deps = [
-        ":query-sampler"
+        ":query-sampler-lib"
     ],
     classpath_resources = [":logback"],
     visibility = ["//visibility:public"]

@@ -18,7 +18,6 @@
 
 package grakn.benchmark.querygen;
 
-import grakn.benchmark.querygen.subsampling.Vectorisable;
 import graql.lang.query.GraqlGet;
 
 import java.util.Arrays;
@@ -27,7 +26,7 @@ import java.util.List;
 /**
  * A GraqlGet query with the measures about the query, computed via
  */
-public class VectorisedQuery implements Vectorisable {
+public class VectorisedQuery {
 
     GraqlGet graqlQuery;
 
@@ -54,7 +53,6 @@ public class VectorisedQuery implements Vectorisable {
         comparisonsPerAttribute = queryVectoriser.comparisonsPerAttribute();
     }
 
-    @Override
     public List<Double> asVector() {
         return Arrays.asList(
                 numVariables,
