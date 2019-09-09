@@ -28,6 +28,7 @@ export function VMController(execution: IExecution) {
     this.project = 'grakn-dev';
     this.machineType = 'n1-standard-16';
     this.imageName = 'benchmark-executor-image-2';
+    this.tags = ['zipkin-9411'];
     this.esUri = `${config.es.host}:${config.es.port}`;
     this.webUri = `${config.web.host}`;
     this.logPath = config.logPath;
@@ -50,6 +51,7 @@ async function start() {
                     `https://www.googleapis.com/compute/v1/projects/${this.project}/global/images/${this.imageName}`,
             },
         }],
+        tags: this.tags,
         // this config assigns an external IP to the VM instance which is required for ssh access
         networkInterfaces: [{ accessConfigs: [{}] }],
     };
