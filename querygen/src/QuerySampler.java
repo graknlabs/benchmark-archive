@@ -146,9 +146,11 @@ public class QuerySampler {
         List<VectorisedQuery> sampled = new ArrayList<>();
         for (KMeans.Cluster cluster : computedClusters) {
             List<VectorisedQuery> members = cluster.getMembers();
-            Collections.shuffle(members);
-            for (int i = 0; i < samplesPerCluster; i++) {
-                sampled.add(members.get(i));
+            if (!members.isEmpty()) {
+                Collections.shuffle(members);
+                for (int i = 0; i < samplesPerCluster; i++) {
+                    sampled.add(members.get(i));
+                }
             }
         }
         return sampled;
