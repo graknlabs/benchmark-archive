@@ -33,6 +33,7 @@ cd ~
 git clone $GRAKN_REPOSITORY_URL
 cd grakn
 git checkout $COMMIT
+bazel clean --expunge  # clean caches just in case
 bazel build //:assemble-linux-targz
 cd bazel-genfiles
 tar -xf grakn-core-all-linux.tar.gz
@@ -51,6 +52,7 @@ SERVER_JAVAOPTS='-Xint' STORAGE_JAVAOPTS='-Xint' ./grakn server start --benchmar
 cd ~
 git clone https://github.com/graknlabs/benchmark.git
 cd benchmark
+bazel clean --expunge
 bazel build //:profiler-distribution
 cd bazel-genfiles
 unzip -o profiler.zip
