@@ -33,6 +33,7 @@ cd ~
 git clone $GRAKN_REPOSITORY_URL
 cd grakn
 git checkout $COMMIT
+echo "Cleaning bazel cache"
 bazel clean --expunge  # clean caches just in case
 bazel build //:assemble-linux-targz
 cd bazel-genfiles
