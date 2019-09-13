@@ -46,6 +46,7 @@ async function start() {
         machineType: this.machineType,
         disks: [{
             boot: true,
+            autoDelete: true,
             initializeParams: {
                 sourceImage:
                     `https://www.googleapis.com/compute/v1/projects/${this.project}/global/images/${this.imageName}`,
