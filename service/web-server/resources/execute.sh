@@ -40,6 +40,8 @@ echo "Cleaning bazel cache"
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
 bazel clean --expunge
 bazel build //:assemble-linux-targz
+# build twice TODO fix if the `missing input file '@local_jdk//:jre/lib...` can be tracked down and resolved
+bazel build //:assemble-linux-targz
 
 cd bazel-genfiles
 tar -xf grakn-core-all-linux.tar.gz
