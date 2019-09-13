@@ -33,9 +33,14 @@ cd ~
 git clone $GRAKN_REPOSITORY_URL
 cd grakn
 git checkout $COMMIT
+
+# steps to reduce occurence of bazel JVM file not found error
+sleep 5
 echo "Cleaning bazel cache"
-bazel clean --expunge  # clean caches just in case
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
+bazel clean --expunge
 bazel build //:assemble-linux-targz
+
 cd bazel-genfiles
 tar -xf grakn-core-all-linux.tar.gz
 
