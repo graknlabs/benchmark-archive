@@ -34,7 +34,8 @@ java_test(
          "//querygen/test-integration/conf:cassandra-embedded.yaml",
          "//querygen/test-integration/conf:grakn.properties",
          "//querygen/test-integration/resources:schema.gql"
-     ]
+     ],
+     size = "medium"
  )
 
 
