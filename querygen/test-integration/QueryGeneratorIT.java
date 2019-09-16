@@ -231,7 +231,7 @@ public class QueryGeneratorIT {
     }
 
     /**
-     * TODO test to check that attribute comparisons are compatiblet
+     * TODO test to check that attribute comparisons are compatible
       */
     @Test
     public void attributeComparisonsBetweenSameDatatypes() {

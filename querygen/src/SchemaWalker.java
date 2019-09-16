@@ -22,6 +22,7 @@ import grakn.client.GraknClient;
 import grakn.core.concept.type.Type;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -35,14 +36,20 @@ class SchemaWalker {
      * @return some type that is a subtype of rootType
      */
     static Type walkSubs(Type rootType, Random random) {
-        List<Type> subs = rootType.subs().collect(Collectors.toList());
+        List<Type> subs = rootType.subs()
+                .sorted(Comparator.comparing(type -> type.label().toString()))
+                .collect(Collectors.toList());
         int index = random.nextInt(subs.size());
         return subs.get(index);
     }
 
     static Type walkSupsNoMeta(GraknClient.Transaction tx, Type ownableAttribute, Random random) {
         Type metaConcept = tx.getMetaConcept();
-        List<? extends Type> nonMetaSups = ownableAttribute.sups().filter(type -> !type.equals(metaConcept)).collect(Collectors.toList());
+        List<? extends Type> nonMetaSups = ownableAttribute.sups()
+                .filter(type -> !type.equals(metaConcept))
+                .sorted(Comparator.comparing(type -> type.label().toString()))
+                .collect(Collectors.toList());
+
 
         int index = random.nextInt(nonMetaSups.size());
         return nonMetaSups.get(index);
