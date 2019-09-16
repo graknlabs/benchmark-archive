@@ -35,7 +35,7 @@ java_test(
          "//querygen/test-integration/conf:grakn.properties",
          "//querygen/test-integration/resources:schema.gql"
      ],
-     size = "medium"
+     size = "large"
  )
 
 

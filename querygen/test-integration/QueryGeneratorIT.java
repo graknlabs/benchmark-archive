@@ -243,8 +243,8 @@ public class QueryGeneratorIT {
         try (GraknClient client = new GraknClient(server.grpcUri());
              GraknClient.Session session = client.session(testKeyspace)) {
             QueryGenerator queryGenerator = new QueryGenerator(session);
-            // generate 500 queries, some fraction (1/20)? should have comparisons
-            int queriesToGenerate = 500;
+            // generate 300 queries, some fraction (1/20)? should have comparisons
+            int queriesToGenerate = 300;
             List<GraqlGet> queries = queryGenerator.generate(queriesToGenerate);
             assertEquals(queries.size(), queriesToGenerate);
             boolean comparisonFound = false;
