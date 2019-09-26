@@ -45,8 +45,9 @@ graknlabs_bazel_distribution()
 # Load Distribution dependencies #
 ##################################
 
-# needed for @rules_pkg?
+# needed by deploy_github rule transitively
 load("@graknlabs_bazel_distribution//github:dependencies.bzl", "tcnksm_ghr")
+tcnksm_ghr()
 
 load("@graknlabs_bazel_distribution//common:dependencies.bzl", "bazelbuild_rules_pkg")
 bazelbuild_rules_pkg()
