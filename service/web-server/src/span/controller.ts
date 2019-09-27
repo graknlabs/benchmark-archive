@@ -9,14 +9,14 @@ const ES_PAYLOAD_COMMON = { index: 'benchmark*', type: 'span' };
 
 export interface ISpanController {
     esClient: IEsClient;
-
     getGraphqlServer: () => graphqlHTTP.Middleware;
 }
 
-export function SpanController(client: IEsClient) {
-    this.esClient = client;
-
-    this.getGraphqlServer = getGraphqlServer.bind(this);
+export function getSpanController(esClient: IEsClient): ISpanController {
+    return {
+        esClient,
+        getGraphqlServer
+    };
 }
 
 function getGraphqlServer(): graphqlHTTP.Middleware {
