@@ -1,7 +1,7 @@
 package grakn.benchmark.generator.util;
 
 import grakn.client.GraknClient;
-import grakn.core.concept.type.AttributeType;
+import grakn.client.concept.AttributeType;
 
 import java.util.HashMap;
 import java.util.HashSet;

@@ -19,8 +19,7 @@
 package grakn.benchmark.querygen;
 
 import grakn.client.GraknClient;
-import grakn.core.concept.Label;
-import grakn.core.concept.type.Type;
+import grakn.client.concept.Type;
 import grakn.core.rule.GraknTestServer;
 import graql.lang.Graql;
 import graql.lang.query.GraqlQuery;

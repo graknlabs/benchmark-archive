@@ -19,6 +19,7 @@
 package grakn.benchmark.querygen;
 
 import grakn.client.GraknClient;
+import grakn.client.answer.Answer;
 import grakn.core.rule.GraknTestServer;
 import graql.lang.Graql;
 import graql.lang.query.GraqlQuery;
@@ -30,6 +31,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -53,7 +56,7 @@ public class QuerySamplerIT {
         try {
             List<String> lines = Files.readAllLines(Paths.get("querygen/test-integration/resources/schema.gql"));
             String graqlQuery = String.join("\n", lines);
-            transaction.execute((GraqlQuery) Graql.parse(graqlQuery));
+            Set<? extends Answer> answers = transaction.stream((GraqlQuery) Graql.parse(graqlQuery), false).collect(Collectors.toSet());
             transaction.commit();
         } catch (IOException e) {
             e.printStackTrace();

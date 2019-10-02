@@ -19,10 +19,11 @@
 package grakn.benchmark.querygen;
 
 import grakn.client.GraknClient;
-import grakn.core.concept.type.AttributeType;
-import grakn.core.concept.type.RelationType;
-import grakn.core.concept.type.Role;
-import grakn.core.concept.type.Type;
+import grakn.client.concept.AttributeType;
+import grakn.client.concept.RelationType;
+import grakn.client.concept.Role;
+import grakn.client.concept.SchemaConcept;
+import grakn.client.concept.Type;
 import graql.lang.Graql;
 import graql.lang.query.GraqlGet;
 import graql.lang.statement.Variable;
@@ -91,7 +92,7 @@ public class QueryGenerator {
      * Returns a QueryBuilder object that builds a GraqlGet query
      */
     QueryBuilder generateNewQuery(GraknClient.Transaction tx) {
-        Type rootThing = tx.getMetaConcept();
+        SchemaConcept rootThing = tx.getMetaConcept();
 
         QueryBuilder builder = new QueryBuilder();
 

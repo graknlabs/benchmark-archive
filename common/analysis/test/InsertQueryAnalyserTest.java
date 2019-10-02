@@ -18,10 +18,10 @@
 
 package grakn.benchmark.common.analysis;
 
-import grakn.core.concept.Concept;
-import grakn.core.concept.ConceptId;
-import grakn.core.concept.answer.ConceptMap;
-import grakn.core.concept.thing.Thing;
+import grakn.client.answer.ConceptMap;
+import grakn.client.concept.Concept;
+import grakn.client.concept.ConceptId;
+import grakn.client.concept.Thing;
 import graql.lang.Graql;
 import graql.lang.query.GraqlInsert;
 import graql.lang.statement.Statement;
@@ -64,7 +64,7 @@ public class InsertQueryAnalyserTest {
             Thing thingMock = mock(Thing.class);
             when(conceptMock.asThing()).thenReturn(thingMock);
             when(thingMock.id()).thenReturn(ConceptId.of(variable.getValue()));
-            when(answerMock.get(variable.getKey())).thenReturn(conceptMock);
+            when(answerMock.get(variable.getKey().toString())).thenReturn(conceptMock);
 
         }
         answerList.add(answerMock);
@@ -220,8 +220,8 @@ public class InsertQueryAnalyserTest {
         when(xConcept.id()).thenReturn(ConceptId.of("V123"));
         Concept yConcept = mock(Concept.class);
         when(yConcept.id()).thenReturn(ConceptId.of("V234"));
-        when(map.get(xVar)).thenReturn(xConcept);
-        when(map.get(yVar)).thenReturn(yConcept);
+        when(map.get(xVar.toString())).thenReturn(xConcept);
+        when(map.get(yVar.toString())).thenReturn(yConcept);
 
         Map<String, List<Concept>> rolePlayers = InsertQueryAnalyser.getRolePlayersAndRoles(insertQuery, Arrays.asList(map));
 
@@ -242,8 +242,8 @@ public class InsertQueryAnalyserTest {
         when(xConcept.id()).thenReturn(ConceptId.of("V123"));
         Concept yConcept = mock(Concept.class);
         when(yConcept.id()).thenReturn(ConceptId.of("V234"));
-        when(map.get(x)).thenReturn(xConcept);
-        when(map.get(y)).thenReturn(yConcept);
+        when(map.get(x.toString())).thenReturn(xConcept);
+        when(map.get(y.toString())).thenReturn(yConcept);
 
         Map<String, List<Concept>> rolePlayers = InsertQueryAnalyser.getRolePlayersAndRoles(insertQuery, Arrays.asList(map));
         assertEquals(0, rolePlayers.size());
@@ -276,7 +276,7 @@ public class InsertQueryAnalyserTest {
         ConceptMap map = mock(ConceptMap.class);
         Concept xConcept = mock(Concept.class);
         when(xConcept.id()).thenReturn(ConceptId.of("V123"));
-        when(map.get(xVar)).thenReturn(xConcept);
+        when(map.get(xVar.toString())).thenReturn(xConcept);
 
         Map<String, List<Concept>> mapping = InsertQueryAnalyser.getRolePlayersAndRoles(insertQuery, Arrays.asList(map));
         assertEquals(2, mapping.get("friend").size());

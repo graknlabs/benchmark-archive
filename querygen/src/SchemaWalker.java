@@ -19,7 +19,8 @@
 package grakn.benchmark.querygen;
 
 import grakn.client.GraknClient;
-import grakn.core.concept.type.Type;
+import grakn.client.concept.SchemaConcept;
+import grakn.client.concept.Type;
 
 import java.util.Comparator;
 import java.util.List;
@@ -37,7 +38,7 @@ class SchemaWalker {
      * @param rootType starting type
      * @return some type that is a subtype of rootType
      */
-    static Type walkSubs(Type rootType, Random random) {
+    static grakn.client.concept.Type walkSubs(SchemaConcept rootType, Random random) {
         List<Type> subs = rootType.subs()
                 .sorted(Comparator.comparing(type -> type.label().toString()))
                 .collect(Collectors.toList());

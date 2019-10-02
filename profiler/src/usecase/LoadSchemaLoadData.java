@@ -4,7 +4,7 @@ import grakn.benchmark.common.configuration.BenchmarkConfiguration;
 import grakn.benchmark.profiler.ThreadedProfiler;
 import grakn.benchmark.profiler.util.SchemaManager;
 import grakn.client.GraknClient;
-import grakn.core.concept.answer.ConceptMap;
+import grakn.client.answer.ConceptMap;
 import graql.lang.query.GraqlInsert;
 
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ public class LoadSchemaLoadData implements UseCase {
                             GraknClient.Transaction writeTransaction = session.transaction().write();
                             List<ConceptMap> insertedIds = writeTransaction.execute(insertQuery);
                             writeTransaction.commit();
-                            insertedConcepts += insertedIds.stream().map(map -> map.concepts().size()).reduce(Integer::sum).orElse(0);
+                            insertedConcepts += insertedIds.stream().map(map -> map.map().values().size()).reduce(Integer::sum).orElse(0);
                         }
                         return insertedConcepts;
                     }, executorService);

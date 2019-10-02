@@ -23,6 +23,7 @@ java_test(
     srcs = ["VectoriserTest.java"],
     deps = [
         "//querygen/src:query-sampler-lib",
+        "@graknlabs_client_java//:client-java",
         "@graknlabs_grakn_core//concept:concept",
         "@graknlabs_graql//java:graql",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",

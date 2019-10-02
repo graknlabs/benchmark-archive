@@ -18,10 +18,10 @@
 
 package grakn.benchmark.report.producer;
 
-import grakn.core.concept.answer.Answer;
-import grakn.core.concept.answer.AnswerGroup;
-import grakn.core.concept.answer.ConceptMap;
-import grakn.core.concept.answer.ConceptSet;
+import grakn.client.answer.Answer;
+import grakn.client.answer.AnswerGroup;
+import grakn.client.answer.ConceptMap;
+import grakn.client.answer.ConceptSet;
 import graql.lang.query.GraqlCompute;
 import graql.lang.query.GraqlDelete;
 import graql.lang.query.GraqlGet;

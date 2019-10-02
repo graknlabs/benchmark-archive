@@ -20,12 +20,11 @@ package grakn.benchmark.querygen;
 
 import grakn.benchmark.querygen.util.Pair;
 import grakn.client.GraknClient;
-import grakn.core.concept.type.RelationType;
-import grakn.core.concept.type.Role;
-import grakn.core.concept.type.Type;
+import grakn.client.concept.RelationType;
+import grakn.client.concept.Role;
+import grakn.client.concept.Type;
 import grakn.core.rule.GraknTestServer;
 import graql.lang.Graql;
-import graql.lang.query.GraqlGet;
 import graql.lang.query.GraqlQuery;
 import graql.lang.statement.Variable;
 import org.junit.BeforeClass;
