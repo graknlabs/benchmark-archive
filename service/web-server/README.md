@@ -52,5 +52,6 @@ gcloud compute ssh ubuntu@benchmark-service --zone=us-east1-b --command='sudo pk
 
 ## Start the Production Web Server
 ```shell
-gcloud compute ssh ubuntu@benchmark-service --zone=us-east1-b --command='nohup sudo node ~/service/web-server/src/server.js 2>&1 | tee -a ~/logs/node_server.log &'
+gcloud compute ssh ubuntu@benchmark-service --zone=us-east1-b --command='cd ~/service/web-server && nohup sudo NODE_ENV=production yarn start 2>&1 | tee -a ~/logs/node_server.log &'
+
 ```

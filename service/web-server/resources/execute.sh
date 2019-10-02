@@ -33,7 +33,16 @@ cd ~
 git clone $GRAKN_REPOSITORY_URL
 cd grakn
 git checkout $COMMIT
+
+# steps to reduce occurence of bazel JVM file not found error
+sleep 5
+echo "Cleaning bazel cache"
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
+bazel clean --expunge
 bazel build //:assemble-linux-targz
+# build twice TODO fix if the `missing input file '@local_jdk//:jre/lib...` can be tracked down and resolved
+bazel build //:assemble-linux-targz
+
 cd bazel-genfiles
 tar -xf grakn-core-all-linux.tar.gz
 
@@ -41,7 +50,8 @@ tar -xf grakn-core-all-linux.tar.gz
 cd grakn-core-all-linux
 
 # current server options to stabilise the variance include disabling the JITs and cassandra caches
-chmod +x server/conf/grakn.properties
+chmod a+rwx server/conf/grakn.properties
+echo "" >> server/conf/grakn.properties # add a new line just in case we join lines together
 echo "storage.internal.counter_cache_size_in_mb=0" >> server/conf/grakn.properties
 echo "storage.internal.key_cache_size_in_mb=0" >> server/conf/grakn.properties
 SERVER_JAVAOPTS='-Xint' STORAGE_JAVAOPTS='-Xint' ./grakn server start --benchmark
@@ -50,13 +60,14 @@ SERVER_JAVAOPTS='-Xint' STORAGE_JAVAOPTS='-Xint' ./grakn server start --benchmar
 cd ~
 git clone https://github.com/graknlabs/benchmark.git
 cd benchmark
+bazel clean --expunge
 bazel build //:profiler-distribution
 cd bazel-genfiles
 unzip -o profiler.zip
 
 # run zipkin
 cd profiler
-tmux new-session -d -s zipkin "STORAGE_TYPE=elasticsearch ES_HOSTS=http://$ES_URI ES_INDEX=benchmark java -jar external-dependencies/zipkin.jar"
+tmux new-session -d -s zipkin "STORAGE_TYPE=elasticsearch ES_HOSTS=$ES_URI ES_INDEX=benchmark java -jar external-dependencies/zipkin.jar"
 
 
 # mark execution as running

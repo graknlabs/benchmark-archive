@@ -4,13 +4,13 @@
 
 import express from 'express';
 import { Client as IEsClient } from '@elastic/elasticsearch';
-import { SpanController, ISpanController } from './controller';
+import { getSpanController, ISpanController } from './controller';
 
 export const getSpanRoutes = (esClient: IEsClient) => {
-    const controller: ISpanController = new SpanController(esClient);
+    const controller: ISpanController = getSpanController(esClient);
     const router = express.Router();
 
-    router.post('/query', controller.getGraphqlServer());
+    router.post('/query', controller.getGraphqlServer.bind(controller)());
 
     return router;
 };

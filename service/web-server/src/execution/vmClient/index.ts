@@ -3,14 +3,14 @@ import { spawn, exec } from 'child-process-promise';
 import { IExecution } from '../types';
 import { config } from '../../config';
 
-export interface IVMController {
+export interface IVMClient {
     execution: IExecution;
     computeClient;
     zone: 'us-east1-b';
     project: 'grakn-dev';
     machineType: 'n1-standard-16';
     imageName: 'benchmark-executor-image-2';
-    logsDestPath: string;
+    tags: string[];
     esUri: string;
     webUri: string;
     logPath: string;
@@ -21,42 +21,47 @@ export interface IVMController {
     downloadLogs: () => Promise<void>;
 }
 
-export function VMController(execution: IExecution) {
-    this.execution = execution;
-    this.computeClient = new ComputeClient();
-    this.zone = 'us-east1-b';
-    this.project = 'grakn-dev';
-    this.machineType = 'n1-standard-16';
-    this.imageName = 'benchmark-executor-image-2';
-    this.esUri = `${config.es.host}:${config.es.port}`;
-    this.webUri = `${config.web.host}`;
-    this.logPath = config.logPath;
+export function getVMClient(execution: IExecution): IVMClient {
+    return {
+        execution,
+        computeClient: new ComputeClient(),
+        zone: 'us-east1-b',
+        project: 'grakn-dev',
+        machineType: 'n1-standard-16',
+        imageName: 'benchmark-executor-image-2',
+        tags: ['zipkin-9411'],
+        esUri: `${config.es.host}:${config.es.port}`,
+        webUri: `${config.web.host}`,
+        logPath: config.logPath,
 
-    this.start = start.bind(this);
-    this.execute = execute.bind(this);
-    this.terminate = terminate.bind(this);
-    this.downloadLogs = downloadLogs.bind(this);
+        start,
+        execute,
+        terminate,
+        downloadLogs
+    };
 }
 
 async function start() {
     const { vmName } = this.execution;
 
-    const config = {
+    const cmConfig = {
         machineType: this.machineType,
         disks: [{
             boot: true,
+            autoDelete: true,
             initializeParams: {
                 sourceImage:
                     `https://www.googleapis.com/compute/v1/projects/${this.project}/global/images/${this.imageName}`,
             },
         }],
+        tags: this.tags,
         // this config assigns an external IP to the VM instance which is required for ssh access
         networkInterfaces: [{ accessConfigs: [{}] }],
     };
 
     console.log(`Starting the ${vmName} VM instance`);
 
-    const [vm, operation] = await this.computeClient.zone(this.zone).createVM(vmName, config).catch((error) => { throw error; });
+    const [vm, operation] = await this.computeClient.zone(this.zone).createVM(vmName, cmConfig).catch((error) => { throw error; });
     console.log(`Polling operation ${operation.id} of ${vmName} VM instance...`);
     await operation.promise();
     operation.on('error', async (error) => { throw error; });

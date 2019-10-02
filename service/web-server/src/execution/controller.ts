@@ -2,7 +2,7 @@
 import graphqlHTTP from 'express-graphql';
 import { makeExecutableSchema, IResolvers } from 'graphql-tools';
 import { Client as IEsClient, RequestParams } from '@elastic/elasticsearch';
-import { VMController, IVMController } from './vmClient';
+import { getVMClient, IVMClient } from './vmClient';
 import { IExecution, TStatus, TStatuses } from './types';
 import { GraphQLSchema } from 'graphql/type';
 import { limitResults, sortResults } from '../utils';
@@ -20,24 +20,25 @@ const statuses: { [key: string]: TStatus } = {
 export interface IExecutionController {
     esClient: IEsClient;
 
-    watchPR: (req, res) => {};
-    create: (req, res) => {};
-    updateStatus: (req, res, status) => {};
-    destroy: (req, res) => {};
+    watchPR: (req, res) => Promise<void>;
+    create: (req, res) => Promise<void>;
+    createInternal: (execution: IExecution) => Promise<void>;
+    updateStatus: (req, res, status: TStatus) => Promise<void>;
+    destroy: (req, res) => Promise<void>;
     getGraphqlServer: () => graphqlHTTP.Middleware;
-    updateStatusInternal: (execution: IExecution, status: TStatus) => Promise<void>;
 }
 
-export function ExecutionController(client: IEsClient) {
-    this.esClient = client;
+export function getExecutionController(esClient: IEsClient): IExecutionController {
+    return {
+        esClient,
 
-    this.create = create.bind(this);
-    this.createInternal = createInternal.bind(this);
-    this.updateStatus = updateStatus.bind(this);
-    this.updateStatusInternal = updateStatusInternal.bind(this);
-    this.destroy = destroy.bind(this);
-    this.getGraphqlServer = getGraphqlServer.bind(this);
-    this.watchPR = watchPR.bind(this);
+        watchPR,
+        create,
+        createInternal,
+        updateStatus,
+        destroy,
+        getGraphqlServer
+    };
 }
 
 async function watchPR(req, res) {
@@ -59,7 +60,6 @@ async function watchPR(req, res) {
         status: 'INITIALISING',
         vmName: `benchmark-executor-${merge_commit_sha.trim()}`,
     };
-
 
     try {
         await this.createInternal(execution);
@@ -103,7 +103,7 @@ async function createInternal(execution) {
 
     console.log(`New execution ${execution.id} added to ES.`);
 
-    const vm: IVMController = new VMController(execution);
+    const vm: IVMClient = getVMClient(execution);
     vm.start().then(() => { vm.execute(); });
 }
 
@@ -111,34 +111,27 @@ async function updateStatus(req, res, status: TStatus) {
     const execution = req.body.execution;
 
     try {
-        await this.updateStatusInternal(execution, status);
+        const payload: RequestParams.Update<{ doc: Partial<IExecution> }> = {
+            ...ES_PAYLOAD_COMMON, id: execution.id, body: { doc: { status } },
+        };
+
+        if (status === statuses.CANCELLED) payload.body.doc.executionCompletedAt = new Date().toISOString();
+
+        await this.esClient.update(payload).catch((error) => { console.log(error); });
+
+        console.log(`Execution ${execution.id} marked as ${status}.`);
         res.status(200).json({});
+
+        const vmDeletionStatuses: TStatuses = ['COMPLETED', 'FAILED', 'CANCELLED'];
+        if (vmDeletionStatuses.includes(status)) {
+            const vm: IVMClient = getVMClient(execution);
+            vm.downloadLogs()
+                .then(() => { vm.terminate().catch((error) => { console.log(error); }); })
+                .catch((error) => { throw error; });
+        }
     } catch (error) {
         console.error(error);
         res.status(500).json({ error });
-    }
-}
-
-// since updating the status of an execution needs to be done both internally (in the process of running the benchmark)
-// and externally (via the dashboard), we need this method which is called directly for internal use, and through
-// its wrapper for external use
-async function updateStatusInternal(execution: IExecution, status: TStatus) {
-    const payload: RequestParams.Update<{ doc: Partial<IExecution> }> = {
-        ...ES_PAYLOAD_COMMON, id: execution.id, body: { doc: { status } },
-    };
-
-    if (status === statuses.CANCELLED) payload.body.doc.executionCompletedAt = new Date().toISOString();
-
-    await this.esClient.update(payload).catch((error) => { console.log(error); });
-
-    console.log(`Execution ${execution.id} marked as ${status}.`);
-
-    const vmDeletionStatuses: TStatuses = ['COMPLETED', 'FAILED', 'CANCELLED'];
-    if (vmDeletionStatuses.includes(status)) {
-        const vm: IVMController = new VMController(execution);
-        vm.downloadLogs()
-            .then(() => { vm.terminate().catch((error) => { console.log(error); }); })
-            .catch((error) => { throw error; });
     }
 }
 
@@ -151,7 +144,7 @@ async function destroy(req, res) {
 
         console.log(`Execution ${execution.id} deleted.`);
 
-        const vm: IVMController = new VMController(execution);
+        const vm: IVMClient = getVMClient(execution);
         await vm.terminate();
 
         res.status(200).json({});

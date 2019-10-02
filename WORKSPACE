@@ -18,6 +18,7 @@
 
 workspace(name = "graknlabs_benchmark")
 
+
 ###########################
 # Grakn Labs dependencies #
 ###########################
@@ -27,15 +28,29 @@ load(
     "graknlabs_build_tools",
     "graknlabs_grakn_core",
     "graknlabs_client_java",
-    "graknlabs_protocol"
+    "graknlabs_protocol",
+    "graknlabs_common"
 )
 graknlabs_build_tools()
 graknlabs_grakn_core()
 graknlabs_client_java()
 graknlabs_protocol()
+graknlabs_common()
 
 load("@graknlabs_build_tools//distribution:dependencies.bzl", "graknlabs_bazel_distribution")
 graknlabs_bazel_distribution()
+
+
+##################################
+# Load Distribution dependencies #
+##################################
+
+# needed by deploy_github rule transitively
+load("@graknlabs_bazel_distribution//github:dependencies.bzl", "tcnksm_ghr")
+tcnksm_ghr()
+
+load("@graknlabs_bazel_distribution//common:dependencies.bzl", "bazelbuild_rules_pkg")
+bazelbuild_rules_pkg()
 
 ###########################
 # Load Bazel dependencies #
@@ -100,8 +115,11 @@ graknlabs_grakn_core_maven_dependencies()
 load("@graknlabs_build_tools//bazel:dependencies.bzl", "bazel_rules_docker")
 bazel_rules_docker()
 
-load("@graknlabs_grakn_core//dependencies/graknlabs:dependencies.bzl", "graknlabs_graql")
+load("@graknlabs_grakn_core//dependencies/graknlabs:dependencies.bzl",
+"graknlabs_graql", "graknlabs_console")
 graknlabs_graql()
+graknlabs_console()
+
 
 ###########################
 # Load Graql dependencies #
@@ -125,6 +143,9 @@ graknlabs_graql_maven_dependencies()
 # TODO: Figure out why this cannot be loaded at earlier at the top of the file
 load("@com_github_google_bazel_common//:workspace_defs.bzl", "google_common_workspace_rules")
 google_common_workspace_rules()
+
+
+
 
 
 ##############################################
