@@ -48,12 +48,14 @@ public class KMeans {
         int initialisations = 0;
         int bestEmptyClusters = clusters;
         List<Cluster> bestClusters = null;
+
+        // try to find a good initial assignment of vectors to clusters that leaves as few as possible
+        // empty clusters
         while (bestEmptyClusters > 0 && initialisations < initialisationAttemptsLimit) {
             Set<VectorisedQuery> picked = new HashSet<>();
 
             Collections.shuffle(items);
 
-            // initialise n clusters;
             this.clusters = new ArrayList<>(clusters);
             int index = 0;
             while (this.clusters.size() != clusters && index < items.size()) {
@@ -70,6 +72,7 @@ public class KMeans {
             int emptyClusters = numberOfEmptyClusters(this.clusters);
             LOG.trace("Initialising clusters: "  + emptyClusters + " out of " + clusters + " are empty.");
 
+            // keep the lowest number of empty clusters found
             if (emptyClusters < bestEmptyClusters) {
                 bestEmptyClusters = emptyClusters;
                 bestClusters = this.clusters;

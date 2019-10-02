@@ -41,7 +41,7 @@ public class Arguments {
                 .longOpt(KEYSPACE_ARGUMENT)
                 .required(true)
                 .hasArg(true)
-                .desc("Specific keyspace to utilize")
+                .desc("Specific keyspace to utilise")
                 .type(String.class)
                 .build();
 

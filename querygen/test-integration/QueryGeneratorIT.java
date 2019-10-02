@@ -259,6 +259,4 @@ public class QueryGeneratorIT {
         }
     }
 
-    public static class test {
-    }
 }
