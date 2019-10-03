@@ -19,7 +19,7 @@
 package grakn.benchmark.common.analysis;
 
 import grakn.client.answer.ConceptMap;
-import grakn.client.concept.Concept;
+import grakn.client.concept.api.Concept;
 import graql.lang.property.IdProperty;
 import graql.lang.property.IsaProperty;
 import graql.lang.property.RelationProperty;

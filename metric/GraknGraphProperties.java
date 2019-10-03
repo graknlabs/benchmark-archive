@@ -22,7 +22,7 @@ import grakn.client.GraknClient;
 import grakn.client.answer.ConceptMap;
 import grakn.client.answer.ConceptSetMeasure;
 import grakn.client.answer.Numeric;
-import grakn.client.concept.Concept;
+import grakn.client.concept.api.Concept;
 import graql.lang.Graql;
 import graql.lang.query.GraqlCompute;
 import graql.lang.query.GraqlGet;

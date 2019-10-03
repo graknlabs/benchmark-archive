@@ -24,7 +24,7 @@ import grakn.client.answer.AnswerGroup;
 import grakn.client.answer.ConceptMap;
 import grakn.client.answer.ConceptSet;
 import grakn.client.answer.Numeric;
-import grakn.client.concept.Concept;
+import grakn.client.concept.api.Concept;
 import graql.lang.Graql;
 import graql.lang.query.GraqlCompute;
 import graql.lang.query.GraqlDelete;

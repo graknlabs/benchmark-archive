@@ -19,9 +19,9 @@
 package grakn.benchmark.common.analysis;
 
 import grakn.client.answer.ConceptMap;
-import grakn.client.concept.Concept;
-import grakn.client.concept.ConceptId;
-import grakn.client.concept.Thing;
+import grakn.client.concept.api.Concept;
+import grakn.client.concept.api.ConceptId;
+import grakn.client.concept.api.Thing;
 import graql.lang.Graql;
 import graql.lang.query.GraqlInsert;
 import graql.lang.statement.Statement;

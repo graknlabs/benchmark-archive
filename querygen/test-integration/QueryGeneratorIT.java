@@ -20,9 +20,9 @@ package grakn.benchmark.querygen;
 
 import grakn.benchmark.querygen.util.Pair;
 import grakn.client.GraknClient;
-import grakn.client.concept.RelationType;
-import grakn.client.concept.Role;
-import grakn.client.concept.Type;
+import grakn.client.concept.api.RelationType;
+import grakn.client.concept.api.Role;
+import grakn.client.concept.api.Type;
 import grakn.core.rule.GraknTestServer;
 import graql.lang.Graql;
 import graql.lang.query.GraqlQuery;

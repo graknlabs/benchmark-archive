@@ -19,14 +19,14 @@
 package grakn.benchmark.generator.storage;
 
 import grakn.benchmark.generator.util.KeyspaceSchemaLabels;
-import grakn.core.concept.Concept;
-import grakn.core.concept.ConceptId;
-import grakn.core.concept.Label;
-import grakn.core.concept.thing.Attribute;
-import grakn.core.concept.thing.Thing;
-import grakn.core.concept.type.AttributeType;
-import grakn.core.concept.type.RelationType;
-import grakn.core.concept.type.Type;
+import grakn.client.concept.api.Attribute;
+import grakn.client.concept.api.AttributeType;
+import grakn.client.concept.api.Concept;
+import grakn.client.concept.api.ConceptId;
+import grakn.client.concept.api.Label;
+import grakn.client.concept.api.RelationType;
+import grakn.client.concept.api.Thing;
+import grakn.client.concept.api.Type;
 import org.apache.ignite.IgniteException;
 import org.apache.ignite.Ignition;
 import org.junit.AfterClass;
