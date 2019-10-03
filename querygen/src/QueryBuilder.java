@@ -18,10 +18,11 @@
 
 package grakn.benchmark.querygen;
 
+import grakn.benchmark.querygen.util.Pair;
 import grakn.client.GraknClient;
-import grakn.core.concept.type.AttributeType;
-import grakn.core.concept.type.Role;
-import grakn.core.concept.type.Type;
+import grakn.client.concept.api.AttributeType;
+import grakn.client.concept.api.Role;
+import grakn.client.concept.api.Type;
 import graql.lang.Graql;
 import graql.lang.pattern.Pattern;
 import graql.lang.property.ValueProperty;
@@ -38,13 +39,26 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Container for all the data that is required to build a GraqlGet query out of mappings from variables to variables
+ * and variables to types
+ *
+ * The entire lifetime of the QueryBuilder needs to be tied to a single Transaction, until after `.build()` is called
+ * This is because it contains live `Concepts` bound to this transaction that are unusable if it is closed
+ */
 public class QueryBuilder {
 
+    // Actual type to query a variable against
     final Map<Variable, Type> variableTypeMap;
+    // map for which variables are owned by which other variables
     final Map<Variable, List<Variable>> attributeOwnership;
+    // For each relation for which we specify role players, record variable and role type
     final Map<Variable, List<Pair<Variable, Role>>> relationRolePlayers;
-    final Map<Variable, Pair<Variable, Graql.Token.Comparator>> attributeComparisons;
+    // map between variables and the comparator used, storing attribute VALUE comparisons only
+    final Map<Variable, Map<Variable, Graql.Token.Comparator>> attributeComparisons;
 
+    // variables that we haven't processed yet when expanding a query, so we don't grow from the same variable twice
+    // although doing so wouldn't be detrimental really
     final List<Variable> unvisitedVariables;
 
     int nextVar = 0;
@@ -64,9 +78,9 @@ public class QueryBuilder {
     }
 
 
-    void addMapping(Variable var, Type type) {
-        variableTypeMap.put(var, type);
-        unvisitedVariables.add(var);
+    void addMapping(Variable variable, Type variableType) {
+        variableTypeMap.put(variable, variableType);
+        unvisitedVariables.add(variable);
     }
 
     void addOwnership(Variable owner, Variable owned) {
@@ -79,8 +93,10 @@ public class QueryBuilder {
         relationRolePlayers.get(relationVar).add(new Pair<>(rolePlayerVariable, role));
     }
 
-    void addComparison(Variable var1, Variable var2, Graql.Token.Comparator comparator) {
-        attributeComparisons.put(var1, new Pair<>(var2, comparator));
+    void addComparison(Variable leftVariable, Variable rightVariable, Graql.Token.Comparator comparator) {
+        attributeComparisons.putIfAbsent(leftVariable, new HashMap<>());
+        Map<Variable, Graql.Token.Comparator> comparisons = attributeComparisons.get(leftVariable);
+        comparisons.put(rightVariable, comparator);
     }
 
     boolean containsVariableWithType(Type type) {
@@ -166,14 +182,19 @@ public class QueryBuilder {
     /**
      * @return List of variables representing attributes that are owned by a variable
      */
-    List<Variable> attributesOwned(Variable var) {
-        return attributeOwnership.get(var);
+    List<Variable> attributesOwned(Variable ownerVar) {
+        return attributeOwnership.get(ownerVar);
     }
 
-    int numAttributeComparisons() {
-        return attributeComparisons.size();
+    long numAttributeComparisons() {
+        return attributeComparisons.values().stream().flatMap(map -> map.values().stream()).count();
     }
 
+    /**
+     * Build a GraqlGet query out of all the maps
+     * Performs a bit of obfuscation when adding `$x has attributetype $a`, where we may provide a less concrete
+     * type for $a here but later specify `$a isa subattrtype` that the query planner has to pick up on
+     */
     GraqlGet build(GraknClient.Transaction tx, Random random) {
         List<Pattern> patterns = new ArrayList<>();
 
@@ -206,11 +227,12 @@ public class QueryBuilder {
         }
 
         // add attribute - attribute comparisons to the query
-        for (Map.Entry<Variable, Pair<Variable, Graql.Token.Comparator>> attributeComparison : attributeComparisons.entrySet()) {
-            Variable v1 = attributeComparison.getKey();
-            Variable v2 = attributeComparison.getValue().getFirst();
-            Graql.Token.Comparator comparator = attributeComparison.getValue().getSecond();
-            patterns.add(Graql.var(v1).operation(ValueProperty.Operation.Comparison.Variable.of(comparator, Graql.var(v2))));
+        for (Map.Entry<Variable, Map<Variable, Graql.Token.Comparator>> attributeComparison : attributeComparisons.entrySet()) {
+            Variable leftComparisonVariable = attributeComparison.getKey();
+            for (Variable rightComparisonVariable : attributeComparison.getValue().keySet()) {
+                Graql.Token.Comparator comparator = attributeComparison.getValue().get(rightComparisonVariable);
+                patterns.add(Graql.var(leftComparisonVariable).operation(ValueProperty.Operation.Comparison.Variable.of(comparator, Graql.var(rightComparisonVariable))));
+            }
         }
 
         return Graql.match(patterns).get();

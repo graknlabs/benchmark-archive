@@ -19,14 +19,16 @@
 package grakn.benchmark.querygen;
 
 import grakn.client.GraknClient;
-import grakn.core.concept.type.Type;
+import grakn.client.concept.api.Type;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+/**
+ * Walk the type hierarchy and return random Types according to the current walk
+ */
 class SchemaWalker {
 
     /**

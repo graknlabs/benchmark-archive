@@ -19,10 +19,10 @@
 package grakn.benchmark.metric;
 
 import grakn.client.GraknClient;
-import grakn.core.concept.Concept;
-import grakn.core.concept.answer.ConceptMap;
-import grakn.core.concept.answer.ConceptSetMeasure;
-import grakn.core.concept.answer.Numeric;
+import grakn.client.answer.ConceptMap;
+import grakn.client.answer.ConceptSetMeasure;
+import grakn.client.answer.Numeric;
+import grakn.client.concept.api.Concept;
 import graql.lang.Graql;
 import graql.lang.query.GraqlCompute;
 import graql.lang.query.GraqlGet;

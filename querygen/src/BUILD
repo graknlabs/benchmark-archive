@@ -17,8 +17,8 @@
 #
 
 java_library(
-    name = "query-generator",
-    srcs = glob(["*.java"]),
+    name = "query-sampler-lib",
+    srcs = glob(["*.java", "subsampling/*.java", "util/*.java"]),
     deps = [
         "@graknlabs_client_java//:client-java",
         "@graknlabs_graql//java:graql",
@@ -27,11 +27,27 @@ java_library(
 
         # together these can be used to create clients with tracing enabled
         "//dependencies/maven/artifacts/org/slf4j:slf4j-api",
-#        "//dependencies/maven/artifacts/commons-cli",
+        "//dependencies/maven/artifacts/commons-cli",
     ],
     runtime_deps = [
         "//dependencies/maven/artifacts/io/grpc:grpc-netty-shaded",
         "//dependencies/maven/artifacts/ch/qos/logback:logback-classic",
     ],
+    visibility = ["//visibility:public"]
+)
+
+java_binary(
+    name = "query-sampler",
+    main_class = "grakn.benchmark.querygen.QuerySampler",
+    runtime_deps = [
+        ":query-sampler-lib"
+    ],
+    classpath_resources = [":logback"],
+    visibility = ["//visibility:public"]
+)
+
+filegroup(
+    name = "logback",
+    srcs = ["//querygen/src:logback.xml"],
     visibility = ["//visibility:public"]
 )

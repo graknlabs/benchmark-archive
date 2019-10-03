@@ -18,9 +18,7 @@
 
 package grakn.benchmark.generator.storage;
 
-
-import grakn.core.concept.Concept;
-import grakn.core.concept.ConceptId;
+import grakn.client.concept.api.Concept;
 
 import java.util.Date;
 import java.util.List;

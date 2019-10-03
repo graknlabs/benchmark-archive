@@ -19,9 +19,9 @@
 package grakn.benchmark.querygen;
 
 
-import grakn.core.concept.type.AttributeType;
-import grakn.core.concept.type.Role;
-import grakn.core.concept.type.Type;
+import grakn.client.concept.api.AttributeType;
+import grakn.client.concept.api.Role;
+import grakn.client.concept.api.Type;
 import graql.lang.statement.Variable;
 
 import java.util.HashMap;
@@ -32,7 +32,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Consume a QueryBuilder and provide a n-dimensional vector representation
+ * Consume a QueryBuilder enable extracting various metrics about the query
+ * essentially converting a query into a vector
  */
 public class Vectoriser {
     private final QueryBuilder queryBuilder;
@@ -234,6 +235,7 @@ public class Vectoriser {
      * then compute the mean of m(T) = sum(m(T)) / #s(T)
      *
      * @return - mean specificity
+     * Range: 0 - 1
      */
     double specificity() {
         Set<Variable> allVariables = queryBuilder.allVariables();
@@ -327,9 +329,18 @@ public class Vectoriser {
 
 
     /**
-     * @return
+     * @return - the mean number of comparisons per attribute variable
+     *
+     * Range: 0 - #vars
+     * explanation: at most n*(n-1) pairwise variable comparisons, divided by n ~= n comparisons per variable
      */
-    int numComparisons() {
-        return queryBuilder.numAttributeComparisons();
+    double comparisonsPerAttribute() {
+        long comparisons = queryBuilder.numAttributeComparisons();
+        long attributeVariables = queryBuilder.allVariables().stream().filter(var -> queryBuilder.getType(var).isAttributeType()).count();
+        if (attributeVariables > 0) {
+            return ((double) comparisons) / attributeVariables;
+        } else {
+            return 0.0;
+        }
     }
 }

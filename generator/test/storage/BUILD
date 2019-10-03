@@ -5,7 +5,7 @@ java_test(
     srcs = ["IgniteConceptStorageTest.java"],
 
     deps = [
-        "@graknlabs_grakn_core//concept:concept",
+        "@graknlabs_client_java//:client-java",
         "//generator:data-generator",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
         "//dependencies/maven/artifacts/org/apache/ignite:ignite-core",

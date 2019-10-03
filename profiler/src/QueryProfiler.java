@@ -18,14 +18,13 @@
 
 package grakn.benchmark.profiler;
 
-
 import brave.Span;
 import brave.Tracer;
 import grakn.benchmark.common.analysis.InsertQueryAnalyser;
 import grakn.benchmark.common.configuration.BenchmarkConfiguration;
 import grakn.client.GraknClient;
-import grakn.core.concept.answer.Answer;
-import grakn.core.concept.answer.ConceptMap;
+import grakn.client.answer.Answer;
+import grakn.client.answer.ConceptMap;
 import graql.lang.Graql;
 import graql.lang.pattern.Pattern;
 import graql.lang.query.GraqlCompute;

@@ -19,29 +19,27 @@
 package grakn.benchmark.querygen;
 
 import grakn.client.GraknClient;
-import grakn.client.concept.api.Label;
-import grakn.client.concept.api.Type;
+import grakn.client.answer.Answer;
 import grakn.core.rule.GraknTestServer;
 import graql.lang.Graql;
 import graql.lang.query.GraqlQuery;
-import org.hamcrest.CoreMatchers;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-public class SchemaWalkerIT {
+public class QuerySamplerIT {
 
-    private static final String testKeyspace = "schemawalker_test";
+    private static final String testKeyspace = "querygen_test";
 
     @ClassRule
     public static final GraknTestServer server = new GraknTestServer(
@@ -51,7 +49,6 @@ public class SchemaWalkerIT {
 
     @BeforeClass
     public static void loadSchema() {
-        Path path = Paths.get("querygen");
         GraknClient client = new GraknClient(server.grpcUri());
         GraknClient.Session session = client.session(testKeyspace);
         GraknClient.Transaction transaction = session.transaction().write();
@@ -59,7 +56,7 @@ public class SchemaWalkerIT {
         try {
             List<String> lines = Files.readAllLines(Paths.get("querygen/test-integration/resources/schema.gql"));
             String graqlQuery = String.join("\n", lines);
-            transaction.execute((GraqlQuery) Graql.parse(graqlQuery));
+            Set<? extends Answer> answers = transaction.stream((GraqlQuery) Graql.parse(graqlQuery), false).collect(Collectors.toSet());
             transaction.commit();
         } catch (IOException e) {
             e.printStackTrace();
@@ -69,47 +66,36 @@ public class SchemaWalkerIT {
         client.close();
     }
 
+
     @Test
-    public void walkSubRetrievesDifferentSubtypes() {
+    public void queryKMeansSamplerReturnsLimitedNumberOfQueries() {
         try (GraknClient client = new GraknClient(server.grpcUri());
-             GraknClient.Session session = client.session(testKeyspace);
-             GraknClient.Transaction tx = session.transaction().write()) {
+             GraknClient.Session session = client.session(testKeyspace)) {
 
-            Type rootThing = tx.getMetaConcept();
-            Random random = new Random(0);
-
-            List<Type> subTypes = new ArrayList<>();
-            for (int i = 0; i < 50; i++) {
-                subTypes.add(SchemaWalker.walkSubs(rootThing, random));
+            int queriesToSample = 30;
+            int queriesToGenerate = 300;
+            List<VectorisedQuery> queries = QuerySampler.querySampleKMeans(session, queriesToGenerate, queriesToSample, 2);
+            assertTrue(queriesToSample >= queries.size());
+            for (VectorisedQuery query : queries) {
+                assertNotNull(query);
+                assertNotNull(query.graqlQuery);
             }
-
-            assertThat(subTypes, CoreMatchers.not(CoreMatchers.everyItem(CoreMatchers.is(rootThing))));
         }
     }
 
-
     @Test
-    public void walkSupsNoMetaDoesNotRetrieveMetaTypes() {
+    public void queryGriddedSamplerReturnsExactNumberOfQueries() {
         try (GraknClient client = new GraknClient(server.grpcUri());
-             GraknClient.Session session = client.session(testKeyspace);
-             GraknClient.Transaction tx = session.transaction().write()) {
+             GraknClient.Session session = client.session(testKeyspace)) {
 
-            Type personType = tx.getSchemaConcept(Label.of("person"));
-            Random random = new Random(0);
-
-            List<Type> superTypes = new ArrayList<>();
-            for (int i = 0; i < 50; i++) {
-                superTypes.add(SchemaWalker.walkSupsNoMeta(tx, personType, random));
+            int queriesToSample = 30;
+            int queriesToGenerate = 300;
+            List<VectorisedQuery> queries = QuerySampler.querySampleGridded(session, queriesToGenerate, queriesToSample, 5);
+            assertTrue(queries.size() == queriesToSample);
+            for (VectorisedQuery query : queries) {
+                assertNotNull(query);
+                assertNotNull(query.graqlQuery);
             }
-
-            assertThat(superTypes, CoreMatchers.not(CoreMatchers.anyOf(
-                    CoreMatchers.is(tx.getMetaAttributeType()),
-                    CoreMatchers.is(tx.getMetaRelationType()),
-                    CoreMatchers.is(tx.getMetaEntityType()),
-                    CoreMatchers.is(tx.getMetaConcept())
-            )));
-
-
         }
     }
 }

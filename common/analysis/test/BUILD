@@ -4,6 +4,7 @@ java_test(
     srcs = ["InsertQueryAnalyserTest.java"],
     deps = [
         "//common/analysis:insert-query-analyser",
+        "@graknlabs_client_java//:client-java",
 
         "@graknlabs_graql//java:graql",
         "@graknlabs_grakn_core//concept:concept",

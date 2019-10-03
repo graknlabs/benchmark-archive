@@ -18,13 +18,13 @@
 
 package grakn.benchmark.querygen;
 
+import grakn.benchmark.querygen.util.Pair;
 import grakn.client.GraknClient;
-import grakn.core.concept.type.RelationType;
-import grakn.core.concept.type.Role;
-import grakn.core.concept.type.Type;
+import grakn.client.concept.api.RelationType;
+import grakn.client.concept.api.Role;
+import grakn.client.concept.api.Type;
 import grakn.core.rule.GraknTestServer;
 import graql.lang.Graql;
-import graql.lang.query.GraqlGet;
 import graql.lang.query.GraqlQuery;
 import graql.lang.statement.Variable;
 import org.junit.BeforeClass;
@@ -81,10 +81,11 @@ public class QueryGeneratorIT {
              GraknClient.Session session = client.session(testKeyspace)) {
             QueryGenerator queryGenerator = new QueryGenerator(session);
             int queriesToGenerate = 100;
-            List<GraqlGet> queries = queryGenerator.generate(queriesToGenerate);
+            List<VectorisedQuery> queries = queryGenerator.generate(queriesToGenerate);
             assertEquals(queries.size(), queriesToGenerate);
-            for (GraqlGet query : queries) {
+            for (VectorisedQuery query : queries) {
                 assertNotNull(query);
+                assertNotNull(query.graqlQuery);
             }
         }
     }
@@ -231,7 +232,7 @@ public class QueryGeneratorIT {
     }
 
     /**
-     * TODO test to check that attribute comparisons are compatible
+     * TODO test to check that attribute comparisons are compatiblet
       */
     @Test
     public void attributeComparisonsBetweenSameDatatypes() {
@@ -243,13 +244,13 @@ public class QueryGeneratorIT {
         try (GraknClient client = new GraknClient(server.grpcUri());
              GraknClient.Session session = client.session(testKeyspace)) {
             QueryGenerator queryGenerator = new QueryGenerator(session);
-            // generate 300 queries, some fraction (1/20)? should have comparisons
-            int queriesToGenerate = 300;
-            List<GraqlGet> queries = queryGenerator.generate(queriesToGenerate);
+            // generate 500 queries, some fraction (1/20)? should have comparisons
+            int queriesToGenerate = 500;
+            List<VectorisedQuery> queries = queryGenerator.generate(queriesToGenerate);
             assertEquals(queries.size(), queriesToGenerate);
             boolean comparisonFound = false;
-            for (GraqlGet query : queries) {
-                String q = query.toString();
+            for (VectorisedQuery query : queries) {
+                String q = query.graqlQuery.toString();
                 if (q.contains("==") || q.contains("!==") || q.contains("<") || q.contains(">")) {
                     comparisonFound = true;
                 }

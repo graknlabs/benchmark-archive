@@ -18,9 +18,8 @@
 
 package grakn.benchmark.common.analysis;
 
-
-import grakn.core.concept.Concept;
-import grakn.core.concept.answer.ConceptMap;
+import grakn.client.answer.ConceptMap;
+import grakn.client.concept.api.Concept;
 import graql.lang.property.IdProperty;
 import graql.lang.property.IsaProperty;
 import graql.lang.property.RelationProperty;
@@ -79,7 +78,7 @@ public class InsertQueryAnalyser {
 
         for (ConceptMap answer : answers) {
             for (Variable insertVarWithoutId : insertVarsWithoutIds) {
-                resultConcepts.add(answer.get(insertVarWithoutId));
+                resultConcepts.add(answer.get(insertVarWithoutId.toString()));
             }
         }
         return resultConcepts;
@@ -109,7 +108,7 @@ public class InsertQueryAnalyser {
                     Variable rolePlayerVar = relationPlayer.getPlayer().var();
                     // add the (concept, role) to the map
                     answers.stream()
-                            .map(conceptMap -> conceptMap.get(rolePlayerVar))
+                            .map(conceptMap -> conceptMap.get(rolePlayerVar.toString()))
                             .forEach(concept -> {
                                 rolePlayers.putIfAbsent(role, new LinkedList<>());
                                 rolePlayers.get(role).add(concept);

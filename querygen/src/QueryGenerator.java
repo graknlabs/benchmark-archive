@@ -19,10 +19,12 @@
 package grakn.benchmark.querygen;
 
 import grakn.client.GraknClient;
-import grakn.core.concept.type.AttributeType;
-import grakn.core.concept.type.RelationType;
-import grakn.core.concept.type.Role;
-import grakn.core.concept.type.Type;
+import grakn.client.concept.api.AttributeType;
+import grakn.client.concept.api.RelationType;
+import grakn.client.concept.api.Role;
+import grakn.client.concept.api.SchemaConcept;
+import grakn.client.concept.api.Thing;
+import grakn.client.concept.api.Type;
 import graql.lang.Graql;
 import graql.lang.query.GraqlGet;
 import graql.lang.statement.Variable;
@@ -35,7 +37,12 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+/**
+ * Generate queries by walking the given session's schema,
+ * returning a Query and its measurements that can be used to cluster or filter similar queries
+ */
 public class QueryGenerator {
 
     private static final Logger LOG = LoggerFactory.getLogger(QueryGenerator.class);
@@ -48,19 +55,44 @@ public class QueryGenerator {
         this.random = new Random(0);
     }
 
-    List<GraqlGet> generate(int numQueries) {
-        List<GraqlGet> queries = new ArrayList<>(numQueries);
+    List<VectorisedQuery> generate(int numQueries) {
+        List<VectorisedQuery> queries = new ArrayList<>(numQueries);
         for (int i = 0; i < numQueries; i++) {
             try (GraknClient.Transaction tx = session.transaction().write()) {
                 QueryBuilder builder = generateNewQuery(tx);
                 Vectoriser queryVectoriser = new Vectoriser(builder);
-                queries.add(builder.build(tx, random));
+
+                GraqlGet graqlQuery = builder.build(tx, random);
+                VectorisedQuery vectorisedQuery = new VectorisedQuery(graqlQuery, queryVectoriser);
+                queries.add(vectorisedQuery);
             }
         }
 
         return queries;
     }
 
+    /**
+     * When generating a single query we seed a single starting variable and type,
+     * then grow connections from each unvisited variable.
+     * If a variable that we are expanding is a relation, we add role players to the relation with some probability
+     * Then, for all variables, we assign relations this variable plays a role in, as well as
+     * any attribute ownerships.
+     *
+     * The length and number of each of these components is implemented as a exponential decay/geometric probability series
+     * iteration, so some queries generated are quite long or contains relations with many role players
+     *
+     * To finish, we add comparisons between compaitble attributes with some probability
+     *
+     * Note that this strategy is quite good at generating _structure_ - but does not handle
+     * IDs or attribute values at all
+     *
+     * Also note that when choosing the variable to play a role, relation to play a role in, attribtue to own etc. we have
+     * a choice to try to re-use an existing variable if there is a compatible one, versus generating a new one.
+     * Adding this choice in randomly generates queries that connect back to themselves rather than just producing
+     * tree-structured queries
+     *
+     * Returns a QueryBuilder object that builds a GraqlGet query
+     */
     QueryBuilder generateNewQuery(GraknClient.Transaction tx) {
         Type rootThing = tx.getMetaConcept();
 

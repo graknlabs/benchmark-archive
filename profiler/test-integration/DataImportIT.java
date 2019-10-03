@@ -20,7 +20,7 @@ package grakn.benchmark.profiler;
 
 import grakn.benchmark.common.configuration.parse.BenchmarkArguments;
 import grakn.client.GraknClient;
-import grakn.core.concept.answer.Numeric;
+import grakn.client.answer.Numeric;
 import graql.lang.Graql;
 import org.apache.commons.cli.CommandLine;
 import org.junit.After;
