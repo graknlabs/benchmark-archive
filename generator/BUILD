@@ -5,7 +5,6 @@ java_library(
         "//common/timer:timer",
 
         "@graknlabs_client_java//:client-java",
-        "@graknlabs_grakn_core//api:api",
         "@graknlabs_grakn_core//common:common",
         "@graknlabs_grakn_core//concept:concept",
         "@graknlabs_graql//java:graql",

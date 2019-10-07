@@ -29,7 +29,6 @@ java_library(
         "//common/timer:timer",
 
         "@graknlabs_client_java//:client-java",
-        "@graknlabs_grakn_core//api:api",
         "@graknlabs_graql//java:graql",
         "@graknlabs_grakn_core//concept:concept",
 
