@@ -19,9 +19,9 @@
 package grakn.benchmark.querygen;
 
 
-import grakn.client.concept.api.AttributeType;
-import grakn.client.concept.api.Role;
-import grakn.client.concept.api.Type;
+import grakn.client.concept.AttributeType;
+import grakn.client.concept.Role;
+import grakn.client.concept.Type;
 import graql.lang.statement.Variable;
 
 import java.util.HashMap;

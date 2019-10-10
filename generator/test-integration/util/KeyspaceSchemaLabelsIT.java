@@ -2,7 +2,7 @@ package grakn.benchmark.generator.util;
 
 
 import grakn.client.GraknClient;
-import grakn.client.concept.api.AttributeType;
+import grakn.client.concept.AttributeType;
 import graql.lang.Graql;
 import org.junit.After;
 import org.junit.Before;

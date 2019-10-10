@@ -20,10 +20,10 @@ package grakn.benchmark.generator.storage;
 
 import grakn.benchmark.generator.DataGeneratorException;
 import grakn.benchmark.generator.util.KeyspaceSchemaLabels;
-import grakn.client.concept.api.Attribute;
-import grakn.client.concept.api.AttributeType;
-import grakn.client.concept.api.Concept;
-import grakn.client.concept.api.Label;
+import grakn.client.concept.Attribute;
+import grakn.client.concept.AttributeType;
+import grakn.client.concept.Concept;
+import grakn.client.concept.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,12 +44,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static grakn.client.concept.api.AttributeType.DataType.BOOLEAN;
-import static grakn.client.concept.api.AttributeType.DataType.DATE;
-import static grakn.client.concept.api.AttributeType.DataType.DOUBLE;
-import static grakn.client.concept.api.AttributeType.DataType.FLOAT;
-import static grakn.client.concept.api.AttributeType.DataType.LONG;
-import static grakn.client.concept.api.AttributeType.DataType.STRING;
+import static grakn.client.concept.AttributeType.DataType.BOOLEAN;
+import static grakn.client.concept.AttributeType.DataType.DATE;
+import static grakn.client.concept.AttributeType.DataType.DOUBLE;
+import static grakn.client.concept.AttributeType.DataType.FLOAT;
+import static grakn.client.concept.AttributeType.DataType.LONG;
+import static grakn.client.concept.AttributeType.DataType.STRING;
 
 
 /**

@@ -19,12 +19,12 @@
 package grakn.benchmark.querygen;
 
 import grakn.client.GraknClient;
-import grakn.client.concept.api.AttributeType;
-import grakn.client.concept.api.RelationType;
-import grakn.client.concept.api.Role;
-import grakn.client.concept.api.SchemaConcept;
-import grakn.client.concept.api.Thing;
-import grakn.client.concept.api.Type;
+import grakn.client.concept.AttributeType;
+import grakn.client.concept.RelationType;
+import grakn.client.concept.Role;
+import grakn.client.concept.SchemaConcept;
+import grakn.client.concept.Thing;
+import grakn.client.concept.Type;
 import graql.lang.Graql;
 import graql.lang.query.GraqlGet;
 import graql.lang.statement.Variable;

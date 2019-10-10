@@ -19,7 +19,7 @@
 package grakn.benchmark.querygen;
 
 import grakn.client.GraknClient;
-import grakn.client.concept.api.Type;
+import grakn.client.concept.Type;
 
 import java.util.Comparator;
 import java.util.List;
