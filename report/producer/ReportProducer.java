@@ -35,8 +35,6 @@ import grakn.benchmark.generator.util.KeyspaceSchemaLabels;
 import grakn.benchmark.report.producer.container.QueryExecutionResults;
 import grakn.benchmark.report.producer.container.ReportData;
 import grakn.client.GraknClient;
-import grakn.core.concept.answer.ConceptMap;
-import grakn.core.concept.type.AttributeType;
 import graql.lang.Graql;
 import graql.lang.query.GraqlQuery;
 import org.apache.commons.cli.CommandLine;
