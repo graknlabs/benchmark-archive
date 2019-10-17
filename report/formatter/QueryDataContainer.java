@@ -26,17 +26,24 @@ class QueryDataContainer {
         representation += "\n  Configuration name: " + configName;
         representation += "\n  Configuration description: " + configDescription;
 
-        List<QueryDataEntry> lowThreadScalability = entriesForConcurrency(minConcurrency());
-        representation += "\n\n  #### Single Thread Scalability \n";
-        representation += QueryDataFormatter.formatScaleTable(lowThreadScalability);
+        long numConcurrency = numConcurrency();
 
-        List<QueryDataEntry> highThreadScalability = entriesForConcurrency(maxConcurrency());
-        representation += "\n\n  #### " + maxConcurrency() + " Thread Scalability \n";
-        representation += QueryDataFormatter.formatScaleTable(highThreadScalability);
+        if (numConcurrency >= 2) {
+            List<QueryDataEntry> lowThreadScalability = entriesForConcurrency(minConcurrency());
+            representation += "\n\n  #### " + minConcurrency() + " Thread Scalability \n";
+            representation += QueryDataFormatter.formatScaleTable(lowThreadScalability);
+        }
 
-        List<QueryDataEntry> highScaleParallelisability = entriesForScale(maxScale());
-        representation += "\n\n  #### Parallelisability at " + maxScale() + " Concepts \n";
-        representation += QueryDataFormatter.formatConcurrencyTable(highScaleParallelisability);
+        if (numConcurrency >= 1) {
+            List<QueryDataEntry> highThreadScalability = entriesForConcurrency(maxConcurrency());
+            representation += "\n\n  #### " + maxConcurrency() + " Thread Scalability \n";
+            representation += QueryDataFormatter.formatScaleTable(highThreadScalability);
+
+            List<QueryDataEntry> highScaleParallelisability = entriesForScale(maxScale());
+            representation += "\n\n  #### Parallelisability at " + maxScale() + " Concepts \n";
+            representation += QueryDataFormatter.formatConcurrencyTable(highScaleParallelisability);
+        }
+
 
         return representation;
     }
@@ -47,27 +54,31 @@ class QueryDataContainer {
     }
 
 
-    public List<QueryDataEntry> entriesForConcurrency(int concurrency) {
+    private List<QueryDataEntry> entriesForConcurrency(int concurrency) {
         return unsortedData.stream()
                 .filter(entry -> entry.concurrency == concurrency)
                 .collect(Collectors.toList());
     }
 
-    public List<QueryDataEntry> entriesForScale(int scale) {
+    private List<QueryDataEntry> entriesForScale(int scale) {
         return unsortedData.stream()
                 .filter(entry -> entry.scale == scale)
                 .collect(Collectors.toList());
     }
 
-    public int maxScale() {
+    private int maxScale() {
         return unsortedData.stream().map(entry -> entry.scale).max(Comparator.naturalOrder()).get();
     }
 
-    public int minConcurrency() {
+    private long numConcurrency() {
+        return unsortedData.stream().map(entry -> entry.concurrency).distinct().count();
+    }
+
+    private int minConcurrency() {
         return unsortedData.stream().map(entry -> entry.concurrency).min(Comparator.naturalOrder()).get();
     }
 
-    public int maxConcurrency() {
+    private int maxConcurrency() {
         return unsortedData.stream().map(entry -> entry.concurrency).max(Comparator.naturalOrder()).get();
     }
 }
