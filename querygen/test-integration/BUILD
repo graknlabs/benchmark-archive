@@ -23,7 +23,6 @@ java_test(
      deps = [
          "//querygen/src:query-sampler-lib",
          "@graknlabs_client_java//:client-java",
-         "@graknlabs_grakn_core//concept:concept",
          "@graknlabs_graql//java:graql",
          "@graknlabs_grakn_core//test-integration/rule:grakn-test-server"
      ],
@@ -46,7 +45,6 @@ java_test(
     deps = [
         "//querygen/src:query-sampler-lib",
         "@graknlabs_client_java//:client-java",
-        "@graknlabs_grakn_core//concept:concept",
         "@graknlabs_graql//java:graql",
         "@graknlabs_grakn_core//test-integration/rule:grakn-test-server"
     ],
@@ -67,7 +65,6 @@ java_test(
     deps = [
         "//querygen/src:query-sampler-lib",
         "@graknlabs_client_java//:client-java",
-        "@graknlabs_grakn_core//concept:concept",
         "@graknlabs_graql//java:graql",
         "@graknlabs_grakn_core//test-integration/rule:grakn-test-server"
     ],

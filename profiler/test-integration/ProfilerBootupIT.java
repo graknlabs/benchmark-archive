@@ -21,8 +21,6 @@ package grakn.benchmark.profiler;
 import grakn.benchmark.common.configuration.parse.BenchmarkArguments;
 import grakn.benchmark.common.exception.BootupException;
 import grakn.client.GraknClient;
-import grakn.core.concept.answer.ConceptMap;
-import graql.lang.Graql;
 import org.apache.commons.cli.CommandLine;
 import org.junit.After;
 import org.junit.Before;
@@ -32,11 +30,7 @@ import org.junit.rules.ExpectedException;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.UUID;
-
-import static graql.lang.Graql.type;
-import static graql.lang.Graql.var;
 
 public class ProfilerBootupIT {
     private final static Path WEB_CONTENT_DATA_GEN_CONFIG_PATH = Paths.get("profiler/test-integration/resources/web_content/web_content_config_data_gen.yml");

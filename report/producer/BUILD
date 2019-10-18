@@ -30,7 +30,6 @@ java_library(
 
         "@graknlabs_client_java//:client-java",
         "@graknlabs_graql//java:graql",
-        "@graknlabs_grakn_core//concept:concept",
 
         "//dependencies/maven/artifacts/org/apache/ignite:ignite-core",
 

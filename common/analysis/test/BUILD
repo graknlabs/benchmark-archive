@@ -7,7 +7,6 @@ java_test(
         "@graknlabs_client_java//:client-java",
 
         "@graknlabs_graql//java:graql",
-        "@graknlabs_grakn_core//concept:concept",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
         "//dependencies/maven/artifacts/org/hamcrest:hamcrest-all"
     ]

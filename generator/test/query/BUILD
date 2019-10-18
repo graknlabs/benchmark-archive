@@ -4,7 +4,6 @@ java_test(
     srcs = ["AttributeGeneratorTest.java"],
     deps = [
         "@graknlabs_graql//java:graql",
-        "@graknlabs_grakn_core//concept:concept",
         "//generator:data-generator",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
     ]
@@ -16,7 +15,6 @@ java_test(
     srcs = ["EntityGeneratorTest.java"],
     deps = [
         "@graknlabs_graql//java:graql",
-        "@graknlabs_grakn_core//concept:concept",
         "//generator:data-generator",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
     ]
@@ -28,7 +26,6 @@ java_test(
     srcs = ["RelationGeneratorTest.java"],
     deps = [
         "@graknlabs_graql//java:graql",
-        "@graknlabs_grakn_core//concept:concept",
         "//generator:data-generator",
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
     ]
