@@ -27,7 +27,9 @@ java_library(
         "//dependencies/maven/artifacts/io/zipkin/reporter2:zipkin-reporter",
         "//dependencies/maven/artifacts/io/zipkin/reporter2:zipkin-sender-urlconnection",
     ],
-    visibility = ["//visibility:public"]
+    visibility = ["//visibility:public"],
+    tags = ["maven_coordinates=io.grakn.benchmark:server-instrumentation:{pom_version}"],
+
 )
 
 
@@ -44,5 +46,6 @@ java_library(
         "//dependencies/maven/artifacts/io/zipkin/reporter2:zipkin-sender-urlconnection",
         "//dependencies/maven/artifacts/org/slf4j:slf4j-api",
     ],
-    visibility = ["//visibility:public"]
+    visibility = ["//visibility:public"],
+    tags = ["maven_coordinates=io.grakn.benchmark:client-instrumentation:{pom_version}"],
 )
