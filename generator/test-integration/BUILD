@@ -4,7 +4,6 @@ java_test(
     srcs = ["util/KeyspaceSchemaLabelsIT.java"],
     deps = [
         "@graknlabs_client_java//:client-java",
-        "@graknlabs_grakn_core//concept:concept",
         "@graknlabs_graql//java:graql",
         "//generator:data-generator",
         "//dependencies/maven/artifacts/org/hamcrest:hamcrest-all"

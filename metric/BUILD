@@ -49,7 +49,6 @@ java_library(
     deps = [
         "@graknlabs_client_java//:client-java",
         "@graknlabs_graql//java:graql",
-        "@graknlabs_grakn_core//concept:concept",
 
         "//dependencies/maven/artifacts/commons-cli",
         "//dependencies/maven/artifacts/org/apache/commons:commons-math3",
@@ -84,7 +83,6 @@ java_test(
          "//metric:metric",
          "//dependencies/maven/artifacts/junit:junit",
         "@graknlabs_client_java//:client-java",
-        "@graknlabs_grakn_core//concept:concept",
         "@graknlabs_graql//java:graql"
      ],
      data = [":test/binaryGraph.csv", ":test/unaryBinaryGraph.csv"],
@@ -116,7 +114,6 @@ java_test(
          "//metric:metric",
          "//dependencies/maven/artifacts/junit:junit",
         "@graknlabs_client_java//:client-java",
-        "@graknlabs_grakn_core//concept:concept",
         "@graknlabs_graql//java:graql",
      ],
      data = [":test/binaryGraph.csv", ":test/unaryBinaryGraph.csv"],
