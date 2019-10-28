@@ -22,7 +22,6 @@ import grakn.benchmark.report.producer.container.QueryExecutionResults;
 import grakn.client.GraknClient;
 import grakn.client.answer.AnswerGroup;
 import grakn.client.answer.ConceptMap;
-import grakn.client.answer.ConceptSet;
 import grakn.client.answer.Numeric;
 import grakn.client.answer.Void;
 import grakn.client.concept.Concept;

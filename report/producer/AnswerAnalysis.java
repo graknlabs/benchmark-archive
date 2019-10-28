@@ -21,7 +21,6 @@ package grakn.benchmark.report.producer;
 import grakn.client.answer.Answer;
 import grakn.client.answer.AnswerGroup;
 import grakn.client.answer.ConceptMap;
-import grakn.client.answer.ConceptSet;
 import grakn.client.answer.Void;
 import graql.lang.query.GraqlCompute;
 import graql.lang.query.GraqlDelete;
@@ -62,7 +61,7 @@ public class AnswerAnalysis {
         return baseRoundTrips + answer.size();
     }
 
-    static int countRoundTripsCompleted(GraqlDelete deleteQuery, Void answer) {
+    public static int countRoundTripsCompleted(GraqlDelete deleteQuery, Void answer) {
         return 2;
     }
 
