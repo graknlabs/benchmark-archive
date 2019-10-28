@@ -24,6 +24,7 @@ import grakn.client.answer.AnswerGroup;
 import grakn.client.answer.ConceptMap;
 import grakn.client.answer.ConceptSet;
 import grakn.client.answer.Numeric;
+import grakn.client.answer.Void;
 import grakn.client.concept.Concept;
 import graql.lang.Graql;
 import graql.lang.query.GraqlCompute;
@@ -103,12 +104,10 @@ class QueriesExecutor implements Callable<Map<GraqlQuery, QueryExecutionResults>
                     queryType = "delete";
 
                     startTime = System.currentTimeMillis();
-                    ConceptSet answer = tx.stream(query.asDelete()).findFirst().get();
+                    Void answer = tx.stream(query.asDelete()).findFirst().get();
                     endTime = System.currentTimeMillis();
 
                     roundTrips = AnswerAnalysis.countRoundTripsCompleted(query.asDelete(), answer);
-                    conceptsHandled = AnswerAnalysis.countDeletedConcepts(query.asDelete(), answer);
-
                 } else if (query instanceof GraqlCompute) {
                     queryType = "compute";
 

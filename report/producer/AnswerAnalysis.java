@@ -22,6 +22,7 @@ import grakn.client.answer.Answer;
 import grakn.client.answer.AnswerGroup;
 import grakn.client.answer.ConceptMap;
 import grakn.client.answer.ConceptSet;
+import grakn.client.answer.Void;
 import graql.lang.query.GraqlCompute;
 import graql.lang.query.GraqlDelete;
 import graql.lang.query.GraqlGet;
@@ -40,10 +41,6 @@ public class AnswerAnalysis {
                 .map(conceptMap -> conceptMap.map().size())
                 .reduce((a,b) -> a+b)
                 .orElse(0);
-    }
-
-    static int countDeletedConcepts(GraqlDelete deleteQuery, ConceptSet answer) {
-        return answer.set().size();
     }
 
     public static int computedConcepts(GraqlCompute computeQuery, List<? extends Answer> answer) {
@@ -65,7 +62,7 @@ public class AnswerAnalysis {
         return baseRoundTrips + answer.size();
     }
 
-    static int countRoundTripsCompleted(GraqlDelete deleteQuery, ConceptSet answer) {
+    static int countRoundTripsCompleted(GraqlDelete deleteQuery, Void answer) {
         return 2;
     }
 
