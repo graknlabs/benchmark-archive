@@ -32,6 +32,8 @@ java_library(
         # together these can be used to create clients with tracing enabled
         "//lib:client-instrumentation",
         "//dependencies/maven/artifacts/io/grpc:grpc-core",
+        "//dependencies/maven/artifacts/io/grpc:grpc-api",
+
 
         "//dependencies/maven/artifacts/io/zipkin/brave:brave",
 

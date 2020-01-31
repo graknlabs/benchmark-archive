@@ -39,6 +39,7 @@ java_library(
     deps = [
         "@graknlabs_protocol//grpc/java:protocol",
         "//dependencies/maven/artifacts/io/grpc:grpc-core",
+        "//dependencies/maven/artifacts/io/grpc:grpc-api",
         "//dependencies/maven/artifacts/com/google/protobuf:protobuf-java",
         "//dependencies/maven/artifacts/io/zipkin/brave:brave",
         "//dependencies/maven/artifacts/io/zipkin/zipkin2:zipkin",

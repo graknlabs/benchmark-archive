@@ -136,11 +136,14 @@ dependencies:
 
   io.grpc:
     grpc-core:
-      version: "1.16.0"
+      version: "1.24.0"
       lang: java
     grpc-netty-shaded:
-     version: "1.16.0"
+     version: "1.24.0"
      lang: java
+    grpc-api:
+      version: "1.24.0"
+      lang: java
 
 
   com.google.protobuf:
