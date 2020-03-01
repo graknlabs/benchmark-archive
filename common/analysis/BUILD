@@ -1,3 +1,5 @@
+load("@graknlabs_build_tools//checkstyle:rules.bzl", "checkstyle_test")
+
 java_library(
     name = "insert-query-analyser",
     srcs = [
@@ -8,4 +10,12 @@ java_library(
         "@graknlabs_graql//java:graql",
     ],
     visibility = ["//visibility:public"]
+)
+
+checkstyle_test(
+    name = "checkstyle",
+    targets = [
+        ":insert-query-analyser"
+    ],
+    license_type = "agpl"
 )

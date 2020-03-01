@@ -1,3 +1,5 @@
+load("@graknlabs_build_tools//checkstyle:rules.bzl", "checkstyle_test")
+
 java_test(
     name = "central-stream-provider-test",
     test_class = "grakn.benchmark.generator.provider.key.CentralConceptProviderTest",
@@ -27,3 +29,13 @@ java_test(
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
      ]
  )
+
+checkstyle_test(
+    name = "checkstyle",
+    targets = [
+        ":central-stream-provider-test",
+        ":conceptid-storage-provider-test",
+        ":not-in-relationship-conceptid-storage-provider-test",
+    ],
+    license_type = "agpl"
+)

@@ -1,6 +1,5 @@
 #
-#  GRAKN.AI - THE KNOWLEDGE GRAPH
-#  Copyright (C) 2019 Grakn Labs Ltd
+#  Copyright (C) 2020 Grakn Labs
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU Affero General Public License as
@@ -15,6 +14,8 @@
 #  You should have received a copy of the GNU Affero General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
+
+load("@graknlabs_build_tools//checkstyle:rules.bzl", "checkstyle_test")
 
 # ----- Nd4j platform specific binaries -----
 
@@ -39,7 +40,8 @@ java_library(
 	exports = select({
 		":linux_build": ["//dependencies/maven/artifacts/org/nd4j:nd4j-native-jar-linux-x86-64"],
 		":osx_build": ["//dependencies/maven/artifacts/org/nd4j:nd4j-native-jar-macosx-x86-64"]
-	})
+	}),
+    tags = ["checkstyle_ignore"]
 )
 
 
@@ -153,4 +155,18 @@ java_test(
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
         "//dependencies/maven/artifacts/org/apache/commons:commons-math3",
     ]
+)
+
+checkstyle_test(
+    name = "checkstyle",
+    targets = [
+        ":metric",
+        ":assortativity-it",
+        ":assortativity-test",
+        ":degree-distribution-it",
+        ":degree-distribution-test",
+        ":global-transitivity-it",
+        ":global-transitivity-test",
+    ],
+    license_type = "agpl"
 )

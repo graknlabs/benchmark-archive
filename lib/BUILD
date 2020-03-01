@@ -1,6 +1,5 @@
 #
-#  GRAKN.AI - THE KNOWLEDGE GRAPH
-#  Copyright (C) 2019 Grakn Labs Ltd
+#  Copyright (C) 2020 Grakn Labs
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU Affero General Public License as
@@ -16,6 +15,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+load("@graknlabs_build_tools//checkstyle:rules.bzl", "checkstyle_test")
 
 java_library(
     name = "server-instrumentation",
@@ -49,4 +49,13 @@ java_library(
     ],
     visibility = ["//visibility:public"],
     tags = ["maven_coordinates=io.grakn.benchmark:client-instrumentation:{pom_version}"],
+)
+
+checkstyle_test(
+    name = "checkstyle",
+    targets = [
+        ":server-instrumentation",
+        ":client-instrumentation",
+    ],
+    license_type = "agpl"
 )

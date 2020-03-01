@@ -1,6 +1,5 @@
 #
-#  GRAKN.AI - THE KNOWLEDGE GRAPH
-#  Copyright (C) 2019 Grakn Labs Ltd
+#  Copyright (C) 2020 Grakn Labs
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU Affero General Public License as
@@ -18,6 +17,7 @@
 
 exports_files(["report_formatter"], visibility = ["//visibility:public"])
 load("@graknlabs_bazel_distribution//common:rules.bzl", "java_deps")
+load("@graknlabs_build_tools//checkstyle:rules.bzl", "checkstyle_test")
 
 java_library(
     name = "report-formatter",
@@ -44,4 +44,10 @@ filegroup(
     name = "logback",
     srcs = ["//report/formatter:logback.xml"],
     visibility = ["//visibility:public"]
+)
+
+checkstyle_test(
+    name = "checkstyle",
+    targets = [":report-formatter"],
+    license_type = "agpl"
 )

@@ -18,20 +18,24 @@
 
 package grakn.benchmark.common.configuration.parse;
 
-import java.util.List;
-
 /**
- *  Absorbs a list of strings that represent a query each
- *  Top-level tag is 'queries'
+ * Sub-object in yaml file that indicates concurrency configuration options
  */
+class Concurrency {
+    private Integer clients;
+    private Boolean separateKeyspaces;
 
-public class QueriesConfigurationFile {
-    private List<String> queries;
-
-    public void setQueries(List<String> queries ) {
-        this.queries = queries;
+    public void setClients(Integer clients) {
+        this.clients = clients;
     }
-    public List<String> getQueries() {
-        return this.queries;
+    public Integer clients() {
+        return clients;
+    }
+
+    public void setUniqueKeyspaces(Boolean uniqueKeyspaces) {
+        this.separateKeyspaces = uniqueKeyspaces;
+    }
+    public Boolean uniqueKeyspaces() {
+        return separateKeyspaces;
     }
 }
