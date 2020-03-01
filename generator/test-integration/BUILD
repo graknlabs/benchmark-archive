@@ -1,3 +1,5 @@
+load("@graknlabs_build_tools//checkstyle:rules.bzl", "checkstyle_test")
+
 java_test(
     name = "keyspace-schema-labels-it",
     test_class = "grakn.benchmark.generator.util.KeyspaceSchemaLabelsIT",
@@ -12,4 +14,12 @@ java_test(
     data = [
         "//profiler/test-integration/resources:web-content-config"
     ]
+)
+
+checkstyle_test(
+    name = "checkstyle",
+    targets = [
+        ":keyspace-schema-labels-it"
+    ],
+    license_type = "agpl"
 )

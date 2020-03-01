@@ -1,3 +1,5 @@
+load("@graknlabs_build_tools//checkstyle:rules.bzl", "checkstyle_test")
+
 java_library(
     name = "data-generator",
     srcs = glob(["**/*.java", "*.java"]),
@@ -20,4 +22,12 @@ java_library(
         "//dependencies/maven/artifacts/io/grpc:grpc-netty-shaded"
     ],
     visibility = ["//visibility:public"]
+)
+
+checkstyle_test(
+    name = "checkstyle",
+    targets = [
+        ":data-generator"
+    ],
+    license_type = "agpl"
 )

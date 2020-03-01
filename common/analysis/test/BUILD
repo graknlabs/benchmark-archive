@@ -1,3 +1,5 @@
+load("@graknlabs_build_tools//checkstyle:rules.bzl", "checkstyle_test")
+
 java_test(
     name = "insert-query-analysis-unit-test",
     test_class = "grakn.benchmark.common.analysis.InsertQueryAnalyserTest",
@@ -10,4 +12,12 @@ java_test(
         "//dependencies/maven/artifacts/org/mockito:mockito-core",
         "//dependencies/maven/artifacts/org/hamcrest:hamcrest-all"
     ]
+)
+
+checkstyle_test(
+    name = "checkstyle",
+    targets = [
+        ":insert-query-analysis-unit-test"
+    ],
+    license_type = "agpl"
 )

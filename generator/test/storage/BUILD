@@ -1,3 +1,4 @@
+load("@graknlabs_build_tools//checkstyle:rules.bzl", "checkstyle_test")
 
 java_test(
     name = "ignite-concept-store-test",
@@ -12,4 +13,12 @@ java_test(
         "//dependencies/maven/artifacts/org/apache/ignite:ignite-indexing",
         "//dependencies/maven/artifacts/org/hamcrest:hamcrest-all"
     ]
+)
+
+checkstyle_test(
+    name = "checkstyle",
+    targets = [
+        ":ignite-concept-store-test"
+    ],
+    license_type = "agpl"
 )
