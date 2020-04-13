@@ -43,7 +43,7 @@ bazel build //:assemble-linux-targz
 # build twice TODO fix if the `missing input file '@local_jdk//:jre/lib...` can be tracked down and resolved
 bazel build //:assemble-linux-targz
 
-cd bazel-genfiles
+cd bazel-bin
 tar -xf grakn-core-all-linux.tar.gz
 
 # configure and start grakn
@@ -62,7 +62,7 @@ git clone https://github.com/graknlabs/benchmark.git
 cd benchmark
 bazel clean --expunge
 bazel build //:profiler-distribution
-cd bazel-genfiles
+cd bazel-bin
 unzip -o profiler.zip
 
 # run zipkin
