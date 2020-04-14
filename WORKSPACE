@@ -39,6 +39,12 @@ graknlabs_common()
 load("@graknlabs_build_tools//distribution:dependencies.bzl", "graknlabs_bazel_distribution")
 graknlabs_bazel_distribution()
 
+load("@graknlabs_grakn_core//dependencies/graknlabs:dependencies.bzl", "graknlabs_grabl_tracing")
+graknlabs_grabl_tracing()
+
+load("@graknlabs_grabl_tracing//dependencies/maven:dependencies.bzl",
+graknlabs_grabl_tracing_maven_dependencies="maven_dependencies")
+graknlabs_grabl_tracing_maven_dependencies()
 
 ##################################
 # Load Distribution dependencies #
