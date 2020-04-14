@@ -22,6 +22,7 @@ package grakn.benchmark.querygen;
 import grakn.client.concept.AttributeType;
 import grakn.client.concept.Role;
 import grakn.client.concept.Type;
+import grakn.client.concept.SchemaConcept;
 import graql.lang.statement.Variable;
 
 import java.util.HashMap;
@@ -265,7 +266,7 @@ public class Vectoriser {
         }
 
         int depth = 1;
-        Type parent = t;
+        SchemaConcept parent = t;
         while (parent.sup() != null && !parent.label().toString().equals("thing")) {
             depth++;
             parent = parent.sup();
