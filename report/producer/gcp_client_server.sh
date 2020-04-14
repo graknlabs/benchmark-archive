@@ -23,7 +23,7 @@ git clone https://github.com/graknlabs/benchmark.git
 cd benchmark
 
 bazel build //:report-producer-distribution
-cd bazel-genfiles
+cd bazel-bin
 unzip report-producer.zip
 cd report-producer
 

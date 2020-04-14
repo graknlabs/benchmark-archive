@@ -10,5 +10,5 @@ mkdir -p $LOG_DIR/$VM_NAME
 gcloud auth activate-service-account --key-file $GCLOUD_CREDENTIALS
 
 gcloud compute scp --zone=$ZONE ubuntu@$VM_NAME:~/execute.log $LOG_DIR/$VM_NAME/
-gcloud compute scp --zone=$ZONE ubuntu@$VM_NAME:~/grakn/bazel-genfiles/grakn-core-all-linux/logs/grakn.log $LOG_DIR/$VM_NAME/
-gcloud compute scp --zone=$ZONE ubuntu@$VM_NAME:~/grakn/bazel-genfiles/grakn-core-all-linux/logs/cassandra.log $LOG_DIR/$VM_NAME/
+gcloud compute scp --zone=$ZONE ubuntu@$VM_NAME:~/grakn/bazel-bin/grakn-core-all-linux/logs/grakn.log $LOG_DIR/$VM_NAME/
+gcloud compute scp --zone=$ZONE ubuntu@$VM_NAME:~/grakn/bazel-bin/grakn-core-all-linux/logs/cassandra.log $LOG_DIR/$VM_NAME/
